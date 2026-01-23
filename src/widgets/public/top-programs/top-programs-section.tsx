@@ -1,0 +1,214 @@
+"use client";
+
+import { memo, useState, useMemo, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "@heroui/react";
+import { usePrograms } from "@/entities/program/api/use-programs";
+import { useTopPrograms } from "@/entities/program/api/use-top-programs";
+import { useCategories } from "@/entities/category/api/use-categories";
+import { ProgramCard } from "../program-card/program-card";
+import { LoadingState } from "@/shared/ui/loading-state/loading-state";
+import { EmptyState } from "@/shared/ui/empty-state/empty-state";
+import { ErrorState } from "@/shared/ui/error-state/error-state";
+import { BookOpen } from "lucide-react";
+import {
+  TOP_PROGRAMS_TEXTS,
+  TOP_PROGRAMS_TABS,
+  TOP_PROGRAMS_CLASSES,
+} from "./constants/top-programs-constants";
+import type { CategoryType } from "@/shared/api/generated/graphql";
+import { CATEGORY_TYPE_LABELS } from "@/shared/constants/categories";
+import type { TopProgramsSectionProps } from "./types/top-programs.types";
+
+export const TopProgramsSection = memo(function TopProgramsSection({
+  initialTopPrograms,
+  initialAllPrograms,
+  initialCategories,
+}: TopProgramsSectionProps = {}) {
+  const [activeTab, setActiveTab] = useState<CategoryType | "all">(
+    "all"
+  );
+
+  // Вызываем хуки только если нет initial данных
+  const hasInitialData =
+    !!initialTopPrograms &&
+    !!initialAllPrograms &&
+    !!initialCategories;
+
+  const {
+    programs: topProgramsClient,
+    loading: topProgramsLoading,
+    error: topProgramsError,
+  } = useTopPrograms(6, { skip: hasInitialData });
+
+  const {
+    programs: allProgramsClient,
+    loading: programsLoading,
+    error: programsError,
+  } = usePrograms(undefined, { skip: hasInitialData });
+
+  const { categories: categoriesClient, loading: categoriesLoading } =
+    useCategories(undefined, { skip: hasInitialData });
+
+  // Мемоизируем данные - используем initial если есть, иначе клиентские
+  const topPrograms = useMemo(
+    () => initialTopPrograms || topProgramsClient,
+    [initialTopPrograms, topProgramsClient]
+  );
+
+  const allPrograms = useMemo(
+    () => initialAllPrograms || allProgramsClient,
+    [initialAllPrograms, allProgramsClient]
+  );
+
+  const categories = useMemo(
+    () => initialCategories || categoriesClient,
+    [initialCategories, categoriesClient]
+  );
+
+  // Фильтруем категории по типу
+  const categoryIds = useMemo(() => {
+    if (activeTab === "all") return undefined;
+    return categories
+      .filter((cat) => cat.type === activeTab)
+      .map((cat) => cat.id);
+  }, [activeTab, categories]);
+
+  // Фильтруем программы на клиенте для конкретных категорий
+  const filteredPrograms = useMemo(() => {
+    if (activeTab === "all") return topPrograms;
+    if (!categoryIds || categoryIds.length === 0) return [];
+    return allPrograms.filter((program) =>
+      categoryIds.includes(program.category)
+    );
+  }, [allPrograms, activeTab, categoryIds, topPrograms]);
+
+  // Сортируем по просмотрам для категорий (если не "all")
+  const sortedPrograms = useMemo(() => {
+    if (activeTab === "all") return filteredPrograms;
+    return [...filteredPrograms].sort(
+      (a, b) => (b.views || 0) - (a.views || 0)
+    );
+  }, [filteredPrograms, activeTab]);
+
+  const displayedPrograms = useMemo(() => {
+    return sortedPrograms.slice(0, 6);
+  }, [sortedPrograms]);
+
+  const categoryLabel = useMemo(() => {
+    if (activeTab === "all") return undefined;
+    return CATEGORY_TYPE_LABELS[activeTab];
+  }, [activeTab]);
+
+  // Мемоизируем обработчик переключения табов
+  const handleTabChange = useCallback((tab: CategoryType | "all") => {
+    setActiveTab(tab);
+  }, []);
+
+  // Мемоизируем обработчик кнопки "Показать больше"
+  const handleShowMore = useCallback(() => {
+    const categoryPath =
+      activeTab === "all"
+        ? ""
+        : `/${activeTab.toLowerCase().replace(/_/g, "-")}`;
+    window.location.href = categoryPath || "/";
+  }, [activeTab]);
+
+  const loading = !hasInitialData
+    ? activeTab === "all"
+      ? topProgramsLoading || categoriesLoading
+      : programsLoading || categoriesLoading
+    : false;
+  const error =
+    activeTab === "all" ? topProgramsError : programsError;
+
+  if (error) {
+    return (
+      <section id="programs" className={TOP_PROGRAMS_CLASSES.section}>
+        <div className={TOP_PROGRAMS_CLASSES.container}>
+          <ErrorState message={error.message} />
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section id="programs" className={TOP_PROGRAMS_CLASSES.section}>
+      <div className={TOP_PROGRAMS_CLASSES.container}>
+        {/* Header */}
+        <div className={TOP_PROGRAMS_CLASSES.header}>
+          <h2 className={TOP_PROGRAMS_CLASSES.title}>
+            {TOP_PROGRAMS_TEXTS.title}
+          </h2>
+          <p className={TOP_PROGRAMS_CLASSES.subtitle}>
+            {TOP_PROGRAMS_TEXTS.subtitle}
+          </p>
+        </div>
+
+        {/* Tabs */}
+        <div className={TOP_PROGRAMS_CLASSES.tabs}>
+          {TOP_PROGRAMS_TABS.map((tab) => (
+            <motion.button
+              key={tab.key}
+              onClick={() => handleTabChange(tab.key)}
+              className={`${TOP_PROGRAMS_CLASSES.tab} ${
+                activeTab === tab.key
+                  ? TOP_PROGRAMS_CLASSES.tabActive
+                  : TOP_PROGRAMS_CLASSES.tabInactive
+              }`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              {tab.label}
+            </motion.button>
+          ))}
+        </div>
+
+        {/* Programs Grid */}
+        {loading ? (
+          <LoadingState message={TOP_PROGRAMS_TEXTS.loading} />
+        ) : displayedPrograms.length === 0 ? (
+          <EmptyState
+            title={TOP_PROGRAMS_TEXTS.noPrograms}
+            icon={<BookOpen className="h-16 w-16 text-default-400" />}
+          />
+        ) : (
+          <>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className={TOP_PROGRAMS_CLASSES.grid}
+              >
+                {displayedPrograms.map((program) => (
+                  <ProgramCard
+                    key={program.id}
+                    program={program}
+                    categoryType={categoryLabel}
+                  />
+                ))}
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Show More Button */}
+            {sortedPrograms.length > 6 && (
+              <div className={TOP_PROGRAMS_CLASSES.showMore}>
+                <Button
+                  color="primary"
+                  variant="bordered"
+                  size="lg"
+                  onPress={handleShowMore}
+                >
+                  {TOP_PROGRAMS_TEXTS.showMore}
+                </Button>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </section>
+  );
+});

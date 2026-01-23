@@ -1,0 +1,283 @@
+"use client";
+
+import {
+  memo,
+  useCallback,
+  useMemo,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { useForm, useWatch } from "react-hook-form";
+import { Button, Form, Card, CardBody } from "@heroui/react";
+import { ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { UserAuthGuard } from "@/shared/lib/auth/user-auth-guard";
+import { useAuthUser } from "@/shared/store/auth-store";
+import { useUpdateProfile } from "@/features/profile/api/use-update-profile";
+import {
+  getProfileDefaultValues,
+  createProfileInput,
+} from "@/features/profile/ui/utils/profile-form-utils";
+import type { ProfileFormData } from "@/features/profile/ui/types/profile-form.types";
+import { useToastState } from "@/shared/store/ui-store";
+import { PublicHeader } from "@/widgets/public/header/public-header";
+import { ProfileBasicInfoSection } from "@/features/profile/ui/sections/profile-basic-info-section";
+import { ProfileAdditionalInfoSection } from "@/features/profile/ui/sections/profile-additional-info-section";
+import { ProfileAddressesSection } from "@/features/profile/ui/sections/profile-addresses-section";
+import { ProfilePassportSection } from "@/features/profile/ui/sections/profile-passport-section";
+import { ProfileEducationSection } from "@/features/profile/ui/sections/profile-education-section";
+import { ProfileAvatarSection } from "@/features/profile/ui/sections/profile-avatar-section";
+import type { Control } from "react-hook-form";
+
+type ProfileSection =
+  | "basic"
+  | "personal"
+  | "addresses"
+  | "education"
+  | "work"
+  | "avatar";
+
+const SIDEBAR_ITEMS: Array<{ key: ProfileSection; label: string }> = [
+  { key: "basic", label: "Основная информация" },
+  { key: "personal", label: "Личные данные" },
+  { key: "addresses", label: "Адреса" },
+  { key: "education", label: "Образование" },
+  { key: "work", label: "Место работы" },
+  { key: "avatar", label: "Аватар" },
+];
+
+const ProfilePageContent = memo(function ProfilePageContent() {
+  const user = useAuthUser();
+  const {
+    updateProfile,
+    loading: updating,
+    error,
+  } = useUpdateProfile();
+  const { showToast } = useToastState();
+
+  const [activeSection, setActiveSection] =
+    useState<ProfileSection>("basic");
+
+  const defaultValues = useMemo(
+    () => getProfileDefaultValues(user?.profile || null),
+    [user?.profile]
+  );
+
+  const { control, handleSubmit, reset } = useForm<ProfileFormData>({
+    defaultValues,
+  });
+
+  const [filePreview, setFilePreview] = useState<string | null>(null);
+  const avatarUrl = useWatch({ control, name: "avatar" });
+  const previousProfileHashRef = useRef<string | null>(null);
+
+  const avatarPreview = useMemo(
+    () => filePreview || avatarUrl || user?.profile?.avatar || null,
+    [filePreview, avatarUrl, user?.profile?.avatar]
+  );
+
+  useEffect(() => {
+    if (user?.profile) {
+      const profileHash = JSON.stringify(user.profile);
+      if (previousProfileHashRef.current !== profileHash) {
+        previousProfileHashRef.current = profileHash;
+        const values = getProfileDefaultValues(user.profile);
+        reset(values);
+      }
+    } else if (
+      !user?.profile &&
+      previousProfileHashRef.current !== null
+    ) {
+      previousProfileHashRef.current = null;
+    }
+  }, [user?.profile, reset]);
+
+  const handleAvatarChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setFilePreview(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+      }
+    },
+    []
+  );
+
+  const onSubmit = useCallback(
+    async (data: ProfileFormData) => {
+      try {
+        const input = createProfileInput(data);
+        await updateProfile(input);
+        showToast("success", "Профиль успешно обновлен");
+      } catch (err) {
+        console.error("Ошибка при обновлении профиля:", err);
+        showToast("error", "Ошибка при обновлении профиля");
+      }
+    },
+    [updateProfile, showToast]
+  );
+
+  if (!user) {
+    return (
+      <div className="flex min-h-[400px] items-center justify-center">
+        <p className="text-default-500 dark:text-foreground/70">
+          Загрузка...
+        </p>
+      </div>
+    );
+  }
+
+  const typedControl = control as unknown as Control<ProfileFormData>;
+
+  const renderContent = () => {
+    switch (activeSection) {
+      case "basic":
+        return (
+          <div className="space-y-6">
+            <div className="mb-4 rounded-xl border border-default-200/50 bg-default-50/50 p-4 dark:border-default-800/50 dark:bg-content1/50">
+              <div className="flex flex-col gap-2">
+                <p className="text-sm font-semibold text-default-700 dark:text-foreground/90">
+                  Email
+                </p>
+                <p className="text-base text-default-900 dark:text-foreground">
+                  {user.email}
+                </p>
+              </div>
+            </div>
+            <ProfileBasicInfoSection control={typedControl} />
+          </div>
+        );
+
+      case "personal":
+        return <ProfilePassportSection control={typedControl} />;
+
+      case "addresses":
+        return <ProfileAddressesSection control={typedControl} />;
+
+      case "education":
+        return <ProfileEducationSection control={typedControl} />;
+
+      case "work":
+        return (
+          <ProfileAdditionalInfoSection control={typedControl} />
+        );
+
+      case "avatar":
+        return (
+          <ProfileAvatarSection
+            control={typedControl}
+            avatarPreview={avatarPreview}
+            userEmail={user.email}
+            onAvatarFileChange={handleAvatarChange}
+          />
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <Card className="flex h-full w-full flex-col border-none shadow-lg">
+      <CardBody className="flex min-h-0 flex-1 flex-col p-0">
+        <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
+          <div className="w-full border-b border-default-200 bg-default-50/50 lg:h-full lg:w-64 lg:border-r lg:border-b-0 lg:bg-transparent dark:border-default-800 dark:bg-content1/50 lg:dark:bg-transparent">
+            <nav className="p-4 lg:p-0">
+              <ul className="flex flex-row gap-2 overflow-x-auto lg:flex-col lg:gap-0">
+                {SIDEBAR_ITEMS.map((item) => (
+                  <li key={item.key}>
+                    <button
+                      type="button"
+                      onClick={() => setActiveSection(item.key)}
+                      className={`w-full rounded-lg px-4 py-3 text-left text-sm font-medium transition-colors ${
+                        activeSection === item.key
+                          ? "bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300"
+                          : "text-default-600 hover:bg-default-100 dark:text-foreground/80 dark:hover:bg-default-800"
+                      }`}
+                    >
+                      {item.label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
+
+          <div className="flex min-w-0 flex-1 flex-col">
+            <Form
+              onSubmit={handleSubmit(onSubmit)}
+              validationBehavior="native"
+              className="flex min-h-0 w-full flex-1 flex-col"
+            >
+              {error && (
+                <div className="m-6 mb-0 shrink-0 rounded-xl border border-danger-200 bg-danger-50/80 p-4 dark:border-danger-800 dark:bg-danger-900/20">
+                  <p className="text-sm font-medium text-danger-800 dark:text-danger-200">
+                    {error.message || "Ошибка при обновлении профиля"}
+                  </p>
+                </div>
+              )}
+
+              <div className="min-h-0 w-full flex-1 overflow-y-auto p-6 lg:p-8">
+                {renderContent()}
+              </div>
+
+              <div className="shrink-0 border-t border-default-200 p-6 dark:border-default-800">
+                <div className="flex justify-end gap-3">
+                  <Button
+                    type="submit"
+                    color="primary"
+                    isLoading={updating}
+                    className="min-w-32 font-semibold shadow-lg transition-shadow hover:shadow-xl"
+                  >
+                    Сохранить изменения
+                  </Button>
+                </div>
+              </div>
+            </Form>
+          </div>
+        </div>
+      </CardBody>
+    </Card>
+  );
+});
+
+export default function ProfilePage() {
+  const router = useRouter();
+
+  return (
+    <UserAuthGuard redirectTo="login">
+      <div className="flex min-h-screen flex-col bg-background">
+        <PublicHeader />
+        <main className="mx-auto flex min-h-0 w-full max-w-7xl flex-1 flex-col px-4 py-8 sm:px-6 md:px-8 lg:px-10 xl:px-12">
+          <div className="flex min-h-0 flex-1 flex-col space-y-4 sm:space-y-6 lg:space-y-8">
+            <div className="flex shrink-0 flex-col gap-3">
+              <Button
+                variant="light"
+                startContent={<ArrowLeft className="h-4 w-4" />}
+                onPress={() => router.back()}
+                className="mb-2 self-start"
+              >
+                Назад
+              </Button>
+              <div className="flex flex-col gap-3">
+                <h1 className="mb-1 bg-linear-to-r from-primary-600 to-primary-800 bg-clip-text text-2xl font-bold wrap-break-word text-transparent sm:mb-2 sm:text-3xl lg:text-4xl dark:from-primary-400 dark:to-primary-600">
+                  Личный кабинет
+                </h1>
+                <p className="text-sm text-default-600 sm:text-base lg:text-lg dark:text-foreground/80">
+                  Управляйте своей личной информацией
+                </p>
+              </div>
+            </div>
+            <div className="min-h-0 flex-1">
+              <ProfilePageContent />
+            </div>
+          </div>
+        </main>
+      </div>
+    </UserAuthGuard>
+  );
+}
