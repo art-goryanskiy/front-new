@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import {
   useAuthStatus,
@@ -22,6 +22,7 @@ export function UserAuthGuard({
   const user = useAuthUser();
   const router = useRouter();
   const pathname = usePathname();
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Пропускаем запрос только если уже есть пользователь
   // Не используем isLoading в условии skip, чтобы избежать цикла
@@ -30,7 +31,36 @@ export function UserAuthGuard({
   const isChecking = isLoading || loading;
 
   useEffect(() => {
+    // Защита от бесконечной загрузки: таймаут на 5 секунд
+    if (isChecking && !isAuthenticated) {
+      timeoutRef.current = setTimeout(() => {
+        // Если загрузка длится слишком долго, принудительно редиректим
+        if (pathname && redirectTo === "login") {
+          saveReturnUrl(pathname);
+        }
+        const redirectPath =
+          redirectTo === "login"
+            ? AUTH_GUARD_ROUTES.login
+            : AUTH_GUARD_ROUTES.home;
+        router.replace(redirectPath);
+      }, 5000);
+    }
+
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, [isChecking, isAuthenticated, pathname, redirectTo, router]);
+
+  useEffect(() => {
     if (!isChecking && !isAuthenticated) {
+      // Очищаем таймаут если уже есть редирект
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+
       // Сохраняем текущий URL перед редиректом (только если редирект на логин)
       if (pathname && redirectTo === "login") {
         saveReturnUrl(pathname);

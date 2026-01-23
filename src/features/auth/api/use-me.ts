@@ -6,6 +6,7 @@ import { useEffect, useMemo, useRef } from "react";
 
 export function useMe(options?: { skip?: boolean }) {
   const setUser = useAuthStore((state) => state.setUser);
+  const setLoading = useAuthStore((state) => state.setLoading);
   const user = useAuthStore((state) => state.user);
 
   const skip = useMemo(() => options?.skip || false, [options?.skip]);
@@ -33,7 +34,14 @@ export function useMe(options?: { skip?: boolean }) {
         setUser(null);
         previousUserRef.current = null;
       }
+      // Сбрасываем isLoading если запрос пропущен
+      setLoading(false);
       return;
+    }
+
+    // Сбрасываем isLoading когда запрос завершается
+    if (!loading) {
+      setLoading(false);
     }
 
     // Обновляем user только если значение действительно изменилось
