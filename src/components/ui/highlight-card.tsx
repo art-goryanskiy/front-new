@@ -24,35 +24,54 @@ export const HighlightCard: FC<HighlightCardProps> = ({
   const cardContent = (
     <Card
       className={cn(
-        "rounded-2xl border border-white/10 text-white",
-        "bg-linear-to-br from-[#010101] via-[#090909] to-[#010101]",
-        "relative overflow-hidden shadow-2xl backdrop-blur-xl",
-        "hover:border-white/25 hover:shadow-2xl hover:shadow-white/5",
-        "flex h-full w-full max-w-[350px] min-w-0 flex-col",
-        "dark:border-white/10 dark:from-background dark:via-background dark:to-background",
+        "relative overflow-hidden flex h-full w-full max-w-[350px] min-w-0 flex-col rounded-2xl shadow-xl backdrop-blur-xl",
+        "border border-border bg-linear-to-br from-white via-neutral-50/80 to-white",
+        "hover:border-neutral-300 hover:shadow-2xl hover:shadow-neutral-200/50",
+        "dark:border-white/10 dark:bg-linear-to-br dark:from-[#010101] dark:via-[#090909] dark:to-[#010101] dark:text-white",
+        "dark:hover:border-white/25 dark:hover:shadow-2xl dark:hover:shadow-white/5",
         className
       )}
     >
-      <div className="absolute inset-0 z-0 overflow-hidden">
-        <div className="absolute inset-0 bg-linear-to-tr from-white/5 to-white/10 opacity-40 transition-opacity duration-500 group-hover:opacity-60" />
-        <div className="absolute -bottom-20 -left-20 h-48 w-48 transform animate-bounce rounded-full bg-linear-to-tr from-white/10 to-transparent opacity-30 blur-3xl transition-all duration-700 group-hover:scale-110 group-hover:opacity-50" />
-        <div className="absolute top-10 left-10 h-16 w-16 animate-ping rounded-full bg-white/5 blur-xl" />
-        <div className="absolute right-16 bottom-16 h-12 w-12 animate-ping rounded-full bg-white/5 blur-lg" />
-        <div className="absolute inset-0 translate-x-full -skew-x-12 transform bg-linear-to-r from-transparent via-white/5 to-transparent transition-transform duration-1000 group-hover:translate-x-[-200%]" />
+      {/* Light: баннерный декор — радиальное свечение как в hero */}
+      <div
+        className="absolute inset-0 z-0 overflow-hidden pointer-events-none"
+        aria-hidden
+      >
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(0,0,0,0.03),transparent_50%)] dark:hidden" />
+        <div className="absolute -bottom-20 -left-20 h-48 w-48 rounded-full bg-neutral-200/50 blur-3xl opacity-70 transition-all duration-700 group-hover:scale-110 group-hover:opacity-90 dark:hidden" />
+        <div className="absolute top-0 right-0 h-32 w-32 rounded-full bg-neutral-100/80 blur-2xl dark:hidden" />
+        {/* Dark: прежние декорации */}
+        <div className="absolute inset-0 hidden bg-linear-to-tr from-white/5 to-white/10 opacity-40 transition-opacity duration-500 group-hover:opacity-60 dark:block" />
+        <div className="absolute -bottom-20 -left-20 hidden h-48 w-48 transform animate-bounce rounded-full bg-linear-to-tr from-white/10 to-transparent opacity-30 blur-3xl transition-all duration-700 group-hover:scale-110 group-hover:opacity-50 dark:block" />
+        <div className="absolute top-10 left-10 hidden h-16 w-16 animate-ping rounded-full bg-white/5 blur-xl dark:block" />
+        <div className="absolute right-16 bottom-16 hidden h-12 w-12 animate-ping rounded-full bg-white/5 blur-lg dark:block" />
+        <div className="absolute inset-0 hidden translate-x-full -skew-x-12 transform bg-linear-to-r from-transparent via-white/5 to-transparent transition-transform duration-1000 group-hover:translate-x-[-200%] dark:block" />
       </div>
 
       <div className="relative z-10 flex min-h-0 flex-1 flex-col items-center p-8 text-center">
         <div className="relative mb-6 shrink-0">
-          <div className="absolute inset-0 animate-ping rounded-full border-2 border-white/20" />
-          <div className="absolute inset-0 animate-pulse rounded-full border border-white/10" />
-          <div className="transform rounded-full border border-white/20 bg-linear-to-br from-black/80 to-black/60 p-6 shadow-2xl backdrop-blur-lg transition-all duration-500 group-hover:scale-110 group-hover:rotate-12 hover:shadow-white/20 dark:from-foreground/10 dark:to-foreground/5">
+          <div className="absolute inset-0 animate-ping rounded-full border-2 border-neutral-300 dark:border-white/20" />
+          <div className="absolute inset-0 animate-pulse rounded-full border border-neutral-200 dark:border-white/10" />
+          <div
+            className={cn(
+              "transform rounded-full border border-neutral-200 bg-neutral-100/80 p-6 shadow-xl backdrop-blur-lg transition-all duration-500 group-hover:scale-110 group-hover:rotate-12",
+              "[&_svg]:text-primary",
+              "dark:border-white/20 dark:bg-neutral-900 dark:[&_svg]:text-white dark:hover:shadow-white/20"
+            )}
+          >
             <div className="transform transition-transform duration-700 group-hover:rotate-180">
               {icon}
             </div>
           </div>
         </div>
 
-        <h3 className="mb-4 line-clamp-3 min-h-18 shrink-0 transform animate-pulse bg-linear-to-r from-white via-gray-100 to-white bg-clip-text text-xl leading-tight font-bold text-transparent transition-transform duration-300 group-hover:scale-105">
+        <h3
+          className={cn(
+            "mb-4 line-clamp-3 min-h-18 shrink-0 text-xl font-bold leading-tight transition-transform duration-300 group-hover:scale-105",
+            "text-foreground",
+            "dark:animate-pulse dark:bg-linear-to-r dark:from-white dark:via-gray-100 dark:to-white dark:bg-clip-text dark:text-transparent"
+          )}
+        >
           {title}
         </h3>
 
@@ -60,30 +79,40 @@ export const HighlightCard: FC<HighlightCardProps> = ({
           {description.map((line, idx) => (
             <p
               key={idx}
-              className="transform text-sm leading-relaxed text-gray-300 transition-colors duration-300 group-hover:text-gray-200 dark:text-gray-400 dark:group-hover:text-gray-300"
+              className={cn(
+                "transform text-sm leading-relaxed transition-colors duration-300",
+                "text-muted-foreground group-hover:text-foreground/90",
+                "dark:text-gray-400 dark:group-hover:text-gray-300"
+              )}
             >
               {line}
             </p>
           ))}
         </div>
 
-        <div className="mt-6 h-0.5 w-1/3 shrink-0 transform animate-pulse rounded-full bg-linear-to-r from-transparent via-white to-transparent transition-all duration-500 group-hover:h-1 group-hover:w-1/2" />
+        <div
+          className={cn(
+            "mt-6 h-0.5 w-1/3 shrink-0 transform animate-pulse rounded-full bg-linear-to-r from-transparent to-transparent transition-all duration-500 group-hover:h-1 group-hover:w-1/2",
+            "via-neutral-300",
+            "dark:via-white"
+          )}
+        />
 
         <div className="mt-4 flex shrink-0 space-x-2 opacity-60 transition-opacity duration-300 group-hover:opacity-100">
-          <div className="h-2 w-2 animate-bounce rounded-full bg-white" />
+          <div className="h-2 w-2 animate-bounce rounded-full bg-neutral-400 dark:bg-white" />
           <div
-            className="h-2 w-2 animate-bounce rounded-full bg-white"
+            className="h-2 w-2 animate-bounce rounded-full bg-neutral-400 dark:bg-white"
             style={{ animationDelay: "0.1s" }}
           />
           <div
-            className="h-2 w-2 animate-bounce rounded-full bg-white"
+            className="h-2 w-2 animate-bounce rounded-full bg-neutral-400 dark:bg-white"
             style={{ animationDelay: "0.2s" }}
           />
         </div>
       </div>
 
-      <div className="absolute top-0 left-0 h-20 w-20 rounded-br-3xl bg-linear-to-br from-white/10 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-      <div className="absolute right-0 bottom-0 h-20 w-20 rounded-tl-3xl bg-linear-to-tl from-white/10 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+      <div className="absolute top-0 left-0 h-20 w-20 rounded-br-3xl bg-linear-to-br from-neutral-200/60 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100 dark:from-white/10" />
+      <div className="absolute right-0 bottom-0 h-20 w-20 rounded-tl-3xl bg-linear-to-tl from-neutral-200/60 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100 dark:from-white/10" />
     </Card>
   );
 
