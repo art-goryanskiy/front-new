@@ -197,9 +197,9 @@ export const TopProgramsSection = memo(function TopProgramsSection({
             {sortedPrograms.length > 6 && (
               <div className={TOP_PROGRAMS_CLASSES.showMore}>
                 <Button
-                  color="primary"
-                  variant="bordered"
+                  variant="outline"
                   size="lg"
+                  className="border-primary text-primary hover:bg-primary/10 hover:text-primary"
                   onClick={handleShowMore}
                 >
                   {TOP_PROGRAMS_TEXTS.showMore}

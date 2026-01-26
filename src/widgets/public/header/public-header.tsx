@@ -15,7 +15,8 @@ import { usePublicHeaderState } from "./hooks/use-public-header-state";
 import { FloatingNav } from "@/components/ui/floating-navbar";
 import { Button } from "@/components/ui/button";
 import { UserMenu } from "@/shared/ui/user-menu/user-menu";
-import { HeaderNav } from "./components/header-nav";
+import { GradientMenu } from "@/components/ui/gradient-menu";
+import { GRADIENT_MENU_HEADER_ITEMS } from "./constants/gradient-menu-header-items";
 
 export const PublicHeader = memo(function PublicHeader() {
   const {
@@ -41,11 +42,13 @@ export const PublicHeader = memo(function PublicHeader() {
         <div className={PUBLIC_HEADER_CLASSES.container}>
           <div className={PUBLIC_HEADER_CLASSES.content}>
             <HeaderLogo />
-            <div
-              className="hidden md:block md:min-w-0 md:flex-1"
-              aria-hidden
-            />
-            <HeaderNav />
+            <nav className="hidden md:flex md:min-w-0 md:flex-1 md:justify-center">
+              <GradientMenu
+                items={GRADIENT_MENU_HEADER_ITEMS}
+                compact
+                className="py-0"
+              />
+            </nav>
             <HeaderActions
               user={user}
               isMobileMenuOpen={state.isMobileMenuOpen}

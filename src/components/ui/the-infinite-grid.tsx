@@ -43,7 +43,7 @@ export const Component = () => {
       ref={containerRef}
       onMouseMove={handleMouseMove}
       className={cn(
-        "relative flex h-screen w-full flex-col items-center justify-center overflow-hidden bg-background dark:bg-neutral-950"
+        "relative flex h-screen w-full flex-col items-center justify-center overflow-hidden bg-background"
       )}
     >
       <div className="absolute inset-0 z-0 opacity-[0.05]">
