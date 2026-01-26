@@ -15,10 +15,24 @@ import { usePublicHeaderState } from "./hooks/use-public-header-state";
 import { FloatingNav } from "@/components/ui/floating-navbar";
 import { Button } from "@/components/ui/button";
 import { UserMenu } from "@/shared/ui/user-menu/user-menu";
-import { GradientMenu } from "@/components/ui/gradient-menu";
-import { GRADIENT_MENU_HEADER_ITEMS } from "./constants/gradient-menu-header-items";
+import { MenuBar } from "@/components/ui/glow-menu";
+import { GLOW_MENU_HEADER_ITEMS } from "./constants/glow-menu-header-items";
+import { usePathname } from "next/navigation";
+
+function getActiveMenuLabel(pathname: string): string | undefined {
+  if (pathname === "/") return "Главная";
+  if (
+    pathname.startsWith("/qualification-upgrade") ||
+    pathname.startsWith("/professional-retraining") ||
+    pathname.startsWith("/professional-education")
+  ) {
+    return "Обучение";
+  }
+  return undefined;
+}
 
 export const PublicHeader = memo(function PublicHeader() {
+  const pathname = usePathname();
   const {
     state,
     user,
@@ -43,9 +57,9 @@ export const PublicHeader = memo(function PublicHeader() {
           <div className={PUBLIC_HEADER_CLASSES.content}>
             <HeaderLogo />
             <nav className="hidden md:flex md:min-w-0 md:flex-1 md:justify-center">
-              <GradientMenu
-                items={GRADIENT_MENU_HEADER_ITEMS}
-                compact
+              <MenuBar
+                items={GLOW_MENU_HEADER_ITEMS}
+                activeItem={getActiveMenuLabel(pathname)}
                 className="py-0"
               />
             </nav>

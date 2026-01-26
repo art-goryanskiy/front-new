@@ -12,7 +12,7 @@ export const HeaderLogo = memo(function HeaderLogo() {
         <div
           style={{
             width: 60,
-            height: 40,
+            height: 50,
             position: "relative",
           }}
         >

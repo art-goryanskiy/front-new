@@ -1,52 +1,33 @@
 "use client";
 
 import * as React from "react";
-import { motion } from "framer-motion";
-import { useTheme } from "next-themes";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { type LucideIcon } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useTheme } from "next-themes";
 import { ChevronDown } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-type IconColor =
-  | "text-primary"
-  | "text-primary-600"
-  | "text-blue-500"
-  | "text-foreground";
-
-interface MenuItemBase {
-  icon: LucideIcon | React.ComponentType<{ className?: string }>;
+export interface GlowMenuSubItem {
   label: string;
-  gradient: string;
-  iconColor: IconColor;
-}
-
-interface MenuItemLink extends MenuItemBase {
   href: string;
-  children?: never;
+  icon?: LucideIcon;
 }
 
-interface MenuItemWithChildren extends MenuItemBase {
-  href?: never;
-  children: (MenuItemBase & { href: string })[];
+export interface GlowMenuItem {
+  icon: LucideIcon | React.FC<{ className?: string }>;
+  label: string;
+  href?: string;
+  gradient: string;
+  iconColor: string;
+  children?: GlowMenuSubItem[];
 }
 
-export type MenuItem = MenuItemLink | MenuItemWithChildren;
-
-interface MenuBarProps {
-  className?: string;
-  items: MenuItem[];
+export interface GlowMenuProps extends React.HTMLAttributes<HTMLDivElement> {
+  items: GlowMenuItem[];
   activeItem?: string;
   onItemClick?: (label: string) => void;
 }
-
-const ICON_HOVER_CLASS: Record<IconColor, string> = {
-  "text-primary": "group-hover:text-primary",
-  "text-primary-600": "group-hover:text-primary-600",
-  "text-blue-500": "group-hover:text-blue-500",
-  "text-foreground": "group-hover:text-foreground",
-};
 
 const itemVariants = {
   initial: { rotateX: 0, opacity: 1 },
@@ -93,239 +74,205 @@ const sharedTransition = {
   duration: 0.5,
 };
 
-function isItemWithChildren(
-  item: MenuItem
-): item is MenuItemWithChildren {
-  return (
-    "children" in item &&
-    Array.isArray(item.children) &&
-    item.children.length > 0
-  );
-}
-
-export const MenuBar = React.forwardRef<HTMLDivElement, MenuBarProps>(
-  ({ className, items, activeItem, onItemClick }, ref) => {
-    const pathname = usePathname();
-    const [openDropdownLabel, setOpenDropdownLabel] = React.useState<
-      string | null
-    >(null);
+export const MenuBar = React.forwardRef<HTMLDivElement, GlowMenuProps>(
+  ({ className, items, activeItem, onItemClick, ...props }, ref) => {
+    const { theme } = useTheme();
+    const isDarkTheme = theme === "dark";
+    const [openDropdown, setOpenDropdown] = React.useState<string | null>(null);
     const dropdownRef = React.useRef<HTMLDivElement>(null);
 
-    const { theme, resolvedTheme } = useTheme();
-    const isDarkTheme = resolvedTheme === "dark" || theme === "dark";
-
     React.useEffect(() => {
-      if (!openDropdownLabel) return;
+      if (!openDropdown) return;
       const handleClickOutside = (e: MouseEvent) => {
         if (
           dropdownRef.current &&
           !dropdownRef.current.contains(e.target as Node)
         ) {
-          setOpenDropdownLabel(null);
+          setOpenDropdown(null);
         }
       };
       document.addEventListener("mousedown", handleClickOutside);
-      return () =>
-        document.removeEventListener("mousedown", handleClickOutside);
-    }, [openDropdownLabel]);
+      return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [openDropdown]);
 
     return (
-      <div ref={ref} className={cn("relative", className)}>
-        <motion.nav
+      <motion.nav
+        ref={ref}
+        className={cn(
+          "relative overflow-visible rounded-2xl border border-border/40 bg-linear-to-b from-background/80 to-background/40 p-2 shadow-lg backdrop-blur-lg",
+          className
+        )}
+        initial="initial"
+      >
+        <motion.div
           className={cn(
-            "relative overflow-hidden rounded-2xl border border-border/40 bg-linear-to-b from-background/80 to-background/40 p-2 shadow-lg backdrop-blur-lg",
-            "border-border from-background/90 to-background/50"
+            "absolute -inset-2 z-0 rounded-3xl from-transparent to-transparent pointer-events-none",
+            isDarkTheme
+              ? "bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(96,165,250,0.3)_30%,rgba(192,132,252,0.3)_60%,rgba(248,113,113,0.3)_90%,transparent_100%)]"
+              : "bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(96,165,250,0.2)_30%,rgba(192,132,252,0.2)_60%,rgba(248,113,113,0.2)_90%,transparent_100%)]"
           )}
-          initial="initial"
-          whileHover="hover"
-        >
-          <motion.div
-            className="pointer-events-none absolute -inset-2 z-0 rounded-3xl to-transparent"
-            style={{
-              background: isDarkTheme
-                ? "radial-gradient(ellipse 80% 80% at 50% 50%, rgba(96,165,250,0.3) 0%, rgba(192,132,252,0.3) 30%, rgba(248,113,113,0.3) 60%, transparent 90%)"
-                : "radial-gradient(ellipse 80% 80% at 50% 50%, rgba(96,165,250,0.2) 0%, rgba(192,132,252,0.2) 30%, rgba(248,113,113,0.2) 60%, transparent 90%)",
-            }}
-            variants={navGlowVariants}
-          />
-          <ul className="relative z-10 flex items-center gap-2">
-            {items.map((item) => {
-              const Icon = item.icon;
-              const isActive =
-                item.label === activeItem ||
-                (isItemWithChildren(item) &&
-                  item.children.some((c) => c.href === pathname));
-              const hoverClass = ICON_HOVER_CLASS[item.iconColor];
+          variants={navGlowVariants}
+        />
+        <ul className="relative z-10 flex items-center gap-2">
+          {items.map((item) => {
+            const Icon = item.icon;
+            const isActive =
+              activeItem === item.label ||
+              (item.children?.some((c) => c.href === activeItem) ?? false);
+            const hasDropdown = item.children && item.children.length > 0;
+            const isDropdownOpen = openDropdown === item.label;
 
-              const content = (
-                <>
-                  <motion.div
-                    className="pointer-events-none absolute inset-0 z-0"
-                    variants={glowVariants}
-                    animate={isActive ? "hover" : "initial"}
-                    style={{
-                      background: item.gradient,
-                      opacity: isActive ? 1 : 0,
-                      borderRadius: "16px",
-                    }}
-                  />
-                  <motion.div
+            const content = (
+              <motion.div
+                className="group relative block overflow-visible rounded-xl"
+                style={{ perspective: "600px" }}
+                whileHover="hover"
+                initial="initial"
+              >
+                <motion.div
+                  className="absolute inset-0 z-0 rounded-2xl pointer-events-none"
+                  variants={glowVariants}
+                  animate={isActive ? "hover" : "initial"}
+                  style={{
+                    background: item.gradient,
+                    opacity: isActive ? 1 : 0,
+                    borderRadius: "16px",
+                  }}
+                />
+                <motion.div
+                  className={cn(
+                    "relative z-10 flex items-center gap-2 rounded-xl bg-transparent px-4 py-2 transition-colors",
+                    isActive
+                      ? "text-foreground"
+                      : "text-muted-foreground group-hover:text-foreground"
+                  )}
+                  variants={itemVariants}
+                  transition={sharedTransition}
+                  style={{
+                    transformStyle: "preserve-3d",
+                    transformOrigin: "center bottom",
+                  }}
+                >
+                  <span
                     className={cn(
-                      "relative z-10 flex items-center gap-2 rounded-xl bg-transparent px-4 py-2 transition-colors",
-                      isActive
-                        ? "text-foreground dark:text-foreground"
-                        : "text-muted-foreground group-hover:text-foreground dark:text-muted-foreground dark:group-hover:text-foreground"
+                      "transition-colors duration-300 group-hover:text-inherit",
+                      item.iconColor
                     )}
-                    variants={itemVariants}
-                    transition={sharedTransition}
-                    style={{
-                      transformStyle: "preserve-3d",
-                      transformOrigin: "center bottom",
-                    }}
                   >
-                    <span
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <span>{item.label}</span>
+                  {hasDropdown && (
+                    <ChevronDown
                       className={cn(
-                        "transition-colors duration-300",
-                        isActive ? item.iconColor : "text-foreground",
-                        hoverClass
+                        "h-4 w-4 transition-transform",
+                        isDropdownOpen && "rotate-180"
                       )}
-                    >
-                      <Icon className="h-5 w-5" />
-                    </span>
-                    <span>{item.label}</span>
-                    {isItemWithChildren(item) && (
-                      <ChevronDown
-                        className={cn(
-                          "h-4 w-4 shrink-0 transition-transform",
-                          openDropdownLabel === item.label &&
-                            "rotate-180"
-                        )}
-                      />
-                    )}
-                  </motion.div>
-                  <motion.div
+                    />
+                  )}
+                </motion.div>
+                <motion.div
+                  className={cn(
+                    "absolute inset-0 z-10 flex items-center gap-2 rounded-xl bg-transparent px-4 py-2 transition-colors pointer-events-none",
+                    isActive
+                      ? "text-foreground"
+                      : "text-muted-foreground group-hover:text-foreground"
+                  )}
+                  variants={backVariants}
+                  transition={sharedTransition}
+                  style={{
+                    transformStyle: "preserve-3d",
+                    transformOrigin: "center top",
+                    rotateX: 90,
+                  }}
+                  aria-hidden
+                >
+                  <span
                     className={cn(
-                      "absolute inset-0 z-10 flex items-center gap-2 rounded-xl bg-transparent px-4 py-2 transition-colors",
-                      isActive
-                        ? "text-foreground dark:text-foreground"
-                        : "text-muted-foreground group-hover:text-foreground dark:text-muted-foreground dark:group-hover:text-foreground"
+                      "transition-colors duration-300 group-hover:text-inherit",
+                      item.iconColor
                     )}
-                    variants={backVariants}
-                    transition={sharedTransition}
-                    style={{
-                      transformStyle: "preserve-3d",
-                      transformOrigin: "center top",
-                      rotateX: 90,
-                    }}
                   >
-                    <span
-                      className={cn(
-                        "transition-colors duration-300",
-                        isActive ? item.iconColor : "text-foreground",
-                        hoverClass
-                      )}
-                    >
-                      <Icon className="h-5 w-5" />
-                    </span>
-                    <span>{item.label}</span>
-                    {isItemWithChildren(item) && (
-                      <ChevronDown className="h-4 w-4 shrink-0 rotate-180" />
-                    )}
-                  </motion.div>
-                </>
-              );
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <span>{item.label}</span>
+                </motion.div>
+              </motion.div>
+            );
 
-              if (isItemWithChildren(item)) {
-                return (
-                  <motion.li
-                    key={item.label}
-                    className="relative"
-                    ref={dropdownRef}
+            return (
+              <motion.li key={item.label} className="relative">
+                <div ref={dropdownRef} className="relative">
+                {hasDropdown ? (
+                  <button
+                    type="button"
+                    onPointerDown={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setOpenDropdown((prev) =>
+                        prev === item.label ? null : item.label
+                      );
+                    }}
+                    className="block w-full cursor-pointer text-left"
+                    aria-expanded={isDropdownOpen}
+                    aria-haspopup="true"
                   >
+                    {content}
+                  </button>
+                ) : item.href ? (
+                  <Link
+                    href={item.href}
+                    onClick={() => onItemClick?.(item.label)}
+                    className="block w-full"
+                  >
+                    {content}
+                  </Link>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => onItemClick?.(item.label)}
+                    className="block w-full"
+                  >
+                    {content}
+                  </button>
+                )}
+
+                <AnimatePresence>
+                  {hasDropdown && isDropdownOpen && item.children && (
                     <motion.div
-                      className="group relative block overflow-visible rounded-xl"
-                      style={{ perspective: "600px" }}
-                      whileHover="hover"
-                      initial="initial"
+                      initial={{ opacity: 0, y: -8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute top-full left-0 z-50 mt-2 min-w-[280px] overflow-hidden rounded-2xl border border-border bg-background/95 p-2 shadow-xl backdrop-blur-xl"
                     >
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setOpenDropdownLabel((prev) =>
-                            prev === item.label ? null : item.label
-                          )
-                        }
-                        className="block w-full text-left"
-                        aria-expanded={
-                          openDropdownLabel === item.label
-                        }
-                        aria-haspopup="true"
-                      >
-                        {content}
-                      </button>
-                      {openDropdownLabel === item.label && (
-                        <div
-                          className="absolute top-full left-0 z-50 mt-1 min-w-[220px] rounded-xl border border-border bg-background py-1 shadow-lg border-border bg-background"
-                          role="menu"
-                        >
-                          {item.children.map((child) => {
-                            const ChildIcon = child.icon;
-                            const isChildActive =
-                              pathname === child.href;
-                            return (
-                              <Link
-                                key={child.href}
-                                href={child.href}
-                                role="menuitem"
-                                onClick={() =>
-                                  setOpenDropdownLabel(null)
-                                }
-                                className={cn(
-                                  "flex items-center gap-2 px-4 py-2 text-sm transition-colors",
-                                  isChildActive
-                                    ? "bg-primary/10 font-medium text-primary dark:bg-primary/20 dark:text-primary-400"
-                                    : "text-muted-foreground hover:bg-muted hover:text-foreground dark:text-foreground dark:hover:bg-muted"
-                                )}
-                              >
-                                <ChildIcon className="h-4 w-4 shrink-0" />
-                                {child.label}
-                              </Link>
-                            );
-                          })}
-                        </div>
-                      )}
+                      {item.children.map((sub) => {
+                        const SubIcon = sub.icon;
+                        return (
+                          <Link
+                            key={sub.href}
+                            href={sub.href}
+                            onClick={() => setOpenDropdown(null)}
+                            className="flex items-center gap-3 rounded-xl p-3 transition-colors hover:bg-muted"
+                          >
+                            {SubIcon ? (
+                              <SubIcon className="h-5 w-5 shrink-0 text-primary" />
+                            ) : null}
+                            <span className="text-sm font-medium text-foreground">
+                              {sub.label}
+                            </span>
+                          </Link>
+                        );
+                      })}
                     </motion.div>
-                  </motion.li>
-                );
-              }
-
-              return (
-                <motion.li key={item.label} className="relative">
-                  <motion.div
-                    className="group relative block overflow-visible rounded-xl"
-                    style={{ perspective: "600px" }}
-                    whileHover="hover"
-                    initial="initial"
-                  >
-                    {onItemClick ? (
-                      <button
-                        onClick={() => onItemClick(item.label)}
-                        className="block w-full text-left"
-                      >
-                        {content}
-                      </button>
-                    ) : (
-                      <Link href={item.href} className="block w-full">
-                        {content}
-                      </Link>
-                    )}
-                  </motion.div>
-                </motion.li>
-              );
-            })}
-          </ul>
-        </motion.nav>
-      </div>
+                  )}
+                </AnimatePresence>
+                </div>
+              </motion.li>
+            );
+          })}
+        </ul>
+      </motion.nav>
     );
   }
 );

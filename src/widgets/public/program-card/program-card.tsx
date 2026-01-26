@@ -1,64 +1,68 @@
 "use client";
 
-import { memo } from "react";
-import { GlowCard } from "@/components/ui/spotlight-card";
+import { memo, useMemo } from "react";
 import { motion } from "framer-motion";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { BookOpen } from "lucide-react";
+import { HighlightCard } from "@/components/ui/highlight-card";
 import { useCanSeePrice } from "@/shared/store/auth-store";
+import { formatPrice } from "@/shared/lib/helpers/format-helpers";
 import type { ProgramCardProps } from "./types/program-card.types";
-import { PROGRAM_CARD_CLASSES } from "./constants/program-card-constants";
-import { ProgramCardHeader } from "./components/program-card-header";
-import { ProgramCardMeta } from "./components/program-card-meta";
-import { ProgramCardFooter } from "./components/program-card-footer";
 import { useProgramCardPricing } from "./hooks/use-program-card-pricing";
-import { cn } from "@/lib/utils";
+
+function buildDescriptionLines(
+  program: ProgramCardProps["program"],
+  minPrice: number | null,
+  canSeePrice: boolean
+): string[] {
+  const lines: string[] = [];
+  if (program.description?.trim()) {
+    const fromDesc = program.description
+      .split(/\n/)
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .slice(0, 4);
+    lines.push(...fromDesc);
+  }
+  if (lines.length === 0) {
+    lines.push("Подробности на странице программы.");
+  }
+  if (canSeePrice && minPrice !== null && minPrice > 0) {
+    lines.push(`От ${formatPrice(minPrice)} ₽`);
+  }
+  return lines;
+}
 
 export const ProgramCard = memo(
   function ProgramCard({ program }: ProgramCardProps) {
     const canSeePrice = useCanSeePrice();
-    const { minPrice, hoursRange } = useProgramCardPricing(program);
+    const { minPrice } = useProgramCardPricing(program);
+    const description = useMemo(
+      () => buildDescriptionLines(program, minPrice, canSeePrice),
+      [program, minPrice, canSeePrice]
+    );
 
     return (
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        whileHover={{ y: -4 }}
-        className="h-full"
+        className="flex h-full justify-center"
       >
-        <GlowCard
-          customSize
-          glowColor="blue"
-          className={cn(
-            "h-full w-full overflow-visible",
-            "grid-rows-[auto_1fr] gap-4 p-4",
-            "min-h-0"
-          )}
-        >
-          <div
-            className={cn(
-              "relative z-10 flex min-h-0 flex-col rounded-xl p-4",
-              "bg-transparent",
-              PROGRAM_CARD_CLASSES.content
-            )}
-          >
-            <ProgramCardHeader title={program.title} />
-            {/* ... остальное без изменений ... */}
-          </div>
-        </GlowCard>
+        <HighlightCard
+          href={`/programs/${program.id}`}
+          title={program.title}
+          description={description}
+          icon={<BookOpen className="h-8 w-8 text-white" />}
+          className="h-full w-full max-w-[350px]"
+        />
       </motion.div>
     );
   },
-  (prevProps, nextProps) => {
-    return (
-      prevProps.program.id === nextProps.program.id &&
-      prevProps.program.title === nextProps.program.title &&
-      prevProps.program.description ===
-        nextProps.program.description &&
-      prevProps.program.pricing === nextProps.program.pricing &&
-      prevProps.program.views === nextProps.program.views &&
-      prevProps.categoryType === nextProps.categoryType
-    );
-  }
+  (prevProps, nextProps) =>
+    prevProps.program.id === nextProps.program.id &&
+    prevProps.program.title === nextProps.program.title &&
+    prevProps.program.description === nextProps.program.description &&
+    prevProps.program.pricing === nextProps.program.pricing &&
+    prevProps.program.views === nextProps.program.views &&
+    prevProps.categoryType === nextProps.categoryType
 );
