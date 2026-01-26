@@ -68,7 +68,7 @@ export const HeaderNav = memo(function HeaderNav() {
         </button>
         {openLabel === "Обучение" && (
           <div
-            className="absolute top-full left-0 z-50 mt-1 min-w-[200px] rounded-lg border border-border bg-background py-1 shadow-lg border-border bg-background"
+            className="absolute top-full left-0 z-50 mt-1 min-w-[200px] rounded-lg border border-border bg-background py-1 shadow-lg"
             role="menu"
           >
             {HEADER_NAV_ITEMS[1].children.map((item) => (
@@ -80,7 +80,7 @@ export const HeaderNav = memo(function HeaderNav() {
                 className={cn(
                   "block px-4 py-2 text-sm transition-colors",
                   pathname === item.href
-                    ? "bg-primary/10 font-medium text-primary dark:text-primary-400"
+                    ? "dark:text-primary-400 bg-primary/10 font-medium text-primary"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground dark:text-foreground"
                 )}
               >

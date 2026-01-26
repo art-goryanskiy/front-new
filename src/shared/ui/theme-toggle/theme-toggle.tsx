@@ -1,64 +1,73 @@
 "use client";
 
-import {
-  memo,
-  useEffect,
-  useState,
-  useCallback,
-  useMemo,
-} from "react";
+import * as React from "react";
+import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
-import { Sun, Moon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-export const ThemeToggle = memo(function ThemeToggle() {
-  const [mounted, setMounted] = useState(false);
-  const { theme, setTheme } = useTheme();
+interface ThemeToggleProps {
+  className?: string;
+}
 
-  useEffect(() => {
+export const ThemeToggle = React.memo(function ThemeToggle({
+  className,
+}: ThemeToggleProps) {
+  const [mounted, setMounted] = React.useState(false);
+  const { theme, setTheme, resolvedTheme } = useTheme();
+  const resolved = resolvedTheme ?? theme ?? "light";
+  const isDark = resolved === "dark";
+
+  React.useEffect(() => {
     setMounted(true);
   }, []);
 
-  const handleToggle = useCallback(() => {
-    setTheme(theme === "dark" ? "light" : "dark");
-  }, [theme, setTheme]);
+  const toggleTheme = React.useCallback(() => {
+    setTheme(isDark ? "light" : "dark");
+  }, [isDark, setTheme]);
 
-  const ariaLabel = useMemo(
-    () =>
-      theme === "dark"
-        ? "Переключить на светлую тему"
-        : "Переключить на темную тему",
-    [theme]
-  );
-
-  const IconComponent = useMemo(
-    () => (theme === "dark" ? Sun : Moon),
-    [theme]
-  );
+  const ariaLabel = isDark
+    ? "Переключить на светлую тему"
+    : "Переключить на тёмную тему";
 
   if (!mounted) {
     return (
-      <Button
-        variant="ghost"
-        size="icon"
-        aria-label="Переключить тему"
-        className="text-muted-foreground"
+      <div
+        className={cn(
+          "flex h-8 w-8 items-center justify-center rounded-full text-foreground",
+          className
+        )}
+        aria-hidden
       >
-        <Spinner size={20} />
-      </Button>
+        <Sun className="h-5 w-5 opacity-50" />
+      </div>
     );
   }
 
   return (
-    <Button
-      variant="ghost"
-      size="icon"
+    <button
+      type="button"
+      onClick={toggleTheme}
       aria-label={ariaLabel}
-      onClick={handleToggle}
-      className="text-muted-foreground hover:text-foreground"
+      className={cn(
+        "relative flex h-8 w-8 items-center justify-center overflow-hidden rounded-full text-foreground",
+        "transition-opacity hover:opacity-80",
+        className
+      )}
     >
-      <IconComponent className="h-5 w-5" />
-    </Button>
+      <Sun
+        className={`absolute h-5 w-5 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+          !isDark
+            ? "translate-y-0 scale-100 opacity-100"
+            : "translate-y-5 scale-50 opacity-0"
+        }`}
+      />
+      <Moon
+        className={`absolute h-5 w-5 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+          isDark
+            ? "translate-y-0 scale-100 opacity-100"
+            : "translate-y-5 scale-50 opacity-0"
+        }`}
+      />
+    </button>
   );
 });

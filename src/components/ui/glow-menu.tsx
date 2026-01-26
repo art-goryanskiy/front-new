@@ -74,135 +74,150 @@ const sharedTransition = {
   duration: 0.5,
 };
 
-export const MenuBar = React.forwardRef<HTMLDivElement, GlowMenuProps>(
-  ({ className, items, activeItem, onItemClick, ...props }, ref) => {
-    const { theme } = useTheme();
-    const isDarkTheme = theme === "dark";
-    const [openDropdown, setOpenDropdown] = React.useState<string | null>(null);
-    const dropdownRef = React.useRef<HTMLDivElement>(null);
+const NAV_GLOW_LIGHT =
+  "bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(96,165,250,0.2)_30%,rgba(192,132,252,0.2)_60%,rgba(248,113,113,0.2)_90%,transparent_100%)]";
+const NAV_GLOW_DARK =
+  "bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(96,165,250,0.3)_30%,rgba(192,132,252,0.3)_60%,rgba(248,113,113,0.3)_90%,transparent_100%)]";
 
-    React.useEffect(() => {
-      if (!openDropdown) return;
-      const handleClickOutside = (e: MouseEvent) => {
-        if (
-          dropdownRef.current &&
-          !dropdownRef.current.contains(e.target as Node)
-        ) {
-          setOpenDropdown(null);
-        }
-      };
-      document.addEventListener("mousedown", handleClickOutside);
-      return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, [openDropdown]);
+export const MenuBar = React.forwardRef<
+  HTMLDivElement,
+  GlowMenuProps
+>(({ className, items, activeItem, onItemClick, ...props }, ref) => {
+  const { theme } = useTheme();
+  const [mounted, setMounted] = React.useState(false);
+  const isDarkTheme = mounted && theme === "dark";
+  const [openDropdown, setOpenDropdown] = React.useState<
+    string | null
+  >(null);
+  const dropdownRef = React.useRef<HTMLDivElement>(null);
 
-    return (
-      <motion.nav
-        ref={ref}
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  React.useEffect(() => {
+    if (!openDropdown) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as Node)
+      ) {
+        setOpenDropdown(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () =>
+      document.removeEventListener("mousedown", handleClickOutside);
+  }, [openDropdown]);
+
+  return (
+    <motion.nav
+      ref={ref}
+      className={cn(
+        "relative overflow-visible rounded-2xl border border-border/40 bg-linear-to-b from-background/80 to-background/40 p-2 shadow-lg backdrop-blur-lg",
+        className
+      )}
+      initial="initial"
+    >
+      <motion.div
         className={cn(
-          "relative overflow-visible rounded-2xl border border-border/40 bg-linear-to-b from-background/80 to-background/40 p-2 shadow-lg backdrop-blur-lg",
-          className
+          "pointer-events-none absolute -inset-2 z-0 rounded-3xl from-transparent to-transparent",
+          isDarkTheme ? NAV_GLOW_DARK : NAV_GLOW_LIGHT
         )}
-        initial="initial"
-      >
-        <motion.div
-          className={cn(
-            "absolute -inset-2 z-0 rounded-3xl from-transparent to-transparent pointer-events-none",
-            isDarkTheme
-              ? "bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(96,165,250,0.3)_30%,rgba(192,132,252,0.3)_60%,rgba(248,113,113,0.3)_90%,transparent_100%)]"
-              : "bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(96,165,250,0.2)_30%,rgba(192,132,252,0.2)_60%,rgba(248,113,113,0.2)_90%,transparent_100%)]"
-          )}
-          variants={navGlowVariants}
-        />
-        <ul className="relative z-10 flex items-center gap-2">
-          {items.map((item) => {
-            const Icon = item.icon;
-            const isActive =
-              activeItem === item.label ||
-              (item.children?.some((c) => c.href === activeItem) ?? false);
-            const hasDropdown = item.children && item.children.length > 0;
-            const isDropdownOpen = openDropdown === item.label;
+        variants={navGlowVariants}
+      />
+      <ul className="relative z-10 flex items-center gap-2">
+        {items.map((item) => {
+          const Icon = item.icon;
+          const isActive =
+            activeItem === item.label ||
+            (item.children?.some((c) => c.href === activeItem) ??
+              false);
+          const hasDropdown =
+            item.children && item.children.length > 0;
+          const isDropdownOpen = openDropdown === item.label;
 
-            const content = (
+          const content = (
+            <motion.div
+              className="group relative block overflow-visible rounded-xl"
+              style={{ perspective: "600px" }}
+              whileHover="hover"
+              initial="initial"
+            >
               <motion.div
-                className="group relative block overflow-visible rounded-xl"
-                style={{ perspective: "600px" }}
-                whileHover="hover"
-                initial="initial"
+                className="pointer-events-none absolute inset-0 z-0 rounded-2xl"
+                variants={glowVariants}
+                animate={isActive ? "hover" : "initial"}
+                style={{
+                  background: item.gradient,
+                  opacity: isActive ? 1 : 0,
+                  borderRadius: "16px",
+                }}
+              />
+              <motion.div
+                className={cn(
+                  "relative z-10 flex items-center gap-2 rounded-xl bg-transparent px-4 py-2 transition-colors",
+                  isActive
+                    ? "text-foreground"
+                    : "text-muted-foreground group-hover:text-foreground"
+                )}
+                variants={itemVariants}
+                transition={sharedTransition}
+                style={{
+                  transformStyle: "preserve-3d",
+                  transformOrigin: "center bottom",
+                }}
               >
-                <motion.div
-                  className="absolute inset-0 z-0 rounded-2xl pointer-events-none"
-                  variants={glowVariants}
-                  animate={isActive ? "hover" : "initial"}
-                  style={{
-                    background: item.gradient,
-                    opacity: isActive ? 1 : 0,
-                    borderRadius: "16px",
-                  }}
-                />
-                <motion.div
+                <span
                   className={cn(
-                    "relative z-10 flex items-center gap-2 rounded-xl bg-transparent px-4 py-2 transition-colors",
-                    isActive
-                      ? "text-foreground"
-                      : "text-muted-foreground group-hover:text-foreground"
+                    "transition-colors duration-300 group-hover:text-inherit",
+                    item.iconColor
                   )}
-                  variants={itemVariants}
-                  transition={sharedTransition}
-                  style={{
-                    transformStyle: "preserve-3d",
-                    transformOrigin: "center bottom",
-                  }}
                 >
-                  <span
+                  <Icon className="h-5 w-5" />
+                </span>
+                <span>{item.label}</span>
+                {hasDropdown && (
+                  <ChevronDown
                     className={cn(
-                      "transition-colors duration-300 group-hover:text-inherit",
-                      item.iconColor
+                      "h-4 w-4 transition-transform",
+                      isDropdownOpen && "rotate-180"
                     )}
-                  >
-                    <Icon className="h-5 w-5" />
-                  </span>
-                  <span>{item.label}</span>
-                  {hasDropdown && (
-                    <ChevronDown
-                      className={cn(
-                        "h-4 w-4 transition-transform",
-                        isDropdownOpen && "rotate-180"
-                      )}
-                    />
-                  )}
-                </motion.div>
-                <motion.div
-                  className={cn(
-                    "absolute inset-0 z-10 flex items-center gap-2 rounded-xl bg-transparent px-4 py-2 transition-colors pointer-events-none",
-                    isActive
-                      ? "text-foreground"
-                      : "text-muted-foreground group-hover:text-foreground"
-                  )}
-                  variants={backVariants}
-                  transition={sharedTransition}
-                  style={{
-                    transformStyle: "preserve-3d",
-                    transformOrigin: "center top",
-                    rotateX: 90,
-                  }}
-                  aria-hidden
-                >
-                  <span
-                    className={cn(
-                      "transition-colors duration-300 group-hover:text-inherit",
-                      item.iconColor
-                    )}
-                  >
-                    <Icon className="h-5 w-5" />
-                  </span>
-                  <span>{item.label}</span>
-                </motion.div>
+                  />
+                )}
               </motion.div>
-            );
+              <motion.div
+                className={cn(
+                  "pointer-events-none absolute inset-0 z-10 flex items-center gap-2 rounded-xl bg-transparent px-4 py-2 transition-colors",
+                  isActive
+                    ? "text-foreground"
+                    : "text-muted-foreground group-hover:text-foreground"
+                )}
+                variants={backVariants}
+                transition={sharedTransition}
+                style={{
+                  transformStyle: "preserve-3d",
+                  transformOrigin: "center top",
+                  rotateX: 90,
+                }}
+                aria-hidden
+              >
+                <span
+                  className={cn(
+                    "transition-colors duration-300 group-hover:text-inherit",
+                    item.iconColor
+                  )}
+                >
+                  <Icon className="h-5 w-5" />
+                </span>
+                <span>{item.label}</span>
+              </motion.div>
+            </motion.div>
+          );
 
-            return (
-              <motion.li key={item.label} className="relative">
-                <div ref={dropdownRef} className="relative">
+          return (
+            <motion.li key={item.label} className="relative">
+              <div ref={dropdownRef} className="relative">
                 {hasDropdown ? (
                   <button
                     type="button"
@@ -267,14 +282,13 @@ export const MenuBar = React.forwardRef<HTMLDivElement, GlowMenuProps>(
                     </motion.div>
                   )}
                 </AnimatePresence>
-                </div>
-              </motion.li>
-            );
-          })}
-        </ul>
-      </motion.nav>
-    );
-  }
-);
+              </div>
+            </motion.li>
+          );
+        })}
+      </ul>
+    </motion.nav>
+  );
+});
 
 MenuBar.displayName = "MenuBar";

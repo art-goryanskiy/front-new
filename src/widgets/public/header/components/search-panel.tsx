@@ -2,7 +2,7 @@
 
 import { memo, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { SearchInput } from "@/shared/ui/search-input/search-input";
+import { OrbInput } from "@/components/ui/animated-input";
 import { PublicSearchDropdown } from "./public-search-dropdown";
 import type { PublicSearchResult } from "../hooks/use-public-search-results";
 
@@ -61,12 +61,17 @@ export const SearchPanel = memo(function SearchPanel({
               className="relative mx-auto max-w-2xl"
             >
               <div ref={searchInputWrapperRef}>
-                <SearchInput
+                <OrbInput
                   value={searchValue}
                   onValueChange={onSearchChange}
-                  placeholder="Поиск программ..."
-                  showKeyboardHint={false}
                   onFocus={onSearchFocus}
+                  placeholders={[
+                    "Поиск программ...",
+                    "Что ищете?",
+                    "Введите запрос...",
+                    "Найти программу обучения...",
+                  ]}
+                  aria-label="Поиск программ"
                   className="w-full"
                 />
               </div>

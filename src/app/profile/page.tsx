@@ -125,9 +125,7 @@ const ProfilePageContent = memo(function ProfilePageContent() {
   if (!user) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
-        <p className="text-muted-foreground">
-          Загрузка...
-        </p>
+        <p className="text-muted-foreground">Загрузка...</p>
       </div>
     );
   }
@@ -232,7 +230,9 @@ const ProfilePageContent = memo(function ProfilePageContent() {
                     disabled={updating}
                     className="min-w-32 font-semibold shadow-lg transition-shadow hover:shadow-xl"
                   >
-                    {updating ? "Сохранение..." : "Сохранить изменения"}
+                    {updating
+                      ? "Сохранение..."
+                      : "Сохранить изменения"}
                   </Button>
                 </div>
               </div>
@@ -263,7 +263,7 @@ export default function ProfilePage() {
                 Назад
               </Button>
               <div className="flex flex-col gap-3">
-                <h1 className="mb-1 bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-2xl font-bold text-transparent break-words sm:mb-2 sm:text-3xl lg:text-4xl">
+                <h1 className="mb-1 bg-linear-to-r from-primary to-primary/80 bg-clip-text text-2xl font-bold wrap-break-word text-transparent sm:mb-2 sm:text-3xl lg:text-4xl">
                   Личный кабинет
                 </h1>
                 <p className="text-sm text-muted-foreground sm:text-base lg:text-lg">
