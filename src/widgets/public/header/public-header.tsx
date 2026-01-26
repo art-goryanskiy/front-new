@@ -5,13 +5,17 @@ import { motion } from "framer-motion";
 import {
   PUBLIC_HEADER_CLASSES,
   PUBLIC_HEADER_ANIMATIONS,
+  FLOATING_NAV_ITEMS,
 } from "./constants/public-header-constants";
 import { HeaderLogo } from "./components/header-logo";
-import { DesktopNavigation } from "./components/desktop-navigation";
 import { HeaderActions } from "./components/header-actions";
 import { MobileMenu } from "./components/mobile-menu";
 import { SearchPanel } from "./components/search-panel";
 import { usePublicHeaderState } from "./hooks/use-public-header-state";
+import { FloatingNav } from "@/components/ui/floating-navbar";
+import { Button } from "@/components/ui/button";
+import { UserMenu } from "@/shared/ui/user-menu/user-menu";
+import { HeaderNav } from "./components/header-nav";
 
 export const PublicHeader = memo(function PublicHeader() {
   const {
@@ -25,7 +29,6 @@ export const PublicHeader = memo(function PublicHeader() {
     handleSearchClose,
     toggleMobileMenu,
     closeMobileMenu,
-    handleMobileCategoryClick,
     handleLoginClick,
   } = usePublicHeaderState();
 
@@ -38,7 +41,11 @@ export const PublicHeader = memo(function PublicHeader() {
         <div className={PUBLIC_HEADER_CLASSES.container}>
           <div className={PUBLIC_HEADER_CLASSES.content}>
             <HeaderLogo />
-            <DesktopNavigation isMounted={state.isMounted} />
+            <div
+              className="hidden md:block md:min-w-0 md:flex-1"
+              aria-hidden
+            />
+            <HeaderNav />
             <HeaderActions
               user={user}
               isMobileMenuOpen={state.isMobileMenuOpen}
@@ -55,7 +62,6 @@ export const PublicHeader = memo(function PublicHeader() {
         isOpen={state.isMobileMenuOpen}
         user={user}
         onClose={closeMobileMenu}
-        onCategoryClick={handleMobileCategoryClick}
         onLoginClick={handleLoginClick}
       />
 

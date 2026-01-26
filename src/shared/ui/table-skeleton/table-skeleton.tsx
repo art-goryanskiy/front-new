@@ -1,16 +1,15 @@
 "use client";
 
+import { Card, CardContent } from "@/components/ui/card";
 import {
-  Card,
-  CardBody,
   Table,
   TableHeader,
-  TableColumn,
   TableBody,
   TableRow,
+  TableHead,
   TableCell,
-} from "@heroui/react";
-import { Skeleton } from "@/widgets/admin/skeleton/skeleton";
+} from "@/components/ui/table";
+import { Skeleton } from "@/components/ui/skeleton";
 import { memo, useMemo } from "react";
 
 interface TableSkeletonProps {
@@ -35,15 +34,17 @@ export const TableSkeleton = memo(function TableSkeleton({
   );
 
   return (
-    <Card className={`border-none shadow-lg ${className}`}>
-      <CardBody className="p-0">
-        <Table removeWrapper aria-label="Загрузка">
+    <Card className={`shadow-lg ${className}`}>
+      <CardContent className="p-0">
+        <Table aria-label="Загрузка">
           <TableHeader>
-            {columnIndices.map((index) => (
-              <TableColumn key={index}>
-                <Skeleton className="h-4 w-20" />
-              </TableColumn>
-            ))}
+            <TableRow>
+              {columnIndices.map((index) => (
+                <TableHead key={index}>
+                  <Skeleton className="h-4 w-20" />
+                </TableHead>
+              ))}
+            </TableRow>
           </TableHeader>
           <TableBody>
             {rowIndices.map((rowIndex) => (
@@ -57,7 +58,7 @@ export const TableSkeleton = memo(function TableSkeleton({
             ))}
           </TableBody>
         </Table>
-      </CardBody>
+      </CardContent>
     </Card>
   );
 });

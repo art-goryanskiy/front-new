@@ -1,9 +1,12 @@
 "use client";
 
-import { memo, useCallback, useMemo } from "react";
+import { memo, useCallback } from "react";
 import { Control, useFieldArray } from "react-hook-form";
 import { Controller } from "react-hook-form";
-import { Button, Input, Textarea } from "@heroui/react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import {
   FORM_LABELS,
   FORM_PLACEHOLDERS,
@@ -40,14 +43,6 @@ export const ProgramFormSubProgramsFields = memo(
       [removeSubProgram]
     );
 
-    const classNames = useMemo(
-      () => ({
-        inputWrapper: "w-full",
-        input: "w-full",
-      }),
-      []
-    );
-
     return (
       <div className={FORM_CLASSES.subProgramsContainer}>
         <p className={FORM_CLASSES.subProgramsDescription}>
@@ -59,42 +54,43 @@ export const ProgramFormSubProgramsFields = memo(
               name={`subPrograms.${index}.title`}
               control={control}
               render={({ field }) => (
-                <Input
-                  {...field}
-                  label={FORM_LABELS.subProgramTitle}
-                  placeholder={FORM_PLACEHOLDERS.subProgramTitle}
-                  aria-label={`${FORM_LABELS.subProgramTitle} ${index + 1}`}
-                  className="w-full"
-                  classNames={classNames}
-                />
+                <div className="space-y-2 w-full">
+                  <Label htmlFor={`subprogram-title-${index}`}>{FORM_LABELS.subProgramTitle}</Label>
+                  <Input
+                    {...field}
+                    id={`subprogram-title-${index}`}
+                    placeholder={FORM_PLACEHOLDERS.subProgramTitle}
+                    aria-label={`${FORM_LABELS.subProgramTitle} ${index + 1}`}
+                    className="w-full"
+                  />
+                </div>
               )}
             />
             <Controller
               name={`subPrograms.${index}.description`}
               control={control}
               render={({ field }) => (
-                <Textarea
-                  {...field}
-                  label={FORM_LABELS.subProgramDescription}
-                  placeholder={
-                    FORM_PLACEHOLDERS.subProgramDescription
-                  }
-                  minRows={2}
-                  description={FORM_MESSAGES.subProgramOptional}
-                  aria-label={`${FORM_LABELS.subProgramDescription} ${index + 1}`}
-                  className="w-full"
-                  classNames={classNames}
-                />
+                <div className="space-y-2 w-full">
+                  <Label htmlFor={`subprogram-desc-${index}`}>{FORM_LABELS.subProgramDescription}</Label>
+                  <Textarea
+                    {...field}
+                    id={`subprogram-desc-${index}`}
+                    placeholder={FORM_PLACEHOLDERS.subProgramDescription}
+                    rows={2}
+                    aria-label={`${FORM_LABELS.subProgramDescription} ${index + 1}`}
+                    className="w-full"
+                  />
+                  <p className="text-sm text-muted-foreground">{FORM_MESSAGES.subProgramOptional}</p>
+                </div>
               )}
             />
             {subProgramFields.length > 1 && (
               <div className="flex justify-end">
                 <Button
                   type="button"
-                  variant="light"
-                  color="danger"
+                  variant="destructive"
                   size="sm"
-                  onPress={() => handleRemoveSubProgram(index)}
+                  onClick={() => handleRemoveSubProgram(index)}
                   aria-label={`${FORM_MESSAGES.removeSubProgram} ${index + 1}`}
                 >
                   {FORM_MESSAGES.removeSubProgram}
@@ -105,9 +101,9 @@ export const ProgramFormSubProgramsFields = memo(
         ))}
         <Button
           type="button"
-          variant="bordered"
+          variant="outline"
           size="sm"
-          onPress={handleAppendSubProgram}
+          onClick={handleAppendSubProgram}
           className="w-full"
         >
           {FORM_MESSAGES.addSubProgram}

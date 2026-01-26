@@ -1,7 +1,13 @@
 "use client";
 
 import { memo } from "react";
-import { Button, Tooltip } from "@heroui/react";
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  TooltipProvider,
+} from "@/components/ui/tooltip";
 import { Icon } from "@/shared/ui/icons/icon";
 
 interface TableActionsProps {
@@ -18,45 +24,44 @@ export const TableActions = memo(function TableActions({
   deleteLabel = "Удалить",
 }: TableActionsProps) {
   return (
-    <div
-      className="flex items-center justify-center gap-1 sm:gap-2"
-      onClick={(e) => e.stopPropagation()}
-      role="group"
-      aria-label="Действия"
-    >
-      <Tooltip
-        content={editLabel}
-        classNames={{ content: "bg-default-900 text-white" }}
+    <TooltipProvider>
+      <div
+        className="flex items-center justify-center gap-1 sm:gap-2"
+        onClick={(e) => e.stopPropagation()}
+        role="group"
+        aria-label="Действия"
       >
-        <Button
-          isIconOnly
-          size="sm"
-          variant="light"
-          color="primary"
-          className="hover:bg-primary-100 hover:scale-110 transition-all min-w-8 h-8 shrink-0"
-          aria-label={editLabel}
-          onPress={onEdit}
-        >
-          <Icon name="edit" size={16} aria-hidden="true" />
-        </Button>
-      </Tooltip>
-      <Tooltip
-        content={deleteLabel}
-        color="danger"
-        classNames={{ content: "bg-danger text-white" }}
-      >
-        <Button
-          isIconOnly
-          size="sm"
-          variant="light"
-          color="danger"
-          className="hover:bg-danger-100 hover:scale-110 transition-all min-w-8 h-8 shrink-0"
-          aria-label={deleteLabel}
-          onPress={onDelete}
-        >
-          <Icon name="trash" size={16} aria-hidden="true" />
-        </Button>
-      </Tooltip>
-    </div>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 shrink-0 hover:scale-110 transition-all text-primary hover:bg-primary/10"
+              aria-label={editLabel}
+              onClick={onEdit}
+            >
+              <Icon name="edit" size={16} aria-hidden="true" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>{editLabel}</TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 shrink-0 hover:scale-110 transition-all text-destructive hover:bg-destructive/10"
+              aria-label={deleteLabel}
+              onClick={onDelete}
+            >
+              <Icon name="trash" size={16} aria-hidden="true" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent className="bg-destructive text-destructive-foreground">
+            {deleteLabel}
+          </TooltipContent>
+        </Tooltip>
+      </div>
+    </TooltipProvider>
   );
 });

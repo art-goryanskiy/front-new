@@ -71,22 +71,22 @@ export const PublicSearchDropdown = memo(function PublicSearchDropdown({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.2 }}
-          className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-900 rounded-lg shadow-lg border border-slate-200 dark:border-slate-800 z-50 max-h-96 overflow-y-auto"
+          className="absolute top-full left-0 right-0 mt-2 bg-background rounded-lg shadow-lg border border-border z-50 max-h-96 overflow-y-auto"
         >
           {loading ? (
-            <div className="p-4 flex items-center justify-center gap-2 text-slate-500 dark:text-slate-400">
+            <div className="p-4 flex items-center justify-center gap-2 text-muted-foreground">
               <Loader2 className="w-4 h-4 animate-spin" />
               <span className="text-sm">Поиск...</span>
             </div>
           ) : !hasResults ? (
-            <div className="p-4 text-center text-sm text-slate-500 dark:text-slate-400">
+            <div className="p-4 text-center text-sm text-muted-foreground">
               Ничего не найдено
             </div>
           ) : (
             <div className="py-2">
               {groupedResults.categories.length > 0 && (
                 <div className="px-4 py-2">
-                  <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
+                  <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
                     Категории
                   </div>
                   <div className="space-y-1">
@@ -103,7 +103,7 @@ export const PublicSearchDropdown = memo(function PublicSearchDropdown({
               )}
               {groupedResults.programs.length > 0 && (
                 <div className="px-4 py-2">
-                  <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
+                  <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
                     Программы
                   </div>
                   <div className="space-y-1">
@@ -174,19 +174,19 @@ const SearchResultItem = memo(function SearchResultItem({
     <motion.button
       whileHover={{ x: 4 }}
       onClick={handleClick}
-      className="w-full text-left px-4 py-3 rounded-lg transition-all hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300"
+      className="w-full text-left px-4 py-3 rounded-lg transition-all hover:bg-muted text-foreground"
     >
       <div className="flex items-center gap-3">
-        <div className="text-slate-500 dark:text-slate-400">
+        <div className="text-muted-foreground">
           <IconComponent className="w-5 h-5" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="font-medium">{highlightedLabel}</div>
-          <div className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+          <div className="text-xs text-muted-foreground mt-0.5">
             {categoryText}
           </div>
           {highlightedDescription && (
-            <div className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">
+            <div className="text-xs text-muted-foreground truncate mt-0.5">
               {highlightedDescription}
             </div>
           )}

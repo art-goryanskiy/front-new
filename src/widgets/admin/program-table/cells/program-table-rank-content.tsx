@@ -1,7 +1,7 @@
 "use client";
 
 import { memo, useMemo } from "react";
-import { Chip } from "@heroui/react";
+import { Badge } from "@/components/ui/badge";
 import { formatRank } from "../utils/program-table-utils";
 import type { ProgramTableCellContentProps } from "../types/program-table.types";
 
@@ -19,14 +19,8 @@ export const ProgramTableRankContent = memo(function ProgramTableRankContent({
   );
 
   return (
-    <Chip
-      color="warning"
-      variant="flat"
-      size="sm"
-      className="font-semibold"
-      aria-label={ariaLabel}
-    >
+    <Badge variant="warning" className="font-semibold" aria-label={ariaLabel}>
       {rankText}
-    </Chip>
+    </Badge>
   );
 });

@@ -40,7 +40,7 @@ const AdminUsersPage = memo(function AdminUsersPage() {
       />
 
       <div>
-        <h2 className="text-xl font-bold text-default-900 sm:text-2xl dark:text-foreground">
+        <h2 className="text-xl font-bold text-foreground sm:text-2xl">
           Все пользователи
         </h2>
       </div>

@@ -9,7 +9,8 @@ import {
   useState,
 } from "react";
 import { useForm, useWatch } from "react-hook-form";
-import { Button, Form, Card, CardBody } from "@heroui/react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { UserAuthGuard } from "@/shared/lib/auth/user-auth-guard";
@@ -124,7 +125,7 @@ const ProfilePageContent = memo(function ProfilePageContent() {
   if (!user) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
-        <p className="text-default-500 dark:text-foreground/70">
+        <p className="text-muted-foreground">
           Загрузка...
         </p>
       </div>
@@ -138,12 +139,12 @@ const ProfilePageContent = memo(function ProfilePageContent() {
       case "basic":
         return (
           <div className="space-y-6">
-            <div className="mb-4 rounded-xl border border-default-200/50 bg-default-50/50 p-4 dark:border-default-800/50 dark:bg-content1/50">
+            <div className="mb-4 rounded-xl border border-border bg-muted/50 p-4">
               <div className="flex flex-col gap-2">
-                <p className="text-sm font-semibold text-default-700 dark:text-foreground/90">
+                <p className="text-sm font-semibold text-foreground">
                   Email
                 </p>
-                <p className="text-base text-default-900 dark:text-foreground">
+                <p className="text-base text-foreground">
                   {user.email}
                 </p>
               </div>
@@ -182,10 +183,10 @@ const ProfilePageContent = memo(function ProfilePageContent() {
   };
 
   return (
-    <Card className="flex h-full w-full flex-col border-none shadow-lg">
-      <CardBody className="flex min-h-0 flex-1 flex-col p-0">
+    <Card className="flex h-full w-full flex-col shadow-lg">
+      <CardContent className="flex min-h-0 flex-1 flex-col p-0">
         <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
-          <div className="w-full border-b border-default-200 bg-default-50/50 lg:h-full lg:w-64 lg:border-r lg:border-b-0 lg:bg-transparent dark:border-default-800 dark:bg-content1/50 lg:dark:bg-transparent">
+          <div className="w-full border-b border-border bg-muted/50 lg:h-full lg:w-64 lg:border-r lg:border-b-0 lg:bg-transparent">
             <nav className="p-4 lg:p-0">
               <ul className="flex flex-row gap-2 overflow-x-auto lg:flex-col lg:gap-0">
                 {SIDEBAR_ITEMS.map((item) => (
@@ -195,8 +196,8 @@ const ProfilePageContent = memo(function ProfilePageContent() {
                       onClick={() => setActiveSection(item.key)}
                       className={`w-full rounded-lg px-4 py-3 text-left text-sm font-medium transition-colors ${
                         activeSection === item.key
-                          ? "bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300"
-                          : "text-default-600 hover:bg-default-100 dark:text-foreground/80 dark:hover:bg-default-800"
+                          ? "bg-primary/10 text-primary"
+                          : "text-muted-foreground hover:bg-muted hover:text-foreground"
                       }`}
                     >
                       {item.label}
@@ -208,14 +209,13 @@ const ProfilePageContent = memo(function ProfilePageContent() {
           </div>
 
           <div className="flex min-w-0 flex-1 flex-col">
-            <Form
+            <form
               onSubmit={handleSubmit(onSubmit)}
-              validationBehavior="native"
               className="flex min-h-0 w-full flex-1 flex-col"
             >
               {error && (
-                <div className="m-6 mb-0 shrink-0 rounded-xl border border-danger-200 bg-danger-50/80 p-4 dark:border-danger-800 dark:bg-danger-900/20">
-                  <p className="text-sm font-medium text-danger-800 dark:text-danger-200">
+                <div className="m-6 mb-0 shrink-0 rounded-xl border border-destructive/30 bg-destructive/10 p-4">
+                  <p className="text-sm font-medium text-destructive">
                     {error.message || "Ошибка при обновлении профиля"}
                   </p>
                 </div>
@@ -225,22 +225,21 @@ const ProfilePageContent = memo(function ProfilePageContent() {
                 {renderContent()}
               </div>
 
-              <div className="shrink-0 border-t border-default-200 p-6 dark:border-default-800">
+              <div className="shrink-0 border-t border-border p-6">
                 <div className="flex justify-end gap-3">
                   <Button
                     type="submit"
-                    color="primary"
-                    isLoading={updating}
+                    disabled={updating}
                     className="min-w-32 font-semibold shadow-lg transition-shadow hover:shadow-xl"
                   >
-                    Сохранить изменения
+                    {updating ? "Сохранение..." : "Сохранить изменения"}
                   </Button>
                 </div>
               </div>
-            </Form>
+            </form>
           </div>
         </div>
-      </CardBody>
+      </CardContent>
     </Card>
   );
 });
@@ -256,18 +255,18 @@ export default function ProfilePage() {
           <div className="flex min-h-0 flex-1 flex-col space-y-4 sm:space-y-6 lg:space-y-8">
             <div className="flex shrink-0 flex-col gap-3">
               <Button
-                variant="light"
-                startContent={<ArrowLeft className="h-4 w-4" />}
-                onPress={() => router.back()}
+                variant="ghost"
+                onClick={() => router.back()}
                 className="mb-2 self-start"
               >
+                <ArrowLeft className="mr-2 h-4 w-4" />
                 Назад
               </Button>
               <div className="flex flex-col gap-3">
-                <h1 className="mb-1 bg-linear-to-r from-primary-600 to-primary-800 bg-clip-text text-2xl font-bold wrap-break-word text-transparent sm:mb-2 sm:text-3xl lg:text-4xl dark:from-primary-400 dark:to-primary-600">
+                <h1 className="mb-1 bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-2xl font-bold text-transparent break-words sm:mb-2 sm:text-3xl lg:text-4xl">
                   Личный кабинет
                 </h1>
-                <p className="text-sm text-default-600 sm:text-base lg:text-lg dark:text-foreground/80">
+                <p className="text-sm text-muted-foreground sm:text-base lg:text-lg">
                   Управляйте своей личной информацией
                 </p>
               </div>

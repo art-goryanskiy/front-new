@@ -2,7 +2,9 @@
 
 import { memo, useCallback, useMemo } from "react";
 import { Controller, Control } from "react-hook-form";
-import { Button, Avatar } from "@heroui/react";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   FORM_MESSAGES,
   FORM_CLASSES,
@@ -51,33 +53,31 @@ export const CategoryFormImageField = memo(
           <div className={FORM_CLASSES.imageContainer}>
             <div className={FORM_CLASSES.imagePreview}>
               {imagePreview && (
-                <Avatar
-                  src={imagePreview}
-                  alt="Preview"
-                  size="lg"
-                  className="h-20 w-20 shrink-0"
-                  aria-label="Предпросмотр изображения"
-                />
+                <Avatar className="h-20 w-20 shrink-0" aria-label="Предпросмотр изображения">
+                  <AvatarImage src={imagePreview} alt="Preview" />
+                  <AvatarFallback>IMG</AvatarFallback>
+                </Avatar>
               )}
               <div className={FORM_CLASSES.imageInput}>
-                <label className="block w-full">
-                  <input
-                    {...field}
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => handleFileChange(onChange, e)}
-                    aria-label={FORM_MESSAGES.selectImage}
-                  />
+                <input
+                  {...field}
+                  id="category-image-file"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => handleFileChange(onChange, e)}
+                  aria-label={FORM_MESSAGES.selectImage}
+                />
+                <Label htmlFor="category-image-file" className="block w-full cursor-pointer">
                   <Button
-                    as="span"
-                    variant="bordered"
-                    className="w-full"
-                    isDisabled={uploadingImage}
+                    type="button"
+                    variant="outline"
+                    className="w-full pointer-events-none"
+                    disabled={uploadingImage}
                   >
                     {buttonText}
                   </Button>
-                </label>
+                </Label>
                 {value && (
                   <p
                     className={FORM_CLASSES.imageFileName}

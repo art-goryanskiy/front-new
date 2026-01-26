@@ -2,7 +2,7 @@
 
 import { memo, useState, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "@heroui/react";
+import { Button } from "@/components/ui/button";
 import { usePrograms } from "@/entities/program/api/use-programs";
 import { useTopPrograms } from "@/entities/program/api/use-top-programs";
 import { useCategories } from "@/entities/category/api/use-categories";
@@ -170,7 +170,7 @@ export const TopProgramsSection = memo(function TopProgramsSection({
         ) : displayedPrograms.length === 0 ? (
           <EmptyState
             title={TOP_PROGRAMS_TEXTS.noPrograms}
-            icon={<BookOpen className="h-16 w-16 text-default-400" />}
+            icon={<BookOpen className="h-16 w-16 text-muted-foreground" />}
           />
         ) : (
           <>
@@ -200,7 +200,7 @@ export const TopProgramsSection = memo(function TopProgramsSection({
                   color="primary"
                   variant="bordered"
                   size="lg"
-                  onPress={handleShowMore}
+                  onClick={handleShowMore}
                 >
                   {TOP_PROGRAMS_TEXTS.showMore}
                 </Button>

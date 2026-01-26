@@ -24,7 +24,7 @@ export default function AdminLayout({
 }) {
   return (
     <AuthGuard>
-      <div className="flex flex-col min-h-screen via-white bg-linear-to-br from-slate-50 to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 lg:flex-row">
+      <div className="flex flex-col min-h-screen bg-background lg:flex-row">
         <Sidebar />
         <div className="flex flex-col flex-1 pb-20 min-w-0 sm:pb-16 lg:pb-0">
           <div className="px-4 py-4 sm:px-6 md:px-8 lg:px-10 xl:px-12">

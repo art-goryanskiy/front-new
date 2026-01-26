@@ -1,7 +1,13 @@
 "use client";
 
 import { memo, useMemo } from "react";
-import { Chip, Tooltip } from "@heroui/react";
+import { Badge } from "@/components/ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  TooltipProvider,
+} from "@/components/ui/tooltip";
 import type { ProgramTableCellContentProps } from "../types/program-table.types";
 
 export const ProgramTableSubprogramsContent = memo(
@@ -43,25 +49,24 @@ export const ProgramTableSubprogramsContent = memo(
     return (
       <div className="text-center">
         {hasSubPrograms ? (
-          <Tooltip
-            content={tooltipContent}
-            placement="left"
-            classNames={{
-              content: "bg-default-900 text-white",
-            }}
-          >
-            <Chip
-              color="secondary"
-              variant="flat"
-              className="cursor-help font-semibold"
-              size="sm"
-              aria-label={ariaLabel}
-            >
-              {subProgramsCount} шт.
-            </Chip>
-          </Tooltip>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="inline-block cursor-help">
+                  <Badge
+                    variant="secondary"
+                    className="font-semibold cursor-help"
+                    aria-label={ariaLabel}
+                  >
+                    {subProgramsCount} шт.
+                  </Badge>
+                </span>
+              </TooltipTrigger>
+              <TooltipContent side="left">{tooltipContent}</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         ) : (
-          <span className="text-default-400" aria-label={ariaLabel}>
+          <span className="text-muted-foreground" aria-label={ariaLabel}>
             -
           </span>
         )}

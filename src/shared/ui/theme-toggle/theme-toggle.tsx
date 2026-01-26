@@ -8,7 +8,8 @@ import {
   useMemo,
 } from "react";
 import { useTheme } from "next-themes";
-import { Button } from "@heroui/react";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { Sun, Moon } from "lucide-react";
 
 export const ThemeToggle = memo(function ThemeToggle() {
@@ -16,7 +17,6 @@ export const ThemeToggle = memo(function ThemeToggle() {
   const { theme, setTheme } = useTheme();
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 
@@ -40,22 +40,23 @@ export const ThemeToggle = memo(function ThemeToggle() {
   if (!mounted) {
     return (
       <Button
-        isIconOnly
-        variant="light"
+        variant="ghost"
+        size="icon"
         aria-label="Переключить тему"
-        className="text-default-600 dark:text-default-400"
-        isLoading
-      />
+        className="text-muted-foreground"
+      >
+        <Spinner size={20} />
+      </Button>
     );
   }
 
   return (
     <Button
-      isIconOnly
-      variant="light"
+      variant="ghost"
+      size="icon"
       aria-label={ariaLabel}
-      onPress={handleToggle}
-      className="text-default-600 hover:text-primary-600 dark:text-foreground dark:hover:text-primary-400"
+      onClick={handleToggle}
+      className="text-muted-foreground hover:text-foreground"
     >
       <IconComponent className="h-5 w-5" />
     </Button>

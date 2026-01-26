@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { PublicHeader } from "@/widgets/public/header/public-header";
-import { HeroBanner } from "@/widgets/public/hero-banner/hero-banner";
 import { TopProgramsSection } from "@/widgets/public/top-programs/top-programs-section";
 import { getTopProgramsServer } from "@/shared/api/server/programs";
 import { getProgramsServer } from "@/shared/api/server/programs";
@@ -8,6 +7,8 @@ import { getCategoriesServer } from "@/shared/api/server/categories";
 import { cookies } from "next/headers";
 import { generateMetadata as generateSeoMetadata } from "@/shared/lib/seo/metadata";
 import { generateOrganizationSchema } from "@/shared/lib/seo/structured-data";
+import { BackgroundPaths } from "@/components/ui/background-paths";
+import { Component } from "@/components/ui/the-infinite-grid";
 
 export const metadata: Metadata = generateSeoMetadata({
   title: "Главная",
@@ -44,7 +45,7 @@ export default async function Home() {
       <div className="min-h-screen bg-background">
         <PublicHeader />
         <main>
-          <HeroBanner />
+          <Component />
           <TopProgramsSection
             initialTopPrograms={topPrograms}
             initialAllPrograms={allPrograms}

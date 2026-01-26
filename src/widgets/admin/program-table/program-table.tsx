@@ -3,13 +3,12 @@
 import {
   Table,
   TableHeader,
-  TableColumn,
   TableBody,
   TableRow,
   TableCell,
-  Card,
-  CardBody,
-} from "@heroui/react";
+  TableHead,
+} from "@/components/ui/table";
+import { Card, CardContent } from "@/components/ui/card";
 import type {
   ProgramFilterInput,
   CategoryType,
@@ -129,59 +128,47 @@ export const ProgramTable = memo(function ProgramTable({
   }
 
   return (
-    <Card className="border-none shadow-lg">
-      <CardBody className="p-0">
+    <Card className={`shadow-lg ${TABLE_CLASSES.wrapper}`}>
+      <CardContent className="p-0">
         <Table
           id={tableId}
           aria-label="Таблица программ"
           aria-describedby={`${tableId}-description`}
-          classNames={TABLE_CLASSES}
-          removeWrapper
         >
           <TableHeader>
-            <TableColumn key="program">ПРОГРАММА</TableColumn>
-            <TableColumn
-              key="qualification"
-              className={`${showAwardedQualification ? "hidden md:table-cell" : "hidden"} text-center`}
-            >
-              КВАЛИФИКАЦИЯ
-            </TableColumn>
-            <TableColumn
-              key="rank"
-              className={`${showAwardedRank ? "hidden md:table-cell" : "hidden"} text-center`}
-            >
-              РАЗРЯД
-            </TableColumn>
-            <TableColumn
-              key="pricing"
-              className="hidden text-start md:table-cell"
-            >
-              ЧАСЫ - ЦЕНА
-            </TableColumn>
-            <TableColumn
-              key="views"
-              className="hidden text-center lg:table-cell"
-            >
-              ПРОСМОТРЫ
-            </TableColumn>
-            <TableColumn
-              key="subPrograms"
-              className={`${showSubPrograms ? "hidden lg:table-cell" : "hidden"} text-center`}
-            >
-              ПОДПРОГРАММЫ
-            </TableColumn>
-            <TableColumn
-              key="actions"
-              className="hidden text-center md:table-cell"
-            >
-              ДЕЙСТВИЯ
-            </TableColumn>
+            <TableRow>
+              <TableHead className={`min-w-0 ${TABLE_CLASSES.th}`}>ПРОГРАММА</TableHead>
+              <TableHead
+                className={`${showAwardedQualification ? "hidden md:table-cell" : "hidden"} text-center ${TABLE_CLASSES.th}`}
+              >
+                КВАЛИФИКАЦИЯ
+              </TableHead>
+              <TableHead
+                className={`${showAwardedRank ? "hidden md:table-cell" : "hidden"} text-center ${TABLE_CLASSES.th}`}
+              >
+                РАЗРЯД
+              </TableHead>
+              <TableHead className={`hidden text-start md:table-cell ${TABLE_CLASSES.th}`}>
+                ЧАСЫ - ЦЕНА
+              </TableHead>
+              <TableHead className={`hidden text-center lg:table-cell ${TABLE_CLASSES.th}`}>
+                ПРОСМОТРЫ
+              </TableHead>
+              <TableHead
+                className={`${showSubPrograms ? "hidden lg:table-cell" : "hidden"} text-center ${TABLE_CLASSES.th}`}
+              >
+                ПОДПРОГРАММЫ
+              </TableHead>
+              <TableHead className={`hidden text-center md:table-cell ${TABLE_CLASSES.th}`}>
+                ДЕЙСТВИЯ
+              </TableHead>
+            </TableRow>
           </TableHeader>
           <TableBody>
             {programs.map((program) => (
               <TableRow
                 key={program.id}
-                className="group"
+                className={`group cursor-pointer ${TABLE_CLASSES.tr}`}
                 onClick={(e) => handleRowClick(program, e)}
                 role="row"
                 tabIndex={0}
@@ -189,13 +176,12 @@ export const ProgramTable = memo(function ProgramTable({
                 aria-label={`Программа ${program.title}`}
                 aria-describedby={`${tableId}-row-${program.id}`}
               >
-                <TableCell key="program" className="min-w-0">
+                <TableCell className={`min-w-0 ${TABLE_CLASSES.td}`}>
                   <ProgramTableTitleContent program={program} />
                 </TableCell>
 
                 <TableCell
-                  key="qualification"
-                  className={`${showAwardedQualification ? "hidden md:table-cell" : "hidden"}`}
+                  className={`${showAwardedQualification ? "hidden md:table-cell" : "hidden"} ${TABLE_CLASSES.td}`}
                   aria-label={
                     showAwardedQualification ? undefined : "Скрыто"
                   }
@@ -206,39 +192,28 @@ export const ProgramTable = memo(function ProgramTable({
                 </TableCell>
 
                 <TableCell
-                  key="rank"
-                  className={`${showAwardedRank ? "hidden md:table-cell" : "hidden"}`}
+                  className={`${showAwardedRank ? "hidden md:table-cell" : "hidden"} ${TABLE_CLASSES.td}`}
                   aria-label={showAwardedRank ? undefined : "Скрыто"}
                 >
                   <ProgramTableRankContent program={program} />
                 </TableCell>
 
-                <TableCell
-                  key="pricing"
-                  className="hidden md:table-cell"
-                >
+                <TableCell className={`hidden md:table-cell ${TABLE_CLASSES.td}`}>
                   <ProgramTablePricingContent program={program} />
                 </TableCell>
 
-                <TableCell
-                  key="views"
-                  className="hidden lg:table-cell"
-                >
+                <TableCell className={`hidden lg:table-cell ${TABLE_CLASSES.td}`}>
                   <ProgramTableViewsContent program={program} />
                 </TableCell>
 
                 <TableCell
-                  key="subPrograms"
-                  className={`${showSubPrograms ? "hidden lg:table-cell" : "hidden"}`}
+                  className={`${showSubPrograms ? "hidden lg:table-cell" : "hidden"} ${TABLE_CLASSES.td}`}
                   aria-label={showSubPrograms ? undefined : "Скрыто"}
                 >
                   <ProgramTableSubprogramsContent program={program} />
                 </TableCell>
 
-                <TableCell
-                  key="actions"
-                  className="hidden md:table-cell"
-                >
+                <TableCell className={`hidden md:table-cell ${TABLE_CLASSES.td}`}>
                   <TableActions
                     onEdit={() => handleEditClick(program)}
                     onDelete={() => handleDeleteClick(program)}
@@ -250,7 +225,7 @@ export const ProgramTable = memo(function ProgramTable({
             ))}
           </TableBody>
         </Table>
-      </CardBody>
+      </CardContent>
     </Card>
   );
 });

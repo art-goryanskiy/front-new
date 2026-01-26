@@ -14,7 +14,7 @@ export const UserTableEmailContent = memo(
     return (
       <div className="flex min-w-0 flex-col">
         <p
-          className="line-clamp-1 text-sm font-semibold text-default-900 transition-colors group-hover:text-primary-600 sm:text-base"
+          className="line-clamp-1 text-sm font-semibold text-foreground transition-colors group-hover:text-primary sm:text-base"
           title={user.email}
         >
           {user.email}

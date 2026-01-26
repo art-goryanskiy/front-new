@@ -1,7 +1,7 @@
 "use client";
 
 import { memo, useMemo } from "react";
-import { Chip } from "@heroui/react";
+import { Badge } from "@/components/ui/badge";
 import type { ProgramTableCellContentProps } from "../types/program-table.types";
 
 export const ProgramTableViewsContent = memo(function ProgramTableViewsContent({
@@ -14,15 +14,9 @@ export const ProgramTableViewsContent = memo(function ProgramTableViewsContent({
 
   return (
     <div className="text-center">
-      <Chip
-        color="default"
-        variant="flat"
-        className="font-semibold"
-        size="sm"
-        aria-label={ariaLabel}
-      >
+      <Badge variant="secondary" className="font-semibold" aria-label={ariaLabel}>
         {program.views}
-      </Chip>
+      </Badge>
     </div>
   );
 });

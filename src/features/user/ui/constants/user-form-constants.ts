@@ -36,11 +36,11 @@ export const FORM_CLASSES = {
   errorText:
     "text-danger-800 dark:text-danger-200 text-sm font-medium",
   section:
-    "space-y-4 p-5 bg-default-50/50 dark:bg-content1/50 rounded-xl border border-default-200/50 dark:border-default-800/50 w-full",
+    "space-y-4 p-5 bg-muted/50 rounded-xl border border-border w-full",
   sectionTitle:
-    "text-sm font-semibold text-default-700 dark:text-foreground/90 uppercase tracking-wide mb-2",
+    "text-sm font-semibold text-foreground uppercase tracking-wide mb-2",
   actions:
-    "flex gap-3 justify-end pt-6 border-t border-default-200 dark:border-default-800 w-full",
+    "flex gap-3 justify-end pt-6 border-t border-border w-full",
 } as const;
 
 export const USER_ROLE_OPTIONS: ReadonlyArray<{

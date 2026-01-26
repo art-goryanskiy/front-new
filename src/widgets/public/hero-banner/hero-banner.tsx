@@ -3,7 +3,7 @@
 import { memo, useCallback } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { Button } from "@heroui/react";
+import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import {
@@ -59,17 +59,17 @@ export const HeroBanner = memo(function HeroBanner() {
               <div className={HERO_BANNER_CLASSES.ctaGroup}>
                 <Button
                   size="lg"
-                  endContent={<ArrowRight className="h-5 w-5" />}
                   className="bg-white font-semibold text-gray-900 hover:bg-gray-100"
-                  onPress={handlePrimaryCta}
+                  onClick={handlePrimaryCta}
                 >
                   {HERO_BANNER_TEXTS.ctaPrimary}
+                  <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
                 <Button
-                  variant="bordered"
+                  variant="outline"
                   size="lg"
                   className="border-2 border-white/30 bg-white/10 font-semibold text-white backdrop-blur-sm hover:bg-white/20"
-                  onPress={handleSecondaryCta}
+                  onClick={handleSecondaryCta}
                 >
                   {HERO_BANNER_TEXTS.ctaSecondary}
                 </Button>

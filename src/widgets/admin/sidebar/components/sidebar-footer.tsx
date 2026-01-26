@@ -1,7 +1,13 @@
 "use client";
 
 import { memo } from "react";
-import { Button, Tooltip } from "@heroui/react";
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  TooltipProvider,
+} from "@/components/ui/tooltip";
 import { Icon } from "@/shared/ui/icons/icon";
 import {
   SIDEBAR_TEXTS,
@@ -22,41 +28,42 @@ export const SidebarFooter = memo(function SidebarFooter({
     <div className={SIDEBAR_CLASSES.desktop.footer}>
       {!isCollapsed && (
         <Button
-          variant="light"
+          variant="ghost"
           className={SIDEBAR_CLASSES.desktop.collapseButton}
-          onPress={onToggle}
-          startContent={
-            <Icon
-              name="chevron-left"
-              className="h-5 w-5 shrink-0"
-              size={ICON_SIZES.footer}
-              aria-label={SIDEBAR_TEXTS.collapseMenu}
-            />
-          }
+          onClick={onToggle}
         >
-          <span
-            className={SIDEBAR_CLASSES.desktop.collapseButtonText}
-          >
+          <Icon
+            name="chevron-left"
+            className="mr-2 h-5 w-5 shrink-0"
+            size={ICON_SIZES.footer}
+            aria-label={SIDEBAR_TEXTS.collapseMenu}
+          />
+          <span className={SIDEBAR_CLASSES.desktop.collapseButtonText}>
             {SIDEBAR_TEXTS.collapseMenu}
           </span>
         </Button>
       )}
       {isCollapsed && (
-        <Tooltip content={SIDEBAR_TEXTS.expandMenu} placement="right">
-          <Button
-            isIconOnly
-            variant="light"
-            className={SIDEBAR_CLASSES.desktop.expandButton}
-            onPress={onToggle}
-            aria-label={SIDEBAR_TEXTS.expandMenu}
-          >
-            <Icon
-              name="chevron-right"
-              className="h-5 w-5 text-default-600 dark:text-foreground/80"
-              size={ICON_SIZES.footer}
-            />
-          </Button>
-        </Tooltip>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className={SIDEBAR_CLASSES.desktop.expandButton}
+                onClick={onToggle}
+                aria-label={SIDEBAR_TEXTS.expandMenu}
+              >
+                <Icon
+                  name="chevron-right"
+                  className="h-5 w-5 text-muted-foreground"
+                  size={ICON_SIZES.footer}
+                />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="right">{SIDEBAR_TEXTS.expandMenu}</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       )}
     </div>
   );

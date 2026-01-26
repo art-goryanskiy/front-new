@@ -2,7 +2,9 @@
 
 import { memo, useCallback, useMemo } from "react";
 import { useForm } from "react-hook-form";
-import { Button, Form, Tabs, Tab } from "@heroui/react";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Spinner } from "@/components/ui/spinner";
 import { useUserModalState } from "@/shared/store/ui-store";
 import { useCreateUser } from "@/entities/user/api/use-create-user";
 import { useUpdateUser } from "@/entities/user/api/use-update-user";
@@ -84,53 +86,50 @@ export const UserForm = memo(function UserForm({
   );
 
   return (
-    <Form
+    <form
       onSubmit={handleSubmit(onSubmit)}
-      validationBehavior="native"
       className={`${FORM_CLASSES.form} w-full`}
     >
       <UserFormError error={error} isEditMode={isEditMode} />
 
-      <Tabs
-        aria-label="Форма пользователя"
-        className="w-full"
-        classNames={{
-          base: "w-full",
-          tabList: "w-full",
-          panel: "w-full",
-        }}
-      >
-        <Tab key="basic" title="Основная информация">
-          <UserFormBasicTab
-            control={control}
-            isEditMode={isEditMode}
-          />
-        </Tab>
-
-        <Tab key="profile" title="Профиль">
+      <Tabs defaultValue="basic" className="w-full">
+        <TabsList className="w-full">
+          <TabsTrigger value="basic" className="flex-1">Основная информация</TabsTrigger>
+          <TabsTrigger value="profile" className="flex-1">Профиль</TabsTrigger>
+        </TabsList>
+        <TabsContent value="basic">
+          <UserFormBasicTab control={control} isEditMode={isEditMode} />
+        </TabsContent>
+        <TabsContent value="profile">
           <UserFormProfileTab control={control} />
-        </Tab>
+        </TabsContent>
       </Tabs>
 
       <div className={FORM_CLASSES.actions}>
         <Button
           type="button"
-          variant="light"
-          onPress={closeModal}
-          isDisabled={loading}
+          variant="ghost"
+          onClick={closeModal}
+          disabled={loading}
           className="min-w-24"
         >
           {FORM_MESSAGES.cancel}
         </Button>
         <Button
           type="submit"
-          color="primary"
-          isLoading={loading}
+          disabled={loading}
           className="min-w-32 font-semibold shadow-lg transition-shadow hover:shadow-xl"
         >
-          {isEditMode ? FORM_MESSAGES.save : FORM_MESSAGES.create}
+          {loading ? (
+            <>
+              <Spinner className="mr-2 h-4 w-4" size={16} />
+              {isEditMode ? FORM_MESSAGES.save : FORM_MESSAGES.create}
+            </>
+          ) : (
+            isEditMode ? FORM_MESSAGES.save : FORM_MESSAGES.create
+          )}
         </Button>
       </div>
-    </Form>
+    </form>
   );
 });

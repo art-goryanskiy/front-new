@@ -49,25 +49,25 @@ export const FORM_CLASSES = {
     "p-4 bg-danger-50/80 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-xl backdrop-blur-sm w-full",
   errorText: "text-danger-800 dark:text-danger-200 text-sm font-medium",
   section:
-    "space-y-4 p-5 bg-default-50/50 dark:bg-content1/50 rounded-xl border border-default-200/50 dark:border-default-800/50 w-full",
+    "space-y-4 p-5 bg-muted/50 rounded-xl border border-border w-full",
   sectionTitle:
-    "text-sm font-semibold text-default-700 dark:text-foreground/90 uppercase tracking-wide mb-3",
+    "text-sm font-semibold text-foreground uppercase tracking-wide mb-3",
   pricingContainer: "space-y-4 w-full",
   pricingLabel:
-    "text-sm font-semibold text-default-700 dark:text-foreground/90 uppercase tracking-wide",
+    "text-sm font-semibold text-foreground uppercase tracking-wide",
   pricingRow:
-    "flex gap-3 items-end p-4 bg-white dark:bg-content1 rounded-lg border border-default-200 dark:border-default-800 w-full",
+    "flex gap-3 items-end p-4 bg-card rounded-lg border border-border w-full",
   pricingInput: "flex-1 w-full",
   subProgramsContainer: "space-y-4 w-full",
   subProgramsLabel:
-    "text-sm font-semibold text-default-700 dark:text-foreground/90 uppercase tracking-wide",
+    "text-sm font-semibold text-foreground uppercase tracking-wide",
   subProgramsDescription:
-    "text-xs text-default-500 dark:text-foreground/70 mb-2",
+    "text-xs text-muted-foreground mb-2",
   subProgramCard:
-    "space-y-4 p-5 border border-default-200 dark:border-default-800 rounded-xl bg-white dark:bg-content1 shadow-sm hover:shadow-md transition-shadow w-full",
+    "space-y-4 p-5 border border-border rounded-xl bg-card shadow-sm hover:shadow-md transition-shadow w-full",
   rankFields: "grid grid-cols-2 gap-4 w-full",
   actions:
-    "flex gap-3 justify-end pt-6 border-t border-default-200 dark:border-default-800 w-full",
+    "flex gap-3 justify-end pt-6 border-t border-border w-full",
 } as const;
 
 export const DEFAULT_VALUES = {

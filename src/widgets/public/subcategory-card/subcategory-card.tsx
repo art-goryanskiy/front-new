@@ -1,7 +1,8 @@
 "use client";
 
 import { memo } from "react";
-import { Card, CardBody, Button } from "@heroui/react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
@@ -28,7 +29,7 @@ export const SubcategoryCard = memo(function SubcategoryCard({
       className="h-full"
     >
       <Card className={SUBCATEGORY_CARD_CLASSES.card}>
-        <CardBody className="flex flex-1 flex-col p-0">
+        <CardContent className="flex flex-1 flex-col p-0">
           <SubcategoryCardImage
             image={category.image}
             name={category.name}
@@ -75,17 +76,15 @@ export const SubcategoryCard = memo(function SubcategoryCard({
               className="mt-auto block"
             >
               <Button
-                color="primary"
-                variant="flat"
-                className={SUBCATEGORY_CARD_CLASSES.cta}
-                fullWidth
-                endContent={<ArrowRight className="h-4 w-4" />}
+                variant="secondary"
+                className={`w-full ${SUBCATEGORY_CARD_CLASSES.cta}`}
               >
                 Смотреть программы
+                <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
           </div>
-        </CardBody>
+        </CardContent>
       </Card>
     </motion.div>
   );

@@ -2,7 +2,8 @@
 
 import { memo, useCallback, useMemo } from "react";
 import { useForm } from "react-hook-form";
-import { Button, Form } from "@heroui/react";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { useProgramModalState } from "@/shared/store/ui-store";
 import { useCreateProgram } from "@/entities/program/api/use-create-programs";
 import { useUpdateProgram } from "@/entities/program/api/use-update-program";
@@ -120,9 +121,8 @@ export const ProgramForm = memo(function ProgramForm({
   );
 
   return (
-    <Form
+    <form
       onSubmit={handleSubmit(onSubmit)}
-      validationBehavior="native"
       className={FORM_CLASSES.form}
     >
       <ProgramFormError error={error} isEditMode={isEditMode} />
@@ -169,22 +169,28 @@ export const ProgramForm = memo(function ProgramForm({
       <div className={FORM_CLASSES.actions}>
         <Button
           type="button"
-          variant="light"
-          onPress={closeModal}
-          isDisabled={loading}
+          variant="ghost"
+          onClick={closeModal}
+          disabled={loading}
           className="min-w-24"
         >
           {FORM_MESSAGES.cancel}
         </Button>
         <Button
           type="submit"
-          color="primary"
-          isLoading={loading}
+          disabled={loading}
           className="min-w-32 font-semibold shadow-lg transition-shadow hover:shadow-xl"
         >
-          {isEditMode ? FORM_MESSAGES.save : FORM_MESSAGES.create}
+          {loading ? (
+            <>
+              <Spinner className="mr-2 h-4 w-4" size={16} />
+              {isEditMode ? FORM_MESSAGES.save : FORM_MESSAGES.create}
+            </>
+          ) : (
+            isEditMode ? FORM_MESSAGES.save : FORM_MESSAGES.create
+          )}
         </Button>
       </div>
-    </Form>
+    </form>
   );
 });

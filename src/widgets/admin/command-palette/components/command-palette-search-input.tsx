@@ -1,10 +1,11 @@
 "use client";
 
-import { memo, useCallback, useEffect } from "react";
-import { Input, Button } from "@heroui/react";
+import { memo, useCallback } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { Search, X } from "lucide-react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useSearchState } from "@/shared/store/ui-store";
 import {
   COMMAND_PALETTE_TEXTS,
@@ -22,26 +23,24 @@ export const CommandPaletteSearchInput = memo(
     onValueChange,
   }: CommandPaletteSearchInputProps) {
     const router = useRouter();
-    const pathname = usePathname();
     const {
       clearSearch,
-      setSearchOriginPath,
       searchOriginPath,
       closeCommandPalette,
     } = useSearchState();
     const hasValue = value.length > 0;
 
-    useEffect(() => {
-      if (!searchOriginPath && pathname) {
-        setSearchOriginPath(pathname);
-      }
-    }, [pathname, searchOriginPath, setSearchOriginPath]);
+    const handleChange = useCallback(
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        onValueChange(e.target.value);
+      },
+      [onValueChange]
+    );
 
     const handleClear = useCallback(() => {
       onValueChange("");
       clearSearch();
       closeCommandPalette();
-
       if (searchOriginPath) {
         router.push(searchOriginPath);
       }
@@ -54,50 +53,45 @@ export const CommandPaletteSearchInput = memo(
     ]);
 
     return (
-      <Input
-        value={value}
-        onValueChange={onValueChange}
-        placeholder={COMMAND_PALETTE_TEXTS.searchPlaceholder}
-        autoFocus
-        startContent={
-          <Search
-            className="h-5 w-5 text-slate-400"
-            aria-hidden="true"
-          />
-        }
-        endContent={
-          <div className="flex items-center gap-1">
-            {hasValue && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
+      <div className="relative flex w-full items-center bg-transparent">
+        <Search
+          className="absolute left-3 h-5 w-5 text-muted-foreground"
+          aria-hidden="true"
+        />
+        <Input
+          value={value}
+          onChange={handleChange}
+          placeholder={COMMAND_PALETTE_TEXTS.searchPlaceholder}
+          autoFocus
+          className="border-0 bg-transparent pl-9 pr-24 shadow-none focus-visible:ring-0"
+          aria-label={COMMAND_PALETTE_TEXTS.searchPlaceholder}
+        />
+        <div className="absolute right-2 flex items-center gap-1">
+          {hasValue && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+            >
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={handleClear}
+                className="h-6 w-6"
+                aria-label="Очистить поиск"
               >
-                <Button
-                  isIconOnly
-                  size="sm"
-                  variant="light"
-                  onPress={handleClear}
-                  className="h-6 w-6 min-w-6"
-                  aria-label="Очистить поиск"
-                >
-                  <X className="h-3.5 w-3.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300" />
-                </Button>
-              </motion.div>
-            )}
-            {!hasValue && (
-              <span className={COMMAND_PALETTE_CLASSES.escBadge}>
-                {COMMAND_PALETTE_TEXTS.escKey}
-              </span>
-            )}
-          </div>
-        }
-        classNames={{
-          inputWrapper: "bg-transparent shadow-none border-none",
-        }}
-        variant="bordered"
-        aria-label={COMMAND_PALETTE_TEXTS.searchPlaceholder}
-      />
+                <X className="h-3.5 w-3.5 text-muted-foreground" />
+              </Button>
+            </motion.div>
+          )}
+          {!hasValue && (
+            <span className={COMMAND_PALETTE_CLASSES.escBadge}>
+              {COMMAND_PALETTE_TEXTS.escKey}
+            </span>
+          )}
+        </div>
+      </div>
     );
   }
 );

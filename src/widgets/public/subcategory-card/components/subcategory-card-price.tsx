@@ -26,7 +26,7 @@ export const SubcategoryCardPrice = memo(
 
     if (!priceRange) {
       return (
-        <span className="text-xs text-default-400">
+        <span className="text-xs text-muted-foreground">
           Цена по запросу
         </span>
       );

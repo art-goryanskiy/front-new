@@ -1,7 +1,7 @@
 "use client";
 
 import { memo } from "react";
-import { Button } from "@heroui/react";
+import { Button } from "@/components/ui/button";
 import { Search, Menu, X } from "lucide-react";
 import { UserMenu } from "@/shared/ui/user-menu/user-menu";
 import { ThemeToggle } from "@/shared/ui/theme-toggle/theme-toggle";
@@ -28,11 +28,11 @@ export const HeaderActions = memo(function HeaderActions({
   return (
     <div className={PUBLIC_HEADER_CLASSES.actions}>
       <Button
-        isIconOnly
-        variant="light"
+        variant="ghost"
+        size="icon"
         aria-label="Поиск"
-        onPress={onSearchClick}
-        className="text-default-600 hover:text-primary-600 dark:text-foreground dark:hover:text-primary-400"
+        onClick={onSearchClick}
+        className="text-muted-foreground hover:text-foreground"
       >
         <Search className="h-5 w-5" />
       </Button>
@@ -41,20 +41,19 @@ export const HeaderActions = memo(function HeaderActions({
         <UserMenu user={user} onLogout={onLogout} />
       ) : (
         <Button
-          color="primary"
-          variant="flat"
-          onPress={onLoginClick}
+          variant="secondary"
+          onClick={onLoginClick}
           className="hidden sm:flex"
         >
           Войти
         </Button>
       )}
       <Button
-        isIconOnly
-        variant="light"
+        variant="ghost"
+        size="icon"
         aria-label="Меню"
-        onPress={onMobileMenuToggle}
-        className="text-default-600 hover:text-primary-600 md:hidden dark:text-foreground dark:hover:text-primary-400"
+        onClick={onMobileMenuToggle}
+        className="text-muted-foreground hover:text-foreground md:hidden"
       >
         {isMobileMenuOpen ? (
           <X className="h-5 w-5" />

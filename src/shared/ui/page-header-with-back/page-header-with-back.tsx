@@ -2,7 +2,7 @@
 
 import { memo, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@heroui/react";
+import { Button } from "@/components/ui/button";
 import { BackButton } from "@/shared/ui/back-button/back-button";
 
 interface PageHeaderWithBackProps {
@@ -34,9 +34,9 @@ export const PageHeaderWithBack = memo(function PageHeaderWithBack({
     <div className="flex items-center gap-4">
       {backButton.variant === "icon" ? (
         <Button
-          isIconOnly
-          variant="light"
-          onPress={handleBack}
+          variant="ghost"
+          size="icon"
+          onClick={handleBack}
           className="shrink-0"
           aria-label={backButton.label || "Назад"}
         >
@@ -46,20 +46,19 @@ export const PageHeaderWithBack = memo(function PageHeaderWithBack({
         <BackButton label={backButton.label} className="shrink-0" />
       )}
       <div className="min-w-0 flex-1">
-        <h1 className="mb-2 text-3xl font-bold text-default-900 dark:text-foreground">
+        <h1 className="mb-2 text-3xl font-bold text-foreground">
           {title}
         </h1>
         {description && (
-          <p className="text-default-600 dark:text-foreground/80">
+          <p className="text-muted-foreground">
             {description}
           </p>
         )}
       </div>
       {actionButton && (
         <Button
-          color="primary"
           size="lg"
-          onPress={actionButton.onPress}
+          onClick={actionButton.onPress}
           className="shrink-0"
         >
           {actionButton.label}

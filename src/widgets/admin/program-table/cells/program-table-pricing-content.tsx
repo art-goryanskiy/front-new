@@ -1,7 +1,7 @@
 "use client";
 
 import { memo, useMemo } from "react";
-import { Chip } from "@heroui/react";
+import { Badge } from "@/components/ui/badge";
 import {
   filterValidPricing,
   formatPrice,
@@ -23,19 +23,17 @@ export const ProgramTablePricingContent = memo(
         <div className="flex flex-wrap gap-1">
           {validPricing.length > 0 ? (
             validPricing.map((p, idx) => (
-              <Chip
+              <Badge
                 key={`${p.hours}-${p.price}-${idx}`}
-                color="primary"
-                variant="flat"
-                size="sm"
+                variant="default"
                 className="font-semibold"
                 aria-label={formatPricingAriaLabel(p.hours, p.price!)}
               >
                 {p.hours}ч - {formatPrice(p.price!)}₽
-              </Chip>
+              </Badge>
             ))
           ) : (
-            <span className="text-default-400 text-sm" aria-label="Нет данных">
+            <span className="text-muted-foreground text-sm" aria-label="Нет данных">
               -
             </span>
           )}

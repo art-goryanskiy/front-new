@@ -1,7 +1,8 @@
 "use client";
 
 import { memo } from "react";
-import { Form, Button } from "@heroui/react";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { useLoginForm } from "./hooks/use-login-form";
 import { LoginFormError } from "./components/login-form-error";
 import { LoginFormEmailField } from "./fields/login-form-email-field";
@@ -20,9 +21,8 @@ export const LoginForm = memo(function LoginForm() {
       <h1 className={LOGIN_FORM_CLASSES.title}>
         {LOGIN_FORM_TEXTS.title}
       </h1>
-      <Form
+      <form
         onSubmit={handleSubmit(onSubmit)}
-        validationBehavior="native"
         className={LOGIN_FORM_CLASSES.form}
       >
         <LoginFormError error={error} />
@@ -32,13 +32,19 @@ export const LoginForm = memo(function LoginForm() {
 
         <Button
           type="submit"
-          color="primary"
           className={LOGIN_FORM_CLASSES.submitButton}
-          isLoading={loading}
+          disabled={loading}
         >
-          {LOGIN_FORM_TEXTS.submit}
+          {loading ? (
+            <>
+              <Spinner className="mr-2 h-4 w-4" size={16} />
+              {LOGIN_FORM_TEXTS.submit}
+            </>
+          ) : (
+            LOGIN_FORM_TEXTS.submit
+          )}
         </Button>
-      </Form>
+      </form>
     </div>
   );
 });

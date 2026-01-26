@@ -1,6 +1,6 @@
 "use client";
 
-import { JSX, memo, useMemo } from "react";
+import { JSX, memo } from "react";
 import {
   Controller,
   type Control,
@@ -8,7 +8,9 @@ import {
   type FieldValues,
   type RegisterOptions,
 } from "react-hook-form";
-import { Input, type InputProps } from "@heroui/react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 
 export interface FormFieldProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -17,14 +19,10 @@ export interface FormFieldProps<
   name: FieldPath<TFieldValues>;
   label: string;
   placeholder?: string;
-  type?: InputProps["type"];
+  type?: React.ComponentProps<"input">["type"];
   isRequired?: boolean;
   rules?: RegisterOptions<TFieldValues, FieldPath<TFieldValues>>;
   className?: string;
-  classNames?: InputProps["classNames"];
-  variant?: InputProps["variant"];
-  size?: InputProps["size"];
-  radius?: InputProps["radius"];
   startContent?: React.ReactNode;
   endContent?: React.ReactNode;
   description?: string;
@@ -42,53 +40,54 @@ export const FormField = memo(function FormField<
   isRequired = false,
   rules,
   className = "w-full",
-  classNames,
-  variant = "bordered",
-  size = "md",
-  radius = "lg",
   startContent,
   endContent,
   description,
   isDisabled,
 }: FormFieldProps<TFieldValues>) {
-  const defaultClassNames = useMemo(
-    () => ({
-      inputWrapper: "w-full",
-      input: "w-full",
-    }),
-    []
-  );
-
-  const finalClassNames = useMemo(
-    () => classNames || defaultClassNames,
-    [classNames, defaultClassNames]
-  );
-
   return (
     <Controller
       name={name}
       control={control}
       rules={rules}
       render={({ field, fieldState }) => (
-        <Input
-          {...field}
-          type={type}
-          label={label}
-          placeholder={placeholder}
-          isRequired={isRequired}
-          isInvalid={fieldState.invalid}
-          errorMessage={fieldState.error?.message}
-          description={description}
-          isDisabled={isDisabled}
-          aria-label={label}
-          className={className}
-          variant={variant}
-          size={size}
-          radius={radius}
-          startContent={startContent}
-          endContent={endContent}
-          classNames={finalClassNames}
-        />
+        <div className={cn("space-y-2", className)}>
+          <Label htmlFor={name}>
+            {label}
+            {isRequired && " *"}
+          </Label>
+          <div className="relative flex w-full items-center">
+            {startContent && (
+              <div className="pointer-events-none absolute left-3 text-muted-foreground">
+                {startContent}
+              </div>
+            )}
+            <Input
+              {...field}
+              id={name}
+              type={type}
+              placeholder={placeholder}
+              required={isRequired}
+              disabled={isDisabled}
+              aria-invalid={fieldState.invalid}
+              aria-label={label}
+              className={startContent ? "pl-9" : endContent ? "pr-9" : undefined}
+            />
+            {endContent && (
+              <div className="absolute right-3 text-muted-foreground">
+                {endContent}
+              </div>
+            )}
+          </div>
+          {description && !fieldState.error && (
+            <p className="text-sm text-muted-foreground">{description}</p>
+          )}
+          {fieldState.error?.message && (
+            <p className="text-sm text-destructive">
+              {fieldState.error.message}
+            </p>
+          )}
+        </div>
       )}
     />
   );

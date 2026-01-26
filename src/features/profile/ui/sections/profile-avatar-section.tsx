@@ -1,7 +1,8 @@
 "use client";
 
 import { memo, useCallback, useRef } from "react";
-import { Avatar, Button } from "@heroui/react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { FormField } from "@/shared/ui/form-field/form-field";
 import { PROFILE_FORM_CLASSES } from "../constants/profile-form-constants";
 import type { ProfileFormData } from "../types/profile-form.types";
@@ -37,17 +38,17 @@ export const ProfileAvatarSection = memo(
       fileInputRef.current?.click();
     }, []);
 
+    const initial = (userEmail || "User").charAt(0).toUpperCase();
+
     return (
       <div className={PROFILE_FORM_CLASSES.section}>
         <h3 className={PROFILE_FORM_CLASSES.sectionTitle}>Аватар</h3>
         <div className="space-y-4">
           <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
-            <Avatar
-              src={avatarPreview || undefined}
-              name={userEmail || "User"}
-              size="lg"
-              className="h-24 w-24 text-lg"
-            />
+            <Avatar className="h-24 w-24 text-lg">
+              <AvatarImage src={avatarPreview || undefined} alt={userEmail} />
+              <AvatarFallback className="text-lg">{initial}</AvatarFallback>
+            </Avatar>
             <div className="flex-1">
               <input
                 ref={fileInputRef}
@@ -58,13 +59,12 @@ export const ProfileAvatarSection = memo(
               />
               <Button
                 type="button"
-                color="primary"
-                variant="flat"
-                onPress={handleButtonClick}
+                variant="secondary"
+                onClick={handleButtonClick}
               >
                 Выбрать изображение
               </Button>
-              <p className="mt-2 text-sm text-default-500 dark:text-foreground/70">
+              <p className="mt-2 text-sm text-muted-foreground">
                 Рекомендуемый размер: 200x200px. Форматы: JPG, PNG
               </p>
             </div>

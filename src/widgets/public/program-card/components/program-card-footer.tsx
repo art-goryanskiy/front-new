@@ -30,12 +30,12 @@ export const ProgramCardFooter = memo(function ProgramCardFooter({
               </span>
             </>
           ) : (
-            <span className="text-xs text-default-400 dark:text-foreground/90">
+            <span className="text-xs text-muted-foreground">
               Цена по запросу
             </span>
           )
         ) : (
-          <div className="flex items-center gap-1.5 text-xs text-default-500 dark:text-foreground/90">
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <Lock className="h-3.5 w-3.5" />
             <span>Войдите для просмотра цены</span>
           </div>

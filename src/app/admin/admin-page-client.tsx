@@ -16,7 +16,7 @@ export function AdminPageClient() {
   return (
     <>
       <div>
-        <h2 className="text-xl font-bold text-default-900 sm:text-2xl dark:text-foreground">
+        <h2 className="text-xl font-bold text-foreground sm:text-2xl">
           Все категории
         </h2>
       </div>

@@ -17,20 +17,20 @@ export const ProgramDetailAdditionalInfo = memo(
       <div className="space-y-3">
         {program.studentCategory && (
           <div>
-            <span className="text-sm text-default-500 dark:text-foreground/90">
+            <span className="text-sm text-muted-foreground">
               Категория студентов:
             </span>
-            <p className="font-medium text-default-900 dark:text-foreground">
+            <p className="font-medium text-foreground">
               {program.studentCategory}
             </p>
           </div>
         )}
         {program.awardedQualification && (
           <div>
-            <span className="text-sm text-default-500 dark:text-foreground/90">
+            <span className="text-sm text-muted-foreground">
               Присваиваемая квалификация:
             </span>
-            <p className="font-medium text-default-900 dark:text-foreground">
+            <p className="font-medium text-foreground">
               {program.awardedQualification}
             </p>
           </div>

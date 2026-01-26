@@ -17,7 +17,6 @@ const nextConfig: NextConfig = {
   // Оптимизация bundle size
   experimental: {
     optimizePackageImports: [
-      "@heroui/react",
       "lucide-react",
       "framer-motion",
     ],

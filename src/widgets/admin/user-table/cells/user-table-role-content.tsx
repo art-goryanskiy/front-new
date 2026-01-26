@@ -1,7 +1,7 @@
 "use client";
 
 import { memo } from "react";
-import { Chip } from "@heroui/react";
+import { Badge } from "@/components/ui/badge";
 import type {
   UserEntity,
   UserRole,
@@ -11,17 +11,9 @@ interface UserTableRoleContentProps {
   user: UserEntity;
 }
 
-const ROLE_COLORS: Record<
-  UserRole,
-  | "default"
-  | "primary"
-  | "secondary"
-  | "success"
-  | "warning"
-  | "danger"
-> = {
-  ADMIN: "primary",
-  USER: "default",
+const ROLE_VARIANTS: Record<UserRole, "default" | "secondary"> = {
+  ADMIN: "default",
+  USER: "secondary",
 };
 
 const ROLE_LABELS: Record<UserRole, string> = {
@@ -32,14 +24,9 @@ const ROLE_LABELS: Record<UserRole, string> = {
 export const UserTableRoleContent = memo(
   function UserTableRoleContent({ user }: UserTableRoleContentProps) {
     return (
-      <Chip
-        color={ROLE_COLORS[user.role]}
-        variant="flat"
-        size="sm"
-        className="font-semibold"
-      >
+      <Badge variant={ROLE_VARIANTS[user.role]} className="font-semibold">
         {ROLE_LABELS[user.role]}
-      </Chip>
+      </Badge>
     );
   }
 );

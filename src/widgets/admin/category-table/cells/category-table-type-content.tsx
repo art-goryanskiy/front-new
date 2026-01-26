@@ -1,7 +1,7 @@
 "use client";
 
 import { memo, useMemo } from "react";
-import { Chip } from "@heroui/react";
+import { Badge } from "@/components/ui/badge";
 import type { CategoryEntity } from "@/shared/api/generated/graphql";
 import {
   getCategoryTypeName,
@@ -12,6 +12,16 @@ interface CategoryTableTypeContentProps {
   category: CategoryEntity;
 }
 
+const COLOR_TO_VARIANT: Record<
+  "primary" | "success" | "warning" | "default",
+  "default" | "secondary" | "success" | "warning"
+> = {
+  primary: "default",
+  success: "success",
+  warning: "warning",
+  default: "secondary",
+};
+
 export const CategoryTableTypeContent = memo(function CategoryTableTypeContent({
   category,
 }: CategoryTableTypeContentProps) {
@@ -20,22 +30,16 @@ export const CategoryTableTypeContent = memo(function CategoryTableTypeContent({
     [category.type]
   );
 
-  const typeColor = useMemo(
-    () => getCategoryTypeColor(category.type),
+  const variant = useMemo(
+    () => COLOR_TO_VARIANT[getCategoryTypeColor(category.type)],
     [category.type]
   );
 
   const ariaLabel = useMemo(() => `Тип: ${typeName}`, [typeName]);
 
   return (
-    <Chip
-      color={typeColor}
-      variant="flat"
-      size="sm"
-      className="font-semibold"
-      aria-label={ariaLabel}
-    >
+    <Badge variant={variant} className="font-semibold" aria-label={ariaLabel}>
       {typeName}
-    </Chip>
+    </Badge>
   );
 });

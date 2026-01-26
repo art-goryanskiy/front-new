@@ -2,11 +2,12 @@
 
 import { memo, useMemo } from "react";
 import { Controller, type Control } from "react-hook-form";
-import { Input } from "@heroui/react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 import {
   REGISTER_FORM_TEXTS,
   EMAIL_REGEX,
-  REGISTER_FORM_CLASSES,
 } from "../constants/register-form-constants";
 import type { RegisterFormData } from "../types/register-form.types";
 
@@ -35,20 +36,23 @@ export const RegisterFormEmailField = memo(
         control={control}
         rules={rules}
         render={({ field, fieldState }) => (
-          <Input
-            {...field}
-            type="email"
-            label={REGISTER_FORM_TEXTS.email.label}
-            placeholder={REGISTER_FORM_TEXTS.email.placeholder}
-            isRequired
-            isInvalid={fieldState.invalid}
-            errorMessage={fieldState.error?.message}
-            aria-label={REGISTER_FORM_TEXTS.email.label}
-            variant="bordered"
-            size="md"
-            radius="lg"
-            classNames={REGISTER_FORM_CLASSES.inputClassNames}
-          />
+          <div className={cn("space-y-2 w-full")}>
+            <Label htmlFor="email">{REGISTER_FORM_TEXTS.email.label} *</Label>
+            <Input
+              {...field}
+              id="email"
+              type="email"
+              placeholder={REGISTER_FORM_TEXTS.email.placeholder}
+              required
+              aria-invalid={fieldState.invalid}
+              aria-label={REGISTER_FORM_TEXTS.email.label}
+            />
+            {fieldState.error?.message && (
+              <p className="text-sm text-destructive">
+                {fieldState.error.message}
+              </p>
+            )}
+          </div>
         )}
       />
     );

@@ -1,9 +1,11 @@
 "use client";
 
-import { memo, useCallback, useMemo } from "react";
+import { memo, useCallback } from "react";
 import { Control, useFieldArray } from "react-hook-form";
 import { Controller } from "react-hook-form";
-import { Button, Input } from "@heroui/react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   FORM_LABELS,
   FORM_PLACEHOLDERS,
@@ -40,14 +42,6 @@ export const ProgramFormPricingFields = memo(
       [removePricing]
     );
 
-    const classNames = useMemo(
-      () => ({
-        inputWrapper: "w-full",
-        input: "w-full",
-      }),
-      []
-    );
-
     return (
       <div className={FORM_CLASSES.pricingContainer}>
         {pricingFields.map((field, index) => (
@@ -56,54 +50,57 @@ export const ProgramFormPricingFields = memo(
               name={`pricing.${index}.hours`}
               control={control}
               render={({ field }) => (
-                <Input
-                  {...field}
-                  type="number"
-                  label={FORM_LABELS.hours}
-                  placeholder={FORM_PLACEHOLDERS.hours}
-                  value={field.value?.toString() || ""}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    field.onChange(value ? Number(value) : 0);
-                  }}
-                  aria-label={`${FORM_LABELS.hours} ${index + 1}`}
-                  className={FORM_CLASSES.pricingInput}
-                  classNames={classNames}
-                />
+                <div className="space-y-2 flex-1">
+                  <Label htmlFor={`pricing-${index}-hours`}>{FORM_LABELS.hours}</Label>
+                  <Input
+                    {...field}
+                    id={`pricing-${index}-hours`}
+                    type="number"
+                    placeholder={FORM_PLACEHOLDERS.hours}
+                    value={field.value?.toString() || ""}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      field.onChange(value ? Number(value) : 0);
+                    }}
+                    aria-label={`${FORM_LABELS.hours} ${index + 1}`}
+                    className={FORM_CLASSES.pricingInput}
+                  />
+                </div>
               )}
             />
             <Controller
               name={`pricing.${index}.price`}
               control={control}
               render={({ field }) => (
-                <Input
-                  type="number"
-                  step="0.01"
-                  label={FORM_LABELS.price}
-                  placeholder={FORM_PLACEHOLDERS.price}
-                  value={
-                    field.value != null ? String(field.value) : ""
-                  }
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    const numValue = value === "" ? 0 : Number(value);
-                    field.onChange(isNaN(numValue) ? 0 : numValue);
-                  }}
-                  onBlur={field.onBlur}
-                  name={field.name}
-                  ref={field.ref}
-                  aria-label={`${FORM_LABELS.price} ${index + 1}`}
-                  className={FORM_CLASSES.pricingInput}
-                  classNames={classNames}
-                />
+                <div className="space-y-2 flex-1">
+                  <Label htmlFor={`pricing-${index}-price`}>{FORM_LABELS.price}</Label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    id={`pricing-${index}-price`}
+                    placeholder={FORM_PLACEHOLDERS.price}
+                    value={
+                      field.value != null ? String(field.value) : ""
+                    }
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      const numValue = value === "" ? 0 : Number(value);
+                      field.onChange(isNaN(numValue) ? 0 : numValue);
+                    }}
+                    onBlur={field.onBlur}
+                    name={field.name}
+                    ref={field.ref}
+                    aria-label={`${FORM_LABELS.price} ${index + 1}`}
+                    className={FORM_CLASSES.pricingInput}
+                  />
+                </div>
               )}
             />
             <Button
               type="button"
-              variant="light"
-              color="danger"
-              onPress={() => handleRemovePricing(index)}
-              isDisabled={pricingFields.length === 1}
+              variant="destructive"
+              onClick={() => handleRemovePricing(index)}
+              disabled={pricingFields.length === 1}
               aria-label={`${FORM_MESSAGES.removePricing} ${index + 1}`}
               className="shrink-0"
             >
@@ -113,9 +110,9 @@ export const ProgramFormPricingFields = memo(
         ))}
         <Button
           type="button"
-          variant="bordered"
+          variant="outline"
           size="sm"
-          onPress={handleAppendPricing}
+          onClick={handleAppendPricing}
           className="w-full"
         >
           {FORM_MESSAGES.addPricing}

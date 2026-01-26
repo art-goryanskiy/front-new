@@ -2,7 +2,8 @@
 
 import { memo, useEffect, useRef, useCallback, useMemo } from "react";
 import { useForm, useWatch } from "react-hook-form";
-import { Button, Form } from "@heroui/react";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { useCategoryModalState } from "@/shared/store/ui-store";
 import { useCreateCategory } from "@/entities/category/api/use-create-category";
 import { useUpdateCategory } from "@/entities/category/api/use-update-category";
@@ -165,9 +166,8 @@ export const CategoryForm = memo(function CategoryForm({
   );
 
   return (
-    <Form
+    <form
       onSubmit={handleSubmit(onSubmit)}
-      validationBehavior="native"
       className={FORM_CLASSES.form}
     >
       {error && (
@@ -207,22 +207,28 @@ export const CategoryForm = memo(function CategoryForm({
       <div className={FORM_CLASSES.actions}>
         <Button
           type="button"
-          variant="light"
-          onPress={closeModal}
-          isDisabled={loading || uploadingImage}
+          variant="ghost"
+          onClick={closeModal}
+          disabled={loading || uploadingImage}
           className="min-w-24"
         >
           {FORM_MESSAGES.cancel}
         </Button>
         <Button
           type="submit"
-          color="primary"
-          isLoading={loading || uploadingImage}
+          disabled={loading || uploadingImage}
           className="min-w-32 font-semibold shadow-lg transition-shadow hover:shadow-xl"
         >
-          {isEditMode ? FORM_MESSAGES.save : FORM_MESSAGES.create}
+          {(loading || uploadingImage) ? (
+            <>
+              <Spinner className="mr-2 h-4 w-4" size={16} />
+              {isEditMode ? FORM_MESSAGES.save : FORM_MESSAGES.create}
+            </>
+          ) : (
+            isEditMode ? FORM_MESSAGES.save : FORM_MESSAGES.create
+          )}
         </Button>
       </div>
-    </Form>
+    </form>
   );
 });

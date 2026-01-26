@@ -2,17 +2,14 @@
 
 import { memo, useMemo } from "react";
 import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-} from "@heroui/react";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useCategoryModalState } from "@/shared/store/ui-store";
 import { CategoryForm } from "@/features/category/ui/category-form";
-import {
-  CATEGORY_MODAL_TEXTS,
-  CATEGORY_MODAL_CONFIG,
-} from "./constants/category-modal-constants";
+import { CATEGORY_MODAL_TEXTS } from "./constants/category-modal-constants";
 
 export const CategoryModal = memo(function CategoryModal() {
   const {
@@ -27,35 +24,21 @@ export const CategoryModal = memo(function CategoryModal() {
   );
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      size={CATEGORY_MODAL_CONFIG.size}
-      scrollBehavior={CATEGORY_MODAL_CONFIG.scrollBehavior}
-      classNames={CATEGORY_MODAL_CONFIG.classNames}
-    >
-      <ModalContent>
-        {() => (
-          <>
-            <ModalHeader
-              className={`flex flex-col gap-1 ${CATEGORY_MODAL_CONFIG.classNames.header}`}
-            >
-              <h2 className="text-xl font-bold text-default-900 dark:text-foreground">
-                {isEditMode
-                  ? CATEGORY_MODAL_TEXTS.edit
-                  : CATEGORY_MODAL_TEXTS.create}
-              </h2>
-            </ModalHeader>
-            <ModalBody
-              className={CATEGORY_MODAL_CONFIG.classNames.body}
-            >
-              <CategoryForm
-                editingCategory={editingCategory || undefined}
-              />
-            </ModalBody>
-          </>
-        )}
-      </ModalContent>
-    </Modal>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="text-xl font-bold">
+            {isEditMode
+              ? CATEGORY_MODAL_TEXTS.edit
+              : CATEGORY_MODAL_TEXTS.create}
+          </DialogTitle>
+        </DialogHeader>
+        <div className="px-1">
+          <CategoryForm
+            editingCategory={editingCategory || undefined}
+          />
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 });

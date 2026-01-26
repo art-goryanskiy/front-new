@@ -81,7 +81,7 @@ export const ProgramList = memo(function ProgramList({
   }, [categoryType]);
 
   const emptyStateIcon = useMemo(
-    () => <BookOpen className="h-10 w-10 text-default-400" />,
+    () => <BookOpen className="h-10 w-10 text-muted-foreground" />,
     []
   );
 

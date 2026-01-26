@@ -35,7 +35,7 @@ export const CommandPaletteResultsCount = memo(
     if (!countText) return null;
 
     return (
-      <div className="px-4 py-2 text-xs text-slate-500 dark:text-slate-400 border-b border-slate-200/50 dark:border-slate-800/50">
+      <div className="px-4 py-2 text-xs text-muted-foreground border-b border-border">
         {countText}
       </div>
     );

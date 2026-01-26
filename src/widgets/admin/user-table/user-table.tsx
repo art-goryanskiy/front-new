@@ -3,13 +3,12 @@
 import {
   Table,
   TableHeader,
-  TableColumn,
   TableBody,
   TableRow,
   TableCell,
-  Card,
-  CardBody,
-} from "@heroui/react";
+  TableHead,
+} from "@/components/ui/table";
+import { Card, CardContent } from "@/components/ui/card";
 import type { UserEntity } from "@/shared/api/generated/graphql";
 import { useUsers } from "@/entities/user/api/use-users";
 import { useUserModalState } from "@/shared/store/ui-store";
@@ -101,60 +100,40 @@ export const UserTable = memo(function UserTable() {
   }
 
   return (
-    <Card className="border-none shadow-lg">
-      <CardBody className="p-0">
+    <Card className={`shadow-lg ${TABLE_CLASSES.wrapper}`}>
+      <CardContent className="p-0">
         <Table
           id={tableId}
           aria-label="Таблица пользователей"
           aria-describedby={`${tableId}-description`}
-          classNames={TABLE_CLASSES}
-          removeWrapper
         >
           <TableHeader>
-            <TableColumn key="name" width="40%">
-              ПОЛЬЗОВАТЕЛЬ
-            </TableColumn>
-            <TableColumn
-              key="email"
-              className="hidden [851px]:table-cell"
-              width="30%"
-            >
-              EMAIL
-            </TableColumn>
-            <TableColumn
-              key="role"
-              className="hidden text-center md:table-cell"
-              width="15%"
-            >
-              РОЛЬ
-            </TableColumn>
-            <TableColumn
-              key="status"
-              className="hidden text-center lg:table-cell"
-              width="15%"
-            >
-              СТАТУС
-            </TableColumn>
-            <TableColumn
-              key="createdAt"
-              className="hidden text-center xl:table-cell"
-              width="15%"
-            >
-              ДАТА РЕГИСТРАЦИИ
-            </TableColumn>
-            <TableColumn
-              key="actions"
-              className="hidden text-center md:table-cell"
-              width="10%"
-            >
-              ДЕЙСТВИЯ
-            </TableColumn>
+            <TableRow>
+              <TableHead className={`min-w-0 w-[40%] ${TABLE_CLASSES.th}`}>
+                ПОЛЬЗОВАТЕЛЬ
+              </TableHead>
+              <TableHead className={`hidden min-w-0 [851px]:table-cell w-[30%] ${TABLE_CLASSES.th}`}>
+                EMAIL
+              </TableHead>
+              <TableHead className={`hidden text-center md:table-cell w-[15%] ${TABLE_CLASSES.th}`}>
+                РОЛЬ
+              </TableHead>
+              <TableHead className={`hidden text-center lg:table-cell w-[15%] ${TABLE_CLASSES.th}`}>
+                СТАТУС
+              </TableHead>
+              <TableHead className={`hidden text-center xl:table-cell w-[15%] ${TABLE_CLASSES.th}`}>
+                ДАТА РЕГИСТРАЦИИ
+              </TableHead>
+              <TableHead className={`hidden text-center md:table-cell w-[10%] ${TABLE_CLASSES.th}`}>
+                ДЕЙСТВИЯ
+              </TableHead>
+            </TableRow>
           </TableHeader>
           <TableBody>
             {users.map((user) => (
               <TableRow
                 key={user.id}
-                className="group"
+                className={`group cursor-pointer ${TABLE_CLASSES.tr}`}
                 onClick={(e) => handleRowClick(user, e)}
                 role="row"
                 tabIndex={0}
@@ -162,45 +141,22 @@ export const UserTable = memo(function UserTable() {
                 aria-label={`Пользователь ${user.email}`}
                 aria-describedby={`${tableId}-row-${user.id}`}
               >
-                <TableCell key="name" className="min-w-0">
+                <TableCell className={`min-w-0 ${TABLE_CLASSES.td}`}>
                   <UserTableNameContent user={user} />
                 </TableCell>
-
-                <TableCell
-                  key="email"
-                  className="hidden min-w-0 [851px]:table-cell"
-                >
+                <TableCell className={`hidden min-w-0 [851px]:table-cell ${TABLE_CLASSES.td}`}>
                   <UserTableEmailContent user={user} />
                 </TableCell>
-
-                <TableCell
-                  key="role"
-                  className="hidden text-center md:table-cell"
-                >
+                <TableCell className={`hidden text-center md:table-cell ${TABLE_CLASSES.td}`}>
                   <UserTableRoleContent user={user} />
                 </TableCell>
-
-                <TableCell
-                  key="status"
-                  className="hidden text-center lg:table-cell"
-                >
+                <TableCell className={`hidden text-center lg:table-cell ${TABLE_CLASSES.td}`}>
                   <UserTableStatusContent user={user} />
                 </TableCell>
-
-                <TableCell
-                  key="createdAt"
-                  className="hidden text-center xl:table-cell"
-                >
-                  <UserTableDateContent
-                    user={user}
-                    field="createdAt"
-                  />
+                <TableCell className={`hidden text-center xl:table-cell ${TABLE_CLASSES.td}`}>
+                  <UserTableDateContent user={user} field="createdAt" />
                 </TableCell>
-
-                <TableCell
-                  key="actions"
-                  className="hidden text-center md:table-cell"
-                >
+                <TableCell className={`hidden text-center md:table-cell ${TABLE_CLASSES.td}`}>
                   <TableActions
                     onEdit={() => handleEditClick(user)}
                     onDelete={() => handleDeleteClick(user)}
@@ -212,7 +168,7 @@ export const UserTable = memo(function UserTable() {
             ))}
           </TableBody>
         </Table>
-      </CardBody>
+      </CardContent>
     </Card>
   );
 });

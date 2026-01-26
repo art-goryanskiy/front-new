@@ -1,7 +1,7 @@
 "use client";
 
 import { memo, useMemo } from "react";
-import { Chip } from "@heroui/react";
+import { Badge } from "@/components/ui/badge";
 import type { CategoryEntity } from "@/shared/api/generated/graphql";
 import { formatProgramsCountAriaLabel } from "../utils/category-table-utils";
 
@@ -20,15 +20,9 @@ export const CategoryTableProgramsCountContent = memo(
     );
 
     return (
-      <Chip
-        color="primary"
-        variant="flat"
-        className="font-bold text-sm sm:text-base"
-        size="sm"
-        aria-label={ariaLabel}
-      >
+      <Badge variant="default" className="font-bold text-sm sm:text-base" aria-label={ariaLabel}>
         {count}
-      </Chip>
+      </Badge>
     );
   }
 );

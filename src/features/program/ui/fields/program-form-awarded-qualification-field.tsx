@@ -1,8 +1,9 @@
 "use client";
 
-import { memo, useMemo } from "react";
+import { memo } from "react";
 import { Controller, Control } from "react-hook-form";
-import { Input } from "@heroui/react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   FORM_LABELS,
   FORM_PLACEHOLDERS,
@@ -17,27 +18,21 @@ export const ProgramFormAwardedQualificationField = memo(
   function ProgramFormAwardedQualificationField({
     control,
   }: ProgramFormAwardedQualificationFieldProps) {
-    const classNames = useMemo(
-      () => ({
-        inputWrapper: "w-full",
-        input: "w-full",
-      }),
-      []
-    );
-
     return (
       <Controller
         name="awardedQualification"
         control={control}
         render={({ field }) => (
-          <Input
-            {...field}
-            label={FORM_LABELS.awardedQualification}
-            placeholder={FORM_PLACEHOLDERS.awardedQualification}
-            aria-label={FORM_LABELS.awardedQualification}
-            className="w-full"
-            classNames={classNames}
-          />
+          <div className="space-y-2 w-full">
+            <Label htmlFor="awardedQualification">{FORM_LABELS.awardedQualification}</Label>
+            <Input
+              {...field}
+              id="awardedQualification"
+              placeholder={FORM_PLACEHOLDERS.awardedQualification}
+              aria-label={FORM_LABELS.awardedQualification}
+              className="w-full"
+            />
+          </div>
         )}
       />
     );

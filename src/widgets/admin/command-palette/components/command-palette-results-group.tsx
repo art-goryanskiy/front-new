@@ -26,7 +26,7 @@ export const CommandPaletteResultsGroup = memo(
 
     return (
       <div className="py-2">
-        <div className="px-4 py-2 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+        <div className="px-4 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
           {title}
         </div>
         <div className="space-y-1">

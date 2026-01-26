@@ -1,7 +1,7 @@
 "use client";
 
 import { memo, useCallback } from "react";
-import { Button } from "@heroui/react";
+import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -22,11 +22,11 @@ export const BackButton = memo(function BackButton({
 
   return (
     <Button
-      variant="light"
-      startContent={<ArrowLeft className="h-4 w-4" />}
-      onPress={handleBack}
+      variant="ghost"
+      onClick={handleBack}
       className={className}
     >
+      <ArrowLeft className="mr-2 h-4 w-4" />
       {label}
     </Button>
   );

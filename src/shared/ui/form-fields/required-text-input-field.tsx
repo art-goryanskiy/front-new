@@ -7,7 +7,9 @@ import {
   type FieldPath,
   type FieldValues,
 } from "react-hook-form";
-import { Input } from "@heroui/react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 
 export interface RequiredTextInputFieldProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -40,33 +42,32 @@ export const RequiredTextInputField = memo(
       [requiredMessage]
     );
 
-    const classNames = useMemo(
-      () => ({
-        inputWrapper: "w-full",
-        input: "w-full",
-      }),
-      []
-    );
-
     return (
       <Controller
         name={name}
         control={control}
         rules={rules}
         render={({ field, fieldState }) => (
-          <Input
-            {...field}
-            label={label}
-            placeholder={placeholder}
-            isRequired
-            isInvalid={fieldState.invalid}
-            errorMessage={fieldState.error?.message}
-            description={description}
-            isDisabled={isDisabled}
-            aria-label={label}
-            className={className}
-            classNames={classNames}
-          />
+          <div className={cn("space-y-2", className)}>
+            <Label htmlFor={name}>{label} *</Label>
+            <Input
+              {...field}
+              id={name}
+              placeholder={placeholder}
+              required
+              disabled={isDisabled}
+              aria-invalid={fieldState.invalid}
+              aria-label={label}
+            />
+            {description && !fieldState.error && (
+              <p className="text-sm text-muted-foreground">{description}</p>
+            )}
+            {fieldState.error?.message && (
+              <p className="text-sm text-destructive">
+                {fieldState.error.message}
+              </p>
+            )}
+          </div>
         )}
       />
     );

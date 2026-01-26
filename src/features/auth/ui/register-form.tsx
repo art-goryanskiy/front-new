@@ -1,7 +1,8 @@
 "use client";
 
 import { memo } from "react";
-import { Form, Button } from "@heroui/react";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { useRegisterForm } from "./hooks/use-register-form";
 import { RegisterFormError } from "./components/register-form-error";
 import { RegisterFormEmailField } from "./fields/register-form-email-field";
@@ -20,9 +21,8 @@ export const RegisterForm = memo(function RegisterForm() {
       <h1 className={REGISTER_FORM_CLASSES.title}>
         {REGISTER_FORM_TEXTS.title}
       </h1>
-      <Form
+      <form
         onSubmit={handleSubmit(onSubmit)}
-        validationBehavior="native"
         className={REGISTER_FORM_CLASSES.form}
       >
         <RegisterFormError error={error} />
@@ -32,13 +32,19 @@ export const RegisterForm = memo(function RegisterForm() {
 
         <Button
           type="submit"
-          color="primary"
           className={REGISTER_FORM_CLASSES.submitButton}
-          isLoading={loading}
+          disabled={loading}
         >
-          {REGISTER_FORM_TEXTS.submit}
+          {loading ? (
+            <>
+              <Spinner className="mr-2 h-4 w-4" size={16} />
+              {REGISTER_FORM_TEXTS.submit}
+            </>
+          ) : (
+            REGISTER_FORM_TEXTS.submit
+          )}
         </Button>
-      </Form>
+      </form>
     </div>
   );
 });

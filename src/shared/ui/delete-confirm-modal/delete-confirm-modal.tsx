@@ -2,13 +2,14 @@
 
 import { memo, useCallback, useMemo } from "react";
 import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Button,
-} from "@heroui/react";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import {
   DELETE_CONFIRM_MODAL_TEXTS,
   DELETE_CONFIRM_MODAL_CLASSES,
@@ -40,60 +41,55 @@ export const DeleteConfirmModal = memo(function DeleteConfirmModal({
   );
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="lg">
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-col gap-1">
-              {title}
-            </ModalHeader>
-            <ModalBody>
-              {error && (
-                <div
-                  className={
-                    DELETE_CONFIRM_MODAL_CLASSES.errorContainer
-                  }
-                >
-                  <p
-                    className={DELETE_CONFIRM_MODAL_CLASSES.errorText}
-                  >
-                    {errorMessage}
-                  </p>
-                </div>
-              )}
-              <p className={DELETE_CONFIRM_MODAL_CLASSES.mainText}>
-                Вы уверены, что хотите удалить {entityType}{" "}
-                <span
-                  className={DELETE_CONFIRM_MODAL_CLASSES.itemName}
-                >
-                  &quot;{itemName}&quot;
-                </span>
-                ?
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent showClose={!loading}>
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4 py-4">
+          {error && (
+            <div className={DELETE_CONFIRM_MODAL_CLASSES.errorContainer}>
+              <p className={DELETE_CONFIRM_MODAL_CLASSES.errorText}>
+                {errorMessage}
               </p>
-              <p className={DELETE_CONFIRM_MODAL_CLASSES.warningText}>
-                {DELETE_CONFIRM_MODAL_TEXTS.warning} {entityType}{" "}
-                {DELETE_CONFIRM_MODAL_TEXTS.willBeDeleted}
-              </p>
-            </ModalBody>
-            <ModalFooter>
-              <Button
-                variant="light"
-                onPress={onClose}
-                isDisabled={loading}
-              >
-                {DELETE_CONFIRM_MODAL_TEXTS.cancel}
-              </Button>
-              <Button
-                color="danger"
-                onPress={handleDelete}
-                isLoading={loading}
-              >
+            </div>
+          )}
+          <p className={DELETE_CONFIRM_MODAL_CLASSES.mainText}>
+            Вы уверены, что хотите удалить {entityType}{" "}
+            <span className={DELETE_CONFIRM_MODAL_CLASSES.itemName}>
+              &quot;{itemName}&quot;
+            </span>
+            ?
+          </p>
+          <p className={DELETE_CONFIRM_MODAL_CLASSES.warningText}>
+            {DELETE_CONFIRM_MODAL_TEXTS.warning} {entityType}{" "}
+            {DELETE_CONFIRM_MODAL_TEXTS.willBeDeleted}
+          </p>
+        </div>
+        <DialogFooter>
+          <Button
+            variant="ghost"
+            onClick={onClose}
+            disabled={loading}
+          >
+            {DELETE_CONFIRM_MODAL_TEXTS.cancel}
+          </Button>
+          <Button
+            variant="destructive"
+            onClick={handleDelete}
+            disabled={loading}
+          >
+            {loading ? (
+              <>
+                <Spinner className="mr-2 h-4 w-4" size={16} />
                 {DELETE_CONFIRM_MODAL_TEXTS.delete}
-              </Button>
-            </ModalFooter>
-          </>
-        )}
-      </ModalContent>
-    </Modal>
+              </>
+            ) : (
+              DELETE_CONFIRM_MODAL_TEXTS.delete
+            )}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 });

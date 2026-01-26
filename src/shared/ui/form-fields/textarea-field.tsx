@@ -1,13 +1,15 @@
 "use client";
 
-import { JSX, memo, useMemo } from "react";
+import { JSX, memo } from "react";
 import {
   Controller,
   type Control,
   type FieldPath,
   type FieldValues,
 } from "react-hook-form";
-import { Textarea } from "@heroui/react";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 
 export interface TextareaFieldProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -34,30 +36,31 @@ export const TextareaField = memo(function TextareaField<
   description,
   isDisabled,
 }: TextareaFieldProps<TFieldValues>) {
-  const classNames = useMemo(
-    () => ({
-      inputWrapper: "w-full",
-      input: "w-full",
-    }),
-    []
-  );
-
   return (
     <Controller
       name={name}
       control={control}
-      render={({ field }) => (
-        <Textarea
-          {...field}
-          label={label}
-          placeholder={placeholder}
-          description={description}
-          minRows={minRows}
-          isDisabled={isDisabled}
-          aria-label={label}
-          className={className}
-          classNames={classNames}
-        />
+      render={({ field, fieldState }) => (
+        <div className={cn("space-y-2", className)}>
+          <Label htmlFor={name}>{label}</Label>
+          <Textarea
+            {...field}
+            id={name}
+            placeholder={placeholder}
+            rows={minRows}
+            disabled={isDisabled}
+            aria-invalid={fieldState.invalid}
+            aria-label={label}
+          />
+          {description && !fieldState.error && (
+            <p className="text-sm text-muted-foreground">{description}</p>
+          )}
+          {fieldState.error?.message && (
+            <p className="text-sm text-destructive">
+              {fieldState.error.message}
+            </p>
+          )}
+        </div>
       )}
     />
   );

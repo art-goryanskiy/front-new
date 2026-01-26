@@ -9,9 +9,10 @@ export const DELETE_CONFIRM_MODAL_TEXTS = {
 } as const;
 
 export const DELETE_CONFIRM_MODAL_CLASSES = {
-  errorContainer: "p-3 bg-danger-50 border border-danger-200 rounded-lg",
-  errorText: "text-danger-800 text-sm",
-  mainText: "text-default-700",
+  errorContainer:
+    "p-3 bg-destructive/10 border border-destructive/20 rounded-lg",
+  errorText: "text-destructive text-sm",
+  mainText: "text-foreground",
   itemName: "font-semibold",
-  warningText: "text-sm text-default-500",
+  warningText: "text-sm text-muted-foreground",
 } as const;

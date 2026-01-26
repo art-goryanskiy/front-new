@@ -53,7 +53,7 @@ export const SearchPanel = memo(function SearchPanel({
             ease: [0.4, 0, 0.2, 1],
           }}
           style={{ overflow: "hidden" }}
-          className="sticky top-0 z-50 border-b border-default-200 bg-background shadow-sm dark:border-default-100"
+          className="sticky top-0 z-50 border-b border-border bg-background shadow-sm"
         >
           <div className="mx-auto w-full max-w-7xl px-4 py-4 sm:px-6 md:px-8 lg:px-10 xl:px-12">
             <div

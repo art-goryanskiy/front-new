@@ -127,14 +127,6 @@ export function usePublicHeaderState() {
     setState((prev) => ({ ...prev, isMobileMenuOpen: false }));
   }, []);
 
-  const handleMobileCategoryClick = useCallback(
-    (path: string) => {
-      router.push(path);
-      setState((prev) => ({ ...prev, isMobileMenuOpen: false }));
-    },
-    [router]
-  );
-
   const handleLoginClick = useCallback(() => {
     router.push("/login");
   }, [router]);
@@ -170,7 +162,6 @@ export function usePublicHeaderState() {
     handleSearchClose,
     toggleMobileMenu,
     closeMobileMenu,
-    handleMobileCategoryClick,
     handleLoginClick,
   };
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { memo, useMemo } from "react";
-import { Chip } from "@heroui/react";
+import { Badge } from "@/components/ui/badge";
 import type { ProgramTableCellContentProps } from "../types/program-table.types";
 
 export const ProgramTableQualificationContent = memo(
@@ -15,15 +15,9 @@ export const ProgramTableQualificationContent = memo(
     );
 
     return (
-      <Chip
-        color="success"
-        variant="flat"
-        size="sm"
-        className="font-semibold"
-        aria-label={ariaLabel}
-      >
+      <Badge variant="success" className="font-semibold" aria-label={ariaLabel}>
         {qualification}
-      </Chip>
+      </Badge>
     );
   }
 );

@@ -34,17 +34,17 @@ export const FORM_CLASSES = {
     "p-4 bg-danger-50/80 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-xl backdrop-blur-sm w-full",
   errorText: "text-danger-800 dark:text-danger-200 text-sm font-medium",
   section:
-    "space-y-4 p-5 bg-default-50/50 dark:bg-content1/50 rounded-xl border border-default-200/50 dark:border-default-800/50 w-full",
+    "space-y-4 p-5 bg-muted/50 rounded-xl border border-border w-full",
   sectionTitle:
-    "text-sm font-semibold text-default-700 dark:text-foreground/90 uppercase tracking-wide mb-2",
+    "text-sm font-semibold text-foreground uppercase tracking-wide mb-2",
   imageContainer: "space-y-3 w-full",
   imagePreview:
-    "flex items-center gap-4 p-4 bg-white dark:bg-content1 rounded-lg border border-default-200 dark:border-default-800 w-full",
+    "flex items-center gap-4 p-4 bg-card rounded-lg border border-border w-full",
   imageInput: "flex-1 w-full",
-  imageFileName: "text-xs text-default-500 dark:text-foreground/70 mt-2",
+  imageFileName: "text-xs text-muted-foreground mt-2",
   uploadingText: "text-xs text-primary-600 dark:text-primary-400 font-medium",
   actions:
-    "flex gap-3 justify-end pt-6 border-t border-default-200 dark:border-default-800 w-full",
+    "flex gap-3 justify-end pt-6 border-t border-border w-full",
 } as const;
 
 /**

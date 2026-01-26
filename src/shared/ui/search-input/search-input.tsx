@@ -1,7 +1,8 @@
 "use client";
 
 import { memo, useCallback, useMemo } from "react";
-import { Input, Kbd, Button } from "@heroui/react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { Search, X } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
@@ -36,6 +37,13 @@ export const SearchInput = memo(function SearchInput({
     }
   }, [onValueChange, clearSearch, searchOriginPath, router]);
 
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      onValueChange(e.target.value);
+    },
+    [onValueChange]
+  );
+
   const handleFocus = useCallback(() => {
     if (!searchOriginPath && pathname) {
       setSearchOriginPath(pathname);
@@ -45,12 +53,9 @@ export const SearchInput = memo(function SearchInput({
 
   const keyboardHint = useMemo(
     () => (
-      <Kbd
-        keys={["command"]}
-        className="border-slate-300/50 bg-slate-100/80 text-slate-600 dark:border-slate-600/50 dark:bg-slate-700/80 dark:text-slate-300"
-      >
+      <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 text-xs text-muted-foreground">
         {SEARCH_INPUT_TEXTS.keyboardHint}
-      </Kbd>
+      </kbd>
     ),
     []
   );
@@ -58,61 +63,56 @@ export const SearchInput = memo(function SearchInput({
   return (
     <motion.div
       {...SEARCH_INPUT_ANIMATIONS.wrapper}
-      className={`${SEARCH_INPUT_CLASSES.wrapper} ${className || ""}`}
+      className={`group ${SEARCH_INPUT_CLASSES.wrapper} ${className || ""}`}
     >
-      <Input
-        value={value}
-        onValueChange={onValueChange}
-        placeholder={placeholder}
-        onFocus={handleFocus}
-        startContent={
-          <motion.div
-            {...SEARCH_INPUT_ANIMATIONS.icon}
-            className="flex items-center"
-          >
-            <Search
-              className="h-4 w-4 shrink-0 text-slate-500 transition-colors duration-300 group-hover:text-primary-600 sm:h-5 sm:w-5 dark:text-slate-400 dark:group-hover:text-primary-400"
-              aria-hidden="true"
-            />
-          </motion.div>
-        }
-        endContent={
-          <div className="flex items-center gap-1">
-            {hasValue && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
+      <div className="relative flex w-full items-center">
+        <motion.div
+          {...SEARCH_INPUT_ANIMATIONS.icon}
+          className="pointer-events-none absolute left-3 flex items-center"
+        >
+          <Search
+            className="h-4 w-4 shrink-0 text-muted-foreground transition-colors duration-300 group-hover:text-primary sm:h-5 sm:w-5"
+            aria-hidden="true"
+          />
+        </motion.div>
+        <Input
+          value={value}
+          onChange={handleChange}
+          placeholder={placeholder}
+          onFocus={handleFocus}
+          className="pl-9 pr-20"
+          aria-label={placeholder}
+        />
+        <div className="absolute right-2 flex items-center gap-1">
+          {hasValue && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+            >
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={handleClear}
+                className="h-6 w-6"
+                aria-label="Очистить поиск"
               >
-                <Button
-                  isIconOnly
-                  size="sm"
-                  variant="light"
-                  onPress={handleClear}
-                  className="h-6 w-6 min-w-6"
-                  aria-label="Очистить поиск"
-                >
-                  <X className="h-3.5 w-3.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300" />
-                </Button>
-              </motion.div>
-            )}
-            {showKeyboardHint && !hasValue && (
-              <motion.div
-                initial={{ opacity: 0.7 }}
-                whileHover={{ opacity: 1 }}
-                className="hidden shrink-0 items-center gap-1 sm:flex"
-              >
-                {keyboardHint}
-              </motion.div>
-            )}
-          </div>
-        }
-        classNames={SEARCH_INPUT_CLASSES}
-        variant="bordered"
-        size="md"
-        radius="lg"
-        aria-label={placeholder}
-      />
+                <X className="h-3.5 w-3.5 text-muted-foreground" />
+              </Button>
+            </motion.div>
+          )}
+          {showKeyboardHint && !hasValue && (
+            <motion.div
+              initial={{ opacity: 0.7 }}
+              whileHover={{ opacity: 1 }}
+              className="hidden shrink-0 items-center gap-1 sm:flex"
+            >
+              {keyboardHint}
+            </motion.div>
+          )}
+        </div>
+      </div>
     </motion.div>
   );
 });

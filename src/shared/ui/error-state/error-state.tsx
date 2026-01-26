@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardBody } from "@heroui/react";
+import { Card, CardContent } from "@/components/ui/card";
 import { memo } from "react";
 
 interface ErrorStateProps {
@@ -16,15 +16,15 @@ export const ErrorState = memo(function ErrorState({
 }: ErrorStateProps) {
   return (
     <Card
-      className={`border-danger-200 bg-linear-to-br from-danger-50 to-danger-100 shadow-lg ${className}`}
+      className={`border-destructive/30 bg-destructive/5 ${className}`}
       role="alert"
       aria-live="assertive"
     >
-      <CardBody>
-        <p className="text-danger-800 font-semibold">
+      <CardContent className="pt-6">
+        <p className="text-destructive font-semibold">
           {title}: {message}
         </p>
-      </CardBody>
+      </CardContent>
     </Card>
   );
 });

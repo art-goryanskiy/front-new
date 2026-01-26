@@ -25,7 +25,7 @@ export const ProgramDetailPricing = memo(
               className={PROGRAM_DETAIL_CLASSES.pricingItem}
             >
               <div>
-                <div className="font-semibold text-default-900 dark:text-foreground">
+                <div className="font-semibold text-foreground">
                   {pricing.hours} часов
                 </div>
               </div>

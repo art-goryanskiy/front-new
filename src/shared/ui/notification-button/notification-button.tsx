@@ -1,7 +1,8 @@
 "use client";
 
 import { memo, useMemo, useCallback } from "react";
-import { Button, Chip } from "@heroui/react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 import { Bell } from "lucide-react";
 import { NOTIFICATION_BUTTON_CLASSES } from "./constants/notification-button-constants";
@@ -37,27 +38,26 @@ export const NotificationButton = memo(function NotificationButton({
       className={className}
     >
       <Button
-        isIconOnly
-        variant="light"
-        size={size}
+        variant="ghost"
+        size="icon"
         className={NOTIFICATION_BUTTON_CLASSES.button}
         onClick={handleClick}
         aria-label="Уведомления"
         aria-describedby={showBadge ? badgeId : undefined}
       >
         <Bell
-          className={`w-4 h-4 sm:w-5 sm:h-5 text-slate-600 dark:text-slate-400`}
+          className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground"
           size={iconSize}
         />
         {showBadge && (
-          <Chip
-            size="sm"
+          <Badge
+            variant="destructive"
             className={NOTIFICATION_BUTTON_CLASSES.badge}
             id={badgeId}
             aria-label={`${count} уведомлений`}
           >
             {formattedCount}
-          </Chip>
+          </Badge>
         )}
       </Button>
     </motion.div>

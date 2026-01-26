@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { Card, CardBody } from "@heroui/react";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface ProgramDetailDescriptionProps {
   description: string;
@@ -10,15 +10,15 @@ export const ProgramDetailDescription = memo(
     description,
   }: ProgramDetailDescriptionProps) {
     return (
-      <Card className="border-none shadow-lg">
-        <CardBody className="p-6">
-          <h2 className="mb-4 text-xl font-semibold text-default-900 dark:text-foreground">
+      <Card className="shadow-lg">
+        <CardContent className="p-6">
+          <h2 className="mb-4 text-xl font-semibold text-foreground">
             Описание
           </h2>
-          <p className="whitespace-pre-line text-default-700 dark:text-foreground">
+          <p className="whitespace-pre-line text-foreground">
             {description}
           </p>
-        </CardBody>
+        </CardContent>
       </Card>
     );
   }

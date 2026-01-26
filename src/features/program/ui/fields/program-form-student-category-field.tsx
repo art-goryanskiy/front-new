@@ -1,8 +1,9 @@
 "use client";
 
-import { memo, useMemo } from "react";
+import { memo } from "react";
 import { Controller, Control } from "react-hook-form";
-import { Input } from "@heroui/react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   FORM_LABELS,
   FORM_PLACEHOLDERS,
@@ -17,27 +18,21 @@ export const ProgramFormStudentCategoryField = memo(
   function ProgramFormStudentCategoryField({
     control,
   }: ProgramFormStudentCategoryFieldProps) {
-    const classNames = useMemo(
-      () => ({
-        inputWrapper: "w-full",
-        input: "w-full",
-      }),
-      []
-    );
-
     return (
       <Controller
         name="studentCategory"
         control={control}
         render={({ field }) => (
-          <Input
-            {...field}
-            label={FORM_LABELS.studentCategory}
-            placeholder={FORM_PLACEHOLDERS.studentCategory}
-            aria-label={FORM_LABELS.studentCategory}
-            className="w-full"
-            classNames={classNames}
-          />
+          <div className="space-y-2 w-full">
+            <Label htmlFor="studentCategory">{FORM_LABELS.studentCategory}</Label>
+            <Input
+              {...field}
+              id="studentCategory"
+              placeholder={FORM_PLACEHOLDERS.studentCategory}
+              aria-label={FORM_LABELS.studentCategory}
+              className="w-full"
+            />
+          </div>
         )}
       />
     );

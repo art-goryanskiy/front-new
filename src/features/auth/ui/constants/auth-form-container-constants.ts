@@ -17,14 +17,13 @@ export const AUTH_FORM_CONTAINER_TEXTS = {
 export const AUTH_FORM_CONTAINER_CLASSES = {
   // Контейнер - на весь экран с улучшенной темной темой и адаптивностью
   container:
-    "relative w-full min-h-screen h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 " +
-    "dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 overflow-hidden max-md:min-h-screen",
+    "relative w-full min-h-screen h-screen bg-background overflow-hidden max-md:min-h-screen",
   containerActive: "active",
 
   // Правая панель - разделена на части: логотип, панель приветствия (на мобильных), форма
   rightPanel:
-    "absolute right-0 w-1/2 h-full bg-white dark:bg-slate-900 flex flex-col z-[1] " +
-    "border-l border-slate-200 dark:border-slate-800 max-md:w-full max-md:h-full " +
+    "absolute right-0 w-1/2 h-full bg-background flex flex-col z-[1] " +
+    "border-l border-border max-md:w-full max-md:h-full " +
     "max-md:border-l-0 max-md:border-t max-[639px]:px-4",
 
   // Верхняя часть - Логотип (увеличен для планшета и мобильных)
@@ -48,13 +47,13 @@ export const AUTH_FORM_CONTAINER_CLASSES = {
     "border-2 border-primary-200/60 dark:border-primary-600/40 shadow-lg max-sm:p-4 " +
     "max-sm:rounded-lg",
   mobileTogglePanelTitle:
-    "text-2xl font-bold mb-2 text-slate-900 dark:text-slate-50 max-sm:text-lg " +
+    "text-2xl font-bold mb-2 text-foreground max-sm:text-lg " +
     "max-sm:mb-1.5 transition-opacity duration-300 leading-tight text-center",
   mobileTogglePanelTitleBrand:
-    "block text-3xl font-normal text-primary-600 dark:text-primary-400 max-sm:text-2xl " +
+    "block text-3xl font-normal text-primary max-sm:text-2xl " +
     "mt-1 max-sm:mt-0.5",
   mobileTogglePanelDescription:
-    "text-sm mb-4 text-slate-700 dark:text-slate-300 max-sm:text-xs max-sm:mb-3 " +
+    "text-sm mb-4 text-muted-foreground max-sm:text-xs max-sm:mb-3 " +
     "transition-opacity duration-300 font-medium text-center",
   mobileToggleButton:
     "w-full max-w-[220px] h-11 bg-primary-600 dark:bg-primary-500 text-white font-semibold " +
@@ -95,7 +94,7 @@ export const AUTH_FORM_CONTAINER_CLASSES = {
   formBoxContent:
     "w-full max-w-md mx-auto max-sm:max-w-full max-md:pt-0 max-md:flex max-md:flex-col max-md:items-center",
   formTitle:
-    "text-5xl font-bold mb-2 text-slate-900 dark:text-slate-50 max-xl:text-4xl " +
+    "text-5xl font-bold mb-2 text-foreground max-xl:text-4xl " +
     "max-lg:text-4xl max-md:text-3xl max-sm:text-2xl max-sm:mb-1 " +
     "transition-opacity duration-300 max-md:mt-0",
 

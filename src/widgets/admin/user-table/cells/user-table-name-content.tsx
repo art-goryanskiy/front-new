@@ -1,7 +1,7 @@
 "use client";
 
 import { memo, useMemo } from "react";
-import { Avatar } from "@heroui/react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { UserEntity } from "@/shared/api/generated/graphql";
 
 interface UserTableNameContentProps {
@@ -59,29 +59,22 @@ export const UserTableNameContent = memo(
 
     return (
       <div className="flex w-full min-w-0 items-center gap-2 sm:gap-3 lg:gap-4">
-        <Avatar
-          src={user.profile?.avatar || undefined}
-          name={displayName}
-          size="sm"
-          className="hidden shrink-0 shadow-md transition-transform group-hover:scale-110 sm:flex"
-          showFallback
-          fallback={
-            <span className="text-xs font-bold text-primary-700 sm:text-sm">
-              {initials}
-            </span>
-          }
-          alt={avatarAlt}
-        />
+        <Avatar className="hidden h-9 w-9 shrink-0 shadow-md transition-transform group-hover:scale-110 sm:flex">
+          <AvatarImage src={user.profile?.avatar} alt={avatarAlt} />
+          <AvatarFallback className="text-xs font-bold text-primary sm:text-sm">
+            {initials}
+          </AvatarFallback>
+        </Avatar>
         <div className="flex w-full min-w-0 flex-1 flex-col overflow-hidden">
           <p
-            className="line-clamp-2 text-sm font-bold text-default-900 transition-colors group-hover:text-primary-600 sm:text-base"
+            className="line-clamp-2 text-sm font-bold text-foreground transition-colors group-hover:text-primary sm:text-base"
             title={displayName}
           >
             {displayName}
           </p>
           {phone && (
             <p
-              className="line-clamp-1 text-xs text-default-500"
+              className="line-clamp-1 text-xs text-muted-foreground"
               title={phone}
             >
               {phone}

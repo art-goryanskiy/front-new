@@ -90,12 +90,12 @@ export const CommandPaletteCommandItem = memo(
               {highlightedLabel}
             </div>
             {categoryText && (
-              <div className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+              <div className="text-xs text-muted-foreground mt-0.5">
                 {categoryText}
               </div>
             )}
             {highlightedDescription && (
-              <div className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">
+              <div className="text-xs text-muted-foreground truncate mt-0.5">
                 {highlightedDescription}
               </div>
             )}

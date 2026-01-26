@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { Card, CardBody } from "@heroui/react";
+import { Card, CardContent } from "@/components/ui/card";
 import type { ProgramSubProgramEntity } from "@/shared/api/generated/graphql";
 import { PROGRAM_DETAIL_CLASSES } from "../constants/program-detail-constants";
 
@@ -12,9 +12,9 @@ export const ProgramDetailSubPrograms = memo(
     subPrograms,
   }: ProgramDetailSubProgramsProps) {
     return (
-      <Card className="border-none shadow-lg">
-        <CardBody className="p-6">
-          <h2 className="mb-4 text-xl font-semibold text-default-900 dark:text-foreground">
+      <Card className="shadow-lg">
+        <CardContent className="p-6">
+          <h2 className="mb-4 text-xl font-semibold text-foreground">
             Подпрограммы
           </h2>
           <div className={PROGRAM_DETAIL_CLASSES.subProgramsList}>
@@ -23,18 +23,18 @@ export const ProgramDetailSubPrograms = memo(
                 key={index}
                 className={PROGRAM_DETAIL_CLASSES.subProgramCard}
               >
-                <h3 className="mb-2 font-semibold text-default-900 dark:text-foreground">
+                <h3 className="mb-2 font-semibold text-foreground">
                   {subProgram.title}
                 </h3>
                 {subProgram.description && (
-                  <p className="text-sm text-default-600 dark:text-foreground/95">
+                  <p className="text-sm text-muted-foreground">
                     {subProgram.description}
                   </p>
                 )}
               </div>
             ))}
           </div>
-        </CardBody>
+        </CardContent>
       </Card>
     );
   }

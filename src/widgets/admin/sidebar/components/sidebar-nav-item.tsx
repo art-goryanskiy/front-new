@@ -1,7 +1,13 @@
 "use client";
 
 import { memo, useCallback, useMemo } from "react";
-import { Button, Tooltip } from "@heroui/react";
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  TooltipProvider,
+} from "@/components/ui/tooltip";
 import { Icon } from "@/shared/ui/icons/icon";
 import { SIDEBAR_CLASSES, ICON_SIZES } from "../constants/sidebar-constants";
 import type { SidebarNavItemProps } from "../types/sidebar.types";
@@ -12,7 +18,7 @@ export const SidebarNavItem = memo(function SidebarNavItem({
   isCollapsed,
   onNavigate,
 }: SidebarNavItemProps) {
-  const handlePress = useCallback(() => {
+  const handleClick = useCallback(() => {
     onNavigate(item.path);
   }, [onNavigate, item.path]);
 
@@ -41,19 +47,16 @@ export const SidebarNavItem = memo(function SidebarNavItem({
   const button = (
     <Button
       key={item.path}
-      variant={isActive ? "solid" : "light"}
-      color={isActive ? item.color : "default"}
+      variant={isActive ? "default" : "ghost"}
       className={buttonClasses}
-      onPress={handlePress}
-      startContent={
-        <Icon
-          name={item.icon}
-          className={iconClasses}
-          size={ICON_SIZES.desktop}
-          aria-label={item.label}
-        />
-      }
+      onClick={handleClick}
     >
+      <Icon
+        name={item.icon}
+        className={iconClasses}
+        size={ICON_SIZES.desktop}
+        aria-label={item.label}
+      />
       {!isCollapsed && (
         <span className={SIDEBAR_CLASSES.navItem.label}>{item.label}</span>
       )}
@@ -61,16 +64,12 @@ export const SidebarNavItem = memo(function SidebarNavItem({
   );
 
   return isCollapsed ? (
-    <Tooltip
-      key={item.path}
-      content={item.label}
-      placement="right"
-      classNames={{
-        content: SIDEBAR_CLASSES.tooltip.content,
-      }}
-    >
-      {button}
-    </Tooltip>
+    <TooltipProvider key={item.path}>
+      <Tooltip>
+        <TooltipTrigger asChild>{button}</TooltipTrigger>
+        <TooltipContent side="right">{item.label}</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   ) : (
     button
   );

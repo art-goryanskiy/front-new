@@ -1,5 +1,6 @@
 import { memo } from "react";
-import { Button, Card, CardBody } from "@heroui/react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { BookOpen } from "lucide-react";
 import type {
   ProgramEntity,
@@ -21,19 +22,18 @@ export const ProgramDetailSidebar = memo(
   }: ProgramDetailSidebarProps) {
     return (
       <div className={PROGRAM_DETAIL_CLASSES.sidebar}>
-        <Card className="sticky top-24 border-none shadow-lg">
-          <CardBody className="space-y-6 p-6">
+        <Card className="sticky top-24 shadow-lg">
+          <CardContent className="space-y-6 p-6">
             <ProgramDetailPricing pricingList={pricingList} />
             <ProgramDetailAdditionalInfo program={program} />
             <Button
-              color="primary"
               size="lg"
               className={PROGRAM_DETAIL_CLASSES.cta}
-              startContent={<BookOpen className="h-5 w-5" />}
             >
+              <BookOpen className="mr-2 h-5 w-5" />
               Записаться на программу
             </Button>
-          </CardBody>
+          </CardContent>
         </Card>
       </div>
     );

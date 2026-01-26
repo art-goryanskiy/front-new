@@ -4,12 +4,12 @@ import { memo, useMemo, useCallback } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  Button,
-  Dropdown,
-  DropdownTrigger,
   DropdownMenu,
-  DropdownItem,
-} from "@heroui/react";
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 import { Home, ChevronDown } from "lucide-react";
 import { PUBLIC_HEADER_CLASSES } from "../constants/public-header-constants";
 import { CATEGORY_TYPE_LABELS } from "@/shared/constants/categories";
@@ -48,17 +48,16 @@ export const DesktopNavigation = memo(function DesktopNavigation({
     [pathname]
   );
 
-  const handleDropdownAction = useCallback(
-    (key: string | number) => {
-      const category = EDUCATION_CATEGORIES.find(
-        (cat) => cat.path === key
-      );
-      if (category) {
-        router.push(category.path);
-      }
+  const handleSelect = useCallback(
+    (path: string) => {
+      router.push(path);
     },
     [router]
   );
+
+  const linkClass = isEducationActive
+    ? "font-semibold text-primary"
+    : "text-muted-foreground hover:text-primary";
 
   return (
     <nav className={PUBLIC_HEADER_CLASSES.nav}>
@@ -71,55 +70,44 @@ export const DesktopNavigation = memo(function DesktopNavigation({
         }
         aria-label="Главная"
       >
-        <Home className="text-default-600 hover:text-primary-600 dark:text-foreground dark:hover:text-primary-400" />
+        <Home className="text-muted-foreground hover:text-primary" />
       </Link>
 
       {isMounted ? (
-        <Dropdown placement="bottom-start">
-          <DropdownTrigger>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
             <Button
-              variant="light"
-              className={`text-sm font-medium ${
-                isEducationActive
-                  ? "font-semibold text-primary-600 dark:text-primary-400"
-                  : "text-default-700 hover:text-primary-600 dark:text-foreground dark:hover:text-primary-400"
-              } transition-colors`}
-              endContent={<ChevronDown className="h-4 w-4" />}
+              variant="ghost"
+              className={`text-sm font-medium ${linkClass} transition-colors`}
             >
               Обучение
+              <ChevronDown className="ml-1 h-4 w-4" />
             </Button>
-          </DropdownTrigger>
-          <DropdownMenu
-            aria-label="Категории обучения"
-            onAction={handleDropdownAction}
-          >
+          </DropdownMenuTrigger>
+          <DropdownMenuContent aria-label="Категории обучения">
             {EDUCATION_CATEGORIES.map((category) => (
-              <DropdownItem
+              <DropdownMenuItem
                 key={category.path}
-                textValue={category.label}
+                onClick={() => handleSelect(category.path)}
                 className={
                   pathname === category.path
-                    ? "font-semibold text-primary-600 dark:text-primary-400"
-                    : "dark:text-foreground"
+                    ? "font-semibold text-primary"
+                    : ""
                 }
               >
                 {category.label}
-              </DropdownItem>
+              </DropdownMenuItem>
             ))}
-          </DropdownMenu>
-        </Dropdown>
+          </DropdownMenuContent>
+        </DropdownMenu>
       ) : (
         <Button
-          variant="light"
-          className={`text-sm font-medium ${
-            isEducationActive
-              ? "font-semibold text-primary-600 dark:text-primary-400"
-              : "text-default-700 hover:text-primary-600 dark:text-foreground dark:hover:text-primary-400"
-          } transition-colors`}
-          endContent={<ChevronDown className="h-4 w-4" />}
-          onPress={() => router.push("/qualification-upgrade")}
+          variant="ghost"
+          className={`text-sm font-medium ${linkClass}`}
+          onClick={() => router.push("/qualification-upgrade")}
         >
           Обучение
+          <ChevronDown className="ml-1 h-4 w-4" />
         </Button>
       )}
     </nav>

@@ -10,8 +10,8 @@ export const PROGRAM_MODAL_CONFIG = {
   size: "4xl" as const,
   scrollBehavior: "inside" as const,
   classNames: {
-    base: "bg-white/95 dark:bg-content1/95 backdrop-blur-xl border border-default-200 dark:border-default-800 shadow-2xl",
-    header: "border-b border-default-200 dark:border-default-800 pb-4",
+base: "bg-background/95 backdrop-blur-xl border border-border shadow-2xl",
+  header: "border-b border-border pb-4",
     body: "py-6",
   },
 } as const;

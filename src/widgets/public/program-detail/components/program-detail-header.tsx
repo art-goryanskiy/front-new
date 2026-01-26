@@ -19,13 +19,13 @@ export const ProgramDetailHeader = memo(function ProgramDetailHeader({
       </h1>
       <div className={PROGRAM_DETAIL_CLASSES.meta}>
         {program.views > 0 && (
-          <div className="flex items-center gap-1 text-default-600 dark:text-foreground/95">
+          <div className="flex items-center gap-1 text-muted-foreground">
             <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
             <span>{program.views} просмотров</span>
           </div>
         )}
         {totalHours !== null && (
-          <div className="flex items-center gap-1 text-default-600 dark:text-foreground/95">
+          <div className="flex items-center gap-1 text-muted-foreground">
             <Clock className="h-4 w-4" />
             <span>{totalHours} часов</span>
           </div>

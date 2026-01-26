@@ -3,13 +3,12 @@
 import {
   Table,
   TableHeader,
-  TableColumn,
   TableBody,
   TableRow,
   TableCell,
-  Card,
-  CardBody,
-} from "@heroui/react";
+  TableHead,
+} from "@/components/ui/table";
+import { Card, CardContent } from "@/components/ui/card";
 import type {
   CategoryType,
   CategoryEntity,
@@ -120,35 +119,36 @@ export const CategoryTable = memo(function CategoryTable({
   }
 
   return (
-    <Card className="overflow-auto border-none shadow-lg">
-      <CardBody className="p-0">
+    <Card className={`overflow-auto shadow-lg ${TABLE_CLASSES.wrapper}`}>
+      <CardContent className="p-0">
         <Table
           id={tableId}
           aria-label="Таблица категорий"
           aria-describedby={`${tableId}-description`}
-          classNames={TABLE_CLASSES}
-          removeWrapper
         >
           <TableHeader>
-            <TableColumn width="45%">КАТЕГОРИЯ</TableColumn>
-            <TableColumn
-              width="25%"
-              className="hidden whitespace-nowrap lg:table-cell"
-            >
-              ТИП КАТЕГОРИИ
-            </TableColumn>
-            <TableColumn className="text-center whitespace-nowrap">
-              ПРОГРАММЫ
-            </TableColumn>
-            <TableColumn className="text-center whitespace-nowrap">
-              ДЕЙСТВИЯ
-            </TableColumn>
+            <TableRow>
+              <TableHead className={`min-w-0 w-[45%] ${TABLE_CLASSES.th}`}>
+                КАТЕГОРИЯ
+              </TableHead>
+              <TableHead
+                className={`hidden whitespace-nowrap lg:table-cell w-[25%] ${TABLE_CLASSES.th}`}
+              >
+                ТИП КАТЕГОРИИ
+              </TableHead>
+              <TableHead className={`text-center whitespace-nowrap ${TABLE_CLASSES.th}`}>
+                ПРОГРАММЫ
+              </TableHead>
+              <TableHead className={`text-center whitespace-nowrap ${TABLE_CLASSES.th}`}>
+                ДЕЙСТВИЯ
+              </TableHead>
+            </TableRow>
           </TableHeader>
           <TableBody>
             {categories.map((category) => (
               <TableRow
                 key={category.id}
-                className="group cursor-pointer"
+                className={`group cursor-pointer ${TABLE_CLASSES.tr}`}
                 onClick={(e) => handleRowClick(category.id, e)}
                 role="row"
                 tabIndex={0}
@@ -156,21 +156,21 @@ export const CategoryTable = memo(function CategoryTable({
                 aria-label={`Категория ${category.name}`}
                 aria-describedby={`${tableId}-row-${category.id}`}
               >
-                <TableCell className="min-w-0" width="25%">
+                <TableCell className={`min-w-0 ${TABLE_CLASSES.td}`}>
                   <CategoryTableNameContent category={category} />
                 </TableCell>
 
-                <TableCell className="hidden whitespace-nowrap lg:table-cell">
+                <TableCell className={`hidden whitespace-nowrap lg:table-cell ${TABLE_CLASSES.td}`}>
                   <CategoryTableTypeContent category={category} />
                 </TableCell>
 
-                <TableCell className="text-center whitespace-nowrap">
+                <TableCell className={`text-center whitespace-nowrap ${TABLE_CLASSES.td}`}>
                   <CategoryTableProgramsCountContent
                     category={category}
                   />
                 </TableCell>
 
-                <TableCell className="text-center whitespace-nowrap">
+                <TableCell className={`text-center whitespace-nowrap ${TABLE_CLASSES.td}`}>
                   <CategoryTableActions
                     onEdit={() => handleEditClick(category)}
                     onDelete={() => handleDeleteClick(category)}
@@ -180,7 +180,7 @@ export const CategoryTable = memo(function CategoryTable({
             ))}
           </TableBody>
         </Table>
-      </CardBody>
+      </CardContent>
     </Card>
   );
 });

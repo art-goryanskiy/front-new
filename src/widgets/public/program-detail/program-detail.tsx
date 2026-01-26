@@ -1,7 +1,7 @@
 "use client";
 
 import { memo, useCallback } from "react";
-import { Button } from "@heroui/react";
+import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type { ProgramDetailProps } from "./types/program-detail.types";
@@ -26,11 +26,11 @@ export const ProgramDetail = memo(function ProgramDetail({
   return (
     <div className={PROGRAM_DETAIL_CLASSES.container}>
       <Button
-        variant="light"
-        startContent={<ArrowLeft className="h-4 w-4" />}
-        onPress={handleBack}
+        variant="ghost"
+        onClick={handleBack}
         className={PROGRAM_DETAIL_CLASSES.backButton}
       >
+        <ArrowLeft className="mr-2 h-4 w-4" />
         Назад
       </Button>
 

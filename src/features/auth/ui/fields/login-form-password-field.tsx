@@ -2,10 +2,11 @@
 
 import { memo, useMemo } from "react";
 import { Controller, type Control } from "react-hook-form";
-import { Input } from "@heroui/react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 import {
   LOGIN_FORM_TEXTS,
-  LOGIN_FORM_CLASSES,
 } from "../constants/login-form-constants";
 import type { LoginFormData } from "../types/login-form.types";
 
@@ -28,20 +29,23 @@ export const LoginFormPasswordField = memo(
         control={control}
         rules={rules}
         render={({ field, fieldState }) => (
-          <Input
-            {...field}
-            type="password"
-            label={LOGIN_FORM_TEXTS.password.label}
-            placeholder={LOGIN_FORM_TEXTS.password.placeholder}
-            isRequired
-            isInvalid={fieldState.invalid}
-            errorMessage={fieldState.error?.message}
-            aria-label={LOGIN_FORM_TEXTS.password.label}
-            variant="bordered"
-            size="md"
-            radius="lg"
-            classNames={LOGIN_FORM_CLASSES.inputClassNames}
-          />
+          <div className={cn("space-y-2 w-full")}>
+            <Label htmlFor="password">{LOGIN_FORM_TEXTS.password.label} *</Label>
+            <Input
+              {...field}
+              id="password"
+              type="password"
+              placeholder={LOGIN_FORM_TEXTS.password.placeholder}
+              required
+              aria-invalid={fieldState.invalid}
+              aria-label={LOGIN_FORM_TEXTS.password.label}
+            />
+            {fieldState.error?.message && (
+              <p className="text-sm text-destructive">
+                {fieldState.error.message}
+              </p>
+            )}
+          </div>
         )}
       />
     );

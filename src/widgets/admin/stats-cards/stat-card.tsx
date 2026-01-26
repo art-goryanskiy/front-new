@@ -1,7 +1,7 @@
 "use client";
 
 import { memo, useMemo } from "react";
-import { Card, CardBody } from "@heroui/react";
+import { Card, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import {
   COLOR_CLASSES,
@@ -54,22 +54,22 @@ export const StatCard = memo(function StatCard({
       transition={{ delay: transitionDelay, duration: 0.3 }}
       whileHover={{ y: -4, transition: { duration: 0.2 } }}
     >
-      <Card className="group overflow-hidden border-none bg-white/80 shadow-lg backdrop-blur-sm transition-all duration-300 hover:shadow-2xl dark:bg-slate-800/80">
-        <CardBody className="relative p-4 sm:p-5 lg:p-6">
+      <Card className="group overflow-hidden border bg-card/80 shadow-lg backdrop-blur-sm transition-all duration-300 hover:shadow-2xl">
+        <CardContent className="relative p-4 sm:p-5 lg:p-6">
           <div
             className={`absolute inset-0 bg-linear-to-br ${colorClass} opacity-0 transition-opacity duration-300 group-hover:opacity-5`}
           />
 
           <div className="relative z-10 flex items-center justify-between gap-3 sm:gap-4">
             <div className="min-w-0 flex-1">
-              <p className="mb-1 truncate text-xs font-medium tracking-wide text-slate-500 uppercase sm:mb-2 sm:text-sm dark:text-slate-400">
+              <p className="mb-1 truncate text-xs font-medium tracking-wide text-muted-foreground uppercase sm:mb-2 sm:text-sm">
                 {title}
               </p>
               <motion.p
                 key={value}
                 initial={{ scale: 1.2, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                className="mb-2 bg-linear-to-r from-slate-900 to-slate-700 bg-clip-text text-2xl font-bold text-transparent sm:mb-3 sm:text-3xl lg:text-4xl dark:from-slate-100 dark:to-slate-300"
+                className="mb-2 text-2xl font-bold text-foreground sm:mb-3 sm:text-3xl lg:text-4xl"
               >
                 {value}
               </motion.p>
@@ -82,7 +82,7 @@ export const StatCard = memo(function StatCard({
                   >
                     {trend.isPositive ? "↑" : "↓"} {trendValue}%
                   </motion.span>
-                  <span className="text-xs text-slate-500 dark:text-slate-400">
+                  <span className="text-xs text-muted-foreground">
                     за месяц
                   </span>
                 </div>
@@ -101,7 +101,7 @@ export const StatCard = memo(function StatCard({
               </div>
             </motion.div>
           </div>
-        </CardBody>
+        </CardContent>
       </Card>
     </motion.div>
   );

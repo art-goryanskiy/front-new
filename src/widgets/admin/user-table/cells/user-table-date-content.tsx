@@ -30,11 +30,11 @@ export const UserTableDateContent = memo(
     );
 
     if (!formattedDate) {
-      return <span className="text-default-400">-</span>;
+      return <span className="text-muted-foreground">-</span>;
     }
 
     return (
-      <span className="text-sm text-default-600 dark:text-default-400">
+      <span className="text-sm text-muted-foreground">
         {formattedDate}
       </span>
     );

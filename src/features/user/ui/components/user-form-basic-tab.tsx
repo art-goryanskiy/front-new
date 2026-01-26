@@ -2,7 +2,15 @@
 
 import { memo } from "react";
 import { Controller } from "react-hook-form";
-import { Select, SelectItem, Switch } from "@heroui/react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import type { Control } from "react-hook-form";
 import type { UserFormData } from "../types/user-form.types";
 import { FormField } from "@/shared/ui/form-field/form-field";
@@ -71,44 +79,46 @@ export const UserFormBasicTab = memo(function UserFormBasicTab({
         name="role"
         control={control}
         render={({ field, fieldState }) => (
-          <Select
-            label={FORM_LABELS.role}
-            placeholder={FORM_PLACEHOLDERS.role}
-            selectedKeys={field.value ? [field.value] : []}
-            onSelectionChange={(keys) => {
-              const selected = Array.from(keys)[0] as
-                | UserRole
-                | undefined;
-              field.onChange(selected);
-            }}
-            isInvalid={fieldState.invalid}
-            errorMessage={fieldState.error?.message}
-            aria-label={FORM_LABELS.role}
-            className="w-full"
-            classNames={{
-              trigger: "w-full",
-              value: "w-full",
-              base: "w-full",
-            }}
-          >
-            {USER_ROLE_OPTIONS.map((option) => (
-              <SelectItem key={option.key}>{option.label}</SelectItem>
-            ))}
-          </Select>
+          <div className="space-y-2">
+            <Label htmlFor="role">{FORM_LABELS.role}</Label>
+            <Select
+              value={field.value ?? ""}
+              onValueChange={(v) => field.onChange(v as UserRole)}
+            >
+              <SelectTrigger id="role" aria-invalid={fieldState.invalid}>
+                <SelectValue placeholder={FORM_PLACEHOLDERS.role} />
+              </SelectTrigger>
+              <SelectContent>
+                {USER_ROLE_OPTIONS.map((option) => (
+                  <SelectItem key={option.key} value={option.key}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {fieldState.error?.message && (
+              <p className="text-sm text-destructive">
+                {fieldState.error.message}
+              </p>
+            )}
+          </div>
         )}
       />
       <Controller
         name="isBlocked"
         control={control}
         render={({ field }) => (
-          <Switch
-            isSelected={field.value || false}
-            onValueChange={field.onChange}
-            aria-label={FORM_LABELS.isBlocked}
-            className="w-full"
-          >
-            {FORM_LABELS.isBlocked}
-          </Switch>
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="isBlocked"
+              checked={field.value ?? false}
+              onCheckedChange={field.onChange}
+              aria-label={FORM_LABELS.isBlocked}
+            />
+            <Label htmlFor="isBlocked" className="cursor-pointer">
+              {FORM_LABELS.isBlocked}
+            </Label>
+          </div>
         )}
       />
     </div>

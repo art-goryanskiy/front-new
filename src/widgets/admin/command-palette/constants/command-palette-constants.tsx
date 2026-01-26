@@ -76,22 +76,22 @@ export const COMMAND_PALETTE_CLASSES = {
     "fixed inset-0 flex items-start justify-center pt-[20vh] z-50 pointer-events-none",
   modal: "w-full max-w-2xl mx-4 pointer-events-auto",
   modalContent:
-    "bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-200/50 dark:border-slate-800/50 overflow-hidden",
-  header: "p-4 border-b border-slate-200/50 dark:border-slate-800/50",
+    "bg-background/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-border overflow-hidden",
+  header: "p-4 border-b border-border",
   commandsList: "max-h-96 overflow-y-auto p-2",
   resultsCount:
-    "px-4 py-2 text-xs text-slate-500 dark:text-slate-400 border-b border-slate-200/50 dark:border-slate-800/50",
-  emptyState: "text-center py-8 text-slate-500 dark:text-slate-400",
+    "px-4 py-2 text-xs text-muted-foreground border-b border-border",
+  emptyState: "text-center py-8 text-muted-foreground",
   commandItem: "w-full text-left px-4 py-3 rounded-lg transition-all",
   commandItemSelected:
     "bg-primary-100 dark:bg-primary-900/30 text-primary-900 dark:text-primary-100",
   commandItemDefault:
-    "hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300",
+    "hover:bg-muted text-foreground",
   commandItemContent: "flex items-center gap-3",
   commandIcon: "text-2xl",
   commandLabel: "font-medium",
   escBadge:
-    "px-2 py-1 text-xs font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 rounded border border-slate-300 dark:border-slate-700",
+    "px-2 py-1 text-xs font-semibold text-muted-foreground bg-muted rounded border border-border",
 } as const;
 
 /**

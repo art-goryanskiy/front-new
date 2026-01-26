@@ -40,7 +40,7 @@ export const SubcategoryList = memo(function SubcategoryList({
   }, [categories, categoryType]);
 
   const emptyStateIcon = useMemo(
-    () => <FolderOpen className="h-10 w-10 text-default-400" />,
+    () => <FolderOpen className="h-10 w-10 text-muted-foreground" />,
     []
   );
 
