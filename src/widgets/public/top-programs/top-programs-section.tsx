@@ -1,23 +1,23 @@
 "use client";
 
-import { memo, useState, useMemo, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { useCategories } from "@/entities/category/api/use-categories";
 import { usePrograms } from "@/entities/program/api/use-programs";
 import { useTopPrograms } from "@/entities/program/api/use-top-programs";
-import { useCategories } from "@/entities/category/api/use-categories";
-import { ProgramCard } from "../program-card/program-card";
-import { LoadingState } from "@/shared/ui/loading-state/loading-state";
-import { EmptyState } from "@/shared/ui/empty-state/empty-state";
-import { ErrorState } from "@/shared/ui/error-state/error-state";
-import { BookOpen } from "lucide-react";
-import {
-  TOP_PROGRAMS_TEXTS,
-  TOP_PROGRAMS_TABS,
-  TOP_PROGRAMS_CLASSES,
-} from "./constants/top-programs-constants";
 import type { CategoryType } from "@/shared/api/generated/graphql";
 import { CATEGORY_TYPE_LABELS } from "@/shared/constants/categories";
+import { EmptyState } from "@/shared/ui/empty-state/empty-state";
+import { ErrorState } from "@/shared/ui/error-state/error-state";
+import { LoadingState } from "@/shared/ui/loading-state/loading-state";
+import { AnimatePresence, motion } from "framer-motion";
+import { BookOpen } from "lucide-react";
+import { memo, useCallback, useMemo, useState } from "react";
+import { ProgramCard } from "../program-card/program-card";
+import {
+  TOP_PROGRAMS_CLASSES,
+  TOP_PROGRAMS_TABS,
+  TOP_PROGRAMS_TEXTS,
+} from "./constants/top-programs-constants";
 import type { TopProgramsSectionProps } from "./types/top-programs.types";
 
 export const TopProgramsSection = memo(function TopProgramsSection({
@@ -170,18 +170,17 @@ export const TopProgramsSection = memo(function TopProgramsSection({
         ) : displayedPrograms.length === 0 ? (
           <EmptyState
             title={TOP_PROGRAMS_TEXTS.noPrograms}
-            icon={<BookOpen className="h-16 w-16 text-muted-foreground" />}
+            icon={
+              <BookOpen className="h-16 w-16 text-muted-foreground" />
+            }
           />
         ) : (
           <>
             <AnimatePresence mode="wait">
               <motion.div
-                key={activeTab}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
+                layout
                 className={TOP_PROGRAMS_CLASSES.grid}
+                transition={{ duration: 0.2 }}
               >
                 {displayedPrograms.map((program) => (
                   <ProgramCard

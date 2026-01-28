@@ -12,6 +12,12 @@ export const REGISTER_FORM_TEXTS = {
     required: "Пароль обязателен",
     minLength: "Пароль должен содержать минимум 6 символов",
   },
+  confirmPassword: {
+    label: "Подтверждение пароля",
+    placeholder: "Повторите пароль",
+    required: "Подтверждение пароля обязательно",
+    mismatch: "Пароли не совпадают",
+  },
   submit: "Зарегистрироваться",
   error: {
     default: "Ошибка при регистрации",
@@ -33,8 +39,7 @@ export const REGISTER_FORM_CLASSES = {
   inputClassNames: {
     inputWrapper:
       "bg-card/80 backdrop-blur-xl border-2 border-border hover:border-primary/80 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all duration-300 shadow-sm hover:shadow-lg focus-within:shadow-xl",
-    input:
-      "text-sm sm:text-base placeholder:text-muted-foreground",
+    input: "text-sm sm:text-base placeholder:text-muted-foreground",
     label: "text-foreground",
   },
 } as const;

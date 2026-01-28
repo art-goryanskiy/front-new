@@ -1,14 +1,15 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
-import Image from "next/image";
-import { Mail, CheckCircle2, XCircle } from "lucide-react";
-import { useVerifyEmail } from "@/features/auth/api/use-verify-email";
 import { useMe } from "@/features/auth/api/use-me";
+import { useVerifyEmail } from "@/features/auth/api/use-verify-email";
+import { useApolloClient } from "@apollo/client/react";
+import { CheckCircle2, Mail, XCircle } from "lucide-react";
+import Image from "next/image";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
 
 function VerifyEmailContent() {
   const searchParams = useSearchParams();
@@ -19,9 +20,10 @@ function VerifyEmailContent() {
   const [mounted, setMounted] = useState(false);
   const [token, setToken] = useState<string | null>(null);
   const [isVerified, setIsVerified] = useState(false);
-  const [verificationError, setVerificationError] = useState<string | null>(
-    null
-  );
+  const [verificationError, setVerificationError] = useState<
+    string | null
+  >(null);
+  const apollo = useApolloClient();
 
   // Извлекаем token из hash (#token=...) после монтирования
   useEffect(() => {
@@ -37,44 +39,58 @@ function VerifyEmailContent() {
 
   // Вызываем мутацию при наличии token
   useEffect(() => {
-    if (mounted && token && !verifying && !isVerified && !verificationError) {
+    if (
+      mounted &&
+      token &&
+      !verifying &&
+      !isVerified &&
+      !verificationError
+    ) {
       verifyEmail({ token })
         .then((success) => {
           if (success) {
             setIsVerified(true);
             // После успешной верификации бэк поставит cookies
             // useMe автоматически получит пользователя
+            apollo.resetStore();
           }
         })
         .catch((err) => {
-          setVerificationError(err.message || "Ошибка при подтверждении email");
+          setVerificationError(
+            err.message || "Ошибка при подтверждении email"
+          );
         });
     }
-  }, [mounted, token, verifying, isVerified, verificationError, verifyEmail]);
+  }, [
+    mounted,
+    token,
+    verifying,
+    isVerified,
+    verificationError,
+    verifyEmail,
+  ]);
 
   // После успешной верификации и получения пользователя - редирект
   useEffect(() => {
-    if (isVerified && user && !meLoading) {
-      // Небольшая задержка для показа успешного сообщения
-      const timer = setTimeout(() => {
-        router.push("/admin");
-      }, 2000);
-      return () => clearTimeout(timer);
-    }
-  }, [isVerified, user, meLoading, router]);
+    if (!isVerified) return;
+
+    const timer = setTimeout(() => {
+      router.replace("/");
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [isVerified, router]);
 
   // Пока не смонтирован - показываем fallback
   if (!mounted) {
     return (
-      <div className="min-h-screen w-full bg-background flex items-center justify-center px-4">
+      <div className="flex min-h-screen w-full items-center justify-center bg-background px-4">
         <div className="w-full max-w-md">
           <Card className="bg-card shadow-lg">
             <CardContent className="p-8">
-              <div className="flex flex-col items-center text-center space-y-6">
+              <div className="flex flex-col items-center space-y-6 text-center">
                 <Spinner size={32} />
-                <p className="text-muted-foreground">
-                  Загрузка...
-                </p>
+                <p className="text-muted-foreground">Загрузка...</p>
               </div>
             </CardContent>
           </Card>
@@ -86,13 +102,13 @@ function VerifyEmailContent() {
   // Если нет token - показываем обычное сообщение
   if (!token) {
     return (
-      <div className="min-h-screen w-full bg-background flex items-center justify-center px-4">
+      <div className="flex min-h-screen w-full items-center justify-center bg-background px-4">
         <div className="w-full max-w-md">
           {/* Логотип */}
-          <div className="flex justify-center mb-8">
+          <div className="mb-8 flex justify-center">
             <button
               onClick={() => router.push("/")}
-              className="focus:outline-none focus:ring-0 rounded-lg hover:opacity-80 transition-opacity duration-200"
+              className="rounded-lg transition-opacity duration-200 hover:opacity-80 focus:ring-0 focus:outline-none"
               aria-label="Перейти на главную страницу"
             >
               <Image
@@ -110,36 +126,37 @@ function VerifyEmailContent() {
           {/* Карточка с сообщением */}
           <Card className="bg-card shadow-lg">
             <CardContent className="p-8">
-              <div className="flex flex-col items-center text-center space-y-6">
+              <div className="flex flex-col items-center space-y-6 text-center">
                 {/* Иконка */}
-                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
-                  <Mail className="w-8 h-8 text-primary" />
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+                  <Mail className="h-8 w-8 text-primary" />
                 </div>
 
                 {/* Заголовок */}
                 <div>
-                  <h1 className="text-3xl font-bold text-foreground mb-2">
+                  <h1 className="mb-2 text-3xl font-bold text-foreground">
                     Проверьте вашу почту
                   </h1>
                   <p className="text-muted-foreground">
                     Мы отправили письмо для подтверждения на адрес
                   </p>
                   {email && (
-                    <p className="text-primary font-semibold mt-2 break-all">
+                    <p className="mt-2 font-semibold break-all text-primary">
                       {email}
                     </p>
                   )}
                 </div>
 
                 {/* Описание */}
-                <div className="text-sm text-muted-foreground space-y-2">
+                <div className="space-y-2 text-sm text-muted-foreground">
                   <p>
-                    Пожалуйста, проверьте вашу почту и перейдите по ссылке в
-                    письме для подтверждения регистрации.
+                    Пожалуйста, проверьте вашу почту и перейдите по
+                    ссылке в письме для подтверждения регистрации.
                   </p>
                   <p>
-                    Если письмо не пришло, проверьте папку &quot;Спам&quot; или
-                    попробуйте зарегистрироваться снова.
+                    Если письмо не пришло, проверьте папку
+                    &quot;Спам&quot; или попробуйте зарегистрироваться
+                    снова.
                   </p>
                 </div>
 
@@ -170,11 +187,11 @@ function VerifyEmailContent() {
   // Состояние загрузки верификации
   if (verifying) {
     return (
-      <div className="min-h-screen w-full bg-background flex items-center justify-center px-4">
+      <div className="flex min-h-screen w-full items-center justify-center bg-background px-4">
         <div className="w-full max-w-md">
           <Card className="bg-card shadow-lg">
             <CardContent className="p-8">
-              <div className="flex flex-col items-center text-center space-y-6">
+              <div className="flex flex-col items-center space-y-6 text-center">
                 <Spinner size={32} />
                 <h1 className="text-2xl font-bold text-foreground">
                   Подтверждение email...
@@ -193,16 +210,16 @@ function VerifyEmailContent() {
   // Состояние ошибки
   if (verificationError || error) {
     return (
-      <div className="min-h-screen w-full bg-background flex items-center justify-center px-4">
+      <div className="flex min-h-screen w-full items-center justify-center bg-background px-4">
         <div className="w-full max-w-md">
           <Card className="bg-card shadow-lg">
             <CardContent className="p-8">
-              <div className="flex flex-col items-center text-center space-y-6">
-                <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center">
-                  <XCircle className="w-8 h-8 text-destructive" />
+              <div className="flex flex-col items-center space-y-6 text-center">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10">
+                  <XCircle className="h-8 w-8 text-destructive" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold text-foreground mb-2">
+                  <h1 className="mb-2 text-2xl font-bold text-foreground">
                     Ошибка подтверждения
                   </h1>
                   <p className="text-muted-foreground">
@@ -230,22 +247,22 @@ function VerifyEmailContent() {
   // Состояние успеха
   if (isVerified) {
     return (
-      <div className="min-h-screen w-full bg-background flex items-center justify-center px-4">
+      <div className="flex min-h-screen w-full items-center justify-center bg-background px-4">
         <div className="w-full max-w-md">
           <Card className="bg-card shadow-lg">
             <CardContent className="p-8">
-              <div className="flex flex-col items-center text-center space-y-6">
-                <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center">
-                  <CheckCircle2 className="w-8 h-8 text-green-600 dark:text-green-400" />
+              <div className="flex flex-col items-center space-y-6 text-center">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-500/10">
+                  <CheckCircle2 className="h-8 w-8 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold text-foreground mb-2">
+                  <h1 className="mb-2 text-2xl font-bold text-foreground">
                     Email успешно подтвержден!
                   </h1>
                   <p className="text-muted-foreground">
                     {meLoading
                       ? "Выполняется вход..."
-                      : "Вы будете перенаправлены в панель администратора"}
+                      : "Вы будете перенаправлены на главную страницу"}
                   </p>
                 </div>
                 {meLoading && <Spinner size={32} />}
@@ -264,7 +281,7 @@ export default function VerifyEmailPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen w-full bg-background flex items-center justify-center">
+        <div className="flex min-h-screen w-full items-center justify-center bg-background">
           <div className="text-muted-foreground">Загрузка...</div>
         </div>
       }

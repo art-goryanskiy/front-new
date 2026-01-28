@@ -1,15 +1,20 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Eye, EyeOff, Mail, Sparkles } from "lucide-react";
+import { Eye, EyeOff, Mail } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Controller } from "react-hook-form";
+import {
+  EMAIL_REGEX,
+  LOGIN_FORM_TEXTS,
+} from "../../features/auth/ui/constants/login-form-constants";
+import { REGISTER_FORM_TEXTS } from "../../features/auth/ui/constants/register-form-constants";
 import { useLoginForm } from "../../features/auth/ui/hooks/use-login-form";
 import { useRegisterForm } from "../../features/auth/ui/hooks/use-register-form";
+import { HandWrittenTitle } from "./hand-writing-text";
 
 interface PupilProps {
   size?: number;
@@ -196,6 +201,26 @@ export function LoginFormPage() {
     : loginForm.loading;
   const error = isRegister ? registerForm.error : loginForm.error;
 
+  const texts = isRegister ? REGISTER_FORM_TEXTS : LOGIN_FORM_TEXTS;
+
+  const emailRules = {
+    required: texts.email.required,
+    pattern: {
+      value: EMAIL_REGEX,
+      message: texts.email.invalidFormat,
+    },
+  };
+
+  const passwordRules = isRegister
+    ? {
+        required: texts.password.required,
+        minLength: {
+          value: 6,
+          message: REGISTER_FORM_TEXTS.password.minLength,
+        },
+      }
+    : { required: texts.password.required };
+
   const [showPassword, setShowPassword] = useState(false);
   const [mouseX, setMouseX] = useState<number>(0);
   const [mouseY, setMouseY] = useState<number>(0);
@@ -334,10 +359,10 @@ export function LoginFormPage() {
       <div className="relative hidden flex-col justify-between bg-linear-to-br from-primary/90 via-primary to-primary/80 p-12 text-primary-foreground lg:flex">
         <div className="relative z-20">
           <div className="flex items-center gap-2 text-lg font-semibold">
-            <div className="flex size-8 items-center justify-center rounded-lg bg-primary-foreground/10 backdrop-blur-sm">
-              <Sparkles className="size-4" />
-            </div>
-            <span>YourBrand</span>
+            <HandWrittenTitle
+              title="Стандарт +"
+              subtitle="учебный центр"
+            />
           </div>
         </div>
 
@@ -710,21 +735,19 @@ export function LoginFormPage() {
         <div className="w-full max-w-[420px]">
           {/* Mobile Logo */}
           <div className="mb-12 flex items-center justify-center gap-2 text-lg font-semibold lg:hidden">
-            <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10">
-              <Sparkles className="size-4 text-primary" />
-            </div>
-            <span>YourBrand</span>
+            <HandWrittenTitle
+              title="Стандарт +"
+              subtitle="учебный центр"
+            />
           </div>
 
           {/* Header */}
           <div className="mb-10 text-center">
             <h1 className="mb-2 text-3xl font-bold tracking-tight">
-              {isRegister ? "Create an account" : "Welcome back!"}
+              {texts.title}
             </h1>
             <p className="text-sm text-muted-foreground">
-              {isRegister
-                ? "Enter your information to get started"
-                : "Please enter your details"}
+              {isRegister ? "Создайте аккаунт" : "Войдите в аккаунт"}
             </p>
           </div>
 
@@ -735,26 +758,29 @@ export function LoginFormPage() {
               <Controller
                 name="email"
                 control={form.control}
+                rules={emailRules}
                 render={({ field, fieldState }) => (
                   <>
                     <Label
                       htmlFor="email"
                       className="text-sm font-medium"
                     >
-                      Email
+                      {texts.email.label}
                     </Label>
+
                     <Input
                       {...field}
                       id="email"
                       type="email"
-                      placeholder="anna@gmail.com"
-                      autoComplete="off"
+                      placeholder={texts.email.placeholder}
+                      autoComplete="email"
                       onFocus={() => setIsTyping(true)}
                       onBlur={() => setIsTyping(false)}
-                      required
+                      aria-invalid={fieldState.invalid}
                       className="h-12 border-border/60 bg-background focus:border-primary"
                     />
-                    {fieldState.error && (
+
+                    {fieldState.error?.message && (
                       <p className="text-sm text-destructive">
                         {fieldState.error.message}
                       </p>
@@ -769,27 +795,42 @@ export function LoginFormPage() {
               <Controller
                 name="password"
                 control={form.control}
+                rules={passwordRules}
                 render={({ field, fieldState }) => (
                   <>
                     <Label
                       htmlFor="password"
                       className="text-sm font-medium"
                     >
-                      Password
+                      {texts.password.label}
                     </Label>
+
                     <div className="relative">
                       <Input
                         {...field}
                         id="password"
                         type={showPassword ? "text" : "password"}
-                        placeholder="••••••••"
-                        required
+                        placeholder={texts.password.placeholder}
+                        autoComplete={
+                          isRegister
+                            ? "new-password"
+                            : "current-password"
+                        }
+                        onFocus={() => setIsTyping(true)}
+                        onBlur={() => setIsTyping(false)}
+                        aria-invalid={fieldState.invalid}
                         className="h-12 border-border/60 bg-background pr-10 focus:border-primary"
                       />
+
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
                         className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
+                        aria-label={
+                          showPassword
+                            ? "Скрыть пароль"
+                            : "Показать пароль"
+                        }
                       >
                         {showPassword ? (
                           <EyeOff className="size-5" />
@@ -798,7 +839,8 @@ export function LoginFormPage() {
                         )}
                       </button>
                     </div>
-                    {fieldState.error && (
+
+                    {fieldState.error?.message && (
                       <p className="text-sm text-destructive">
                         {fieldState.error.message}
                       </p>
@@ -808,29 +850,67 @@ export function LoginFormPage() {
               />
             </div>
 
+            {isRegister && (
+              <div className="space-y-2">
+                <Controller
+                  name="confirmPassword"
+                  control={form.control}
+                  rules={{
+                    required:
+                      REGISTER_FORM_TEXTS.confirmPassword.required,
+                    validate: (value) =>
+                      value === form.getValues("password") ||
+                      REGISTER_FORM_TEXTS.confirmPassword.mismatch,
+                  }}
+                  render={({ field, fieldState }) => (
+                    <>
+                      <Label
+                        htmlFor="confirmPassword"
+                        className="text-sm font-medium"
+                      >
+                        {REGISTER_FORM_TEXTS.confirmPassword.label}
+                      </Label>
+
+                      <Input
+                        {...field}
+                        id="confirmPassword"
+                        type={showPassword ? "text" : "password"}
+                        placeholder={
+                          REGISTER_FORM_TEXTS.confirmPassword
+                            .placeholder
+                        }
+                        autoComplete="new-password"
+                        onFocus={() => setIsTyping(true)}
+                        onBlur={() => setIsTyping(false)}
+                        aria-invalid={fieldState.invalid}
+                        className="h-12 border-border/60 bg-background focus:border-primary"
+                      />
+
+                      {fieldState.error?.message && (
+                        <p className="text-sm text-destructive">
+                          {fieldState.error.message}
+                        </p>
+                      )}
+                    </>
+                  )}
+                />
+              </div>
+            )}
+
             {!isRegister && (
               <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="remember" />
-                  <Label
-                    htmlFor="remember"
-                    className="cursor-pointer text-sm font-normal"
-                  >
-                    Remember for 30 days
-                  </Label>
-                </div>
                 <a
                   href="#"
                   className="text-sm font-medium text-primary hover:underline"
                 >
-                  Forgot password?
+                  Забыли пароль?
                 </a>
               </div>
             )}
 
             {error && (
               <div className="rounded-lg border border-red-900/30 bg-red-950/20 p-3 text-sm text-red-400">
-                {error?.message || "An error occurred"}
+                {error?.message || texts.error.default}
               </div>
             )}
 
@@ -842,11 +922,11 @@ export function LoginFormPage() {
             >
               {isLoading
                 ? isRegister
-                  ? "Creating account..."
-                  : "Signing in..."
+                  ? "Создание аккаунта..."
+                  : "Вход в аккаунт..."
                 : isRegister
-                  ? "Sign up"
-                  : "Log in"}
+                  ? "Создать аккаунт"
+                  : "Вход в аккаунт"}
             </Button>
           </form>
 
@@ -868,7 +948,7 @@ export function LoginFormPage() {
           <div className="mt-8 text-center text-sm text-muted-foreground">
             {isRegister ? (
               <>
-                Already have an account?{" "}
+                Уже есть аккаунт?{" "}
                 <a
                   href="/login"
                   onClick={(e) => {
@@ -877,12 +957,12 @@ export function LoginFormPage() {
                   }}
                   className="font-medium text-foreground hover:underline"
                 >
-                  Log in
+                  Войти
                 </a>
               </>
             ) : (
               <>
-                Don't have an account?{" "}
+                Нет аккаунта?{" "}
                 <a
                   href="/register"
                   onClick={(e) => {
@@ -891,7 +971,7 @@ export function LoginFormPage() {
                   }}
                   className="font-medium text-foreground hover:underline"
                 >
-                  Sign Up
+                  Зарегистрироваться
                 </a>
               </>
             )}

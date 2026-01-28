@@ -1,16 +1,17 @@
 "use client";
 
-import { memo } from "react";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { useRegisterForm } from "./hooks/use-register-form";
+import { memo } from "react";
 import { RegisterFormError } from "./components/register-form-error";
+import {
+  REGISTER_FORM_CLASSES,
+  REGISTER_FORM_TEXTS,
+} from "./constants/register-form-constants";
+import { RegisterFormConfirmPasswordField } from "./fields/register-form-confirm-password-field";
 import { RegisterFormEmailField } from "./fields/register-form-email-field";
 import { RegisterFormPasswordField } from "./fields/register-form-password-field";
-import {
-  REGISTER_FORM_TEXTS,
-  REGISTER_FORM_CLASSES,
-} from "./constants/register-form-constants";
+import { useRegisterForm } from "./hooks/use-register-form";
 
 export const RegisterForm = memo(function RegisterForm() {
   const { form, onSubmit, loading, error } = useRegisterForm();
@@ -29,6 +30,7 @@ export const RegisterForm = memo(function RegisterForm() {
 
         <RegisterFormEmailField control={control} />
         <RegisterFormPasswordField control={control} />
+        <RegisterFormConfirmPasswordField control={control} />
 
         <Button
           type="submit"
