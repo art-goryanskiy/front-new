@@ -2,7 +2,9 @@
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "explicit",
+    "source.removeUnusedImports": "explicit"
   },
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
@@ -59,7 +61,14 @@
   },
   "css.validate": false,
   "scss.validate": false,
-  "cSpell.words": [
-    "Snils"
-  ]
+  "cSpell.words": ["Snils"],
+  // Настройки для подсветки неиспользуемых файлов
+  "typescript.preferences.includePackageJsonAutoImports": "off",
+  "typescript.suggest.autoImports": true,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "typescript.tsserver.experimental.enableProjectDiagnostics": true,
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "explorer.decorations.badges": true,
+  "explorer.decorations.colors": true
 }

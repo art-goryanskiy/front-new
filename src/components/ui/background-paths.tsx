@@ -1,7 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
 import { useMemo } from "react";
 
 function FloatingPaths({ position }: { position: number }) {

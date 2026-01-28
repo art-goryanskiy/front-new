@@ -1,13 +1,11 @@
 "use client";
 
-import { memo, useMemo } from "react";
-import { Controller, type Control } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import {
-  REGISTER_FORM_TEXTS,
-} from "../constants/register-form-constants";
+import { memo, useMemo } from "react";
+import { Controller, type Control } from "react-hook-form";
+import { REGISTER_FORM_TEXTS } from "../constants/register-form-constants";
 import type { RegisterFormData } from "../types/register-form.types";
 
 interface RegisterFormPasswordFieldProps {
@@ -35,8 +33,10 @@ export const RegisterFormPasswordField = memo(
         control={control}
         rules={rules}
         render={({ field, fieldState }) => (
-          <div className={cn("space-y-2 w-full")}>
-            <Label htmlFor="password">{REGISTER_FORM_TEXTS.password.label} *</Label>
+          <div className={cn("w-full space-y-2")}>
+            <Label htmlFor="password">
+              {REGISTER_FORM_TEXTS.password.label} *
+            </Label>
             <Input
               {...field}
               id="password"
