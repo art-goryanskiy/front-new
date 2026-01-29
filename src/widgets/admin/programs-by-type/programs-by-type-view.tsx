@@ -1,0 +1,373 @@
+"use client";
+
+import { useCategories } from "@/entities/category/api/use-categories";
+import { useProgramsPage } from "@/entities/program/api/use-programs-page";
+import type {
+  CategoryEntity,
+  CategoryType,
+} from "@/shared/api/generated/graphql";
+import { useDebounce } from "@/shared/lib/hooks/use-debounce";
+import { memo, useCallback, useMemo, useState } from "react";
+
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { DataToolbar } from "@/shared/ui/data-toolbar/data-toolbar";
+import { EmptyState } from "@/shared/ui/empty-state/empty-state";
+import { ErrorState } from "@/shared/ui/error-state/error-state";
+import { LoadingState } from "@/shared/ui/loading-state/loading-state";
+
+import { useProgramModalState } from "@/shared/store/modal-store";
+import { POPULAR_VIEWS_THRESHOLD } from "@/widgets/admin/program-table/constants/program-table-constants";
+import { ProgramList } from "@/widgets/admin/program-table/program-list";
+import { hasValidPricing } from "@/widgets/admin/program-table/utils/program-table-utils";
+
+type PricingFilter = "all" | "withPrice" | "noPrice";
+type ViewsFilter = "all" | "popular";
+type Sort = "updatedDesc" | "viewsDesc" | "titleAsc";
+
+function mapSort(sort: Sort): {
+  sortBy: string;
+  sortOrder: "asc" | "desc";
+} {
+  if (sort === "viewsDesc")
+    return { sortBy: "views", sortOrder: "desc" };
+  if (sort === "titleAsc")
+    return { sortBy: "title", sortOrder: "asc" };
+  return { sortBy: "updatedAt", sortOrder: "desc" };
+}
+
+const PAGE_SIZE = 30;
+
+const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
+  type,
+  title,
+  categoriesOfType,
+  categoryIds,
+
+  q,
+  setQ,
+  debouncedQ,
+
+  categoryId,
+  setCategoryId,
+
+  pricing,
+  setPricing,
+  views,
+  setViews,
+  sort,
+  setSort,
+}: {
+  type: CategoryType;
+  title: string;
+  categoriesOfType: CategoryEntity[];
+  categoryIds: string[];
+
+  q: string;
+  setQ: (v: string) => void;
+  debouncedQ: string;
+
+  categoryId: string;
+  setCategoryId: (v: string) => void;
+
+  pricing: PricingFilter;
+  setPricing: (v: PricingFilter) => void;
+  views: ViewsFilter;
+  setViews: (v: ViewsFilter) => void;
+  sort: Sort;
+  setSort: (v: Sort) => void;
+}) {
+  const { openCreateProgramModal } = useProgramModalState();
+
+  // Пагинация “дорого и просто”: увеличиваем limit, offset всегда 0.
+  // Так не нужно аккумулировать страницы и не нужны эффекты.
+  const [page, setPage] = useState(1);
+  const limit = PAGE_SIZE * page;
+
+  const { sortBy, sortOrder } = useMemo(() => mapSort(sort), [sort]);
+
+  const filter = useMemo(() => {
+    const search = debouncedQ.trim();
+
+    const base = {
+      sortBy,
+      sortOrder,
+      limit,
+      offset: 0,
+    };
+
+    if (categoryId !== "all") {
+      return search
+        ? { ...base, category: categoryId, search }
+        : { ...base, category: categoryId };
+    }
+
+    if (categoryIds.length === 0) return undefined;
+
+    return search
+      ? { ...base, categoryIds, search }
+      : { ...base, categoryIds };
+  }, [categoryId, categoryIds, debouncedQ, sortBy, sortOrder, limit]);
+
+  const { items, total, loading, error } = useProgramsPage(filter);
+
+  const localQuery = useMemo(() => q.trim().toLowerCase(), [q]);
+
+  const filteredItems = useMemo(() => {
+    return items.filter((p) => {
+      // views
+      if (
+        views === "popular" &&
+        (p.views || 0) <= POPULAR_VIEWS_THRESHOLD
+      ) {
+        return false;
+      }
+
+      // pricing
+      if (pricing !== "all") {
+        const hasPrice = hasValidPricing(p.pricing);
+        if (pricing === "withPrice" && !hasPrice) return false;
+        if (pricing === "noPrice" && hasPrice) return false;
+      }
+
+      // локальный поиск (чтобы реагировало сразу, пока debouncedQ ждёт)
+      if (!localQuery) return true;
+      const haystack =
+        `${p.title} ${p.slug} ${p.description || ""}`.toLowerCase();
+      return haystack.includes(localQuery);
+    });
+  }, [items, views, pricing, localQuery]);
+
+  const countsText = useMemo(() => {
+    // total — это total по серверному фильтру (category/categoryIds/search),
+    // остальные фильтры (popular/price/локальный поиск) применяются на клиенте.
+    return `${filteredItems.length} / ${total}`;
+  }, [filteredItems.length, total]);
+
+  const canLoadMore = useMemo(
+    () => items.length < total,
+    [items.length, total]
+  );
+
+  const handleLoadMore = useCallback(() => {
+    setPage((p) => p + 1);
+  }, []);
+
+  const canCreateProgram = useMemo(
+    () => categoryId !== "all",
+    [categoryId]
+  );
+
+  const handleCreate = useCallback(() => {
+    if (categoryId === "all") return;
+    openCreateProgramModal(categoryId, type);
+  }, [openCreateProgramModal, categoryId, type]);
+
+  if (loading && page === 1)
+    return <LoadingState message="Загрузка программ…" />;
+  if (error) return <ErrorState message={error.message} />;
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-end justify-between gap-3">
+        <h2 className="text-xl font-bold text-foreground sm:text-2xl">
+          {title}
+        </h2>
+      </div>
+
+      <DataToolbar
+        searchValue={q}
+        onSearchValueChange={setQ}
+        searchPlaceholder="Поиск по программам…"
+        rightSlot={
+          <div className="flex items-center gap-2">
+            <span className="hidden rounded-full border border-border/60 bg-muted/20 px-2.5 py-1 text-xs text-muted-foreground sm:inline-flex">
+              {countsText}
+            </span>
+
+            <Select value={categoryId} onValueChange={setCategoryId}>
+              <SelectTrigger className="h-9 w-[220px] bg-background/60">
+                <SelectValue placeholder="Категория" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">
+                  Все категории типа
+                </SelectItem>
+                {categoriesOfType.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>
+                    {c.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select
+              value={views}
+              onValueChange={(v) => setViews(v as ViewsFilter)}
+            >
+              <SelectTrigger className="h-9 w-[150px] bg-background/60">
+                <SelectValue placeholder="Просмотры" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Все</SelectItem>
+                <SelectItem value="popular">Популярные</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select
+              value={pricing}
+              onValueChange={(v) => setPricing(v as PricingFilter)}
+            >
+              <SelectTrigger className="h-9 w-[150px] bg-background/60">
+                <SelectValue placeholder="Цена" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Любая</SelectItem>
+                <SelectItem value="withPrice">С ценой</SelectItem>
+                <SelectItem value="noPrice">Без цены</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select
+              value={sort}
+              onValueChange={(v) => setSort(v as Sort)}
+            >
+              <SelectTrigger className="h-9 w-[170px] bg-background/60">
+                <SelectValue placeholder="Сортировка" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="updatedDesc">
+                  Сначала новые
+                </SelectItem>
+                <SelectItem value="viewsDesc">
+                  По просмотрам
+                </SelectItem>
+                <SelectItem value="titleAsc">По названию</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Button
+              className="font-semibold"
+              onClick={handleCreate}
+              disabled={!canCreateProgram}
+              title={
+                canCreateProgram
+                  ? "Создать программу"
+                  : "Выберите конкретную категорию, чтобы создать программу"
+              }
+            >
+              + Программа
+            </Button>
+          </div>
+        }
+      />
+
+      {filteredItems.length === 0 ? (
+        <EmptyState
+          title="Программы не найдены"
+          description="Попробуйте изменить фильтры или выберите другую категорию."
+        />
+      ) : (
+        <>
+          <ProgramList
+            programs={filteredItems}
+            categoryType={type}
+            caption={`Показано ${filteredItems.length} из ${total}`}
+          />
+
+          <div className="flex justify-center">
+            <Button
+              variant="outline"
+              className="font-semibold"
+              onClick={handleLoadMore}
+              disabled={!canLoadMore || loading}
+            >
+              {loading ? "Загрузка…" : "Показать ещё"}
+            </Button>
+          </div>
+        </>
+      )}
+    </div>
+  );
+});
+
+export const ProgramsByTypeView = memo(function ProgramsByTypeView({
+  type,
+  title,
+}: {
+  type: CategoryType;
+  title: string;
+}) {
+  const {
+    categories,
+    loading: categoriesLoading,
+    error: categoriesError,
+  } = useCategories();
+
+  const [q, setQ] = useState("");
+  const debouncedQ = useDebounce(q, 250);
+
+  const [categoryId, setCategoryId] = useState<string>("all");
+  const [pricing, setPricing] = useState<PricingFilter>("all");
+  const [views, setViews] = useState<ViewsFilter>("all");
+  const [sort, setSort] = useState<Sort>("updatedDesc");
+
+  const categoriesOfType = useMemo(() => {
+    return categories.filter(
+      (c) => c.type === type
+    ) as CategoryEntity[];
+  }, [categories, type]);
+
+  const categoryIds = useMemo(
+    () => categoriesOfType.map((c) => c.id),
+    [categoriesOfType]
+  );
+
+  // reset пагинации без useEffect: при изменении ключевых фильтров ремоунтим Results
+  const paginationKey = useMemo(
+    () =>
+      `${type}|${categoryId}|${debouncedQ}|${pricing}|${views}|${sort}`,
+    [type, categoryId, debouncedQ, pricing, views, sort]
+  );
+
+  if (categoriesLoading)
+    return <LoadingState message="Загрузка категорий…" />;
+  if (categoriesError)
+    return <ErrorState message={categoriesError.message} />;
+
+  if (categoriesOfType.length === 0) {
+    return (
+      <EmptyState
+        title="Нет категорий этого типа"
+        description="Сначала создайте категорию, затем добавляйте программы."
+      />
+    );
+  }
+
+  return (
+    <ProgramsByTypeResults
+      key={paginationKey}
+      type={type}
+      title={title}
+      categoriesOfType={categoriesOfType}
+      categoryIds={categoryIds}
+      q={q}
+      setQ={setQ}
+      debouncedQ={debouncedQ}
+      categoryId={categoryId}
+      setCategoryId={setCategoryId}
+      pricing={pricing}
+      setPricing={setPricing}
+      views={views}
+      setViews={setViews}
+      sort={sort}
+      setSort={setSort}
+    />
+  );
+});

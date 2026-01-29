@@ -1,10 +1,9 @@
 "use client";
 
-import { memo, useCallback, useMemo } from "react";
-import { usePathname, useRouter } from "next/navigation";
 import { MENU_ITEMS } from "@/shared/constants/categories";
+import { usePathname, useRouter } from "next/navigation";
+import { memo, useCallback, useMemo } from "react";
 import { MobileSidebarNavItem } from "./mobile-sidebar-nav-item";
-import { SIDEBAR_CLASSES } from "../constants/sidebar-constants";
 
 const HOME_MENU_ITEM = {
   label: "Главная",
@@ -31,37 +30,27 @@ export const MobileSidebar = memo(function MobileSidebar() {
     [router]
   );
 
-  const isHomeActive = useMemo(
-    () => pathname === "/admin",
-    [pathname]
-  );
-  const isUsersActive = useMemo(
-    () => pathname === "/admin/users",
-    [pathname]
+  const items = useMemo(
+    () => [HOME_MENU_ITEM, USERS_MENU_ITEM, ...MENU_ITEMS],
+    []
   );
 
   return (
-    <aside className={SIDEBAR_CLASSES.mobile.base}>
-      <nav className={SIDEBAR_CLASSES.mobile.nav}>
-        <MobileSidebarNavItem
-          item={HOME_MENU_ITEM}
-          isActive={isHomeActive}
-          onNavigate={handleNavigate}
-        />
-        <MobileSidebarNavItem
-          item={USERS_MENU_ITEM}
-          isActive={isUsersActive}
-          onNavigate={handleNavigate}
-        />
-        {MENU_ITEMS.map((item) => (
-          <MobileSidebarNavItem
-            key={item.path}
-            item={item}
-            isActive={pathname === item.path}
-            onNavigate={handleNavigate}
-          />
-        ))}
-      </nav>
+    <aside className="fixed inset-x-0 bottom-0 z-50 lg:hidden">
+      <div className="pointer-events-none flex justify-center pb-3">
+        <div className="pointer-events-auto w-fit rounded-2xl border border-border/60 bg-background/80 px-2 py-2 shadow-sm backdrop-blur-md">
+          <nav className="flex items-center gap-1">
+            {items.map((item) => (
+              <MobileSidebarNavItem
+                key={item.path}
+                item={item}
+                isActive={pathname === item.path}
+                onNavigate={handleNavigate}
+              />
+            ))}
+          </nav>
+        </div>
+      </div>
     </aside>
   );
 });

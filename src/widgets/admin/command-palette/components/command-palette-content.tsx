@@ -1,30 +1,30 @@
 "use client";
 
-import { memo, useState, useMemo, useCallback } from "react";
+import { useSearchState } from "@/shared/store/search-store";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { useSearchState } from "@/shared/store/ui-store";
+import { memo, useCallback, useMemo, useState } from "react";
+import {
+  COMMANDS,
+  COMMAND_PALETTE_ANIMATIONS,
+  COMMAND_PALETTE_CLASSES,
+} from "../constants/command-palette-constants";
 import { useCommandPaletteFilter } from "../hooks/use-command-palette-filter";
 import { useCommandPaletteNavigation } from "../hooks/use-command-palette-navigation";
 import { useSearchResults } from "../hooks/use-search-results";
-import {
-  COMMANDS,
-  COMMAND_PALETTE_CLASSES,
-  COMMAND_PALETTE_ANIMATIONS,
-} from "../constants/command-palette-constants";
-import { CommandPaletteSearchInput } from "./command-palette-search-input";
-import { CommandPaletteEmptyState } from "./command-palette-empty-state";
-import { CommandPaletteLoadingState } from "./command-palette-loading-state";
-import { CommandPaletteResultsGroup } from "./command-palette-results-group";
-import { CommandPaletteResultsCount } from "./command-palette-results-count";
-import {
-  groupSearchResults,
-  calculateGroupOffsets,
-} from "../utils/command-palette-utils";
 import type {
   Command,
   SearchResult,
 } from "../types/command-palette.types";
+import {
+  calculateGroupOffsets,
+  groupSearchResults,
+} from "../utils/command-palette-utils";
+import { CommandPaletteEmptyState } from "./command-palette-empty-state";
+import { CommandPaletteLoadingState } from "./command-palette-loading-state";
+import { CommandPaletteResultsCount } from "./command-palette-results-count";
+import { CommandPaletteResultsGroup } from "./command-palette-results-group";
+import { CommandPaletteSearchInput } from "./command-palette-search-input";
 
 interface CommandPaletteContentProps {
   closeCommandPalette: () => void;

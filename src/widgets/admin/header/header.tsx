@@ -1,22 +1,22 @@
 "use client";
 
-import { memo, useCallback, useMemo } from "react";
-import { motion } from "framer-motion";
-import { useAuthUser } from "@/shared/store/auth-store";
 import { useLogout } from "@/features/auth/api/use-logout";
-import { useSearchState } from "@/shared/store/ui-store";
-import { useRouter, usePathname } from "next/navigation";
 import { useIsMobile } from "@/shared/lib/hooks/use-is-mobile";
 import { useKeyboardShortcut } from "@/shared/lib/hooks/use-keyboard-shortcut";
-import { SearchInput } from "@/shared/ui/search-input/search-input";
+import { useAuthUser } from "@/shared/store/auth-store";
+import { useSearchState } from "@/shared/store/search-store";
 import { NotificationButton } from "@/shared/ui/notification-button/notification-button";
-import { UserMenu } from "@/shared/ui/user-menu/user-menu";
-import { ThemeToggle } from "@/shared/ui/theme-toggle/theme-toggle";
-import {
-  HEADER_CLASSES,
-  HEADER_ANIMATIONS,
-} from "./constants/header-constants";
 import { SEARCH_INPUT_TEXTS } from "@/shared/ui/search-input/constants/search-input-constants";
+import { SearchInput } from "@/shared/ui/search-input/search-input";
+import { ThemeToggle } from "@/shared/ui/theme-toggle/theme-toggle";
+import { UserMenu } from "@/shared/ui/user-menu/user-menu";
+import { motion } from "framer-motion";
+import { usePathname, useRouter } from "next/navigation";
+import { memo, useCallback, useMemo } from "react";
+import {
+  HEADER_ANIMATIONS,
+  HEADER_CLASSES,
+} from "./constants/header-constants";
 
 export const Header = memo(function Header() {
   const user = useAuthUser();

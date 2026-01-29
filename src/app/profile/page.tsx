@@ -1,35 +1,35 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { useUpdateProfile } from "@/features/profile/api/use-update-profile";
+import { ProfileAdditionalInfoSection } from "@/features/profile/ui/sections/profile-additional-info-section";
+import { ProfileAddressesSection } from "@/features/profile/ui/sections/profile-addresses-section";
+import { ProfileAvatarSection } from "@/features/profile/ui/sections/profile-avatar-section";
+import { ProfileBasicInfoSection } from "@/features/profile/ui/sections/profile-basic-info-section";
+import { ProfileEducationSection } from "@/features/profile/ui/sections/profile-education-section";
+import { ProfilePassportSection } from "@/features/profile/ui/sections/profile-passport-section";
+import type { ProfileFormData } from "@/features/profile/ui/types/profile-form.types";
+import {
+  createProfileInput,
+  getProfileDefaultValues,
+} from "@/features/profile/ui/utils/profile-form-utils";
+import { UserAuthGuard } from "@/shared/lib/auth/user-auth-guard";
+import { useAuthUser } from "@/shared/store/auth-store";
+import { useToastState } from "@/shared/store/toast-store";
+import { PublicHeader } from "@/widgets/public/header/public-header";
+import { ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
 import {
   memo,
   useCallback,
-  useMemo,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
-import { useForm, useWatch } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { UserAuthGuard } from "@/shared/lib/auth/user-auth-guard";
-import { useAuthUser } from "@/shared/store/auth-store";
-import { useUpdateProfile } from "@/features/profile/api/use-update-profile";
-import {
-  getProfileDefaultValues,
-  createProfileInput,
-} from "@/features/profile/ui/utils/profile-form-utils";
-import type { ProfileFormData } from "@/features/profile/ui/types/profile-form.types";
-import { useToastState } from "@/shared/store/ui-store";
-import { PublicHeader } from "@/widgets/public/header/public-header";
-import { ProfileBasicInfoSection } from "@/features/profile/ui/sections/profile-basic-info-section";
-import { ProfileAdditionalInfoSection } from "@/features/profile/ui/sections/profile-additional-info-section";
-import { ProfileAddressesSection } from "@/features/profile/ui/sections/profile-addresses-section";
-import { ProfilePassportSection } from "@/features/profile/ui/sections/profile-passport-section";
-import { ProfileEducationSection } from "@/features/profile/ui/sections/profile-education-section";
-import { ProfileAvatarSection } from "@/features/profile/ui/sections/profile-avatar-section";
 import type { Control } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 
 type ProfileSection =
   | "basic"

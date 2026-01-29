@@ -1,9 +1,9 @@
 "use client";
 
-import { memo, useCallback } from "react";
-import { useProgramModalState } from "@/shared/store/ui-store";
 import { useDeleteProgram } from "@/entities/program/api/use-delete-program";
+import { useProgramModalState } from "@/shared/store/modal-store";
 import { DeleteConfirmModal } from "@/shared/ui/delete-confirm-modal/delete-confirm-modal";
+import { memo, useCallback } from "react";
 
 export const DeleteProgramModal = memo(function DeleteProgramModal() {
   const {

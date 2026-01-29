@@ -1,15 +1,18 @@
 "use client";
 
-import { memo, useCallback, useMemo } from "react";
+import { highlightMatch } from "@/shared/ui/highlight/highlight-match";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { getCommandIcon } from "../constants/command-palette-constants";
+import { memo, useCallback, useMemo } from "react";
 import {
-  COMMAND_PALETTE_CLASSES,
   COMMAND_PALETTE_ANIMATIONS,
+  COMMAND_PALETTE_CLASSES,
+  getCommandIcon,
 } from "../constants/command-palette-constants";
-import { highlightMatch } from "../utils/highlight-utils";
-import type { Command, SearchResult } from "../types/command-palette.types";
+import type {
+  Command,
+  SearchResult,
+} from "../types/command-palette.types";
 
 interface CommandPaletteCommandItemProps {
   command: Command | SearchResult;
@@ -46,7 +49,9 @@ export const CommandPaletteCommandItem = memo(
     const description =
       "description" in command ? command.description : undefined;
     const parentCategoryName =
-      "parentCategoryName" in command ? command.parentCategoryName : undefined;
+      "parentCategoryName" in command
+        ? command.parentCategoryName
+        : undefined;
     const commandType = "type" in command ? command.type : undefined;
 
     const highlightedDescription = useMemo(() => {
@@ -85,17 +90,17 @@ export const CommandPaletteCommandItem = memo(
           <div className={COMMAND_PALETTE_CLASSES.commandIcon}>
             {IconComponent}
           </div>
-          <div className="flex-1 min-w-0">
+          <div className="min-w-0 flex-1">
             <div className={COMMAND_PALETTE_CLASSES.commandLabel}>
               {highlightedLabel}
             </div>
             {categoryText && (
-              <div className="text-xs text-muted-foreground mt-0.5">
+              <div className="mt-0.5 text-xs text-muted-foreground">
                 {categoryText}
               </div>
             )}
             {highlightedDescription && (
-              <div className="text-xs text-muted-foreground truncate mt-0.5">
+              <div className="mt-0.5 truncate text-xs text-muted-foreground">
                 {highlightedDescription}
               </div>
             )}

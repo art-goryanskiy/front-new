@@ -1,30 +1,30 @@
 "use client";
 
-import { memo, useEffect, useRef, useCallback, useMemo } from "react";
-import { useForm, useWatch } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { useCategoryModalState } from "@/shared/store/ui-store";
 import { useCreateCategory } from "@/entities/category/api/use-create-category";
 import { useUpdateCategory } from "@/entities/category/api/use-update-category";
-import { useCategoryImage } from "./hooks/use-category-image";
-import {
-  getDefaultValues,
-  createCategoryInput,
-  updateCategoryInput,
-} from "./utils/category-form-utils";
+import { useCategoryModalState } from "@/shared/store/modal-store";
+import { memo, useCallback, useEffect, useMemo, useRef } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import {
   FORM_CLASSES,
   FORM_MESSAGES,
 } from "./constants/category-form-constants";
+import { CategoryFormDescriptionField } from "./fields/category-form-description-field";
+import { CategoryFormImageField } from "./fields/category-form-image-field";
+import { CategoryFormNameField } from "./fields/category-form-name-field";
+import { CategoryFormTypeField } from "./fields/category-form-type-field";
+import { useCategoryImage } from "./hooks/use-category-image";
 import type {
   CategoryFormData,
   CategoryFormProps,
 } from "./types/category-form.types";
-import { CategoryFormNameField } from "./fields/category-form-name-field";
-import { CategoryFormDescriptionField } from "./fields/category-form-description-field";
-import { CategoryFormTypeField } from "./fields/category-form-type-field";
-import { CategoryFormImageField } from "./fields/category-form-image-field";
+import {
+  createCategoryInput,
+  getDefaultValues,
+  updateCategoryInput,
+} from "./utils/category-form-utils";
 
 export const CategoryForm = memo(function CategoryForm({
   editingCategory,
@@ -219,13 +219,15 @@ export const CategoryForm = memo(function CategoryForm({
           disabled={loading || uploadingImage}
           className="min-w-32 font-semibold shadow-lg transition-shadow hover:shadow-xl"
         >
-          {(loading || uploadingImage) ? (
+          {loading || uploadingImage ? (
             <>
               <Spinner className="mr-2 h-4 w-4" size={16} />
               {isEditMode ? FORM_MESSAGES.save : FORM_MESSAGES.create}
             </>
+          ) : isEditMode ? (
+            FORM_MESSAGES.save
           ) : (
-            isEditMode ? FORM_MESSAGES.save : FORM_MESSAGES.create
+            FORM_MESSAGES.create
           )}
         </Button>
       </div>

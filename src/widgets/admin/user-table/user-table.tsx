@@ -2,36 +2,92 @@
 
 import {
   Table,
-  TableHeader,
   TableBody,
-  TableRow,
+  TableCaption,
   TableCell,
   TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
-import { Card, CardContent } from "@/components/ui/card";
-import type { UserEntity } from "@/shared/api/generated/graphql";
 import { useUsers } from "@/entities/user/api/use-users";
-import { useUserModalState } from "@/shared/store/ui-store";
-import { memo, useCallback, useMemo } from "react";
+import { cn } from "@/lib/utils";
+import type {
+  UserEntity,
+  UserRole,
+} from "@/shared/api/generated/graphql";
+import { useUserModalState } from "@/shared/store/modal-store";
 import { EmptyState } from "@/shared/ui/empty-state/empty-state";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
+import { Surface } from "@/shared/ui/surface/surface";
 import { TableActions } from "@/shared/ui/table-actions/table-actions";
-import {
-  TABLE_CLASSES,
-  EMPTY_STATE_ICON,
-} from "./constants/user-table-constants";
+import { TableSkeleton } from "@/shared/ui/table-skeleton/table-skeleton";
+import { memo, useCallback, useEffect, useMemo } from "react";
+import { UserTableDateContent } from "./cells/user-table-date-content";
 import { UserTableEmailContent } from "./cells/user-table-email-content";
 import { UserTableNameContent } from "./cells/user-table-name-content";
 import { UserTableRoleContent } from "./cells/user-table-role-content";
 import { UserTableStatusContent } from "./cells/user-table-status-content";
-import { UserTableDateContent } from "./cells/user-table-date-content";
-import { TableSkeleton } from "@/shared/ui/table-skeleton/table-skeleton";
+import {
+  EMPTY_STATE_ICON,
+  TABLE_CLASSES,
+} from "./constants/user-table-constants";
 
-export const UserTable = memo(function UserTable() {
+export const UserTable = memo(function UserTable({
+  searchQuery = "",
+  roleFilter = "all",
+  statusFilter = "all",
+  onCountsChange,
+}: {
+  searchQuery?: string;
+  roleFilter?: UserRole | "all";
+  statusFilter?: "all" | "active" | "unverified" | "blocked";
+  onCountsChange?: (c: { shown: number; total: number }) => void;
+}) {
   const { users, loading, error } = useUsers();
-
   const { openEditUserModal, openDeleteUserModal } =
     useUserModalState();
+
+  const normalizedQuery = useMemo(
+    () => searchQuery.trim().toLowerCase(),
+    [searchQuery]
+  );
+
+  const filteredUsers = useMemo(() => {
+    return users.filter((u) => {
+      // role filter
+      if (roleFilter !== "all" && u.role !== roleFilter) return false;
+
+      // status filter
+      if (statusFilter !== "all") {
+        const isActive = !u.isBlocked && u.isEmailVerified;
+        const isUnverified = !u.isBlocked && !u.isEmailVerified;
+
+        if (statusFilter === "active" && !isActive) return false;
+        if (statusFilter === "unverified" && !isUnverified)
+          return false;
+        if (statusFilter === "blocked" && !u.isBlocked) return false;
+      }
+
+      // search filter
+      if (!normalizedQuery) return true;
+
+      const firstName = u.firstName || u.profile?.firstName || "";
+      const lastName = u.lastName || u.profile?.lastName || "";
+      const phone = u.phone || u.profile?.phone || "";
+      const email = u.email || "";
+
+      const haystack =
+        `${firstName} ${lastName} ${email} ${phone}`.toLowerCase();
+      return haystack.includes(normalizedQuery);
+    });
+  }, [users, normalizedQuery, roleFilter, statusFilter]);
+
+  useEffect(() => {
+    onCountsChange?.({
+      shown: filteredUsers.length,
+      total: users.length,
+    });
+  }, [onCountsChange, filteredUsers.length, users.length]);
 
   const handleRowClick = useCallback(
     (user: UserEntity, e: React.MouseEvent) => {
@@ -49,16 +105,12 @@ export const UserTable = memo(function UserTable() {
   );
 
   const handleEditClick = useCallback(
-    (user: UserEntity) => {
-      openEditUserModal(user);
-    },
+    (user: UserEntity) => openEditUserModal(user),
     [openEditUserModal]
   );
 
   const handleDeleteClick = useCallback(
-    (user: UserEntity) => {
-      openDeleteUserModal(user);
-    },
+    (user: UserEntity) => openDeleteUserModal(user),
     [openDeleteUserModal]
   );
 
@@ -74,9 +126,15 @@ export const UserTable = memo(function UserTable() {
 
   const tableId = useMemo(() => "user-table", []);
 
-  if (loading) {
-    return <TableSkeleton rows={5} columns={6} />;
-  }
+  const getDisplayName = useCallback((u: UserEntity) => {
+    const firstName = u.firstName || u.profile?.firstName;
+    const lastName = u.lastName || u.profile?.lastName;
+    if (firstName && lastName) return `${firstName} ${lastName}`;
+    if (firstName) return firstName;
+    return u.email;
+  }, []);
+
+  if (loading) return <TableSkeleton rows={5} columns={6} />;
 
   if (error) {
     return (
@@ -99,76 +157,191 @@ export const UserTable = memo(function UserTable() {
     );
   }
 
+  if (filteredUsers.length === 0) {
+    return (
+      <EmptyState
+        title="Ничего не найдено"
+        description={`По запросу “${searchQuery}” нет результатов`}
+        icon={EMPTY_STATE_ICON}
+      />
+    );
+  }
+
   return (
-    <Card className={`shadow-lg ${TABLE_CLASSES.wrapper}`}>
-      <CardContent className="p-0">
-        <Table
-          id={tableId}
-          aria-label="Таблица пользователей"
-          aria-describedby={`${tableId}-description`}
-        >
-          <TableHeader>
-            <TableRow>
-              <TableHead className={`min-w-0 w-[40%] ${TABLE_CLASSES.th}`}>
-                ПОЛЬЗОВАТЕЛЬ
-              </TableHead>
-              <TableHead className={`hidden min-w-0 [851px]:table-cell w-[30%] ${TABLE_CLASSES.th}`}>
-                EMAIL
-              </TableHead>
-              <TableHead className={`hidden text-center md:table-cell w-[15%] ${TABLE_CLASSES.th}`}>
-                РОЛЬ
-              </TableHead>
-              <TableHead className={`hidden text-center lg:table-cell w-[15%] ${TABLE_CLASSES.th}`}>
-                СТАТУС
-              </TableHead>
-              <TableHead className={`hidden text-center xl:table-cell w-[15%] ${TABLE_CLASSES.th}`}>
-                ДАТА РЕГИСТРАЦИИ
-              </TableHead>
-              <TableHead className={`hidden text-center md:table-cell w-[10%] ${TABLE_CLASSES.th}`}>
-                ДЕЙСТВИЯ
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {users.map((user) => (
-              <TableRow
-                key={user.id}
-                className={`group cursor-pointer ${TABLE_CLASSES.tr}`}
-                onClick={(e) => handleRowClick(user, e)}
-                role="row"
-                tabIndex={0}
-                onKeyDown={(e) => handleKeyDown(user, e)}
-                aria-label={`Пользователь ${user.email}`}
-                aria-describedby={`${tableId}-row-${user.id}`}
-              >
-                <TableCell className={`min-w-0 ${TABLE_CLASSES.td}`}>
-                  <UserTableNameContent user={user} />
-                </TableCell>
-                <TableCell className={`hidden min-w-0 [851px]:table-cell ${TABLE_CLASSES.td}`}>
-                  <UserTableEmailContent user={user} />
-                </TableCell>
-                <TableCell className={`hidden text-center md:table-cell ${TABLE_CLASSES.td}`}>
+    <>
+      {/* MOBILE (<md): cards */}
+      <div className={TABLE_CLASSES.cardsWrap}>
+        {filteredUsers.map((user) => (
+          <Surface
+            key={user.id}
+            className={cn(
+              TABLE_CLASSES.card,
+              "focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:outline-none"
+            )}
+            role="button"
+            tabIndex={0}
+            onClick={() => openEditUserModal(user)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                openEditUserModal(user);
+              }
+            }}
+            aria-label={`Открыть пользователя ${user.email}`}
+          >
+            <div className={TABLE_CLASSES.cardHeader}>
+              <div className={TABLE_CLASSES.cardMain}>
+                <div
+                  className={TABLE_CLASSES.cardTitle}
+                  title={getDisplayName(user)}
+                >
+                  {getDisplayName(user)}
+                </div>
+                <div
+                  className={TABLE_CLASSES.cardSub}
+                  title={user.email}
+                >
+                  {user.email}
+                </div>
+
+                <div className={TABLE_CLASSES.cardMeta}>
                   <UserTableRoleContent user={user} />
-                </TableCell>
-                <TableCell className={`hidden text-center lg:table-cell ${TABLE_CLASSES.td}`}>
                   <UserTableStatusContent user={user} />
-                </TableCell>
-                <TableCell className={`hidden text-center xl:table-cell ${TABLE_CLASSES.td}`}>
-                  <UserTableDateContent user={user} field="createdAt" />
-                </TableCell>
-                <TableCell className={`hidden text-center md:table-cell ${TABLE_CLASSES.td}`}>
-                  <TableActions
-                    onEdit={() => handleEditClick(user)}
-                    onDelete={() => handleDeleteClick(user)}
-                    editLabel="Редактировать пользователя"
-                    deleteLabel="Удалить пользователя"
-                  />
-                </TableCell>
+                  <span className={TABLE_CLASSES.cardMetaPill}>
+                    <UserTableDateContent
+                      user={user}
+                      field="createdAt"
+                    />
+                  </span>
+                </div>
+              </div>
+
+              <div className="shrink-0">
+                <TableActions
+                  onEdit={() => handleEditClick(user)}
+                  onDelete={() => handleDeleteClick(user)}
+                  editLabel="Редактировать пользователя"
+                  deleteLabel="Удалить пользователя"
+                />
+              </div>
+            </div>
+          </Surface>
+        ))}
+      </div>
+
+      {/* DESKTOP (md+): premium table */}
+      <div className="hidden md:block">
+        <Surface variant="floating" className={TABLE_CLASSES.wrapper}>
+          <Table
+            id={tableId}
+            aria-label="Таблица пользователей"
+            aria-describedby={`${tableId}-description`}
+          >
+            <TableHeader className={TABLE_CLASSES.thead}>
+              <TableRow>
+                <TableHead
+                  className={`w-[40%] min-w-0 ${TABLE_CLASSES.th}`}
+                >
+                  ПОЛЬЗОВАТЕЛЬ
+                </TableHead>
+                <TableHead
+                  className={`hidden w-[30%] min-w-0 [851px]:table-cell ${TABLE_CLASSES.th}`}
+                >
+                  EMAIL
+                </TableHead>
+                <TableHead
+                  className={`hidden w-[15%] text-center md:table-cell ${TABLE_CLASSES.th}`}
+                >
+                  РОЛЬ
+                </TableHead>
+                <TableHead
+                  className={`hidden w-[15%] text-center lg:table-cell ${TABLE_CLASSES.th}`}
+                >
+                  СТАТУС
+                </TableHead>
+                <TableHead
+                  className={`hidden w-[15%] text-center xl:table-cell ${TABLE_CLASSES.th}`}
+                >
+                  ДАТА РЕГИСТРАЦИИ
+                </TableHead>
+                <TableHead
+                  className={`hidden w-[10%] text-center md:table-cell ${TABLE_CLASSES.th}`}
+                >
+                  ДЕЙСТВИЯ
+                </TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
+            </TableHeader>
+
+            <TableBody className="[&_tr:nth-child(even)]:bg-muted/10">
+              {filteredUsers.map((user) => (
+                <TableRow
+                  key={user.id}
+                  className={`group cursor-pointer ${TABLE_CLASSES.tr}`}
+                  onClick={(e) => handleRowClick(user, e)}
+                  role="row"
+                  tabIndex={0}
+                  onKeyDown={(e) => handleKeyDown(user, e)}
+                  aria-label={`Пользователь ${user.email}`}
+                  aria-describedby={`${tableId}-row-${user.id}`}
+                >
+                  <TableCell
+                    className={`min-w-0 ${TABLE_CLASSES.td}`}
+                  >
+                    <UserTableNameContent user={user} />
+                  </TableCell>
+
+                  <TableCell
+                    className={`hidden min-w-0 [851px]:table-cell ${TABLE_CLASSES.td}`}
+                  >
+                    <UserTableEmailContent user={user} />
+                  </TableCell>
+
+                  <TableCell
+                    className={`hidden text-center md:table-cell ${TABLE_CLASSES.td}`}
+                  >
+                    <UserTableRoleContent user={user} />
+                  </TableCell>
+
+                  <TableCell
+                    className={`hidden text-center lg:table-cell ${TABLE_CLASSES.td}`}
+                  >
+                    <UserTableStatusContent user={user} />
+                  </TableCell>
+
+                  <TableCell
+                    className={`hidden text-center xl:table-cell ${TABLE_CLASSES.td}`}
+                  >
+                    <UserTableDateContent
+                      user={user}
+                      field="createdAt"
+                    />
+                  </TableCell>
+
+                  <TableCell
+                    className={`hidden text-center md:table-cell ${TABLE_CLASSES.td}`}
+                  >
+                    <TableActions
+                      onEdit={() => handleEditClick(user)}
+                      onDelete={() => handleDeleteClick(user)}
+                      editLabel="Редактировать пользователя"
+                      deleteLabel="Удалить пользователя"
+                    />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+
+            <TableCaption className={TABLE_CLASSES.caption}>
+              Показано {filteredUsers.length} из {users.length}
+              {normalizedQuery ? ` • фильтр: “${searchQuery}”` : ""}
+              {roleFilter !== "all" ? ` • роль: ${roleFilter}` : ""}
+              {statusFilter !== "all"
+                ? ` • статус: ${statusFilter}`
+                : ""}
+            </TableCaption>
+          </Table>
+        </Surface>
+      </div>
+    </>
   );
 });

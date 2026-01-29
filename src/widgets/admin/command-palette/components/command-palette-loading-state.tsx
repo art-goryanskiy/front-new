@@ -1,7 +1,7 @@
 "use client";
 
+import { Skeleton } from "@/components/ui/skeleton";
 import { memo, useMemo } from "react";
-import { Skeleton } from "@/widgets/admin/skeleton/skeleton";
 import { COMMAND_PALETTE_CLASSES } from "../constants/command-palette-constants";
 
 export const CommandPaletteLoadingState = memo(

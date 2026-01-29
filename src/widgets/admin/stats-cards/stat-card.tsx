@@ -1,11 +1,12 @@
 "use client";
 
-import { memo, useMemo } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import { Surface } from "@/shared/ui/surface/surface";
 import { motion } from "framer-motion";
+import { memo, useMemo } from "react";
 import {
-  COLOR_CLASSES,
-  SHADOW_COLORS,
+  ACCENT_GRADIENT,
+  ICON_BADGE_CLASSES,
   type StatCardColor,
 } from "./constants/stats-cards-constants";
 
@@ -29,16 +30,13 @@ export const StatCard = memo(function StatCard({
   trend,
   index,
 }: StatCardProps) {
-  const colorClass = useMemo(() => COLOR_CLASSES[color], [color]);
-  const shadowColor = useMemo(() => SHADOW_COLORS[color], [color]);
-
-  const transitionDelay = useMemo(() => index * 0.1, [index]);
+  const transitionDelay = useMemo(() => index * 0.06, [index]);
 
   const trendClassName = useMemo(
     () =>
       trend?.isPositive
-        ? "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400"
-        : "bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400",
+        ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
+        : "border-rose-500/20 bg-rose-500/10 text-rose-700 dark:text-rose-400",
     [trend?.isPositive]
   );
 
@@ -49,60 +47,75 @@ export const StatCard = memo(function StatCard({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: transitionDelay, duration: 0.3 }}
-      whileHover={{ y: -4, transition: { duration: 0.2 } }}
+      transition={{ delay: transitionDelay, duration: 0.25 }}
+      whileHover={{ y: -2, transition: { duration: 0.15 } }}
     >
-      <Card className="group overflow-hidden border bg-card/80 shadow-lg backdrop-blur-sm transition-all duration-300 hover:shadow-2xl">
-        <CardContent className="relative p-4 sm:p-5 lg:p-6">
-          <div
-            className={`absolute inset-0 bg-linear-to-br ${colorClass} opacity-0 transition-opacity duration-300 group-hover:opacity-5`}
-          />
+      <Surface
+        variant="floating"
+        className={cn(
+          "relative overflow-hidden p-4 sm:p-5 lg:p-6",
+          "transition-colors"
+        )}
+      >
+        {/* мягкий градиент-акцент */}
+        <div
+          className={cn(
+            "pointer-events-none absolute inset-0 opacity-70",
+            "bg-linear-to-br",
+            ACCENT_GRADIENT[color]
+          )}
+        />
 
-          <div className="relative z-10 flex items-center justify-between gap-3 sm:gap-4">
-            <div className="min-w-0 flex-1">
-              <p className="mb-1 truncate text-xs font-medium tracking-wide text-muted-foreground uppercase sm:mb-2 sm:text-sm">
-                {title}
-              </p>
-              <motion.p
-                key={value}
-                initial={{ scale: 1.2, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                className="mb-2 text-2xl font-bold text-foreground sm:mb-3 sm:text-3xl lg:text-4xl"
-              >
-                {value}
-              </motion.p>
-              {trend && trendValue !== null && (
-                <div className="flex flex-wrap items-center gap-2">
-                  <motion.span
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className={`rounded-full px-2 py-0.5 text-xs font-semibold ${trendClassName}`}
-                  >
-                    {trend.isPositive ? "↑" : "↓"} {trendValue}%
-                  </motion.span>
-                  <span className="text-xs text-muted-foreground">
-                    за месяц
-                  </span>
-                </div>
-              )}
-            </div>
-            <motion.div
-              whileHover={{
-                rotate: [0, -10, 10, -10, 0],
-                scale: 1.1,
-              }}
-              transition={{ duration: 0.5 }}
-              className={`h-12 w-12 rounded-xl bg-linear-to-br sm:h-14 sm:w-14 sm:rounded-2xl lg:h-16 lg:w-16 ${colorClass} flex items-center justify-center shadow-xl ${shadowColor} shrink-0 transition-shadow group-hover:shadow-2xl`}
+        <div className="relative z-10 flex items-start justify-between gap-3">
+          <div className="min-w-0 flex-1">
+            <p className="mb-1 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+              {title}
+            </p>
+
+            <motion.p
+              key={value}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-2xl font-bold text-foreground sm:text-3xl"
             >
-              <div className="text-lg text-white sm:text-xl lg:text-2xl">
-                {icon}
+              {value}
+            </motion.p>
+
+            {trend && trendValue !== null && (
+              <div className="mt-2 flex flex-wrap items-center gap-2">
+                <span
+                  className={cn(
+                    "inline-flex items-center gap-1 rounded-full border px-2 py-1 text-[11px] font-semibold",
+                    trendClassName
+                  )}
+                >
+                  {trend.isPositive ? "↑" : "↓"} {trendValue}%
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  за месяц
+                </span>
               </div>
-            </motion.div>
+            )}
           </div>
-        </CardContent>
-      </Card>
+
+          {/* glass badge для иконки */}
+          <motion.div
+            whileHover={{ rotate: [0, -6, 6, -6, 0], scale: 1.03 }}
+            transition={{ duration: 0.45 }}
+            className={cn(
+              "grid h-12 w-12 shrink-0 place-items-center rounded-2xl border backdrop-blur-sm",
+              "shadow-sm",
+              ICON_BADGE_CLASSES[color]
+            )}
+          >
+            <div className="text-[0px] [&_svg]:h-6 [&_svg]:w-6">
+              {icon}
+            </div>
+          </motion.div>
+        </div>
+      </Surface>
     </motion.div>
   );
 });

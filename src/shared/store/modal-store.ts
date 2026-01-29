@@ -1,34 +1,34 @@
-// src/shared/store/ui-store.ts
-import { create } from "zustand";
 import type {
-  CategoryType,
   CategoryEntity,
+  CategoryType,
   ProgramEntity,
   UserEntity,
 } from "@/shared/api/generated/graphql";
+import { create } from "zustand";
+import { useShallow } from "zustand/react/shallow";
 
-interface UIStore {
+interface ModalStore {
+  // Category modals
   isCategoryModalOpen: boolean;
   isDeleteCategoryModalOpen: boolean;
   categoryType: CategoryType | null;
   editingCategory: CategoryEntity | null;
   deletingCategory: CategoryEntity | null;
-  searchQuery: string;
-  searchOriginPath: string | null; // Путь, откуда был начат поиск
+
+  openCreateCategoryModal: (type?: CategoryType) => void;
+  openEditCategoryModal: (category: CategoryEntity) => void;
+  openDeleteCategoryModal: (category: CategoryEntity) => void;
+  closeCategoryModal: () => void;
+  closeDeleteCategoryModal: () => void;
+
+  // Program modals
   isProgramModalOpen: boolean;
   isDeleteProgramModalOpen: boolean;
   editingProgram: ProgramEntity | null;
   deletingProgram: ProgramEntity | null;
   programCategoryId: string | null;
   programCategoryType: CategoryType | null;
-  openCreateCategoryModal: (type?: CategoryType) => void;
-  openEditCategoryModal: (category: CategoryEntity) => void;
-  openDeleteCategoryModal: (category: CategoryEntity) => void;
-  closeCategoryModal: () => void;
-  closeDeleteCategoryModal: () => void;
-  setSearchQuery: (query: string) => void;
-  setSearchOriginPath: (path: string | null) => void;
-  clearSearch: () => void;
+
   openCreateProgramModal: (
     categoryId: string,
     categoryType?: CategoryType | null
@@ -46,45 +46,26 @@ interface UIStore {
   isDeleteUserModalOpen: boolean;
   editingUser: UserEntity | null;
   deletingUser: UserEntity | null;
+
   openCreateUserModal: () => void;
   openEditUserModal: (user: UserEntity) => void;
   openDeleteUserModal: (user: UserEntity) => void;
   closeUserModal: () => void;
   closeDeleteUserModal: () => void;
-
-  isCommandPaletteOpen: boolean;
-  openCommandPalette: () => void;
-  closeCommandPalette: () => void;
-  toast: {
-    type: "success" | "error" | "info";
-    message: string;
-  } | null;
-  showToast: (
-    type: "success" | "error" | "info",
-    message: string
-  ) => void;
-  clearToast: () => void;
 }
 
-export const useUIStore = create<UIStore>((set) => ({
+const useModalStore = create<ModalStore>((set) => ({
+  // Category modals
   isCategoryModalOpen: false,
   isDeleteCategoryModalOpen: false,
   categoryType: null,
   editingCategory: null,
   deletingCategory: null,
-  searchQuery: "",
-  searchOriginPath: null,
-  isProgramModalOpen: false,
-  isDeleteProgramModalOpen: false,
-  editingProgram: null,
-  deletingProgram: null,
-  programCategoryId: null,
-  programCategoryType: null,
-  isCommandPaletteOpen: false,
+
   openCreateCategoryModal: (type) =>
     set({
       isCategoryModalOpen: true,
-      categoryType: type || null,
+      categoryType: type ?? null,
       editingCategory: null,
     }),
   openEditCategoryModal: (category) =>
@@ -109,13 +90,15 @@ export const useUIStore = create<UIStore>((set) => ({
       isDeleteCategoryModalOpen: false,
       deletingCategory: null,
     }),
-  setSearchQuery: (query) => set({ searchQuery: query }),
-  setSearchOriginPath: (path) => set({ searchOriginPath: path }),
-  clearSearch: () =>
-    set({
-      searchQuery: "",
-      searchOriginPath: null,
-    }),
+
+  // Program modals
+  isProgramModalOpen: false,
+  isDeleteProgramModalOpen: false,
+  editingProgram: null,
+  deletingProgram: null,
+  programCategoryId: null,
+  programCategoryType: null,
+
   openCreateProgramModal: (categoryId, categoryType) =>
     set({
       isProgramModalOpen: true,
@@ -147,11 +130,13 @@ export const useUIStore = create<UIStore>((set) => ({
       isDeleteProgramModalOpen: false,
       deletingProgram: null,
     }),
+
   // User modals
   isUserModalOpen: false,
   isDeleteUserModalOpen: false,
   editingUser: null,
   deletingUser: null,
+
   openCreateUserModal: () =>
     set({
       isUserModalOpen: true,
@@ -177,31 +162,10 @@ export const useUIStore = create<UIStore>((set) => ({
       isDeleteUserModalOpen: false,
       deletingUser: null,
     }),
-  openCommandPalette: () => set({ isCommandPaletteOpen: true }),
-  closeCommandPalette: () => set({ isCommandPaletteOpen: false }),
-  toast: null,
-  showToast: (type, message) => set({ toast: { type, message } }),
-  clearToast: () => set({ toast: null }),
 }));
 
-import { useShallow } from "zustand/react/shallow";
-// Оптимизированные селекторы для минимизации ререндеров
-export const useSearchState = () =>
-  useUIStore(
-    useShallow((state) => ({
-      searchQuery: state.searchQuery,
-      searchOriginPath: state.searchOriginPath,
-      isCommandPaletteOpen: state.isCommandPaletteOpen,
-      setSearchQuery: state.setSearchQuery,
-      setSearchOriginPath: state.setSearchOriginPath,
-      openCommandPalette: state.openCommandPalette,
-      closeCommandPalette: state.closeCommandPalette,
-      clearSearch: state.clearSearch,
-    }))
-  );
-
 export const useCategoryModalState = () =>
-  useUIStore(
+  useModalStore(
     useShallow((state) => ({
       isCategoryModalOpen: state.isCategoryModalOpen,
       isDeleteCategoryModalOpen: state.isDeleteCategoryModalOpen,
@@ -217,7 +181,7 @@ export const useCategoryModalState = () =>
   );
 
 export const useProgramModalState = () =>
-  useUIStore(
+  useModalStore(
     useShallow((state) => ({
       isProgramModalOpen: state.isProgramModalOpen,
       isDeleteProgramModalOpen: state.isDeleteProgramModalOpen,
@@ -234,7 +198,7 @@ export const useProgramModalState = () =>
   );
 
 export const useUserModalState = () =>
-  useUIStore(
+  useModalStore(
     useShallow((state) => ({
       isUserModalOpen: state.isUserModalOpen,
       isDeleteUserModalOpen: state.isDeleteUserModalOpen,
@@ -245,14 +209,5 @@ export const useUserModalState = () =>
       openDeleteUserModal: state.openDeleteUserModal,
       closeUserModal: state.closeUserModal,
       closeDeleteUserModal: state.closeDeleteUserModal,
-    }))
-  );
-
-export const useToastState = () =>
-  useUIStore(
-    useShallow((state) => ({
-      toast: state.toast,
-      showToast: state.showToast,
-      clearToast: state.clearToast,
     }))
   );

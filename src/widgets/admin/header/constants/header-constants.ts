@@ -3,12 +3,12 @@
  */
 export const HEADER_CLASSES = {
   header:
-    "sticky top-0 z-40 border-b shadow-sm backdrop-blur-xl bg-background/70 border-border",
+    "sticky top-0 z-40 border-b border-border/60 bg-background/70 backdrop-blur-xl",
   container: "mx-auto w-full max-w-7xl",
   content:
-    "flex gap-2 justify-between items-center px-4 h-14 sm:h-16 sm:px-6 md:px-8 lg:px-10 xl:px-12 sm:gap-4",
+    "flex h-14 items-center justify-between gap-2 px-4 sm:h-16 sm:gap-4 sm:px-6 md:px-8 lg:px-10 xl:px-12",
   searchWrapper: "flex-1 min-w-0",
-  actions: "flex gap-1 items-center sm:gap-2 shrink-0",
+  actions: "flex shrink-0 items-center gap-1 sm:gap-2",
 } as const;
 
 export const HEADER_ANIMATIONS = {

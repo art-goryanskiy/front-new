@@ -1,14 +1,14 @@
 "use client";
 
-import { memo, useMemo } from "react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useUserModalState } from "@/shared/store/ui-store";
 import { UserForm } from "@/features/user/ui/user-form";
+import { useUserModalState } from "@/shared/store/modal-store";
+import { memo, useMemo } from "react";
 import { USER_MODAL_TEXTS } from "./constants/user-modal-constants";
 
 export const UserModal = memo(function UserModal() {
@@ -22,7 +22,7 @@ export const UserModal = memo(function UserModal() {
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] max-w-5xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">
             {isEditMode

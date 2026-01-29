@@ -1,6 +1,3 @@
-/**
- * Константы для сайдбара
- */
 export const SIDEBAR_TEXTS = {
   collapseMenu: "Свернуть меню",
   expandMenu: "Развернуть меню",
@@ -10,40 +7,45 @@ export const SIDEBAR_TEXTS = {
 
 export const SIDEBAR_CLASSES = {
   desktop: {
-    base: "hidden lg:flex bg-linear-to-b from-background to-muted border-r border-border flex-col h-screen sticky top-0 transition-all duration-300 ease-in-out shadow-sm",
-    collapsed: "w-20",
-    expanded: "max-w-[380px]",
-    logoSection: "p-5 backdrop-blur-sm bg-background/80",
-    logoButton:
-      "p-1 rounded-lg transition-all duration-200 cursor-pointer hover:scale-105 active:scale-95",
-    nav: "overflow-y-auto flex-1 p-3 space-y-2",
+    base: "hidden lg:flex flex-col h-dvh sticky top-0 border-r border-border/60 bg-background/55 backdrop-blur-xl supports-[backdrop-filter]:bg-background/45",
+    collapsed: "w-[88px]",
+    expanded: "w-[296px]",
+    logoSection: "px-4 py-4",
+    nav: "flex-1 p-2 space-y-1",
     footer:
-      "p-4 border-t border-border bg-muted/50",
+      "p-3 border-t border-border/60 bg-background/35 backdrop-blur",
     collapseButton:
-      "justify-start w-full h-auto text-muted-foreground hover:bg-muted min-h-12",
+      "justify-start w-full h-auto text-muted-foreground hover:bg-muted/20 min-h-11 rounded-xl",
     collapseButtonText:
       "ml-2 font-medium text-left whitespace-normal wrap-break-word",
-    expandButton: "w-full h-12 hover:bg-muted",
+    expandButton: "w-full h-11 hover:bg-muted/20 rounded-xl",
   },
-  mobile: {
-    base: "fixed right-0 bottom-0 left-0 z-50 border-t shadow-lg backdrop-blur-md lg:hidden bg-background/95 border-border",
-    nav: "flex gap-1 justify-center items-center px-2 py-2",
-  },
+
   navItem: {
-    base: "w-full transition-all duration-200",
-    collapsed: "justify-center h-12 min-w-12",
-    expanded: "justify-start h-auto min-h-12",
-    active: "shadow-md shadow-primary-500/20 font-semibold",
-    inactive: "hover:bg-muted hover:scale-[1.02]",
-    icon: "shrink-0 transition-transform",
-    iconActive: "scale-110",
-    label: "ml-2 text-left font-medium whitespace-normal wrap-break-word",
+    base: "group relative w-full rounded-xl transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40",
+    collapsed: "justify-center h-11 min-w-11",
+    expanded: "justify-start h-11 px-3",
+
+    // “дорогой” active: soft fill + тонкий индикатор слева
+    active:
+      "bg-muted/25 text-foreground border border-border/60 before:absolute before:left-1 before:top-2 before:bottom-2 before:w-1 before:rounded-full before:bg-primary",
+
+    // inactive: читаемый muted + hover
+    inactive:
+      "text-muted-foreground hover:bg-muted/15 hover:text-foreground",
+
+    icon: "shrink-0 transition-colors",
+    iconActive: "text-primary",
+    label: "ml-3 min-w-0 flex-1 truncate text-left font-medium",
     mobile: {
-      base: "min-w-14 h-14 transition-all",
-      active: "shadow-lg scale-110",
-      inactive: "hover:scale-105",
+      base: "relative h-12 w-12 rounded-xl transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40",
+      // на мобиле делаем контрастнее: primary tint + ring + dot
+      active:
+        "bg-primary/12 text-primary border border-primary/20 ring-1 ring-primary/20 after:absolute after:-bottom-0.5 after:left-1/2 after:h-1 after:w-1 after:-translate-x-1/2 after:rounded-full after:bg-primary",
+      inactive: "text-muted-foreground hover:bg-muted/20",
     },
   },
+
   tooltip: {
     content: "bg-popover text-popover-foreground",
   },
@@ -52,7 +54,7 @@ export const SIDEBAR_CLASSES = {
 export const SIDEBAR_BREAKPOINT = "(max-width: 1199px)";
 export const LOGO_SIZE = { width: 58, height: 58 };
 export const ICON_SIZES = {
-  desktop: 26,
+  desktop: 22,
   mobile: 20,
   footer: 20,
 } as const;

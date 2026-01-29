@@ -1,15 +1,22 @@
-import { cn } from "@/lib/utils";
+"use client";
+import { motion } from "framer-motion";
 
-function Skeleton({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+export function Skeleton({ className = "" }: { className?: string }) {
   return (
     <div
-      className={cn("animate-pulse rounded-md bg-muted", className)}
-      {...props}
-    />
+      className={`overflow-hidden rounded-lg bg-muted ${className}`}
+    >
+      <motion.div
+        className="h-full w-full bg-linear-to-r from-transparent via-white/20 to-transparent"
+        animate={{
+          x: ["-100%", "100%"],
+        }}
+        transition={{
+          duration: 1.5,
+          repeat: Infinity,
+          ease: "linear",
+        }}
+      />
+    </div>
   );
 }
-
-export { Skeleton };

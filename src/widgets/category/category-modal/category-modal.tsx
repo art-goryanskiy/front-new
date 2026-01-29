@@ -1,14 +1,14 @@
 "use client";
 
-import { memo, useMemo } from "react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useCategoryModalState } from "@/shared/store/ui-store";
 import { CategoryForm } from "@/features/category/ui/category-form";
+import { useCategoryModalState } from "@/shared/store/modal-store";
+import { memo, useMemo } from "react";
 import { CATEGORY_MODAL_TEXTS } from "./constants/category-modal-constants";
 
 export const CategoryModal = memo(function CategoryModal() {
@@ -25,7 +25,7 @@ export const CategoryModal = memo(function CategoryModal() {
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] max-w-5xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">
             {isEditMode

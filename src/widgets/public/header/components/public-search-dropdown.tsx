@@ -1,11 +1,11 @@
 "use client";
 
-import { memo, useCallback, useMemo, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Folder, BookOpen, Loader2 } from "lucide-react";
-import { usePublicSearchResults } from "../hooks/use-public-search-results";
-import { highlightMatch } from "@/widgets/admin/command-palette/utils/highlight-utils";
+import { highlightMatch } from "@/shared/ui/highlight/highlight-match";
+import { AnimatePresence, motion } from "framer-motion";
+import { BookOpen, Folder, Loader2 } from "lucide-react";
+import { memo, useCallback, useEffect, useMemo, useRef } from "react";
 import type { PublicSearchResult } from "../hooks/use-public-search-results";
+import { usePublicSearchResults } from "../hooks/use-public-search-results";
 
 interface PublicSearchDropdownProps {
   query: string;
@@ -14,117 +14,119 @@ interface PublicSearchDropdownProps {
   onSelect: (result: PublicSearchResult) => void;
 }
 
-export const PublicSearchDropdown = memo(function PublicSearchDropdown({
-  query,
-  isOpen,
-  onClose,
-  onSelect,
-}: PublicSearchDropdownProps) {
-  const { results, loading } = usePublicSearchResults(query);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+export const PublicSearchDropdown = memo(
+  function PublicSearchDropdown({
+    query,
+    isOpen,
+    onClose,
+    onSelect,
+  }: PublicSearchDropdownProps) {
+    const { results, loading } = usePublicSearchResults(query);
+    const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Закрываем при клике вне dropdown
-  useEffect(() => {
-    if (!isOpen) return;
+    // Закрываем при клике вне dropdown
+    useEffect(() => {
+      if (!isOpen) return;
 
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
+      const handleClickOutside = (event: MouseEvent) => {
+        if (
+          dropdownRef.current &&
+          !dropdownRef.current.contains(event.target as Node)
+        ) {
+          onClose();
+        }
+      };
+
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }, [isOpen, onClose]);
+
+    const handleResultClick = useCallback(
+      (result: PublicSearchResult) => {
+        onSelect(result);
         onClose();
-      }
-    };
+      },
+      [onSelect, onClose]
+    );
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isOpen, onClose]);
+    const hasResults = results.length > 0;
+    const showDropdown = isOpen && query.length > 0;
 
-  const handleResultClick = useCallback(
-    (result: PublicSearchResult) => {
-      onSelect(result);
-      onClose();
-    },
-    [onSelect, onClose]
-  );
+    // Группируем результаты
+    const groupedResults = useMemo(() => {
+      const categories = results.filter((r) => r.type === "category");
+      const programs = results.filter((r) => r.type === "program");
+      return { categories, programs };
+    }, [results]);
 
-  const hasResults = results.length > 0;
-  const showDropdown = isOpen && query.length > 0;
+    if (!showDropdown) return null;
 
-  // Группируем результаты
-  const groupedResults = useMemo(() => {
-    const categories = results.filter((r) => r.type === "category");
-    const programs = results.filter((r) => r.type === "program");
-    return { categories, programs };
-  }, [results]);
-
-  if (!showDropdown) return null;
-
-  return (
-    <AnimatePresence>
-      {showDropdown && (
-        <motion.div
-          ref={dropdownRef}
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.2 }}
-          className="absolute top-full left-0 right-0 mt-2 bg-background rounded-lg shadow-lg border border-border z-50 max-h-96 overflow-y-auto"
-        >
-          {loading ? (
-            <div className="p-4 flex items-center justify-center gap-2 text-muted-foreground">
-              <Loader2 className="w-4 h-4 animate-spin" />
-              <span className="text-sm">Поиск...</span>
-            </div>
-          ) : !hasResults ? (
-            <div className="p-4 text-center text-sm text-muted-foreground">
-              Ничего не найдено
-            </div>
-          ) : (
-            <div className="py-2">
-              {groupedResults.categories.length > 0 && (
-                <div className="px-4 py-2">
-                  <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-                    Категории
+    return (
+      <AnimatePresence>
+        {showDropdown && (
+          <motion.div
+            ref={dropdownRef}
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="absolute top-full right-0 left-0 z-50 mt-2 max-h-96 overflow-y-auto rounded-lg border border-border bg-background shadow-lg"
+          >
+            {loading ? (
+              <div className="flex items-center justify-center gap-2 p-4 text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span className="text-sm">Поиск...</span>
+              </div>
+            ) : !hasResults ? (
+              <div className="p-4 text-center text-sm text-muted-foreground">
+                Ничего не найдено
+              </div>
+            ) : (
+              <div className="py-2">
+                {groupedResults.categories.length > 0 && (
+                  <div className="px-4 py-2">
+                    <div className="mb-2 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+                      Категории
+                    </div>
+                    <div className="space-y-1">
+                      {groupedResults.categories.map((result) => (
+                        <SearchResultItem
+                          key={result.id}
+                          result={result}
+                          query={query}
+                          onClick={handleResultClick}
+                        />
+                      ))}
+                    </div>
                   </div>
-                  <div className="space-y-1">
-                    {groupedResults.categories.map((result) => (
-                      <SearchResultItem
-                        key={result.id}
-                        result={result}
-                        query={query}
-                        onClick={handleResultClick}
-                      />
-                    ))}
+                )}
+                {groupedResults.programs.length > 0 && (
+                  <div className="px-4 py-2">
+                    <div className="mb-2 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+                      Программы
+                    </div>
+                    <div className="space-y-1">
+                      {groupedResults.programs.map((result) => (
+                        <SearchResultItem
+                          key={result.id}
+                          result={result}
+                          query={query}
+                          onClick={handleResultClick}
+                        />
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
-              {groupedResults.programs.length > 0 && (
-                <div className="px-4 py-2">
-                  <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-                    Программы
-                  </div>
-                  <div className="space-y-1">
-                    {groupedResults.programs.map((result) => (
-                      <SearchResultItem
-                        key={result.id}
-                        result={result}
-                        query={query}
-                        onClick={handleResultClick}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-});
+                )}
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    );
+  }
+);
 
 interface SearchResultItemProps {
   result: PublicSearchResult;
@@ -144,7 +146,8 @@ const SearchResultItem = memo(function SearchResultItem({
   );
 
   const highlightedLabel = useMemo(
-    () => (query ? highlightMatch(result.label, query) : result.label),
+    () =>
+      query ? highlightMatch(result.label, query) : result.label,
     [result.label, query]
   );
 
@@ -174,19 +177,19 @@ const SearchResultItem = memo(function SearchResultItem({
     <motion.button
       whileHover={{ x: 4 }}
       onClick={handleClick}
-      className="w-full text-left px-4 py-3 rounded-lg transition-all hover:bg-muted text-foreground"
+      className="w-full rounded-lg px-4 py-3 text-left text-foreground transition-all hover:bg-muted"
     >
       <div className="flex items-center gap-3">
         <div className="text-muted-foreground">
-          <IconComponent className="w-5 h-5" />
+          <IconComponent className="h-5 w-5" />
         </div>
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 flex-1">
           <div className="font-medium">{highlightedLabel}</div>
-          <div className="text-xs text-muted-foreground mt-0.5">
+          <div className="mt-0.5 text-xs text-muted-foreground">
             {categoryText}
           </div>
           {highlightedDescription && (
-            <div className="text-xs text-muted-foreground truncate mt-0.5">
+            <div className="mt-0.5 truncate text-xs text-muted-foreground">
               {highlightedDescription}
             </div>
           )}

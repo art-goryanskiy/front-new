@@ -1,9 +1,9 @@
 "use client";
 
-import { useCallback } from "react";
-import { useCategoryModalState } from "@/shared/store/ui-store";
 import { useDeleteCategory } from "@/entities/category/api/use-delete-category";
+import { useCategoryModalState } from "@/shared/store/modal-store";
 import { DeleteConfirmModal } from "@/shared/ui/delete-confirm-modal/delete-confirm-modal";
+import { useCallback } from "react";
 
 export function DeleteCategoryModal() {
   const {

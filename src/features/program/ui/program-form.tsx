@@ -1,33 +1,33 @@
 "use client";
 
-import { memo, useCallback, useMemo } from "react";
-import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { useProgramModalState } from "@/shared/store/ui-store";
 import { useCreateProgram } from "@/entities/program/api/use-create-programs";
 import { useUpdateProgram } from "@/entities/program/api/use-update-program";
-import { useProgramFormConfig } from "./hooks/use-program-form-config";
-import {
-  getDefaultValues,
-  createProgramInput,
-  updateProgramInput,
-} from "./utils/program-form-utils";
+import { useProgramModalState } from "@/shared/store/modal-store";
+import { memo, useCallback, useMemo } from "react";
+import { useForm } from "react-hook-form";
 import {
   FORM_CLASSES,
   FORM_MESSAGES,
 } from "./constants/program-form-constants";
+import { ProgramFormAwardedQualificationField } from "./fields/program-form-awarded-qualification-field";
+import { ProgramFormAwardedRankFields } from "./fields/program-form-awarded-rank-fields";
+import { ProgramFormDescriptionField } from "./fields/program-form-description-field";
+import { ProgramFormPricingFields } from "./fields/program-form-pricing-fields";
+import { ProgramFormStudentCategoryField } from "./fields/program-form-student-category-field";
+import { ProgramFormSubProgramsFields } from "./fields/program-form-subprograms-fields";
+import { ProgramFormTitleField } from "./fields/program-form-title-field";
+import { useProgramFormConfig } from "./hooks/use-program-form-config";
 import type {
   ProgramFormData,
   ProgramFormProps,
 } from "./types/program-form.types";
-import { ProgramFormTitleField } from "./fields/program-form-title-field";
-import { ProgramFormDescriptionField } from "./fields/program-form-description-field";
-import { ProgramFormStudentCategoryField } from "./fields/program-form-student-category-field";
-import { ProgramFormAwardedQualificationField } from "./fields/program-form-awarded-qualification-field";
-import { ProgramFormAwardedRankFields } from "./fields/program-form-awarded-rank-fields";
-import { ProgramFormPricingFields } from "./fields/program-form-pricing-fields";
-import { ProgramFormSubProgramsFields } from "./fields/program-form-subprograms-fields";
+import {
+  createProgramInput,
+  getDefaultValues,
+  updateProgramInput,
+} from "./utils/program-form-utils";
 
 interface ErrorLike {
   message?: string;
@@ -186,8 +186,10 @@ export const ProgramForm = memo(function ProgramForm({
               <Spinner className="mr-2 h-4 w-4" size={16} />
               {isEditMode ? FORM_MESSAGES.save : FORM_MESSAGES.create}
             </>
+          ) : isEditMode ? (
+            FORM_MESSAGES.save
           ) : (
-            isEditMode ? FORM_MESSAGES.save : FORM_MESSAGES.create
+            FORM_MESSAGES.create
           )}
         </Button>
       </div>

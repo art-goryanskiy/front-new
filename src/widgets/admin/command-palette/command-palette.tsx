@@ -1,8 +1,8 @@
 "use client";
 
-import { memo } from "react";
+import { useSearchState } from "@/shared/store/search-store";
 import { AnimatePresence } from "framer-motion";
-import { useSearchState } from "@/shared/store/ui-store";
+import { memo } from "react";
 import { CommandPaletteContent } from "./components/command-palette-content";
 
 export const CommandPalette = memo(function CommandPalette() {

@@ -1,15 +1,15 @@
 "use client";
 
-import { memo, useCallback } from "react";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useSearchState } from "@/shared/store/search-store";
 import { motion } from "framer-motion";
 import { Search, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useSearchState } from "@/shared/store/ui-store";
+import { memo, useCallback } from "react";
 import {
-  COMMAND_PALETTE_TEXTS,
   COMMAND_PALETTE_CLASSES,
+  COMMAND_PALETTE_TEXTS,
 } from "../constants/command-palette-constants";
 
 interface CommandPaletteSearchInputProps {
@@ -23,11 +23,8 @@ export const CommandPaletteSearchInput = memo(
     onValueChange,
   }: CommandPaletteSearchInputProps) {
     const router = useRouter();
-    const {
-      clearSearch,
-      searchOriginPath,
-      closeCommandPalette,
-    } = useSearchState();
+    const { clearSearch, searchOriginPath, closeCommandPalette } =
+      useSearchState();
     const hasValue = value.length > 0;
 
     const handleChange = useCallback(
@@ -63,7 +60,7 @@ export const CommandPaletteSearchInput = memo(
           onChange={handleChange}
           placeholder={COMMAND_PALETTE_TEXTS.searchPlaceholder}
           autoFocus
-          className="border-0 bg-transparent pl-9 pr-24 shadow-none focus-visible:ring-0"
+          className="border-0 bg-transparent pr-24 pl-9 shadow-none focus-visible:ring-0"
           aria-label={COMMAND_PALETTE_TEXTS.searchPlaceholder}
         />
         <div className="absolute right-2 flex items-center gap-1">

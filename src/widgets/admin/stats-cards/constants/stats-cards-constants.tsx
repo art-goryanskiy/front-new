@@ -1,26 +1,31 @@
-import { Folder, BookOpen, Eye, Tag } from "lucide-react";
+import { BookOpen, Eye, Folder, Tag } from "lucide-react";
 import type { ReactElement } from "react";
 
-export type StatCardColor = "primary" | "success" | "warning" | "danger";
+export type StatCardColor =
+  | "primary"
+  | "success"
+  | "warning"
+  | "danger";
 
 /**
- * CSS классы для градиентов иконок
+ * Мягкий акцент-фон (не “заливка”, а лёгкий градиент).
+ * В основном используем токены, но для success/warning/danger — аккуратные семантические цвета.
  */
-export const COLOR_CLASSES: Record<StatCardColor, string> = {
-  primary: "from-blue-500 via-blue-600 to-blue-700",
-  success: "from-emerald-500 via-emerald-600 to-emerald-700",
-  warning: "from-amber-500 via-amber-600 to-amber-700",
-  danger: "from-rose-500 via-rose-600 to-rose-700",
+export const ACCENT_GRADIENT: Record<StatCardColor, string> = {
+  primary: "from-primary/18 via-primary/8 to-transparent",
+  success: "from-emerald-500/16 via-emerald-500/7 to-transparent",
+  warning: "from-amber-500/16 via-amber-500/7 to-transparent",
+  danger: "from-rose-500/16 via-rose-500/7 to-transparent",
 } as const;
 
 /**
- * CSS классы для теней
+ * Стили “glass badge” для иконки.
  */
-export const SHADOW_COLORS: Record<StatCardColor, string> = {
-  primary: "shadow-blue-500/20",
-  success: "shadow-emerald-500/20",
-  warning: "shadow-amber-500/20",
-  danger: "shadow-rose-500/20",
+export const ICON_BADGE_CLASSES: Record<StatCardColor, string> = {
+  primary: "border-primary/20 bg-primary/10 text-primary",
+  success: "border-emerald-500/20 bg-emerald-500/10 text-emerald-500",
+  warning: "border-amber-500/20 bg-amber-500/10 text-amber-500",
+  danger: "border-rose-500/20 bg-rose-500/10 text-rose-500",
 } as const;
 
 /**
@@ -34,7 +39,7 @@ export const STAT_ICONS = {
 } as const;
 
 /**
- * Создает иконку для карточки статистики
+ * Создаёт иконку для карточки статистики
  */
 export function createStatIcon(
   iconType: keyof typeof STAT_ICONS,

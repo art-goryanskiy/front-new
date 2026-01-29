@@ -1,14 +1,15 @@
 // src/app/admin/layout.tsx
-import { lazy, Suspense } from "react";
 import { AuthGuard } from "@/shared/lib/auth/auth-guard";
-import { Sidebar } from "@/widgets/admin/sidebar/sidebar";
 import { Header } from "@/widgets/admin/header/header";
+import { Sidebar } from "@/widgets/admin/sidebar/sidebar";
+import { lazy, Suspense } from "react";
 
-// Динамические импорты для компонентов, которые не нужны при первой загрузке
 const CommandPalette = lazy(() =>
-  import("@/widgets/admin/command-palette/command-palette").then((mod) => ({
-    default: mod.CommandPalette,
-  }))
+  import("@/widgets/admin/command-palette/command-palette").then(
+    (mod) => ({
+      default: mod.CommandPalette,
+    })
+  )
 );
 
 const Toaster = lazy(() =>
@@ -24,18 +25,18 @@ export default function AdminLayout({
 }) {
   return (
     <AuthGuard>
-      <div className="flex flex-col min-h-screen bg-background lg:flex-row">
+      <div className="min-h-dvh bg-background [--admin-header-offset:--spacing(16)] lg:flex">
+        {/* Sidebar рендерим ОДИН раз — внутри он сам решает desktop/mobile */}
         <Sidebar />
-        <div className="flex flex-col flex-1 pb-20 min-w-0 sm:pb-16 lg:pb-0">
-          <div className="px-4 py-4 sm:px-6 md:px-8 lg:px-10 xl:px-12">
-            <Header />
-          </div>
-          <main className="overflow-auto flex-1 px-4 py-6 sm:px-6 md:px-8 lg:px-10 xl:px-12 sm:py-8 lg:py-10">
-            <div className="mx-auto w-full max-w-7xl">{children}</div>
+        <div className="flex min-w-0 flex-1 flex-col">
+          {/* Header сам sticky, не оборачиваем доп. паддингами */}
+          <Header />
+
+          <main className="flex-1 overflow-auto pb-20 lg:pb-0">
+            <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 md:px-8 lg:px-10 xl:px-12">
+              {children}
+            </div>
           </main>
-        </div>
-        <div className="lg:hidden">
-          <Sidebar />
         </div>
         <Suspense fallback={null}>
           <CommandPalette />

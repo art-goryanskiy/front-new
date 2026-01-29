@@ -1,16 +1,17 @@
 "use client";
 
-import { memo, useCallback, useMemo } from "react";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Kbd } from "@/components/ui/kbd";
+import { useSearchState } from "@/shared/store/search-store";
 import { motion } from "framer-motion";
 import { Search, X } from "lucide-react";
-import { useRouter, usePathname } from "next/navigation";
-import { useSearchState } from "@/shared/store/ui-store";
+import { usePathname, useRouter } from "next/navigation";
+import { memo, useCallback, useMemo } from "react";
 import {
-  SEARCH_INPUT_TEXTS,
-  SEARCH_INPUT_CLASSES,
   SEARCH_INPUT_ANIMATIONS,
+  SEARCH_INPUT_CLASSES,
+  SEARCH_INPUT_TEXTS,
 } from "./constants/search-input-constants";
 import type { SearchInputProps } from "./types/search-input.types";
 
@@ -52,11 +53,7 @@ export const SearchInput = memo(function SearchInput({
   }, [pathname, searchOriginPath, setSearchOriginPath, onFocus]);
 
   const keyboardHint = useMemo(
-    () => (
-      <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 text-xs text-muted-foreground">
-        {SEARCH_INPUT_TEXTS.keyboardHint}
-      </kbd>
-    ),
+    () => <Kbd>{SEARCH_INPUT_TEXTS.keyboardHint}</Kbd>,
     []
   );
 
@@ -80,7 +77,7 @@ export const SearchInput = memo(function SearchInput({
           onChange={handleChange}
           placeholder={placeholder}
           onFocus={handleFocus}
-          className="pl-9 pr-20"
+          className="pr-20 pl-9"
           aria-label={placeholder}
         />
         <div className="absolute right-2 flex items-center gap-1">

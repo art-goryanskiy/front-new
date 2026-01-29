@@ -1,14 +1,14 @@
 "use client";
 
-import { memo, useMemo } from "react";
 import { useCategories } from "@/entities/category/api/use-categories";
 import { usePrograms } from "@/entities/program/api/use-programs";
-import { StatsCardsSkeleton } from "./stats-cards-skeleton";
-import { StatCard } from "./stat-card";
+import { memo, useMemo } from "react";
 import {
   createStatIcon,
   type StatCardColor,
 } from "./constants/stats-cards-constants";
+import { StatCard } from "./stat-card";
+import { StatsCardsSkeleton } from "./stats-cards-skeleton";
 import {
   calculateTotalViews,
   formatStatValue,
@@ -16,7 +16,8 @@ import {
 
 export const StatsCards = memo(function StatsCards() {
   const { categories, loading: categoriesLoading } = useCategories();
-  const { programs: allPrograms, loading: programsLoading } = usePrograms();
+  const { programs: allPrograms, loading: programsLoading } =
+    usePrograms();
 
   const stats = useMemo(() => {
     if (categoriesLoading || programsLoading) {
@@ -32,25 +33,25 @@ export const StatsCards = memo(function StatsCards() {
         title: "Всего категорий",
         value: totalCategories,
         color: "primary" as StatCardColor,
-        icon: createStatIcon("categories", "w-8 h-8"),
+        icon: createStatIcon("categories", "h-6 w-6"),
       },
       {
         title: "Всего программ",
         value: totalPrograms,
         color: "success" as StatCardColor,
-        icon: createStatIcon("programs", "w-8 h-8"),
+        icon: createStatIcon("programs", "h-6 w-6"),
       },
       {
         title: "Просмотры",
         value: formatStatValue(totalViews),
         color: "warning" as StatCardColor,
-        icon: createStatIcon("views", "w-8 h-8"),
+        icon: createStatIcon("views", "h-6 w-6"),
       },
       {
         title: "Активных типов",
         value: 3,
         color: "danger" as StatCardColor,
-        icon: createStatIcon("types", "w-8 h-8"),
+        icon: createStatIcon("types", "h-6 w-6"),
       },
     ];
   }, [categories, allPrograms, categoriesLoading, programsLoading]);
@@ -64,7 +65,7 @@ export const StatsCards = memo(function StatsCards() {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4 lg:gap-6">
       {stats.map((stat, index) => (
         <StatCard key={stat.title} {...stat} index={index} />
       ))}

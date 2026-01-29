@@ -1,12 +1,12 @@
 "use client";
 
+import { useToastState } from "@/shared/store/toast-store";
+import { AnimatePresence, motion } from "framer-motion";
 import { memo, useEffect, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { useToastState } from "@/shared/store/ui-store";
 import {
-  TOASTER_CONFIG,
   TOASTER_ANIMATIONS,
   TOASTER_CLASSES,
+  TOASTER_CONFIG,
   TOASTER_ICONS,
   getToastClasses,
 } from "./constants/toaster-constants";

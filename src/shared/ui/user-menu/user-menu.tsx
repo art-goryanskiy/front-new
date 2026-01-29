@@ -1,20 +1,24 @@
 "use client";
 
-import { memo, useMemo, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Icon, type IconName } from "@/shared/ui/icons/icon";
 import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
-import { Icon, type IconName } from "@/shared/ui/icons/icon";
+import { useRouter } from "next/navigation";
+import { memo, useCallback, useMemo } from "react";
 import {
-  USER_MENU_TEXTS,
   USER_MENU_CLASSES,
+  USER_MENU_TEXTS,
 } from "./constants/user-menu-constants";
 import type { UserMenuProps } from "./types/user-menu.types";
 
@@ -62,7 +66,7 @@ export const UserMenu = memo(function UserMenu({
         >
           <Avatar className={USER_MENU_CLASSES.avatar}>
             <AvatarImage src={user?.avatarUrl} alt={userEmail} />
-            <AvatarFallback className="bg-primary text-primary-foreground text-xs font-semibold sm:text-sm">
+            <AvatarFallback className="bg-primary text-xs font-semibold text-primary-foreground sm:text-sm">
               {userInitial}
             </AvatarFallback>
           </Avatar>
@@ -73,13 +77,23 @@ export const UserMenu = memo(function UserMenu({
           />
         </motion.button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className={USER_MENU_CLASSES.menu}>
+      <DropdownMenuContent
+        align="end"
+        className={USER_MENU_CLASSES.menu}
+      >
         {menuItems.map((item) => (
           <DropdownMenuItem
             key={item.key}
-            onClick={item.onPress ?? (item.key === "profile" ? handleProfile : undefined)}
+            onClick={
+              item.onPress ??
+              (item.key === "profile" ? handleProfile : undefined)
+            }
           >
-            <Icon name={item.icon} className="mr-2 h-4 w-4" size={16} />
+            <Icon
+              name={item.icon}
+              className="mr-2 h-4 w-4"
+              size={16}
+            />
             {item.label}
           </DropdownMenuItem>
         ))}

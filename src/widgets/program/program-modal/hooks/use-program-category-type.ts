@@ -1,13 +1,13 @@
 "use client";
 
-import { useMemo } from "react";
-import { useQuery } from "@apollo/client/react";
-import { useProgramModalState } from "@/shared/store/ui-store";
-import { GET_CATEGORY } from "@/shared/api/queries/categories";
 import type {
   CategoryEntity,
   CategoryType,
 } from "@/shared/api/generated/graphql";
+import { GET_CATEGORY } from "@/shared/api/queries/categories";
+import { useProgramModalState } from "@/shared/store/modal-store";
+import { useQuery } from "@apollo/client/react";
+import { useMemo } from "react";
 
 /**
  * Хук для получения типа категории программы

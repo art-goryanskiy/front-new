@@ -1,18 +1,21 @@
 "use client";
 
-import { memo, useCallback, useMemo } from "react";
-import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Spinner } from "@/components/ui/spinner";
-import { useUserModalState } from "@/shared/store/ui-store";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 import { useCreateUser } from "@/entities/user/api/use-create-user";
 import { useUpdateUser } from "@/entities/user/api/use-update-user";
-import {
-  getDefaultValues,
-  createUserInput,
-  updateUserInput,
-} from "./utils/user-form-utils";
+import { useUserModalState } from "@/shared/store/modal-store";
+import { memo, useCallback, useMemo } from "react";
+import { useForm } from "react-hook-form";
+import { UserFormBasicTab } from "./components/user-form-basic-tab";
+import { UserFormError } from "./components/user-form-error";
+import { UserFormProfileTab } from "./components/user-form-profile-tab";
 import {
   FORM_CLASSES,
   FORM_MESSAGES,
@@ -21,9 +24,11 @@ import type {
   UserFormData,
   UserFormProps,
 } from "./types/user-form.types";
-import { UserFormBasicTab } from "./components/user-form-basic-tab";
-import { UserFormProfileTab } from "./components/user-form-profile-tab";
-import { UserFormError } from "./components/user-form-error";
+import {
+  createUserInput,
+  getDefaultValues,
+  updateUserInput,
+} from "./utils/user-form-utils";
 
 export const UserForm = memo(function UserForm({
   editingUser,
@@ -94,11 +99,18 @@ export const UserForm = memo(function UserForm({
 
       <Tabs defaultValue="basic" className="w-full">
         <TabsList className="w-full">
-          <TabsTrigger value="basic" className="flex-1">Основная информация</TabsTrigger>
-          <TabsTrigger value="profile" className="flex-1">Профиль</TabsTrigger>
+          <TabsTrigger value="basic" className="flex-1">
+            Основная информация
+          </TabsTrigger>
+          <TabsTrigger value="profile" className="flex-1">
+            Профиль
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="basic">
-          <UserFormBasicTab control={control} isEditMode={isEditMode} />
+          <UserFormBasicTab
+            control={control}
+            isEditMode={isEditMode}
+          />
         </TabsContent>
         <TabsContent value="profile">
           <UserFormProfileTab control={control} />
@@ -125,8 +137,10 @@ export const UserForm = memo(function UserForm({
               <Spinner className="mr-2 h-4 w-4" size={16} />
               {isEditMode ? FORM_MESSAGES.save : FORM_MESSAGES.create}
             </>
+          ) : isEditMode ? (
+            FORM_MESSAGES.save
           ) : (
-            isEditMode ? FORM_MESSAGES.save : FORM_MESSAGES.create
+            FORM_MESSAGES.create
           )}
         </Button>
       </div>

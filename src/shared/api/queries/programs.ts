@@ -29,6 +29,38 @@ export const GET_PROGRAMS = gql`
   }
 `;
 
+export const GET_PROGRAMS_PAGE = gql`
+  query ProgramsPage($filter: ProgramFilterInput) {
+    programsPage(filter: $filter) {
+      total
+      items {
+        id
+        title
+        slug
+        description
+        image
+        category
+        baseHours
+        studentCategory
+        awardedQualification
+        awardedRankFrom
+        awardedRankTo
+        pricing {
+          hours
+          price
+        }
+        subPrograms {
+          title
+          description
+        }
+        views
+        createdAt
+        updatedAt
+      }
+    }
+  }
+`;
+
 export const GET_TOP_PROGRAMS = gql`
   query GetTopPrograms($limit: Float) {
     topPrograms(limit: $limit) {

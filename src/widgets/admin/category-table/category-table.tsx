@@ -2,45 +2,54 @@
 
 import {
   Table,
-  TableHeader,
   TableBody,
-  TableRow,
+  TableCaption,
   TableCell,
   TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
-import { Card, CardContent } from "@/components/ui/card";
-import type {
-  CategoryType,
-  CategoryEntity,
-} from "@/shared/api/generated/graphql";
 import { useCategories } from "@/entities/category/api/use-categories";
-import { memo, useCallback, useMemo } from "react";
-import {
-  useCategoryModalState,
-  useSearchState,
-} from "@/shared/store/ui-store";
-import { useRouter } from "next/navigation";
-import { CategoryTableActions } from "./category-table-actions";
+import { cn } from "@/lib/utils";
+import type {
+  CategoryEntity,
+  CategoryType,
+} from "@/shared/api/generated/graphql";
+import { useCategoryModalState } from "@/shared/store/modal-store";
 import { EmptyState } from "@/shared/ui/empty-state/empty-state";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
-import {
-  TABLE_CLASSES,
-  EMPTY_STATE_ICON,
-} from "./constants/category-table-constants";
-import { useCategoryTableFilter } from "./hooks/use-category-table-filter";
-import { CategoryTableNameContent } from "./cells/category-table-name-content";
-import { CategoryTableTypeContent } from "./cells/category-table-type-content";
-import { CategoryTableProgramsCountContent } from "./cells/category-table-programs-count-content";
+import { Surface } from "@/shared/ui/surface/surface";
 import { TableSkeleton } from "@/shared/ui/table-skeleton/table-skeleton";
+import { useRouter } from "next/navigation";
+import { memo, useCallback, useEffect, useMemo } from "react";
+
+import { CategoryTableActions } from "./category-table-actions";
+import { CategoryTableNameContent } from "./cells/category-table-name-content";
+import { CategoryTableProgramsCountContent } from "./cells/category-table-programs-count-content";
+import { CategoryTableTypeContent } from "./cells/category-table-type-content";
+import {
+  EMPTY_STATE_ICON,
+  TABLE_CLASSES,
+} from "./constants/category-table-constants";
+import {
+  filterCategoriesBySearch,
+  filterCategoriesByType,
+} from "./utils/category-table-utils";
+
+type ProgramsFilter = "all" | "withPrograms" | "empty";
 
 interface CategoryTableProps {
   type: CategoryType;
   searchQuery?: string;
+  programsFilter?: ProgramsFilter;
+  onCountsChange?: (c: { shown: number; total: number }) => void;
 }
 
 export const CategoryTable = memo(function CategoryTable({
   type,
   searchQuery = "",
+  programsFilter = "all",
+  onCountsChange,
 }: CategoryTableProps) {
   const {
     categories: allCategories,
@@ -49,15 +58,44 @@ export const CategoryTable = memo(function CategoryTable({
   } = useCategories();
   const { openEditCategoryModal, openDeleteCategoryModal } =
     useCategoryModalState();
-  const { searchQuery: storeSearchQuery } = useSearchState();
   const router = useRouter();
 
-  const categories = useCategoryTableFilter({
-    categories: allCategories,
-    type,
-    searchQuery,
-    storeSearchQuery,
-  });
+  const normalizedQuery = useMemo(
+    () => searchQuery.trim(),
+    [searchQuery]
+  );
+
+  const filtered = useMemo(() => {
+    let res = filterCategoriesByType(allCategories, type);
+
+    if (normalizedQuery) {
+      res = filterCategoriesBySearch(res, normalizedQuery);
+    }
+
+    if (programsFilter !== "all") {
+      res = res.filter((c) => {
+        const count = c.programsCount ?? 0;
+        if (programsFilter === "withPrograms") return count > 0;
+        return count === 0;
+      });
+    }
+
+    return res;
+  }, [allCategories, type, normalizedQuery, programsFilter]);
+
+  useEffect(() => {
+    onCountsChange?.({
+      shown: filtered.length,
+      total: filterCategoriesByType(allCategories, type).length,
+    });
+  }, [onCountsChange, filtered.length, allCategories, type]);
+
+  const handleNavigate = useCallback(
+    (categoryId: string) => {
+      router.push(`/admin/category/${categoryId}`);
+    },
+    [router]
+  );
 
   const handleRowClick = useCallback(
     (categoryId: string, e: React.MouseEvent) => {
@@ -69,9 +107,19 @@ export const CategoryTable = memo(function CategoryTable({
       ) {
         return;
       }
-      router.push(`/admin/category/${categoryId}`);
+      handleNavigate(categoryId);
     },
-    [router]
+    [handleNavigate]
+  );
+
+  const handleKeyDown = useCallback(
+    (categoryId: string, e: React.KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        handleNavigate(categoryId);
+      }
+    },
+    [handleNavigate]
   );
 
   const handleEditClick = useCallback(
@@ -88,27 +136,18 @@ export const CategoryTable = memo(function CategoryTable({
     [openDeleteCategoryModal]
   );
 
-  const handleKeyDown = useCallback(
-    (categoryId: string, e: React.KeyboardEvent) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        router.push(`/admin/category/${categoryId}`);
-      }
-    },
-    [router]
-  );
-
   const tableId = useMemo(() => `category-table-${type}`, [type]);
 
-  if (loading) {
-    return <TableSkeleton rows={5} columns={4} />;
-  }
+  if (loading) return <TableSkeleton rows={5} columns={4} />;
 
-  if (error) {
-    return <ErrorState message={error.message} />;
-  }
+  if (error) return <ErrorState message={error.message} />;
 
-  if (categories.length === 0) {
+  const totalInType = filterCategoriesByType(
+    allCategories,
+    type
+  ).length;
+
+  if (totalInType === 0) {
     return (
       <EmptyState
         title="Категории не найдены"
@@ -118,69 +157,164 @@ export const CategoryTable = memo(function CategoryTable({
     );
   }
 
+  if (filtered.length === 0) {
+    return (
+      <EmptyState
+        title="Ничего не найдено"
+        description={`По запросу “${searchQuery}” нет результатов`}
+        icon={EMPTY_STATE_ICON}
+      />
+    );
+  }
+
   return (
-    <Card className={`overflow-auto shadow-lg ${TABLE_CLASSES.wrapper}`}>
-      <CardContent className="p-0">
-        <Table
-          id={tableId}
-          aria-label="Таблица категорий"
-          aria-describedby={`${tableId}-description`}
-        >
-          <TableHeader>
-            <TableRow>
-              <TableHead className={`min-w-0 w-[45%] ${TABLE_CLASSES.th}`}>
-                КАТЕГОРИЯ
-              </TableHead>
-              <TableHead
-                className={`hidden whitespace-nowrap lg:table-cell w-[25%] ${TABLE_CLASSES.th}`}
-              >
-                ТИП КАТЕГОРИИ
-              </TableHead>
-              <TableHead className={`text-center whitespace-nowrap ${TABLE_CLASSES.th}`}>
-                ПРОГРАММЫ
-              </TableHead>
-              <TableHead className={`text-center whitespace-nowrap ${TABLE_CLASSES.th}`}>
-                ДЕЙСТВИЯ
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {categories.map((category) => (
-              <TableRow
-                key={category.id}
-                className={`group cursor-pointer ${TABLE_CLASSES.tr}`}
-                onClick={(e) => handleRowClick(category.id, e)}
-                role="row"
-                tabIndex={0}
-                onKeyDown={(e) => handleKeyDown(category.id, e)}
-                aria-label={`Категория ${category.name}`}
-                aria-describedby={`${tableId}-row-${category.id}`}
-              >
-                <TableCell className={`min-w-0 ${TABLE_CLASSES.td}`}>
-                  <CategoryTableNameContent category={category} />
-                </TableCell>
+    <>
+      {/* MOBILE (<md): cards */}
+      <div className={TABLE_CLASSES.cardsWrap}>
+        {filtered.map((category) => {
+          const programsCount = category.programsCount ?? 0;
 
-                <TableCell className={`hidden whitespace-nowrap lg:table-cell ${TABLE_CLASSES.td}`}>
-                  <CategoryTableTypeContent category={category} />
-                </TableCell>
+          return (
+            <Surface
+              key={category.id}
+              className={cn(
+                TABLE_CLASSES.card,
+                "focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:outline-none"
+              )}
+              role="button"
+              tabIndex={0}
+              onClick={() => handleNavigate(category.id)}
+              onKeyDown={(e) => handleKeyDown(category.id, e)}
+              aria-label={`Открыть категорию ${category.name}`}
+            >
+              <div className={TABLE_CLASSES.cardHeader}>
+                <div className={TABLE_CLASSES.cardMain}>
+                  <div
+                    className={TABLE_CLASSES.cardTitle}
+                    title={category.name}
+                  >
+                    {category.name}
+                  </div>
+                  <div
+                    className={TABLE_CLASSES.cardSub}
+                    title={category.slug}
+                  >
+                    {category.slug}
+                  </div>
 
-                <TableCell className={`text-center whitespace-nowrap ${TABLE_CLASSES.td}`}>
-                  <CategoryTableProgramsCountContent
-                    category={category}
-                  />
-                </TableCell>
+                  {category.description && (
+                    <div
+                      className={TABLE_CLASSES.cardDesc}
+                      title={category.description}
+                    >
+                      {category.description}
+                    </div>
+                  )}
 
-                <TableCell className={`text-center whitespace-nowrap ${TABLE_CLASSES.td}`}>
+                  <div className={TABLE_CLASSES.cardMeta}>
+                    <CategoryTableTypeContent category={category} />
+                    <span className={TABLE_CLASSES.cardMetaPill}>
+                      Программы: {programsCount}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="shrink-0">
                   <CategoryTableActions
                     onEdit={() => handleEditClick(category)}
                     onDelete={() => handleDeleteClick(category)}
                   />
-                </TableCell>
+                </div>
+              </div>
+            </Surface>
+          );
+        })}
+      </div>
+
+      {/* DESKTOP (md+): premium table */}
+      <div className="hidden md:block">
+        <Surface variant="floating" className={TABLE_CLASSES.wrapper}>
+          <Table id={tableId} aria-label="Таблица категорий">
+            <TableHeader className={TABLE_CLASSES.thead}>
+              <TableRow>
+                <TableHead
+                  className={`w-[45%] min-w-0 ${TABLE_CLASSES.th}`}
+                >
+                  КАТЕГОРИЯ
+                </TableHead>
+                <TableHead
+                  className={`hidden w-[25%] whitespace-nowrap lg:table-cell ${TABLE_CLASSES.th}`}
+                >
+                  ТИП
+                </TableHead>
+                <TableHead
+                  className={`w-[15%] text-center whitespace-nowrap ${TABLE_CLASSES.th}`}
+                >
+                  ПРОГРАММЫ
+                </TableHead>
+                <TableHead
+                  className={`w-[15%] text-center whitespace-nowrap ${TABLE_CLASSES.th}`}
+                >
+                  ДЕЙСТВИЯ
+                </TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
+            </TableHeader>
+
+            <TableBody className="[&_tr:nth-child(even)]:bg-muted/10">
+              {filtered.map((category) => (
+                <TableRow
+                  key={category.id}
+                  className={`group cursor-pointer ${TABLE_CLASSES.tr}`}
+                  onClick={(e) => handleRowClick(category.id, e)}
+                  role="row"
+                  tabIndex={0}
+                  onKeyDown={(e) => handleKeyDown(category.id, e)}
+                  aria-label={`Категория ${category.name}`}
+                >
+                  <TableCell
+                    className={`min-w-0 ${TABLE_CLASSES.td}`}
+                  >
+                    <CategoryTableNameContent category={category} />
+                  </TableCell>
+
+                  <TableCell
+                    className={`hidden whitespace-nowrap lg:table-cell ${TABLE_CLASSES.td}`}
+                  >
+                    <CategoryTableTypeContent category={category} />
+                  </TableCell>
+
+                  <TableCell
+                    className={`text-center whitespace-nowrap ${TABLE_CLASSES.td}`}
+                  >
+                    <CategoryTableProgramsCountContent
+                      category={category}
+                    />
+                  </TableCell>
+
+                  <TableCell
+                    className={`text-center whitespace-nowrap ${TABLE_CLASSES.td}`}
+                  >
+                    <CategoryTableActions
+                      onEdit={() => handleEditClick(category)}
+                      onDelete={() => handleDeleteClick(category)}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+
+            <TableCaption className={TABLE_CLASSES.caption}>
+              Показано {filtered.length} из {totalInType}
+              {searchQuery.trim()
+                ? ` • фильтр: “${searchQuery}”`
+                : ""}
+              {programsFilter !== "all"
+                ? ` • программы: ${programsFilter}`
+                : ""}
+            </TableCaption>
+          </Table>
+        </Surface>
+      </div>
+    </>
   );
 });

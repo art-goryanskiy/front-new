@@ -1,13 +1,14 @@
 "use client";
 
-import { memo, useCallback, useMemo } from "react";
-import { usePathname, useRouter } from "next/navigation";
-import { useSidebarStore } from "@/shared/store/sidebar-store";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { MENU_ITEMS } from "@/shared/constants/categories";
+import { useSidebarStore } from "@/shared/store/sidebar-store";
+import { usePathname, useRouter } from "next/navigation";
+import { memo, useCallback, useMemo } from "react";
+import { SIDEBAR_CLASSES } from "../constants/sidebar-constants";
+import { SidebarFooter } from "./sidebar-footer";
 import { SidebarLogo } from "./sidebar-logo";
 import { SidebarNavItem } from "./sidebar-nav-item";
-import { SidebarFooter } from "./sidebar-footer";
-import { SIDEBAR_CLASSES } from "../constants/sidebar-constants";
 
 const HOME_MENU_ITEM = {
   label: "Главная",
@@ -38,15 +39,6 @@ export const DesktopSidebar = memo(function DesktopSidebar() {
     [router]
   );
 
-  const isHomeActive = useMemo(
-    () => pathname === "/admin",
-    [pathname]
-  );
-  const isUsersActive = useMemo(
-    () => pathname === "/admin/users",
-    [pathname]
-  );
-
   const asideClassName = useMemo(
     () =>
       `${SIDEBAR_CLASSES.desktop.base} ${
@@ -58,35 +50,45 @@ export const DesktopSidebar = memo(function DesktopSidebar() {
   );
 
   return (
-    <aside className={asideClassName}>
-      <SidebarLogo />
-      <nav className={SIDEBAR_CLASSES.desktop.nav}>
-        <SidebarNavItem
-          item={HOME_MENU_ITEM}
-          isActive={isHomeActive}
-          isCollapsed={isCollapsed}
-          onNavigate={handleNavigate}
-        />
-        <SidebarNavItem
-          item={USERS_MENU_ITEM}
-          isActive={isUsersActive}
-          isCollapsed={isCollapsed}
-          onNavigate={handleNavigate}
-        />
-        {MENU_ITEMS.map((item) => (
+    <aside className={asideClassName} aria-label="Навигация админки">
+      <div className={SIDEBAR_CLASSES.desktop.logoSection}>
+        <SidebarLogo />
+      </div>
+
+      <ScrollArea className="flex-1">
+        <nav className="space-y-1 p-2">
           <SidebarNavItem
-            key={item.path}
-            item={item}
-            isActive={pathname === item.path}
+            item={HOME_MENU_ITEM}
+            isActive={pathname === "/admin"}
             isCollapsed={isCollapsed}
             onNavigate={handleNavigate}
           />
-        ))}
-      </nav>
-      <SidebarFooter
-        isCollapsed={isCollapsed}
-        onToggle={toggleSidebar}
-      />
+
+          <SidebarNavItem
+            item={USERS_MENU_ITEM}
+            isActive={pathname === "/admin/users"}
+            isCollapsed={isCollapsed}
+            onNavigate={handleNavigate}
+          />
+
+          {MENU_ITEMS.map((item) => (
+            <SidebarNavItem
+              key={item.path}
+              item={item}
+              isActive={pathname === item.path}
+              isCollapsed={isCollapsed}
+              onNavigate={handleNavigate}
+            />
+          ))}
+        </nav>
+      </ScrollArea>
+
+      <div className={SIDEBAR_CLASSES.desktop.footer}>
+        <SidebarFooter
+          isCollapsed={isCollapsed}
+          onToggle={toggleSidebar}
+        />
+      </div>
     </aside>
   );
 });

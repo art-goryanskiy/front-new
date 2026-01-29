@@ -1,16 +1,16 @@
 "use client";
 
-import { memo, useMemo } from "react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useProgramModalState } from "@/shared/store/ui-store";
 import { ProgramForm } from "@/features/program/ui/program-form";
-import { useProgramCategoryType } from "./hooks/use-program-category-type";
+import { useProgramModalState } from "@/shared/store/modal-store";
+import { memo, useMemo } from "react";
 import { PROGRAM_MODAL_TEXTS } from "./constants/program-modal-constants";
+import { useProgramCategoryType } from "./hooks/use-program-category-type";
 
 export const ProgramModal = memo(function ProgramModal() {
   const {
@@ -27,7 +27,7 @@ export const ProgramModal = memo(function ProgramModal() {
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] max-w-5xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">
             {isEditMode
