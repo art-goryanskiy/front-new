@@ -66,6 +66,9 @@ export const RequiredTextInputField = memo(
                 id={name}
                 placeholder={placeholder}
                 required
+                lang="ru"
+                spellCheck={true}
+                autoCorrect="on"
                 disabled={isDisabled}
                 aria-invalid={fieldState.invalid}
                 aria-label={label}

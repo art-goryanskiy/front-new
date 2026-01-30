@@ -18,6 +18,10 @@ export const ProgramCard = memo(
     const { minPrice } = useProgramCardPricing(program);
     const { showToast } = useToastState();
 
+    const cardTitle = useMemo(() => {
+      return program.shortTitle?.trim() || program.title;
+    }, [program.shortTitle, program.title]);
+
     const priceText = useMemo(() => {
       if (!canSeePrice) return null;
       if (minPrice === null || minPrice <= 0)
@@ -63,7 +67,7 @@ export const ProgramCard = memo(
                   className="line-clamp-2 min-w-0 flex-1 text-sm leading-snug font-semibold break-words hyphens-auto text-foreground"
                   title={program.title}
                 >
-                  {program.title}
+                  {cardTitle}
                 </h3>
 
                 {canSeePrice && (
@@ -96,6 +100,7 @@ export const ProgramCard = memo(
   (prevProps, nextProps) =>
     prevProps.program.id === nextProps.program.id &&
     prevProps.program.title === nextProps.program.title &&
+    prevProps.program.shortTitle === nextProps.program.shortTitle &&
     prevProps.program.pricing === nextProps.program.pricing &&
     prevProps.program.views === nextProps.program.views &&
     prevProps.categoryType === nextProps.categoryType

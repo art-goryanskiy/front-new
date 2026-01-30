@@ -8,6 +8,7 @@ import {
   GET_PROGRAMS_PAGE,
 } from "@/shared/api/queries/programs";
 import { GET_CATEGORIES } from "@/shared/api/queries/categories";
+import { revalidatePublicProgramsAndCategories } from "@/shared/lib/revalidate/public-revalidate";
 import { useMutation } from "@apollo/client/react";
 
 export function useUpdateProgram() {
@@ -43,6 +44,11 @@ export function useUpdateProgram() {
       const result = await updateProgram({
         variables: { id, input },
       });
+      try {
+        await revalidatePublicProgramsAndCategories();
+      } catch {
+        // Do not break admin UX if revalidation fails
+      }
       return result.data?.updateProgram;
     } catch (error) {
       throw error;

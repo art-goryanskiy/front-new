@@ -5,6 +5,7 @@ export const GET_PROGRAMS = gql`
     programs(filter: $filter) {
       id
       title
+      shortTitle
       slug
       description
       image
@@ -36,6 +37,7 @@ export const GET_PROGRAMS_PAGE = gql`
       items {
         id
         title
+        shortTitle
         slug
         description
         image
@@ -66,6 +68,7 @@ export const GET_TOP_PROGRAMS = gql`
     topPrograms(limit: $limit) {
       id
       title
+      shortTitle
       slug
       description
       image
@@ -95,6 +98,7 @@ export const GET_PROGRAM = gql`
     program(id: $id) {
       id
       title
+      shortTitle
       slug
       description
       image

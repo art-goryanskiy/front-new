@@ -2,7 +2,7 @@
 
 import { memo } from "react";
 import { type Control } from "react-hook-form";
-import { TextareaField } from "@/shared/ui/form-fields/textarea-field";
+import { MarkdownField } from "@/shared/ui/form-fields/markdown-field";
 import {
   FORM_LABELS,
   FORM_PLACEHOLDERS,
@@ -19,13 +19,13 @@ export const CategoryFormDescriptionField = memo(
     control,
   }: CategoryFormDescriptionFieldProps) {
     return (
-      <TextareaField
+      <MarkdownField
         control={control}
         name="description"
         label={FORM_LABELS.description}
         placeholder={FORM_PLACEHOLDERS.description}
         description={FORM_MESSAGES.descriptionOptional}
-        minRows={3}
+        minRows={6}
       />
     );
   }

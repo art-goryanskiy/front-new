@@ -20,6 +20,8 @@ type Documents = {
   "\n  mutation Register($input: RegisterInput!) {\n    register(input: $input)\n  }\n": typeof types.RegisterDocument;
   "\n  mutation VerifyEmail($input: VerifyEmailInput!) {\n    verifyEmail(input: $input)\n  }\n": typeof types.VerifyEmailDocument;
   "\n  mutation RequestEmailVerification(\n    $input: RequestEmailVerificationInput!\n  ) {\n    requestEmailVerification(input: $input)\n  }\n": typeof types.RequestEmailVerificationDocument;
+  "\n  mutation RequestPasswordReset($input: RequestPasswordResetInput!) {\n    requestPasswordReset(input: $input)\n  }\n": typeof types.RequestPasswordResetDocument;
+  "\n  mutation ResetPassword($input: ResetPasswordInput!) {\n    resetPassword(input: $input)\n  }\n": typeof types.ResetPasswordDocument;
   "\n  mutation UpdateMyProfile($input: UpdateMyProfileInput!) {\n    updateMyProfile(input: $input) {\n      ...UserProfileFields\n    }\n  }\n  \n": typeof types.UpdateMyProfileDocument;
   "\n  mutation CreateCategory($input: CreateCategoryInput!) {\n    createCategory(input: $input) {\n      id\n      name\n      slug\n      description\n      image\n      type\n      parent\n      createdAt\n      updatedAt\n      programsCount\n    }\n  }\n": typeof types.CreateCategoryDocument;
   "\n  mutation UpdateCategory($id: ID!, $input: UpdateCategoryInput!) {\n    updateCategory(id: $id, input: $input) {\n      id\n      name\n      slug\n      description\n      image\n      type\n      parent\n      createdAt\n      updatedAt\n      programsCount\n    }\n  }\n": typeof types.UpdateCategoryDocument;
@@ -35,9 +37,10 @@ type Documents = {
   "\n  query Me {\n    me {\n      ...UserFields\n    }\n  }\n  \n": typeof types.MeDocument;
   "\n  query GetCategories($filter: CategoryFilterInput) {\n    categories(filter: $filter) {\n      id\n      name\n      slug\n      description\n      image\n      type\n      parent\n      createdAt\n      updatedAt\n      programsCount\n    }\n  }\n": typeof types.GetCategoriesDocument;
   "\n  query GetCategory($id: ID!) {\n    category(id: $id) {\n      id\n      name\n      slug\n      description\n      image\n      type\n      parent\n      createdAt\n      updatedAt\n      programsCount\n    }\n  }\n": typeof types.GetCategoryDocument;
-  "\n  query GetPrograms($filter: ProgramFilterInput) {\n    programs(filter: $filter) {\n      id\n      title\n      slug\n      description\n      image\n      category\n      baseHours\n      studentCategory\n      awardedQualification\n      awardedRankFrom\n      awardedRankTo\n      pricing {\n        hours\n        price\n      }\n      subPrograms {\n        title\n        description\n      }\n      views\n      createdAt\n      updatedAt\n    }\n  }\n": typeof types.GetProgramsDocument;
-  "\n  query GetTopPrograms($limit: Float) {\n    topPrograms(limit: $limit) {\n      id\n      title\n      slug\n      description\n      image\n      category\n      baseHours\n      studentCategory\n      awardedQualification\n      awardedRankFrom\n      awardedRankTo\n      pricing {\n        hours\n        price\n      }\n      subPrograms {\n        title\n        description\n      }\n      views\n      createdAt\n      updatedAt\n    }\n  }\n": typeof types.GetTopProgramsDocument;
-  "\n  query GetProgram($id: ID!) {\n    program(id: $id) {\n      id\n      title\n      slug\n      description\n      image\n      category\n      baseHours\n      studentCategory\n      awardedQualification\n      awardedRankFrom\n      awardedRankTo\n      pricing {\n        hours\n        price\n      }\n      subPrograms {\n        title\n        description\n      }\n      views\n      createdAt\n      updatedAt\n    }\n  }\n": typeof types.GetProgramDocument;
+  "\n  query GetPrograms($filter: ProgramFilterInput) {\n    programs(filter: $filter) {\n      id\n      title\n      shortTitle\n      slug\n      description\n      image\n      category\n      baseHours\n      studentCategory\n      awardedQualification\n      awardedRankFrom\n      awardedRankTo\n      pricing {\n        hours\n        price\n      }\n      subPrograms {\n        title\n        description\n      }\n      views\n      createdAt\n      updatedAt\n    }\n  }\n": typeof types.GetProgramsDocument;
+  "\n  query ProgramsPage($filter: ProgramFilterInput) {\n    programsPage(filter: $filter) {\n      total\n      items {\n        id\n        title\n        shortTitle\n        slug\n        description\n        image\n        category\n        baseHours\n        studentCategory\n        awardedQualification\n        awardedRankFrom\n        awardedRankTo\n        pricing {\n          hours\n          price\n        }\n        subPrograms {\n          title\n          description\n        }\n        views\n        createdAt\n        updatedAt\n      }\n    }\n  }\n": typeof types.ProgramsPageDocument;
+  "\n  query GetTopPrograms($limit: Float) {\n    topPrograms(limit: $limit) {\n      id\n      title\n      shortTitle\n      slug\n      description\n      image\n      category\n      baseHours\n      studentCategory\n      awardedQualification\n      awardedRankFrom\n      awardedRankTo\n      pricing {\n        hours\n        price\n      }\n      subPrograms {\n        title\n        description\n      }\n      views\n      createdAt\n      updatedAt\n    }\n  }\n": typeof types.GetTopProgramsDocument;
+  "\n  query GetProgram($id: ID!) {\n    program(id: $id) {\n      id\n      title\n      shortTitle\n      slug\n      description\n      image\n      category\n      baseHours\n      studentCategory\n      awardedQualification\n      awardedRankFrom\n      awardedRankTo\n      pricing {\n        hours\n        price\n      }\n      subPrograms {\n        title\n        description\n      }\n      views\n      createdAt\n      updatedAt\n    }\n  }\n": typeof types.GetProgramDocument;
   "\n  query AdminUsers($filter: AdminUserFilterInput) {\n    adminUsers(filter: $filter) {\n      ...UserFields\n    }\n  }\n  \n": typeof types.AdminUsersDocument;
   "\n  query AdminUser($id: ID!) {\n    adminUser(id: $id) {\n      ...UserFields\n    }\n  }\n  \n": typeof types.AdminUserDocument;
 };
@@ -53,6 +56,10 @@ const documents: Documents = {
     types.VerifyEmailDocument,
   "\n  mutation RequestEmailVerification(\n    $input: RequestEmailVerificationInput!\n  ) {\n    requestEmailVerification(input: $input)\n  }\n":
     types.RequestEmailVerificationDocument,
+  "\n  mutation RequestPasswordReset($input: RequestPasswordResetInput!) {\n    requestPasswordReset(input: $input)\n  }\n":
+    types.RequestPasswordResetDocument,
+  "\n  mutation ResetPassword($input: ResetPasswordInput!) {\n    resetPassword(input: $input)\n  }\n":
+    types.ResetPasswordDocument,
   "\n  mutation UpdateMyProfile($input: UpdateMyProfileInput!) {\n    updateMyProfile(input: $input) {\n      ...UserProfileFields\n    }\n  }\n  \n":
     types.UpdateMyProfileDocument,
   "\n  mutation CreateCategory($input: CreateCategoryInput!) {\n    createCategory(input: $input) {\n      id\n      name\n      slug\n      description\n      image\n      type\n      parent\n      createdAt\n      updatedAt\n      programsCount\n    }\n  }\n":
@@ -83,11 +90,13 @@ const documents: Documents = {
     types.GetCategoriesDocument,
   "\n  query GetCategory($id: ID!) {\n    category(id: $id) {\n      id\n      name\n      slug\n      description\n      image\n      type\n      parent\n      createdAt\n      updatedAt\n      programsCount\n    }\n  }\n":
     types.GetCategoryDocument,
-  "\n  query GetPrograms($filter: ProgramFilterInput) {\n    programs(filter: $filter) {\n      id\n      title\n      slug\n      description\n      image\n      category\n      baseHours\n      studentCategory\n      awardedQualification\n      awardedRankFrom\n      awardedRankTo\n      pricing {\n        hours\n        price\n      }\n      subPrograms {\n        title\n        description\n      }\n      views\n      createdAt\n      updatedAt\n    }\n  }\n":
+  "\n  query GetPrograms($filter: ProgramFilterInput) {\n    programs(filter: $filter) {\n      id\n      title\n      shortTitle\n      slug\n      description\n      image\n      category\n      baseHours\n      studentCategory\n      awardedQualification\n      awardedRankFrom\n      awardedRankTo\n      pricing {\n        hours\n        price\n      }\n      subPrograms {\n        title\n        description\n      }\n      views\n      createdAt\n      updatedAt\n    }\n  }\n":
     types.GetProgramsDocument,
-  "\n  query GetTopPrograms($limit: Float) {\n    topPrograms(limit: $limit) {\n      id\n      title\n      slug\n      description\n      image\n      category\n      baseHours\n      studentCategory\n      awardedQualification\n      awardedRankFrom\n      awardedRankTo\n      pricing {\n        hours\n        price\n      }\n      subPrograms {\n        title\n        description\n      }\n      views\n      createdAt\n      updatedAt\n    }\n  }\n":
+  "\n  query ProgramsPage($filter: ProgramFilterInput) {\n    programsPage(filter: $filter) {\n      total\n      items {\n        id\n        title\n        shortTitle\n        slug\n        description\n        image\n        category\n        baseHours\n        studentCategory\n        awardedQualification\n        awardedRankFrom\n        awardedRankTo\n        pricing {\n          hours\n          price\n        }\n        subPrograms {\n          title\n          description\n        }\n        views\n        createdAt\n        updatedAt\n      }\n    }\n  }\n":
+    types.ProgramsPageDocument,
+  "\n  query GetTopPrograms($limit: Float) {\n    topPrograms(limit: $limit) {\n      id\n      title\n      shortTitle\n      slug\n      description\n      image\n      category\n      baseHours\n      studentCategory\n      awardedQualification\n      awardedRankFrom\n      awardedRankTo\n      pricing {\n        hours\n        price\n      }\n      subPrograms {\n        title\n        description\n      }\n      views\n      createdAt\n      updatedAt\n    }\n  }\n":
     types.GetTopProgramsDocument,
-  "\n  query GetProgram($id: ID!) {\n    program(id: $id) {\n      id\n      title\n      slug\n      description\n      image\n      category\n      baseHours\n      studentCategory\n      awardedQualification\n      awardedRankFrom\n      awardedRankTo\n      pricing {\n        hours\n        price\n      }\n      subPrograms {\n        title\n        description\n      }\n      views\n      createdAt\n      updatedAt\n    }\n  }\n":
+  "\n  query GetProgram($id: ID!) {\n    program(id: $id) {\n      id\n      title\n      shortTitle\n      slug\n      description\n      image\n      category\n      baseHours\n      studentCategory\n      awardedQualification\n      awardedRankFrom\n      awardedRankTo\n      pricing {\n        hours\n        price\n      }\n      subPrograms {\n        title\n        description\n      }\n      views\n      createdAt\n      updatedAt\n    }\n  }\n":
     types.GetProgramDocument,
   "\n  query AdminUsers($filter: AdminUserFilterInput) {\n    adminUsers(filter: $filter) {\n      ...UserFields\n    }\n  }\n  \n":
     types.AdminUsersDocument,
@@ -145,6 +154,18 @@ export function gql(
 export function gql(
   source: "\n  mutation RequestEmailVerification(\n    $input: RequestEmailVerificationInput!\n  ) {\n    requestEmailVerification(input: $input)\n  }\n"
 ): (typeof documents)["\n  mutation RequestEmailVerification(\n    $input: RequestEmailVerificationInput!\n  ) {\n    requestEmailVerification(input: $input)\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(
+  source: "\n  mutation RequestPasswordReset($input: RequestPasswordResetInput!) {\n    requestPasswordReset(input: $input)\n  }\n"
+): (typeof documents)["\n  mutation RequestPasswordReset($input: RequestPasswordResetInput!) {\n    requestPasswordReset(input: $input)\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(
+  source: "\n  mutation ResetPassword($input: ResetPasswordInput!) {\n    resetPassword(input: $input)\n  }\n"
+): (typeof documents)["\n  mutation ResetPassword($input: ResetPasswordInput!) {\n    resetPassword(input: $input)\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -239,20 +260,26 @@ export function gql(
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(
-  source: "\n  query GetPrograms($filter: ProgramFilterInput) {\n    programs(filter: $filter) {\n      id\n      title\n      slug\n      description\n      image\n      category\n      baseHours\n      studentCategory\n      awardedQualification\n      awardedRankFrom\n      awardedRankTo\n      pricing {\n        hours\n        price\n      }\n      subPrograms {\n        title\n        description\n      }\n      views\n      createdAt\n      updatedAt\n    }\n  }\n"
-): (typeof documents)["\n  query GetPrograms($filter: ProgramFilterInput) {\n    programs(filter: $filter) {\n      id\n      title\n      slug\n      description\n      image\n      category\n      baseHours\n      studentCategory\n      awardedQualification\n      awardedRankFrom\n      awardedRankTo\n      pricing {\n        hours\n        price\n      }\n      subPrograms {\n        title\n        description\n      }\n      views\n      createdAt\n      updatedAt\n    }\n  }\n"];
+  source: "\n  query GetPrograms($filter: ProgramFilterInput) {\n    programs(filter: $filter) {\n      id\n      title\n      shortTitle\n      slug\n      description\n      image\n      category\n      baseHours\n      studentCategory\n      awardedQualification\n      awardedRankFrom\n      awardedRankTo\n      pricing {\n        hours\n        price\n      }\n      subPrograms {\n        title\n        description\n      }\n      views\n      createdAt\n      updatedAt\n    }\n  }\n"
+): (typeof documents)["\n  query GetPrograms($filter: ProgramFilterInput) {\n    programs(filter: $filter) {\n      id\n      title\n      shortTitle\n      slug\n      description\n      image\n      category\n      baseHours\n      studentCategory\n      awardedQualification\n      awardedRankFrom\n      awardedRankTo\n      pricing {\n        hours\n        price\n      }\n      subPrograms {\n        title\n        description\n      }\n      views\n      createdAt\n      updatedAt\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(
-  source: "\n  query GetTopPrograms($limit: Float) {\n    topPrograms(limit: $limit) {\n      id\n      title\n      slug\n      description\n      image\n      category\n      baseHours\n      studentCategory\n      awardedQualification\n      awardedRankFrom\n      awardedRankTo\n      pricing {\n        hours\n        price\n      }\n      subPrograms {\n        title\n        description\n      }\n      views\n      createdAt\n      updatedAt\n    }\n  }\n"
-): (typeof documents)["\n  query GetTopPrograms($limit: Float) {\n    topPrograms(limit: $limit) {\n      id\n      title\n      slug\n      description\n      image\n      category\n      baseHours\n      studentCategory\n      awardedQualification\n      awardedRankFrom\n      awardedRankTo\n      pricing {\n        hours\n        price\n      }\n      subPrograms {\n        title\n        description\n      }\n      views\n      createdAt\n      updatedAt\n    }\n  }\n"];
+  source: "\n  query ProgramsPage($filter: ProgramFilterInput) {\n    programsPage(filter: $filter) {\n      total\n      items {\n        id\n        title\n        shortTitle\n        slug\n        description\n        image\n        category\n        baseHours\n        studentCategory\n        awardedQualification\n        awardedRankFrom\n        awardedRankTo\n        pricing {\n          hours\n          price\n        }\n        subPrograms {\n          title\n          description\n        }\n        views\n        createdAt\n        updatedAt\n      }\n    }\n  }\n"
+): (typeof documents)["\n  query ProgramsPage($filter: ProgramFilterInput) {\n    programsPage(filter: $filter) {\n      total\n      items {\n        id\n        title\n        shortTitle\n        slug\n        description\n        image\n        category\n        baseHours\n        studentCategory\n        awardedQualification\n        awardedRankFrom\n        awardedRankTo\n        pricing {\n          hours\n          price\n        }\n        subPrograms {\n          title\n          description\n        }\n        views\n        createdAt\n        updatedAt\n      }\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(
-  source: "\n  query GetProgram($id: ID!) {\n    program(id: $id) {\n      id\n      title\n      slug\n      description\n      image\n      category\n      baseHours\n      studentCategory\n      awardedQualification\n      awardedRankFrom\n      awardedRankTo\n      pricing {\n        hours\n        price\n      }\n      subPrograms {\n        title\n        description\n      }\n      views\n      createdAt\n      updatedAt\n    }\n  }\n"
-): (typeof documents)["\n  query GetProgram($id: ID!) {\n    program(id: $id) {\n      id\n      title\n      slug\n      description\n      image\n      category\n      baseHours\n      studentCategory\n      awardedQualification\n      awardedRankFrom\n      awardedRankTo\n      pricing {\n        hours\n        price\n      }\n      subPrograms {\n        title\n        description\n      }\n      views\n      createdAt\n      updatedAt\n    }\n  }\n"];
+  source: "\n  query GetTopPrograms($limit: Float) {\n    topPrograms(limit: $limit) {\n      id\n      title\n      shortTitle\n      slug\n      description\n      image\n      category\n      baseHours\n      studentCategory\n      awardedQualification\n      awardedRankFrom\n      awardedRankTo\n      pricing {\n        hours\n        price\n      }\n      subPrograms {\n        title\n        description\n      }\n      views\n      createdAt\n      updatedAt\n    }\n  }\n"
+): (typeof documents)["\n  query GetTopPrograms($limit: Float) {\n    topPrograms(limit: $limit) {\n      id\n      title\n      shortTitle\n      slug\n      description\n      image\n      category\n      baseHours\n      studentCategory\n      awardedQualification\n      awardedRankFrom\n      awardedRankTo\n      pricing {\n        hours\n        price\n      }\n      subPrograms {\n        title\n        description\n      }\n      views\n      createdAt\n      updatedAt\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(
+  source: "\n  query GetProgram($id: ID!) {\n    program(id: $id) {\n      id\n      title\n      shortTitle\n      slug\n      description\n      image\n      category\n      baseHours\n      studentCategory\n      awardedQualification\n      awardedRankFrom\n      awardedRankTo\n      pricing {\n        hours\n        price\n      }\n      subPrograms {\n        title\n        description\n      }\n      views\n      createdAt\n      updatedAt\n    }\n  }\n"
+): (typeof documents)["\n  query GetProgram($id: ID!) {\n    program(id: $id) {\n      id\n      title\n      shortTitle\n      slug\n      description\n      image\n      category\n      baseHours\n      studentCategory\n      awardedQualification\n      awardedRankFrom\n      awardedRankTo\n      pricing {\n        hours\n        price\n      }\n      subPrograms {\n        title\n        description\n      }\n      views\n      createdAt\n      updatedAt\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

@@ -65,6 +65,9 @@ export function createProgramInput(
   const input: CreateProgramInput = {
     title: data.title.trim(),
     category: categoryId,
+    ...(data.shortTitle?.trim() && {
+      shortTitle: data.shortTitle.trim(),
+    }),
     ...(data.description?.trim() && {
       description: data.description.trim(),
     }),
@@ -107,6 +110,9 @@ export function updateProgramInput(
 
   const input: UpdateProgramInput = {
     title: data.title.trim(),
+    ...(data.shortTitle?.trim() && {
+      shortTitle: data.shortTitle.trim(),
+    }),
     ...(data.description?.trim() && {
       description: data.description.trim(),
     }),
@@ -140,6 +146,7 @@ export function updateProgramInput(
 export function getDefaultValues(
   editingProgram?: {
     title?: string;
+    shortTitle?: string | null;
     description?: string | null;
     studentCategory?: string | null;
     pricing?: Array<{ hours: number; price?: number | null }>;
@@ -154,6 +161,7 @@ export function getDefaultValues(
 ): ProgramFormData {
   return {
     title: editingProgram?.title || "",
+    shortTitle: editingProgram?.shortTitle || "",
     description: editingProgram?.description || "",
     studentCategory: editingProgram?.studentCategory || "",
     pricing: editingProgram?.pricing?.map((p) => ({

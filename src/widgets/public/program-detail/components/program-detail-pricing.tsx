@@ -11,7 +11,18 @@ export const ProgramDetailPricing = memo(
   function ProgramDetailPricing({
     pricingList,
   }: ProgramDetailPricingProps) {
-    if (pricingList.length === 0) return null;
+    if (pricingList.length === 0) {
+      return (
+        <div>
+          <h3 className={PROGRAM_DETAIL_CLASSES.sectionTitle}>
+            Стоимость
+          </h3>
+          <div className="rounded-xl border border-border/60 bg-muted/15 p-4 text-sm text-muted-foreground">
+            Цена по запросу
+          </div>
+        </div>
+      );
+    }
 
     return (
       <div>
@@ -29,9 +40,15 @@ export const ProgramDetailPricing = memo(
                   {pricing.hours} часов
                 </div>
               </div>
-              <div className="text-lg font-bold text-primary">
-                {formatPrice(pricing.price!)}₽
-              </div>
+              {pricing.price && pricing.price > 0 ? (
+                <div className="text-lg font-bold text-primary">
+                  {formatPrice(pricing.price)} ₽
+                </div>
+              ) : (
+                <div className="text-sm font-semibold text-muted-foreground">
+                  Цена по запросу
+                </div>
+              )}
             </div>
           ))}
         </div>

@@ -4,6 +4,7 @@ import {
 } from "@/shared/api/generated/graphql";
 import { UPDATE_CATEGORY } from "@/shared/api/mutations/categories";
 import { GET_CATEGORIES } from "@/shared/api/queries/categories";
+import { revalidatePublicProgramsAndCategories } from "@/shared/lib/revalidate/public-revalidate";
 import { useMutation } from "@apollo/client/react";
 
 export function useUpdateCategory() {
@@ -26,6 +27,11 @@ export function useUpdateCategory() {
       const result = await updateCategory({
         variables: { id, input },
       });
+      try {
+        await revalidatePublicProgramsAndCategories();
+      } catch {
+        // Do not break admin UX if revalidation fails
+      }
       return result.data?.updateCategory;
     } catch (error) {
       throw error;

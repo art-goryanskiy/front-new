@@ -78,6 +78,9 @@ export const FormField = memo(function FormField<
                 type={type}
                 placeholder={placeholder}
                 required={isRequired}
+                lang={type === "text" ? "ru" : undefined}
+                spellCheck={type === "text"}
+                autoCorrect={type === "text" ? "on" : "off"}
                 disabled={isDisabled}
                 aria-invalid={fieldState.invalid}
                 aria-label={label}

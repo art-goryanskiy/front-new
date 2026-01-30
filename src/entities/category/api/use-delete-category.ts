@@ -1,6 +1,7 @@
 import { CategoryEntity } from "@/shared/api/generated/graphql";
 import { DELETE_CATEGORY } from "@/shared/api/mutations/categories";
 import { GET_CATEGORIES } from "@/shared/api/queries/categories";
+import { revalidatePublicProgramsAndCategories } from "@/shared/lib/revalidate/public-revalidate";
 import { useMutation } from "@apollo/client/react";
 
 export function useDeleteCategory() {
@@ -20,6 +21,11 @@ export function useDeleteCategory() {
       const result = await deleteCategory({
         variables: { id },
       });
+      try {
+        await revalidatePublicProgramsAndCategories();
+      } catch {
+        // Do not break admin UX if revalidation fails
+      }
       return result.data?.deleteCategory;
     } catch (error) {
       throw error;

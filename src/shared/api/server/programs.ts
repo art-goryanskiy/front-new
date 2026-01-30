@@ -29,6 +29,8 @@ interface ProgramFilterVariables {
   category?: string;
 }
 
+const PROGRAMS_TAG = "public:programs";
+
 export async function getProgramsServer(
   filter?: {
     sortBy?: string;
@@ -59,7 +61,8 @@ export async function getProgramsServer(
     Object.keys(variables).length > 0
       ? { filter: variables }
       : undefined,
-    headers
+    headers,
+    { revalidate: 60, tags: [PROGRAMS_TAG] }
   );
 
   return data.programs;
@@ -73,7 +76,8 @@ export async function getTopProgramsServer(
   const data = await serverGraphQLRequest<GetTopProgramsResponse>(
     gqlToString(GET_TOP_PROGRAMS),
     { limit },
-    headers
+    headers,
+    { revalidate: 60, tags: [PROGRAMS_TAG] }
   );
 
   return data.topPrograms;
@@ -87,7 +91,8 @@ export async function getProgramServer(
   const data = await serverGraphQLRequest<GetProgramResponse>(
     gqlToString(GET_PROGRAM),
     { id },
-    headers
+    headers,
+    { revalidate: 60, tags: [PROGRAMS_TAG, `public:program:${id}`] }
   );
 
   return data.program;

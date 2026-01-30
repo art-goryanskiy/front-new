@@ -4,6 +4,7 @@ import {
 } from "@/shared/api/generated/graphql";
 import { CREATE_CATEGORY } from "@/shared/api/mutations/categories";
 import { GET_CATEGORIES } from "@/shared/api/queries/categories";
+import { revalidatePublicProgramsAndCategories } from "@/shared/lib/revalidate/public-revalidate";
 import { useMutation } from "@apollo/client/react";
 
 export function useCreateCategory() {
@@ -20,6 +21,11 @@ export function useCreateCategory() {
 
   const handleCreate = async (input: CreateCategoryInput) => {
     const result = await createCategory({ variables: { input } });
+    try {
+      await revalidatePublicProgramsAndCategories();
+    } catch {
+      // Do not break admin UX if revalidation fails
+    }
     return result.data?.createCategory;
   };
 

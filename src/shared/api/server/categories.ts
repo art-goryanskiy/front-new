@@ -13,6 +13,7 @@ interface GetCategoryResponse {
 
 // Категории кэшируются на 1 час, так как они редко меняются
 const CATEGORIES_REVALIDATE = 3600;
+const CATEGORIES_TAG = "public:categories";
 
 export async function getCategoriesServer(): Promise<
   CategoryEntity[]
@@ -21,7 +22,7 @@ export async function getCategoriesServer(): Promise<
     gqlToString(GET_CATEGORIES),
     undefined,
     undefined,
-    { revalidate: CATEGORIES_REVALIDATE }
+    { revalidate: CATEGORIES_REVALIDATE, tags: [CATEGORIES_TAG] }
   );
   return data.categories;
 }
@@ -33,7 +34,10 @@ export async function getCategoryServer(
     gqlToString(GET_CATEGORY),
     { id },
     undefined,
-    { revalidate: CATEGORIES_REVALIDATE }
+    {
+      revalidate: CATEGORIES_REVALIDATE,
+      tags: [CATEGORIES_TAG, `public:category:${id}`],
+    }
   );
   return data.category;
 }

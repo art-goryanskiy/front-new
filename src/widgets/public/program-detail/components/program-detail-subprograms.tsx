@@ -11,7 +11,10 @@ export const ProgramDetailSubPrograms = memo(
     subPrograms,
   }: ProgramDetailSubProgramsProps) {
     return (
-      <section className={PROGRAM_DETAIL_CLASSES.section}>
+      <section
+        id="subprograms"
+        className={`${PROGRAM_DETAIL_CLASSES.section} scroll-mt-28`}
+      >
         <h2 className={PROGRAM_DETAIL_CLASSES.sectionTitle}>
           Подпрограммы
         </h2>
@@ -21,11 +24,11 @@ export const ProgramDetailSubPrograms = memo(
               key={index}
               className={PROGRAM_DETAIL_CLASSES.subProgramCard}
             >
-              <h3 className="mb-2 font-semibold text-foreground">
+              <h3 className="mb-2 text-sm font-semibold text-foreground sm:text-base">
                 {subProgram.title}
               </h3>
               {subProgram.description && (
-                <p className="text-sm leading-relaxed text-muted-foreground">
+                <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
                   {subProgram.description}
                 </p>
               )}

@@ -2,6 +2,7 @@ import type { CategoryType } from "@/shared/api/generated/graphql";
 
 export interface ProgramFormData {
   title: string;
+  shortTitle?: string;
   description?: string;
   studentCategory?: string;
   pricing: Array<{ hours: number; price: number }>;
@@ -14,6 +15,7 @@ export interface ProgramFormData {
 export interface EditingProgram {
   id: string;
   title: string;
+  shortTitle?: string | null;
   description?: string | null;
   studentCategory?: string | null;
   category: string;

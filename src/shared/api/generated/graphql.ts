@@ -106,6 +106,7 @@ export type CreateProgramInput = {
   description?: InputMaybe<Scalars["String"]["input"]>;
   image?: InputMaybe<Scalars["String"]["input"]>;
   pricing?: InputMaybe<Array<ProgramPricingInput>>;
+  shortTitle?: InputMaybe<Scalars["String"]["input"]>;
   studentCategory?: InputMaybe<Scalars["String"]["input"]>;
   subPrograms?: InputMaybe<Array<ProgramSubProgramInput>>;
   title: Scalars["String"]["input"];
@@ -256,6 +257,7 @@ export type ProgramEntity = {
   id: Scalars["ID"]["output"];
   image?: Maybe<Scalars["String"]["output"]>;
   pricing: Array<ProgramPricing>;
+  shortTitle?: Maybe<Scalars["String"]["output"]>;
   slug: Scalars["String"]["output"];
   studentCategory?: Maybe<Scalars["String"]["output"]>;
   subPrograms?: Maybe<Array<ProgramSubProgramEntity>>;
@@ -296,6 +298,12 @@ export type ProgramSubProgramInput = {
   title: Scalars["String"]["input"];
 };
 
+export type ProgramsPageEntity = {
+  __typename?: "ProgramsPageEntity";
+  items: Array<ProgramEntity>;
+  total: Scalars["Int"]["output"];
+};
+
 export type Query = {
   __typename?: "Query";
   adminUser?: Maybe<UserEntity>;
@@ -305,6 +313,7 @@ export type Query = {
   me: UserEntity;
   program: ProgramEntity;
   programs: Array<ProgramEntity>;
+  programsPage: ProgramsPageEntity;
   topPrograms: Array<ProgramEntity>;
 };
 
@@ -329,6 +338,10 @@ export type QueryProgramArgs = {
 };
 
 export type QueryProgramsArgs = {
+  filter?: InputMaybe<ProgramFilterInput>;
+};
+
+export type QueryProgramsPageArgs = {
   filter?: InputMaybe<ProgramFilterInput>;
 };
 
@@ -395,6 +408,7 @@ export type UpdateProgramInput = {
   description?: InputMaybe<Scalars["String"]["input"]>;
   image?: InputMaybe<Scalars["String"]["input"]>;
   pricing?: InputMaybe<Array<ProgramPricingInput>>;
+  shortTitle?: InputMaybe<Scalars["String"]["input"]>;
   studentCategory?: InputMaybe<Scalars["String"]["input"]>;
   subPrograms?: InputMaybe<Array<ProgramSubProgramInput>>;
   title?: InputMaybe<Scalars["String"]["input"]>;
@@ -523,6 +537,24 @@ export type RequestEmailVerificationMutationVariables = Exact<{
 export type RequestEmailVerificationMutation = {
   __typename?: "Mutation";
   requestEmailVerification: boolean;
+};
+
+export type RequestPasswordResetMutationVariables = Exact<{
+  input: RequestPasswordResetInput;
+}>;
+
+export type RequestPasswordResetMutation = {
+  __typename?: "Mutation";
+  requestPasswordReset: boolean;
+};
+
+export type ResetPasswordMutationVariables = Exact<{
+  input: ResetPasswordInput;
+}>;
+
+export type ResetPasswordMutation = {
+  __typename?: "Mutation";
+  resetPassword: boolean;
 };
 
 export type UpdateMyProfileMutationVariables = Exact<{
@@ -796,6 +828,7 @@ export type GetProgramsQuery = {
     __typename?: "ProgramEntity";
     id: string;
     title: string;
+    shortTitle?: string | null;
     slug: string;
     description?: string | null;
     image?: string | null;
@@ -821,6 +854,46 @@ export type GetProgramsQuery = {
   }>;
 };
 
+export type ProgramsPageQueryVariables = Exact<{
+  filter?: InputMaybe<ProgramFilterInput>;
+}>;
+
+export type ProgramsPageQuery = {
+  __typename?: "Query";
+  programsPage: {
+    __typename?: "ProgramsPageEntity";
+    total: number;
+    items: Array<{
+      __typename?: "ProgramEntity";
+      id: string;
+      title: string;
+      shortTitle?: string | null;
+      slug: string;
+      description?: string | null;
+      image?: string | null;
+      category: string;
+      baseHours?: number | null;
+      studentCategory?: string | null;
+      awardedQualification?: string | null;
+      awardedRankFrom?: number | null;
+      awardedRankTo?: number | null;
+      views: number;
+      createdAt: any;
+      updatedAt: any;
+      pricing: Array<{
+        __typename?: "ProgramPricing";
+        hours: number;
+        price?: number | null;
+      }>;
+      subPrograms?: Array<{
+        __typename?: "ProgramSubProgramEntity";
+        title: string;
+        description?: string | null;
+      }> | null;
+    }>;
+  };
+};
+
 export type GetTopProgramsQueryVariables = Exact<{
   limit?: InputMaybe<Scalars["Float"]["input"]>;
 }>;
@@ -831,6 +904,7 @@ export type GetTopProgramsQuery = {
     __typename?: "ProgramEntity";
     id: string;
     title: string;
+    shortTitle?: string | null;
     slug: string;
     description?: string | null;
     image?: string | null;
@@ -866,6 +940,7 @@ export type GetProgramQuery = {
     __typename?: "ProgramEntity";
     id: string;
     title: string;
+    shortTitle?: string | null;
     slug: string;
     description?: string | null;
     image?: string | null;
@@ -1427,6 +1502,105 @@ export const RequestEmailVerificationDocument = {
 } as unknown as DocumentNode<
   RequestEmailVerificationMutation,
   RequestEmailVerificationMutationVariables
+>;
+export const RequestPasswordResetDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "RequestPasswordReset" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "input" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: {
+                kind: "Name",
+                value: "RequestPasswordResetInput",
+              },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "requestPasswordReset" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "input" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "input" },
+                },
+              },
+            ],
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  RequestPasswordResetMutation,
+  RequestPasswordResetMutationVariables
+>;
+export const ResetPasswordDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "ResetPassword" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "input" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "ResetPasswordInput" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "resetPassword" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "input" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "input" },
+                },
+              },
+            ],
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  ResetPasswordMutation,
+  ResetPasswordMutationVariables
 >;
 export const UpdateMyProfileDocument = {
   kind: "Document",
@@ -3365,6 +3539,10 @@ export const GetProgramsDocument = {
                 },
                 {
                   kind: "Field",
+                  name: { kind: "Name", value: "shortTitle" },
+                },
+                {
+                  kind: "Field",
                   name: { kind: "Name", value: "slug" },
                 },
                 {
@@ -3459,6 +3637,178 @@ export const GetProgramsDocument = {
   GetProgramsQuery,
   GetProgramsQueryVariables
 >;
+export const ProgramsPageDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "ProgramsPage" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "filter" },
+          },
+          type: {
+            kind: "NamedType",
+            name: { kind: "Name", value: "ProgramFilterInput" },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "programsPage" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "filter" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "filter" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "total" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "items" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "id" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "title" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "shortTitle" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "slug" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "description" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "image" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "category" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "baseHours" },
+                      },
+                      {
+                        kind: "Field",
+                        name: {
+                          kind: "Name",
+                          value: "studentCategory",
+                        },
+                      },
+                      {
+                        kind: "Field",
+                        name: {
+                          kind: "Name",
+                          value: "awardedQualification",
+                        },
+                      },
+                      {
+                        kind: "Field",
+                        name: {
+                          kind: "Name",
+                          value: "awardedRankFrom",
+                        },
+                      },
+                      {
+                        kind: "Field",
+                        name: {
+                          kind: "Name",
+                          value: "awardedRankTo",
+                        },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "pricing" },
+                        selectionSet: {
+                          kind: "SelectionSet",
+                          selections: [
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "hours" },
+                            },
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "price" },
+                            },
+                          ],
+                        },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "subPrograms" },
+                        selectionSet: {
+                          kind: "SelectionSet",
+                          selections: [
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "title" },
+                            },
+                            {
+                              kind: "Field",
+                              name: {
+                                kind: "Name",
+                                value: "description",
+                              },
+                            },
+                          ],
+                        },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "views" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "createdAt" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "updatedAt" },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  ProgramsPageQuery,
+  ProgramsPageQueryVariables
+>;
 export const GetTopProgramsDocument = {
   kind: "Document",
   definitions: [
@@ -3505,6 +3855,10 @@ export const GetTopProgramsDocument = {
                 {
                   kind: "Field",
                   name: { kind: "Name", value: "title" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "shortTitle" },
                 },
                 {
                   kind: "Field",
@@ -3651,6 +4005,10 @@ export const GetProgramDocument = {
                 {
                   kind: "Field",
                   name: { kind: "Name", value: "title" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "shortTitle" },
                 },
                 {
                   kind: "Field",

@@ -22,10 +22,10 @@ export function DetailPageLayout({
           }}
         />
       ))}
-      <div className="relative min-h-screen overflow-x-hidden bg-background">
+      <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-background">
         <PublicBackdrop />
         <PublicHeader />
-        <main className="relative z-10 mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 md:px-8 lg:px-10 xl:px-12">
+        <main className="relative z-10 mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 md:px-8 lg:px-10 xl:px-12">
           {children}
         </main>
         <PublicFooter />

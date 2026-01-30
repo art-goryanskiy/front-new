@@ -18,6 +18,7 @@ import { ProgramFormAwardedQualificationField } from "./fields/program-form-awar
 import { ProgramFormAwardedRankFields } from "./fields/program-form-awarded-rank-fields";
 import { ProgramFormDescriptionField } from "./fields/program-form-description-field";
 import { ProgramFormPricingFields } from "./fields/program-form-pricing-fields";
+import { ProgramFormShortTitleField } from "./fields/program-form-short-title-field";
 import { ProgramFormStudentCategoryField } from "./fields/program-form-student-category-field";
 import { ProgramFormSubProgramsFields } from "./fields/program-form-subprograms-fields";
 import { ProgramFormTitleField } from "./fields/program-form-title-field";
@@ -166,6 +167,7 @@ export const ProgramForm = memo(function ProgramForm({
           errors={formState.errors}
           labels={{
             title: FORM_LABELS.title,
+            shortTitle: FORM_LABELS.shortTitle,
             studentCategory: FORM_LABELS.studentCategory,
             awardedQualification: FORM_LABELS.awardedQualification,
           }}
@@ -190,6 +192,7 @@ export const ProgramForm = memo(function ProgramForm({
           Основная информация
         </h3>
         <ProgramFormTitleField control={control} />
+        <ProgramFormShortTitleField control={control} />
         <ProgramFormDescriptionField control={control} />
         <ProgramFormStudentCategoryField control={control} />
       </div>

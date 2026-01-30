@@ -11,6 +11,9 @@ import {
 import { getCategoryServer } from "@/shared/api/server/categories";
 import type { CategoryEntity } from "@/shared/api/generated/graphql";
 import { safeAsyncNull } from "@/shared/lib/helpers/error-helpers";
+import { cookies } from "next/headers";
+import { safeAsyncArray } from "@/shared/lib/helpers/error-helpers";
+import { getProgramsServer } from "@/shared/api/server/programs";
 
 export async function generateMetadata({
   params,
@@ -35,19 +38,39 @@ export default async function ProgramDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const cookieStore = await cookies();
+  const cookie = cookieStore.toString();
 
-  const program = await safeAsyncNull(getProgramServer(id));
+  const program = await safeAsyncNull(getProgramServer(id, cookie));
 
   if (!program) {
     notFound();
   }
 
-  const [category, programSchema] = await Promise.all([
-    program.category
-      ? safeAsyncNull(getCategoryServer(program.category))
-      : Promise.resolve<CategoryEntity | null>(null),
-    Promise.resolve(generateProgramSchema(program)),
-  ]);
+  const [category, programSchema, relatedProgramsRaw] =
+    await Promise.all([
+      program.category
+        ? safeAsyncNull(getCategoryServer(program.category))
+        : Promise.resolve<CategoryEntity | null>(null),
+      Promise.resolve(generateProgramSchema(program)),
+      program.category
+        ? safeAsyncArray(
+            getProgramsServer(
+              {
+                category: program.category,
+                sortBy: "views",
+                sortOrder: "desc",
+                limit: 8,
+              },
+              cookie
+            )
+          )
+        : Promise.resolve([]),
+    ]);
+
+  const relatedPrograms = relatedProgramsRaw
+    .filter((p) => p.id !== program.id)
+    .slice(0, 6);
 
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: "Главная", url: "/" },
@@ -64,7 +87,11 @@ export default async function ProgramDetailPage({
         { type: "breadcrumb", data: breadcrumbSchema },
       ]}
     >
-      <ProgramDetail program={program} />
+      <ProgramDetail
+        program={program}
+        category={category}
+        relatedPrograms={relatedPrograms}
+      />
     </DetailPageLayout>
   );
 }

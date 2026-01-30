@@ -3,6 +3,7 @@
  */
 export const FORM_LABELS = {
   title: "Название программы",
+  shortTitle: "Короткое название",
   description: "Описание",
   studentCategory: "Категория студентов",
   awardedQualification: "Присваиваемая квалификация",
@@ -18,6 +19,7 @@ export const FORM_LABELS = {
 
 export const FORM_PLACEHOLDERS = {
   title: "Введите название программы",
+  shortTitle: "Короткое название для карточек (до 80 символов)",
   description: "Введите описание программы (необязательно)",
   studentCategory: "Введите категорию студентов",
   awardedQualification: "Введите квалификацию",
@@ -31,6 +33,7 @@ export const FORM_PLACEHOLDERS = {
 
 export const FORM_MESSAGES = {
   titleRequired: "Название обязательно",
+  shortTitleTooLong: "Максимум 80 символов",
   subProgramsDescription:
     "Добавьте подпрограммы для этой программы повышения квалификации",
   subProgramOptional: "Необязательное поле",

@@ -5,6 +5,7 @@ import {
   GET_PROGRAMS,
   GET_PROGRAMS_PAGE,
 } from "@/shared/api/queries/programs";
+import { revalidatePublicProgramsAndCategories } from "@/shared/lib/revalidate/public-revalidate";
 import { useMutation } from "@apollo/client/react";
 
 export function useDeleteProgram() {
@@ -37,6 +38,11 @@ export function useDeleteProgram() {
       const result = await deleteProgram({
         variables: { id },
       });
+      try {
+        await revalidatePublicProgramsAndCategories();
+      } catch {
+        // Do not break admin UX if revalidation fails
+      }
       return result.data?.deleteProgram;
     } catch (error) {
       throw error;

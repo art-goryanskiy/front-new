@@ -1,10 +1,11 @@
 export const PROGRAM_DETAIL_CLASSES = {
-  container: "space-y-8",
+  container:
+    "space-y-8 pb-[calc(6.5rem+env(safe-area-inset-bottom))] lg:pb-0",
   header: "space-y-4",
-  backButton: "mb-4",
-  title: "text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground",
+  title:
+    "text-balance text-2xl font-bold leading-tight text-foreground sm:text-3xl lg:text-4xl",
   meta: "flex flex-wrap items-center gap-4 text-sm text-muted-foreground",
-  image: "w-full aspect-video rounded-2xl object-cover",
+  image: "object-cover",
   content: "grid grid-cols-1 lg:grid-cols-3 gap-8",
   main: "lg:col-span-2 space-y-6",
   sidebar: "lg:col-span-1 space-y-6",

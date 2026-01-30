@@ -56,7 +56,7 @@ export const UserModal = memo(function UserModal() {
       >
         <DialogContent
           showClose={false}
-          className="top-1/2 left-1/2 max-h-[90dvh] w-[min(calc(100vw-1.5rem),72rem)] -translate-x-1/2 -translate-y-1/2 overflow-hidden border-border/60 bg-background p-0 shadow-2xl sm:rounded-2xl"
+          className="top-1/2 left-1/2 max-h-[90dvh] w-[calc(100vw-1.5rem)] max-w-[84rem] -translate-x-1/2 -translate-y-1/2 overflow-hidden border-border/60 bg-background p-0 shadow-2xl sm:rounded-2xl"
           onEscapeKeyDown={(e) => {
             if (isBusy) {
               e.preventDefault();
