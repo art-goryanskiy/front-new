@@ -40,32 +40,41 @@ export const CategoryFormTypeField = memo(
         rules={rules}
         render={({ field, fieldState }) => (
           <div className="space-y-2">
-            <Label
-              htmlFor="type"
-              className="text-xs font-medium text-muted-foreground"
-            >
-              {FORM_LABELS.type} *
-            </Label>
-            <Select
-              value={field.value ?? ""}
-              onValueChange={field.onChange}
-              disabled={isEditMode}
-            >
-              <SelectTrigger
-                id="type"
-                aria-invalid={fieldState.invalid}
-                className="h-10 bg-background/60"
+            <div className="group relative pt-2">
+              <Label
+                htmlFor="type"
+                className={[
+                  "absolute top-2 left-3 z-10 -translate-y-1/2 rounded-md bg-background/80 px-1 text-[11px] font-medium backdrop-blur-sm transition-colors",
+                  fieldState.invalid
+                    ? "text-destructive"
+                    : "text-muted-foreground group-focus-within:text-foreground",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
               >
-                <SelectValue placeholder={FORM_PLACEHOLDERS.type} />
-              </SelectTrigger>
-              <SelectContent>
-                {CATEGORY_TYPE_OPTIONS.map((option) => (
-                  <SelectItem key={option.key} value={option.key}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+                {FORM_LABELS.type} *
+              </Label>
+              <Select
+                value={field.value ?? ""}
+                onValueChange={field.onChange}
+                disabled={isEditMode}
+              >
+                <SelectTrigger
+                  id="type"
+                  aria-invalid={fieldState.invalid}
+                  className="peer h-10 bg-background/60"
+                >
+                  <SelectValue placeholder={FORM_PLACEHOLDERS.type} />
+                </SelectTrigger>
+                <SelectContent>
+                  {CATEGORY_TYPE_OPTIONS.map((option) => (
+                    <SelectItem key={option.key} value={option.key}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
             {fieldState.error?.message && (
               <p className="text-sm text-destructive">
                 {fieldState.error.message}

@@ -8,12 +8,14 @@ export const PROGRAM_DETAIL_CLASSES = {
   content: "grid grid-cols-1 lg:grid-cols-3 gap-8",
   main: "lg:col-span-2 space-y-6",
   sidebar: "lg:col-span-1 space-y-6",
-  section: "p-6 bg-card rounded-xl border border-border",
-  sectionTitle: "text-lg font-semibold text-foreground mb-4",
+  section:
+    "rounded-2xl border border-border/60 bg-background/60 p-6 shadow-sm backdrop-blur-xl",
+  sectionTitle: "mb-4 text-lg font-semibold text-foreground",
   pricingList: "space-y-3",
   pricingItem:
-    "flex justify-between items-center p-3 bg-card rounded-lg border border-border",
+    "flex items-center justify-between rounded-xl border border-border/60 bg-muted/15 p-3",
   subProgramsList: "space-y-4",
-  subProgramCard: "p-4 bg-card rounded-lg border border-border",
+  subProgramCard:
+    "rounded-xl border border-border/60 bg-background/60 p-4 backdrop-blur",
   cta: "w-full",
 } as const;

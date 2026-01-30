@@ -17,40 +17,40 @@ export const SubcategoryCardPrice = memo(
   }: SubcategoryCardPriceProps) {
     if (!canSeePrice) {
       return (
-        <div className={SUBCATEGORY_CARD_CLASSES.lockedPrice}>
+        <div className={SUBCATEGORY_CARD_CLASSES.chip}>
           <Lock className="h-3.5 w-3.5" />
-          <span className="text-xs">Войдите для просмотра цены</span>
+          <span className={SUBCATEGORY_CARD_CLASSES.priceChip}>
+            Цена по входу
+          </span>
         </div>
       );
     }
 
     if (!priceRange) {
       return (
-        <span className="text-xs text-muted-foreground">
-          Цена по запросу
-        </span>
+        <div className={SUBCATEGORY_CARD_CLASSES.chip}>
+          <span className={SUBCATEGORY_CARD_CLASSES.priceChip}>
+            Цена по запросу
+          </span>
+        </div>
       );
     }
 
     if (priceRange.isRange) {
       return (
-        <div className={SUBCATEGORY_CARD_CLASSES.priceSection}>
-          <span className={SUBCATEGORY_CARD_CLASSES.priceFrom}>
-            от
-          </span>
-          <span className={SUBCATEGORY_CARD_CLASSES.priceRange}>
-            {formatPrice(priceRange.min)}₽ -{" "}
-            {formatPrice(priceRange.max)}₽
+        <div className={SUBCATEGORY_CARD_CLASSES.chip}>
+          <span className={SUBCATEGORY_CARD_CLASSES.priceChip}>
+            {formatPrice(priceRange.min)}–
+            {formatPrice(priceRange.max)} ₽
           </span>
         </div>
       );
     }
 
     return (
-      <div className={SUBCATEGORY_CARD_CLASSES.priceSection}>
-        <span className={SUBCATEGORY_CARD_CLASSES.priceFrom}>от</span>
-        <span className={SUBCATEGORY_CARD_CLASSES.price}>
-          {formatPrice(priceRange.min)}₽
+      <div className={SUBCATEGORY_CARD_CLASSES.chip}>
+        <span className={SUBCATEGORY_CARD_CLASSES.priceEmphasis}>
+          от {formatPrice(priceRange.min)} ₽
         </span>
       </div>
     );

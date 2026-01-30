@@ -61,7 +61,27 @@ export const CategoryModal = memo(function CategoryModal() {
       >
         <DialogContent
           showClose={false}
-          className="relative max-h-[90dvh] w-[min(calc(100vw-1.5rem),72rem)] overflow-hidden border-border/60 bg-background p-0 shadow-2xl sm:rounded-2xl"
+          className="top-1/2 left-1/2 max-h-[90dvh] w-[min(calc(100vw-1.5rem),72rem)] -translate-x-1/2 -translate-y-1/2 overflow-hidden border-border/60 bg-background p-0 shadow-2xl sm:rounded-2xl"
+          onEscapeKeyDown={(e) => {
+            if (isBusy) {
+              e.preventDefault();
+              return;
+            }
+            if (isDirty) {
+              e.preventDefault();
+              setConfirmOpen(true);
+            }
+          }}
+          onInteractOutside={(e) => {
+            if (isBusy) {
+              e.preventDefault();
+              return;
+            }
+            if (isDirty) {
+              e.preventDefault();
+              setConfirmOpen(true);
+            }
+          }}
         >
           {/* shader-lite background */}
           <div className="pointer-events-none absolute inset-0">

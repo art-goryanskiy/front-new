@@ -6,10 +6,12 @@ import { useCreateCategory } from "@/entities/category/api/use-create-category";
 import { useUpdateCategory } from "@/entities/category/api/use-update-category";
 import { useCategoryModalState } from "@/shared/store/modal-store";
 import { useToastState } from "@/shared/store/toast-store";
+import { FormErrorSummary } from "@/shared/ui/form-error-summary/form-error-summary";
 import { memo, useCallback, useEffect, useMemo } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import {
   FORM_CLASSES,
+  FORM_LABELS,
   FORM_MESSAGES,
 } from "./constants/category-form-constants";
 import { CategoryFormDescriptionField } from "./fields/category-form-description-field";
@@ -145,11 +147,27 @@ export const CategoryForm = memo(function CategoryForm({
     ]
   );
 
+  const onInvalid = useCallback(() => {
+    // Scroll to summary if visible
+    const el = document.getElementById("form-error-summary");
+    el?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, []);
+
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(onSubmit, onInvalid)}
       className={FORM_CLASSES.form}
     >
+      <div id="form-error-summary">
+        <FormErrorSummary<CategoryFormData>
+          errors={formState.errors}
+          labels={{
+            name: FORM_LABELS.name,
+            type: FORM_LABELS.type,
+          }}
+        />
+      </div>
+
       {error && (
         <div className={FORM_CLASSES.errorContainer}>
           <p className={FORM_CLASSES.errorText}>

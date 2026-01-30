@@ -69,6 +69,18 @@ export const REQUEST_EMAIL_VERIFICATION = gql`
   }
 `;
 
+export const REQUEST_PASSWORD_RESET = gql`
+  mutation RequestPasswordReset($input: RequestPasswordResetInput!) {
+    requestPasswordReset(input: $input)
+  }
+`;
+
+export const RESET_PASSWORD = gql`
+  mutation ResetPassword($input: ResetPasswordInput!) {
+    resetPassword(input: $input)
+  }
+`;
+
 export const UPDATE_MY_PROFILE = gql`
   mutation UpdateMyProfile($input: UpdateMyProfileInput!) {
     updateMyProfile(input: $input) {

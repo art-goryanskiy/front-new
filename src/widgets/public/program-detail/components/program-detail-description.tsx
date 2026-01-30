@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { PROGRAM_DETAIL_CLASSES } from "../constants/program-detail-constants";
 
 interface ProgramDetailDescriptionProps {
   description: string;
@@ -10,16 +10,14 @@ export const ProgramDetailDescription = memo(
     description,
   }: ProgramDetailDescriptionProps) {
     return (
-      <Card className="shadow-lg">
-        <CardContent className="p-6">
-          <h2 className="mb-4 text-xl font-semibold text-foreground">
-            Описание
-          </h2>
-          <p className="whitespace-pre-line text-foreground">
-            {description}
-          </p>
-        </CardContent>
-      </Card>
+      <section className={PROGRAM_DETAIL_CLASSES.section}>
+        <h2 className={PROGRAM_DETAIL_CLASSES.sectionTitle}>
+          Описание
+        </h2>
+        <p className="text-sm leading-relaxed whitespace-pre-line text-foreground">
+          {description}
+        </p>
+      </section>
     );
   }
 );

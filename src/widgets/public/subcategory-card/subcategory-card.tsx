@@ -1,8 +1,6 @@
 "use client";
 
-import { memo } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { memo, useMemo } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
@@ -12,6 +10,7 @@ import { SUBCATEGORY_CARD_CLASSES } from "./constants/subcategory-card-constants
 import { SubcategoryCardImage } from "./components/subcategory-card-image";
 import { SubcategoryCardPrice } from "./components/subcategory-card-price";
 import { useSubcategoryPricing } from "./hooks/use-subcategory-pricing";
+import { cn } from "@/lib/utils";
 
 export const SubcategoryCard = memo(function SubcategoryCard({
   category,
@@ -20,72 +19,76 @@ export const SubcategoryCard = memo(function SubcategoryCard({
   const canSeePrice = useCanSeePrice();
   const priceRange = useSubcategoryPricing(category);
 
+  const programsLabel = useMemo(() => {
+    if (
+      category.programsCount === null ||
+      category.programsCount === undefined
+    ) {
+      return "— программ";
+    }
+    const n = category.programsCount;
+    return `${n} ${n === 1 ? "программа" : "программ"}`;
+  }, [category.programsCount]);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      whileHover={{ y: -4 }}
       className="h-full"
     >
-      <Card className={SUBCATEGORY_CARD_CLASSES.card}>
-        <CardContent className="flex flex-1 flex-col p-0">
-          <SubcategoryCardImage
-            image={category.image}
-            name={category.name}
-            priority={priority}
-          />
+      <Link
+        href={`/categories/${category.id}`}
+        className="block h-full"
+      >
+        <div className={SUBCATEGORY_CARD_CLASSES.card}>
+          <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+            <div className="absolute -top-24 -right-24 h-[260px] w-[360px] rounded-full bg-primary/10 blur-3xl" />
+            <div className="absolute inset-0 bg-linear-to-b from-transparent via-background/10 to-background/60" />
+          </div>
 
-          <div className={SUBCATEGORY_CARD_CLASSES.content}>
-            <h3 className={SUBCATEGORY_CARD_CLASSES.title}>
-              {category.name}
-            </h3>
+          <div
+            className={cn(
+              "relative z-10",
+              SUBCATEGORY_CARD_CLASSES.content
+            )}
+          >
+            <div className={SUBCATEGORY_CARD_CLASSES.headerRow}>
+              <SubcategoryCardImage
+                image={category.image}
+                name={category.name}
+                priority={priority}
+              />
+
+              <div className="min-w-0 flex-1">
+                <h3
+                  className={SUBCATEGORY_CARD_CLASSES.title}
+                  title={category.name}
+                >
+                  {category.name}
+                </h3>
+              </div>
+
+              <ArrowRight className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-foreground" />
+            </div>
+
             <p className={SUBCATEGORY_CARD_CLASSES.description}>
-              {category.description || "\u00A0"}
+              {category.description ||
+                "Откройте категорию, чтобы увидеть программы."}
             </p>
 
             <div className={SUBCATEGORY_CARD_CLASSES.footer}>
-              <div className="flex flex-col gap-2">
-                {category.programsCount !== null &&
-                category.programsCount !== undefined ? (
-                  <span
-                    className={SUBCATEGORY_CARD_CLASSES.programsCount}
-                  >
-                    {category.programsCount}{" "}
-                    {category.programsCount === 1
-                      ? "программа"
-                      : "программ"}
-                  </span>
-                ) : (
-                  <span
-                    className={SUBCATEGORY_CARD_CLASSES.programsCount}
-                  >
-                    {"\u00A0"}
-                  </span>
-                )}
-
-                <SubcategoryCardPrice
-                  priceRange={priceRange}
-                  canSeePrice={canSeePrice}
-                />
+              <div className={SUBCATEGORY_CARD_CLASSES.chip}>
+                {programsLabel}
               </div>
+              <SubcategoryCardPrice
+                priceRange={priceRange}
+                canSeePrice={canSeePrice}
+              />
             </div>
-
-            <Link
-              href={`/categories/${category.id}`}
-              className="mt-auto block"
-            >
-              <Button
-                variant="secondary"
-                className={`w-full ${SUBCATEGORY_CARD_CLASSES.cta}`}
-              >
-                Смотреть программы
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </Link>
     </motion.div>
   );
 });

@@ -49,6 +49,7 @@ export const PublicHeader = memo(function PublicHeader() {
         {...PUBLIC_HEADER_ANIMATIONS.header}
         className={PUBLIC_HEADER_CLASSES.header}
       >
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-border to-transparent" />
         <div className={PUBLIC_HEADER_CLASSES.container}>
           <div className={PUBLIC_HEADER_CLASSES.content}>
             <HeaderLogo />

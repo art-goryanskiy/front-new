@@ -36,18 +36,29 @@ export const LoginFormEmailField = memo(function LoginFormEmailField({
       rules={rules}
       render={({ field, fieldState }) => (
         <div className={cn("w-full space-y-2")}>
-          <Label htmlFor="email">
-            {LOGIN_FORM_TEXTS.email.label} *
-          </Label>
-          <Input
-            {...field}
-            id="email"
-            type="email"
-            placeholder={LOGIN_FORM_TEXTS.email.placeholder}
-            required
-            aria-invalid={fieldState.invalid}
-            aria-label={LOGIN_FORM_TEXTS.email.label}
-          />
+          <div className="group relative pt-2">
+            <Label
+              htmlFor="email"
+              className={cn(
+                "absolute top-2 left-3 z-10 -translate-y-1/2 rounded-md bg-background/80 px-1 text-[11px] font-medium backdrop-blur-sm transition-colors",
+                fieldState.invalid
+                  ? "text-destructive"
+                  : "text-muted-foreground group-focus-within:text-foreground"
+              )}
+            >
+              {LOGIN_FORM_TEXTS.email.label} *
+            </Label>
+            <Input
+              {...field}
+              id="email"
+              type="email"
+              placeholder={LOGIN_FORM_TEXTS.email.placeholder}
+              required
+              aria-invalid={fieldState.invalid}
+              aria-label={LOGIN_FORM_TEXTS.email.label}
+              className="peer bg-background/60"
+            />
+          </div>
           {fieldState.error?.message && (
             <p className="text-sm text-destructive">
               {fieldState.error.message}

@@ -8,6 +8,8 @@ import { cookies } from "next/headers";
 import { generateMetadata as generateSeoMetadata } from "@/shared/lib/seo/metadata";
 import { generateOrganizationSchema } from "@/shared/lib/seo/structured-data";
 import { Component } from "@/components/ui/the-infinite-grid";
+import { PublicFooter } from "@/widgets/public/footer/public-footer";
+import { CategoryTypeTiles } from "@/widgets/public/home/category-type-tiles";
 
 export const metadata: Metadata = generateSeoMetadata({
   title: "Главная",
@@ -43,14 +45,16 @@ export default async function Home() {
       />
       <div className="min-h-screen bg-background">
         <PublicHeader />
-        <main>
+        <main className="relative z-10">
           <Component />
+          <CategoryTypeTiles categories={categories} />
           <TopProgramsSection
             initialTopPrograms={topPrograms}
             initialAllPrograms={allPrograms}
             initialCategories={categories}
           />
         </main>
+        <PublicFooter />
       </div>
     </>
   );

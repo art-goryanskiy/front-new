@@ -6,10 +6,12 @@ import { useCreateProgram } from "@/entities/program/api/use-create-programs";
 import { useUpdateProgram } from "@/entities/program/api/use-update-program";
 import { useProgramModalState } from "@/shared/store/modal-store";
 import { useToastState } from "@/shared/store/toast-store";
+import { FormErrorSummary } from "@/shared/ui/form-error-summary/form-error-summary";
 import { memo, useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import {
   FORM_CLASSES,
+  FORM_LABELS,
   FORM_MESSAGES,
 } from "./constants/program-form-constants";
 import { ProgramFormAwardedQualificationField } from "./fields/program-form-awarded-qualification-field";
@@ -153,9 +155,23 @@ export const ProgramForm = memo(function ProgramForm({
 
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(onSubmit, () => {
+        const el = document.getElementById("form-error-summary");
+        el?.scrollIntoView({ behavior: "smooth", block: "start" });
+      })}
       className={FORM_CLASSES.form}
     >
+      <div id="form-error-summary">
+        <FormErrorSummary<ProgramFormData>
+          errors={formState.errors}
+          labels={{
+            title: FORM_LABELS.title,
+            studentCategory: FORM_LABELS.studentCategory,
+            awardedQualification: FORM_LABELS.awardedQualification,
+          }}
+        />
+      </div>
+
       <ProgramFormError
         error={
           missingCategory

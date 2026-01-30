@@ -2,11 +2,11 @@ import { CATEGORY_TYPE_LABELS } from "@/shared/constants/categories";
 
 export const PUBLIC_HEADER_CLASSES = {
   header:
-    "sticky top-0 z-50 border-b shadow-sm backdrop-blur-xl bg-background/95 border-border/50",
+    "sticky top-0 z-50 border-b border-border/60 bg-background/70 shadow-sm backdrop-blur-xl supports-[backdrop-filter]:bg-background/50",
   container: "mx-auto w-full max-w-7xl",
   content:
     "flex gap-4 justify-between items-center px-4 h-16 sm:px-6 md:px-8 lg:px-10 xl:px-12",
-  logo: "flex items-center gap-2 font-bold text-xl sm:text-2xl bg-linear-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent",
+  logo: "flex items-center gap-2 rounded-lg transition-opacity hover:opacity-90 focus:outline-none",
   nav: "hidden md:flex items-center gap-6",
   navLink:
     "text-sm font-medium text-foreground hover:text-primary transition-colors",

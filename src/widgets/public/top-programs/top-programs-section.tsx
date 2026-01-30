@@ -125,6 +125,10 @@ export const TopProgramsSection = memo(function TopProgramsSection({
   if (error) {
     return (
       <section id="programs" className={TOP_PROGRAMS_CLASSES.section}>
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute -top-24 -left-24 h-[320px] w-[420px] rounded-full bg-primary/10 blur-3xl" />
+          <div className="absolute -right-24 -bottom-24 h-[360px] w-[520px] rounded-full bg-emerald-500/10 blur-3xl" />
+        </div>
         <div className={TOP_PROGRAMS_CLASSES.container}>
           <ErrorState message={error.message} />
         </div>
@@ -134,6 +138,11 @@ export const TopProgramsSection = memo(function TopProgramsSection({
 
   return (
     <section id="programs" className={TOP_PROGRAMS_CLASSES.section}>
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -top-28 -right-28 h-[360px] w-[520px] rounded-full bg-primary/10 blur-3xl" />
+        <div className="absolute -bottom-28 -left-28 h-[420px] w-[520px] rounded-full bg-blue-500/10 blur-3xl" />
+        <div className="absolute inset-0 bg-linear-to-b from-transparent via-background/10 to-background/60" />
+      </div>
       <div className={TOP_PROGRAMS_CLASSES.container}>
         {/* Header */}
         <div className={TOP_PROGRAMS_CLASSES.header}>

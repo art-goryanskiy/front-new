@@ -12,10 +12,13 @@ export function useMe(options?: { skip?: boolean }) {
   const skip = useMemo(() => options?.skip || false, [options?.skip]);
 
   const { data, loading, error } = useQuery<{
-    me: UserEntity;
+    me: UserEntity | null;
   }>(ME, {
     errorPolicy: "ignore",
-    fetchPolicy: "cache-first",
+    // Важно для корректной авторизации: "cache-first" может держать устаревший `me`.
+    // Один сетевой запрос при старте, затем можно жить из кеша.
+    fetchPolicy: "network-only",
+    nextFetchPolicy: "cache-first",
     skip,
     notifyOnNetworkStatusChange: false,
   });

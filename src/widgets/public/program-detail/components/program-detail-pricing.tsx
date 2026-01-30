@@ -29,7 +29,7 @@ export const ProgramDetailPricing = memo(
                   {pricing.hours} часов
                 </div>
               </div>
-              <div className="text-primary-600 dark:text-primary-400 text-lg font-bold">
+              <div className="text-lg font-bold text-primary">
                 {formatPrice(pricing.price!)}₽
               </div>
             </div>

@@ -34,18 +34,29 @@ export const RegisterFormPasswordField = memo(
         rules={rules}
         render={({ field, fieldState }) => (
           <div className={cn("w-full space-y-2")}>
-            <Label htmlFor="password">
-              {REGISTER_FORM_TEXTS.password.label} *
-            </Label>
-            <Input
-              {...field}
-              id="password"
-              type="password"
-              placeholder={REGISTER_FORM_TEXTS.password.placeholder}
-              required
-              aria-invalid={fieldState.invalid}
-              aria-label={REGISTER_FORM_TEXTS.password.label}
-            />
+            <div className="group relative pt-2">
+              <Label
+                htmlFor="password"
+                className={cn(
+                  "absolute top-2 left-3 z-10 -translate-y-1/2 rounded-md bg-background/80 px-1 text-[11px] font-medium backdrop-blur-sm transition-colors",
+                  fieldState.invalid
+                    ? "text-destructive"
+                    : "text-muted-foreground group-focus-within:text-foreground"
+                )}
+              >
+                {REGISTER_FORM_TEXTS.password.label} *
+              </Label>
+              <Input
+                {...field}
+                id="password"
+                type="password"
+                placeholder={REGISTER_FORM_TEXTS.password.placeholder}
+                required
+                aria-invalid={fieldState.invalid}
+                aria-label={REGISTER_FORM_TEXTS.password.label}
+                className="peer bg-background/60"
+              />
+            </div>
             {fieldState.error?.message && (
               <p className="text-sm text-destructive">
                 {fieldState.error.message}

@@ -49,22 +49,29 @@ export const RequiredTextInputField = memo(
         rules={rules}
         render={({ field, fieldState }) => (
           <div className={cn("space-y-2", className)}>
-            <Label
-              htmlFor={name}
-              className="text-xs font-medium text-muted-foreground"
-            >
-              {label} *
-            </Label>
-            <Input
-              {...field}
-              id={name}
-              placeholder={placeholder}
-              required
-              disabled={isDisabled}
-              aria-invalid={fieldState.invalid}
-              aria-label={label}
-              className="bg-background/60"
-            />
+            <div className="group relative pt-2">
+              <Label
+                htmlFor={name}
+                className={cn(
+                  "absolute top-2 left-3 z-10 -translate-y-1/2 rounded-md bg-background/80 px-1 text-[11px] font-medium backdrop-blur-sm transition-colors",
+                  fieldState.invalid
+                    ? "text-destructive"
+                    : "text-muted-foreground group-focus-within:text-foreground"
+                )}
+              >
+                {label} *
+              </Label>
+              <Input
+                {...field}
+                id={name}
+                placeholder={placeholder}
+                required
+                disabled={isDisabled}
+                aria-invalid={fieldState.invalid}
+                aria-label={label}
+                className="peer bg-background/60"
+              />
+            </div>
             {description && !fieldState.error && (
               <p className="text-sm text-muted-foreground">
                 {description}

@@ -11,6 +11,11 @@ export function useUpdateCategory() {
     updateCategory: CategoryEntity;
   }>(UPDATE_CATEGORY, {
     refetchQueries: [{ query: GET_CATEGORIES }],
+    awaitRefetchQueries: true,
+    update: (cache) => {
+      cache.evict({ fieldName: "categories" });
+      cache.gc();
+    },
   });
 
   const handleUpdate = async (

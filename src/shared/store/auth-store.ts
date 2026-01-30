@@ -1,6 +1,6 @@
-import { create } from "zustand/react";
-import { useShallow } from "zustand/shallow";
-import { UserEntity } from "../api/generated/graphql";
+import { create } from "zustand";
+import { useShallow } from "zustand/react/shallow";
+import type { UserEntity } from "../api/generated/graphql";
 
 interface AuthStore {
   user: UserEntity | null;

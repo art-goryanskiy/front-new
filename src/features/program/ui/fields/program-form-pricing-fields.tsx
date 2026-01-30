@@ -51,7 +51,10 @@ export const ProgramFormPricingFields = memo(
               control={control}
               render={({ field }) => (
                 <div className="flex-1 space-y-2">
-                  <Label htmlFor={`pricing-${index}-hours`}>
+                  <Label
+                    htmlFor={`pricing-${index}-hours`}
+                    className="text-xs font-medium text-muted-foreground"
+                  >
                     {FORM_LABELS.hours}
                   </Label>
                   <Input
@@ -65,7 +68,7 @@ export const ProgramFormPricingFields = memo(
                       field.onChange(value ? Number(value) : 0);
                     }}
                     aria-label={`${FORM_LABELS.hours} ${index + 1}`}
-                    className={FORM_CLASSES.pricingInput}
+                    className={`${FORM_CLASSES.pricingInput} h-10 bg-background/60`}
                   />
                 </div>
               )}
@@ -75,7 +78,10 @@ export const ProgramFormPricingFields = memo(
               control={control}
               render={({ field }) => (
                 <div className="flex-1 space-y-2">
-                  <Label htmlFor={`pricing-${index}-price`}>
+                  <Label
+                    htmlFor={`pricing-${index}-price`}
+                    className="text-xs font-medium text-muted-foreground"
+                  >
                     {FORM_LABELS.price}
                   </Label>
                   <Input
@@ -96,7 +102,7 @@ export const ProgramFormPricingFields = memo(
                     name={field.name}
                     ref={field.ref}
                     aria-label={`${FORM_LABELS.price} ${index + 1}`}
-                    className={FORM_CLASSES.pricingInput}
+                    className={`${FORM_CLASSES.pricingInput} h-10 bg-background/60`}
                   />
                 </div>
               )}

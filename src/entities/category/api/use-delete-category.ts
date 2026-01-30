@@ -8,6 +8,11 @@ export function useDeleteCategory() {
     deleteCategory: CategoryEntity;
   }>(DELETE_CATEGORY, {
     refetchQueries: [{ query: GET_CATEGORIES }],
+    awaitRefetchQueries: true,
+    update: (cache) => {
+      cache.evict({ fieldName: "categories" });
+      cache.gc();
+    },
   });
 
   const handleDelete = async (id: string) => {

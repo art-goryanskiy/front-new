@@ -3,9 +3,14 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Spinner } from "@/components/ui/spinner";
+import { cn } from "@/lib/utils";
+import { FormErrorSummary } from "@/shared/ui/form-error-summary/form-error-summary";
+import { Surface } from "@/shared/ui/surface/surface";
 import { Eye, EyeOff, Mail } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import type { KeyboardEvent as ReactKeyboardEvent } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Controller,
   type SubmitHandler,
@@ -217,7 +222,15 @@ export function LoginFormPage() {
   const commonOnSubmit =
     onSubmit as unknown as SubmitHandler<AuthFormDataCommon>;
 
-  const handleSubmit = commonForm.handleSubmit(commonOnSubmit);
+  const handleInvalid = useCallback(() => {
+    const el = document.getElementById("auth-form-error-summary");
+    el?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, []);
+
+  const handleSubmit = commonForm.handleSubmit(
+    commonOnSubmit,
+    handleInvalid
+  );
 
   const texts = isRegister ? REGISTER_FORM_TEXTS : LOGIN_FORM_TEXTS;
 
@@ -240,6 +253,10 @@ export function LoginFormPage() {
     : { required: texts.password.required };
 
   const [showPassword, setShowPassword] = useState(false);
+  const [capsLockOn, setCapsLockOn] = useState(false);
+  const [activePasswordField, setActivePasswordField] = useState<
+    "password" | "confirmPassword" | null
+  >(null);
   const [mouseX, setMouseX] = useState<number>(0);
   const [mouseY, setMouseY] = useState<number>(0);
   const [isPurpleBlinking, setIsPurpleBlinking] = useState(false);
@@ -263,6 +280,13 @@ export function LoginFormPage() {
     yellow: null,
     orange: null,
   });
+
+  const handlePasswordKey = useCallback(
+    (e: ReactKeyboardEvent<HTMLInputElement>) => {
+      setCapsLockOn(e.getModifierState("CapsLock"));
+    },
+    []
+  );
 
   const password = commonForm.watch("password") || "";
 
@@ -804,6 +828,31 @@ export function LoginFormPage() {
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
+            <div id="auth-form-error-summary">
+              <FormErrorSummary<AuthFormDataCommon>
+                errors={commonForm.formState.errors}
+                labels={{
+                  email: texts.email.label,
+                  password: texts.password.label,
+                  confirmPassword: isRegister
+                    ? REGISTER_FORM_TEXTS.confirmPassword.label
+                    : undefined,
+                }}
+              />
+            </div>
+
+            {error && (
+              <Surface
+                variant="default"
+                className="w-full border-destructive/30 bg-destructive/10 p-4"
+                role="alert"
+              >
+                <p className="text-sm font-medium text-destructive">
+                  {error?.message || texts.error.default}
+                </p>
+              </Surface>
+            )}
+
             {/* Email Field */}
             <div className="space-y-2">
               <Controller
@@ -812,27 +861,39 @@ export function LoginFormPage() {
                 rules={emailRules}
                 render={({ field, fieldState }) => (
                   <>
-                    <Label
-                      htmlFor="email"
-                      className="text-sm font-medium"
-                    >
-                      {texts.email.label}
-                    </Label>
+                    <div className="group relative pt-2">
+                      <Label
+                        htmlFor="email"
+                        className={cn(
+                          "absolute top-2 left-3 z-10 -translate-y-1/2 rounded-md bg-background/80 px-1 text-[11px] font-medium backdrop-blur-sm transition-colors",
+                          fieldState.invalid
+                            ? "text-destructive"
+                            : "text-muted-foreground group-focus-within:text-foreground"
+                        )}
+                      >
+                        {texts.email.label}
+                      </Label>
 
-                    <Input
-                      {...field}
-                      id="email"
-                      type="email"
-                      placeholder={texts.email.placeholder}
-                      autoComplete="email"
-                      onFocus={() => setIsTyping(true)}
-                      onBlur={() => setIsTyping(false)}
-                      aria-invalid={fieldState.invalid}
-                      className="h-12 border-border/60 bg-background focus:border-primary"
-                    />
+                      <Input
+                        {...field}
+                        id="email"
+                        type="email"
+                        inputMode="email"
+                        placeholder={texts.email.placeholder}
+                        autoComplete="email"
+                        disabled={isLoading}
+                        onFocus={() => setIsTyping(true)}
+                        onBlur={() => setIsTyping(false)}
+                        aria-invalid={fieldState.invalid}
+                        className={cn(
+                          "peer h-12 border-border/60 bg-background/60 pr-10",
+                          "focus:border-primary"
+                        )}
+                      />
+                    </div>
 
                     {fieldState.error?.message && (
-                      <p className="text-sm text-destructive">
+                      <p className="text-xs font-medium text-destructive">
                         {fieldState.error.message}
                       </p>
                     )}
@@ -849,53 +910,85 @@ export function LoginFormPage() {
                 rules={passwordRules}
                 render={({ field, fieldState }) => (
                   <>
-                    <Label
-                      htmlFor="password"
-                      className="text-sm font-medium"
-                    >
-                      {texts.password.label}
-                    </Label>
-
-                    <div className="relative">
-                      <Input
-                        {...field}
-                        id="password"
-                        type={showPassword ? "text" : "password"}
-                        placeholder={texts.password.placeholder}
-                        autoComplete={
-                          isRegister
-                            ? "new-password"
-                            : "current-password"
-                        }
-                        onFocus={() => setIsTyping(true)}
-                        onBlur={() => setIsTyping(false)}
-                        aria-invalid={fieldState.invalid}
-                        className="h-12 border-border/60 bg-background pr-10 focus:border-primary"
-                      />
-
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
-                        aria-label={
-                          showPassword
-                            ? "Скрыть пароль"
-                            : "Показать пароль"
-                        }
-                      >
-                        {showPassword ? (
-                          <EyeOff className="size-5" />
-                        ) : (
-                          <Eye className="size-5" />
+                    <div className="group relative pt-2">
+                      <Label
+                        htmlFor="password"
+                        className={cn(
+                          "absolute top-2 left-3 z-10 -translate-y-1/2 rounded-md bg-background/80 px-1 text-[11px] font-medium backdrop-blur-sm transition-colors",
+                          fieldState.invalid
+                            ? "text-destructive"
+                            : "text-muted-foreground group-focus-within:text-foreground"
                         )}
-                      </button>
+                      >
+                        {texts.password.label}
+                      </Label>
+
+                      <div className="relative">
+                        <Input
+                          {...field}
+                          id="password"
+                          type={showPassword ? "text" : "password"}
+                          placeholder={texts.password.placeholder}
+                          autoComplete={
+                            isRegister
+                              ? "new-password"
+                              : "current-password"
+                          }
+                          disabled={isLoading}
+                          onKeyDown={handlePasswordKey}
+                          onKeyUp={handlePasswordKey}
+                          onFocus={() => {
+                            setIsTyping(true);
+                            setActivePasswordField("password");
+                          }}
+                          onBlur={() => {
+                            setIsTyping(false);
+                            setActivePasswordField((v) =>
+                              v === "password" ? null : v
+                            );
+                          }}
+                          aria-invalid={fieldState.invalid}
+                          className={cn(
+                            "peer h-12 border-border/60 bg-background/60 pr-11",
+                            "focus:border-primary"
+                          )}
+                        />
+
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => setShowPassword((v) => !v)}
+                          disabled={isLoading}
+                          className="absolute top-1/2 right-2 h-9 w-9 -translate-y-1/2 rounded-xl border border-border/60 bg-background/60 text-muted-foreground shadow-sm backdrop-blur hover:bg-muted/20 hover:text-foreground"
+                          aria-label={
+                            showPassword
+                              ? "Скрыть пароль"
+                              : "Показать пароль"
+                          }
+                        >
+                          {showPassword ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </div>
                     </div>
 
                     {fieldState.error?.message && (
-                      <p className="text-sm text-destructive">
+                      <p className="text-xs font-medium text-destructive">
                         {fieldState.error.message}
                       </p>
                     )}
+
+                    {capsLockOn &&
+                      !showPassword &&
+                      activePasswordField === "password" && (
+                        <div className="inline-flex items-center rounded-full border border-border/60 bg-muted/20 px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
+                          Caps Lock включён
+                        </div>
+                      )}
                   </>
                 )}
               />
@@ -915,33 +1008,86 @@ export function LoginFormPage() {
                   }}
                   render={({ field, fieldState }) => (
                     <>
-                      <Label
-                        htmlFor="confirmPassword"
-                        className="text-sm font-medium"
-                      >
-                        {REGISTER_FORM_TEXTS.confirmPassword.label}
-                      </Label>
+                      <div className="group relative pt-2">
+                        <Label
+                          htmlFor="confirmPassword"
+                          className={cn(
+                            "absolute top-2 left-3 z-10 -translate-y-1/2 rounded-md bg-background/80 px-1 text-[11px] font-medium backdrop-blur-sm transition-colors",
+                            fieldState.invalid
+                              ? "text-destructive"
+                              : "text-muted-foreground group-focus-within:text-foreground"
+                          )}
+                        >
+                          {REGISTER_FORM_TEXTS.confirmPassword.label}
+                        </Label>
 
-                      <Input
-                        {...field}
-                        id="confirmPassword"
-                        type={showPassword ? "text" : "password"}
-                        placeholder={
-                          REGISTER_FORM_TEXTS.confirmPassword
-                            .placeholder
-                        }
-                        autoComplete="new-password"
-                        onFocus={() => setIsTyping(true)}
-                        onBlur={() => setIsTyping(false)}
-                        aria-invalid={fieldState.invalid}
-                        className="h-12 border-border/60 bg-background focus:border-primary"
-                      />
+                        <div className="relative">
+                          <Input
+                            {...field}
+                            id="confirmPassword"
+                            type={showPassword ? "text" : "password"}
+                            placeholder={
+                              REGISTER_FORM_TEXTS.confirmPassword
+                                .placeholder
+                            }
+                            autoComplete="new-password"
+                            disabled={isLoading}
+                            onKeyDown={handlePasswordKey}
+                            onKeyUp={handlePasswordKey}
+                            onFocus={() => {
+                              setIsTyping(true);
+                              setActivePasswordField(
+                                "confirmPassword"
+                              );
+                            }}
+                            onBlur={() => {
+                              setIsTyping(false);
+                              setActivePasswordField((v) =>
+                                v === "confirmPassword" ? null : v
+                              );
+                            }}
+                            aria-invalid={fieldState.invalid}
+                            className={cn(
+                              "peer h-12 border-border/60 bg-background/60 pr-11",
+                              "focus:border-primary"
+                            )}
+                          />
+
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setShowPassword((v) => !v)}
+                            disabled={isLoading}
+                            className="absolute top-1/2 right-2 h-9 w-9 -translate-y-1/2 rounded-xl border border-border/60 bg-background/60 text-muted-foreground shadow-sm backdrop-blur hover:bg-muted/20 hover:text-foreground"
+                            aria-label={
+                              showPassword
+                                ? "Скрыть пароль"
+                                : "Показать пароль"
+                            }
+                          >
+                            {showPassword ? (
+                              <EyeOff className="h-4 w-4" />
+                            ) : (
+                              <Eye className="h-4 w-4" />
+                            )}
+                          </Button>
+                        </div>
+                      </div>
 
                       {fieldState.error?.message && (
-                        <p className="text-sm text-destructive">
+                        <p className="text-xs font-medium text-destructive">
                           {fieldState.error.message}
                         </p>
                       )}
+
+                      {capsLockOn &&
+                        !showPassword &&
+                        activePasswordField === "confirmPassword" && (
+                          <div className="inline-flex items-center rounded-full border border-border/60 bg-muted/20 px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
+                            Caps Lock включён
+                          </div>
+                        )}
                     </>
                   )}
                 />
@@ -950,18 +1096,13 @@ export function LoginFormPage() {
 
             {!isRegister && (
               <div className="flex items-center justify-between">
-                <a
-                  href="#"
+                <button
+                  type="button"
+                  onClick={() => router.push("/forgot-password")}
                   className="text-sm font-medium text-primary hover:underline"
                 >
                   Забыли пароль?
-                </a>
-              </div>
-            )}
-
-            {error && (
-              <div className="rounded-lg border border-red-900/30 bg-red-950/20 p-3 text-sm text-red-400">
-                {error?.message || texts.error.default}
+                </button>
               </div>
             )}
 
@@ -971,13 +1112,18 @@ export function LoginFormPage() {
               size="lg"
               disabled={isLoading}
             >
-              {isLoading
-                ? isRegister
-                  ? "Создание аккаунта..."
-                  : "Вход в аккаунт..."
-                : isRegister
-                  ? "Создать аккаунт"
-                  : "Вход в аккаунт"}
+              {isLoading ? (
+                <span className="inline-flex items-center justify-center gap-2">
+                  <Spinner size={18} className="h-[18px] w-[18px]" />
+                  {isRegister
+                    ? "Создание аккаунта…"
+                    : "Вход в аккаунт…"}
+                </span>
+              ) : isRegister ? (
+                "Создать аккаунт"
+              ) : (
+                "Войти"
+              )}
             </Button>
           </form>
 
@@ -988,9 +1134,10 @@ export function LoginFormPage() {
                 variant="outline"
                 className="h-12 w-full border-border/60 bg-background hover:bg-accent"
                 type="button"
+                disabled
               >
                 <Mail className="mr-2 size-5" />
-                Log in with Google
+                Войти через Google (скоро)
               </Button>
             </div>
           )}

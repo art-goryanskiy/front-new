@@ -12,6 +12,7 @@ import { useCreateUser } from "@/entities/user/api/use-create-user";
 import { useUpdateUser } from "@/entities/user/api/use-update-user";
 import { useUserModalState } from "@/shared/store/modal-store";
 import { useToastState } from "@/shared/store/toast-store";
+import { FormErrorSummary } from "@/shared/ui/form-error-summary/form-error-summary";
 import { memo, useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { UserFormBasicTab } from "./components/user-form-basic-tab";
@@ -19,6 +20,7 @@ import { UserFormError } from "./components/user-form-error";
 import { UserFormProfileTab } from "./components/user-form-profile-tab";
 import {
   FORM_CLASSES,
+  FORM_LABELS,
   FORM_MESSAGES,
 } from "./constants/user-form-constants";
 import type {
@@ -114,9 +116,23 @@ export const UserForm = memo(function UserForm({
 
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(onSubmit, () => {
+        const el = document.getElementById("form-error-summary");
+        el?.scrollIntoView({ behavior: "smooth", block: "start" });
+      })}
       className={`${FORM_CLASSES.form} w-full`}
     >
+      <div id="form-error-summary">
+        <FormErrorSummary<UserFormData>
+          errors={formState.errors}
+          labels={{
+            email: FORM_LABELS.email,
+            password: FORM_LABELS.password,
+            role: FORM_LABELS.role,
+          }}
+        />
+      </div>
+
       <UserFormError error={error} isEditMode={isEditMode} />
 
       <Tabs defaultValue="basic" className="w-full">

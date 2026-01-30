@@ -1,25 +1,21 @@
 export const SUBCATEGORY_CARD_CLASSES = {
-  card: "group relative h-full bg-card transition-all duration-300",
-  imageWrapper: "relative w-full h-48 shrink-0",
-  image: "object-contain",
-  imageOverlay:
-    "absolute inset-0 bg-linear-to-b from-transparent via-transparent to-black/20",
-  imageOverlayTheme:
-    "dark:from-transparent dark:via-transparent dark:to-black/40",
+  card: "group relative h-full overflow-hidden rounded-2xl border border-border/60 bg-background/60 shadow-sm backdrop-blur-xl transition-[border,transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:border-border/80 hover:shadow-lg",
+
+  imageWrapper:
+    "relative h-12 w-12 shrink-0 overflow-hidden rounded-xl border border-border/60 bg-background/60 shadow-sm backdrop-blur",
+  image: "object-contain p-2",
   fallbackGradient:
-    "w-full h-full flex items-center justify-center bg-linear-to-br from-primary-100 to-purple-100 dark:from-primary-900 dark:to-purple-900",
-  content: "p-6 flex-1 flex flex-col min-h-0",
-  title: "text-xl font-bold text-foreground mb-2 min-h-[3rem]",
+    "flex h-full w-full items-center justify-center bg-linear-to-br from-primary/10 via-background to-blue-500/10",
+
+  content: "flex h-full min-h-[132px] flex-col gap-3 p-5",
+  headerRow: "flex items-start gap-3",
+  title:
+    "min-w-0 flex-1 line-clamp-2 break-words hyphens-auto text-sm font-semibold leading-snug text-foreground",
   description:
-    "text-sm text-foreground line-clamp-3 flex-1 min-h-[3.75rem] mb-4",
-  footer: "flex flex-col gap-2 shrink-0 min-h-[3.5rem]",
-  programsCount:
-    "text-sm font-semibold text-foreground min-h-[1.5rem]",
-  priceSection: "flex items-center gap-2 min-h-[1.5rem]",
-  price: "text-lg font-bold text-primary",
-  priceFrom: "text-xs text-muted-foreground",
-  priceRange: "text-lg font-bold text-primary",
-  lockedPrice:
-    "flex items-center gap-1.5 text-xs text-muted-foreground min-h-[1.5rem]",
-  cta: "w-full mt-4 shrink-0",
+    "text-sm leading-relaxed text-muted-foreground line-clamp-2",
+
+  footer: "mt-auto flex items-center justify-between gap-3 pt-1",
+  chip: "inline-flex items-center rounded-full border border-border/60 bg-muted/20 px-2.5 py-1 text-[11px] font-medium text-muted-foreground backdrop-blur",
+  priceChip: "text-[11px] font-semibold text-foreground",
+  priceEmphasis: "text-sm font-semibold text-foreground",
 } as const;

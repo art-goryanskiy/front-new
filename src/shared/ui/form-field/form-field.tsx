@@ -52,42 +52,50 @@ export const FormField = memo(function FormField<
       rules={rules}
       render={({ field, fieldState }) => (
         <div className={cn("space-y-2", className)}>
-          <Label
-            htmlFor={name}
-            className="text-xs font-medium text-muted-foreground"
-          >
-            {label}
-            {isRequired && " *"}
-          </Label>
-          <div className="relative flex w-full items-center">
-            {startContent && (
-              <div className="pointer-events-none absolute left-3 text-muted-foreground">
-                {startContent}
-              </div>
-            )}
-            <Input
-              {...field}
-              id={name}
-              type={type}
-              placeholder={placeholder}
-              required={isRequired}
-              disabled={isDisabled}
-              aria-invalid={fieldState.invalid}
-              aria-label={label}
+          <div className="group relative pt-2">
+            <Label
+              htmlFor={name}
               className={cn(
-                "bg-background/60",
-                startContent
-                  ? "pl-9"
-                  : endContent
-                    ? "pr-9"
-                    : undefined
+                "absolute top-2 left-3 z-10 -translate-y-1/2 rounded-md bg-background/80 px-1 text-[11px] font-medium backdrop-blur-sm transition-colors",
+                fieldState.invalid
+                  ? "text-destructive"
+                  : "text-muted-foreground group-focus-within:text-foreground"
               )}
-            />
-            {endContent && (
-              <div className="absolute right-3 text-muted-foreground">
-                {endContent}
-              </div>
-            )}
+            >
+              {label}
+              {isRequired && " *"}
+            </Label>
+
+            <div className="relative flex w-full items-center">
+              {startContent && (
+                <div className="pointer-events-none absolute left-3 text-muted-foreground">
+                  {startContent}
+                </div>
+              )}
+              <Input
+                {...field}
+                id={name}
+                type={type}
+                placeholder={placeholder}
+                required={isRequired}
+                disabled={isDisabled}
+                aria-invalid={fieldState.invalid}
+                aria-label={label}
+                className={cn(
+                  "peer bg-background/60",
+                  startContent
+                    ? "pl-9"
+                    : endContent
+                      ? "pr-9"
+                      : undefined
+                )}
+              />
+              {endContent && (
+                <div className="absolute right-3 text-muted-foreground">
+                  {endContent}
+                </div>
+              )}
+            </div>
           </div>
           {description && !fieldState.error && (
             <p className="text-sm text-muted-foreground">

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useRef } from "react";
+import React, { useRef } from "react";
 import { cn } from "@/lib/utils";
 import {
   type MotionValue,
@@ -9,9 +9,11 @@ import {
   useAnimationFrame,
 } from "framer-motion";
 import { HandWrittenTitle } from "./hand-writing-text";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { ArrowRight, Sparkles } from "lucide-react";
 
 export const Component = () => {
-  const [count, setCount] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const mouseX = useMotionValue(0);
@@ -43,7 +45,7 @@ export const Component = () => {
       ref={containerRef}
       onMouseMove={handleMouseMove}
       className={cn(
-        "relative flex h-screen w-full flex-col items-center justify-center overflow-hidden bg-background"
+        "relative flex min-h-[92vh] w-full flex-col items-center justify-center overflow-hidden bg-background"
       )}
     >
       <div className="absolute inset-0 z-0 opacity-[0.05]">
@@ -57,33 +59,51 @@ export const Component = () => {
       </motion.div>
 
       <div className="pointer-events-none absolute inset-0 z-0">
-        <div className="absolute top-[-20%] right-[-20%] h-[40%] w-[40%] rounded-full bg-orange-500/40 blur-[120px] dark:bg-orange-600/20" />
-        <div className="absolute top-[-10%] right-[10%] h-[20%] w-[20%] rounded-full bg-primary/30 blur-[100px]" />
-        <div className="absolute bottom-[-20%] left-[-10%] h-[40%] w-[40%] rounded-full bg-blue-500/40 blur-[120px] dark:bg-blue-600/20" />
+        <div className="absolute -top-24 -left-24 h-[320px] w-[420px] rounded-full bg-primary/15 blur-3xl" />
+        <div className="absolute -top-32 -right-28 h-[360px] w-[520px] rounded-full bg-orange-500/15 blur-3xl dark:bg-orange-500/10" />
+        <div className="absolute -bottom-32 -left-28 h-[420px] w-[520px] rounded-full bg-blue-500/15 blur-3xl dark:bg-blue-500/10" />
+        <div className="absolute inset-0 bg-linear-to-b from-transparent via-background/20 to-background/70" />
       </div>
 
-      <div className="pointer-events-none relative z-10 mx-auto flex max-w-3xl flex-col items-center space-y-6 px-4 text-center">
-        <div className="space-y-8">
-          <h1 className="text-4xl font-extrabold tracking-tight text-foreground drop-shadow-sm md:text-6xl dark:text-neutral-100">
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12">
+        <div className="mx-auto max-w-3xl text-center">
+          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-border/60 bg-muted/20 px-3 py-1 text-xs font-semibold text-muted-foreground backdrop-blur">
+            <Sparkles className="h-4 w-4 text-primary" />
+            Современные образовательные программы • онлайн и очно
+          </div>
+
+          <h1 className="text-4xl font-extrabold tracking-tight text-balance text-foreground md:text-6xl">
             <HandWrittenTitle title="Стандарт +" />
           </h1>
-          <p className="text-lg text-muted-foreground md:text-xl dark:text-neutral-400">
-            Профессиональное обучение для карьерного роста. <br />
-            Повышение квалификации, переподготовка и обучение по
-            отраслевым стандартам.
-          </p>
-        </div>
 
-        <div className="pointer-events-auto flex gap-4">
-          <button
-            onClick={() => setCount(count + 1)}
-            className="rounded-md bg-primary px-8 py-3 font-semibold text-primary-foreground shadow-md transition-all hover:bg-primary/90 active:scale-95"
-          >
-            Interact ({count})
-          </button>
-          <button className="rounded-md bg-secondary px-8 py-3 font-semibold text-secondary-foreground transition-all hover:bg-secondary/80 active:scale-95">
-            Learn More
-          </button>
+          <p className="mt-6 text-base leading-relaxed text-pretty text-muted-foreground sm:text-lg">
+            Профессиональное обучение для карьерного роста: повышение
+            квалификации, переподготовка и обучение по отраслевым
+            стандартам.
+          </p>
+
+          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Button
+              asChild
+              size="lg"
+              className="h-12 px-6 font-semibold"
+            >
+              <Link href="#programs">
+                Смотреть программы
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="h-12 px-6 font-semibold"
+            >
+              <Link href="/qualification-upgrade">
+                Подобрать обучение
+              </Link>
+            </Button>
+          </div>
         </div>
       </div>
     </div>

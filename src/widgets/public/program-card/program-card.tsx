@@ -1,44 +1,40 @@
 "use client";
 
-import { memo, useMemo } from "react";
+import Link from "next/link";
+import { memo, useCallback, useMemo } from "react";
 import { motion } from "framer-motion";
-import { BookOpen } from "lucide-react";
-import { HighlightCard } from "@/components/ui/highlight-card";
+import { ShoppingCart } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useCanSeePrice } from "@/shared/store/auth-store";
 import { formatPrice } from "@/shared/lib/helpers/format-helpers";
 import type { ProgramCardProps } from "./types/program-card.types";
 import { useProgramCardPricing } from "./hooks/use-program-card-pricing";
-
-function buildDescriptionLines(
-  program: ProgramCardProps["program"],
-  minPrice: number | null,
-  canSeePrice: boolean
-): string[] {
-  const lines: string[] = [];
-  if (program.description?.trim()) {
-    const fromDesc = program.description
-      .split(/\n/)
-      .map((s) => s.trim())
-      .filter(Boolean)
-      .slice(0, 4);
-    lines.push(...fromDesc);
-  }
-  if (lines.length === 0) {
-    lines.push("Подробности на странице программы.");
-  }
-  if (canSeePrice && minPrice !== null && minPrice > 0) {
-    lines.push(`От ${formatPrice(minPrice)} ₽`);
-  }
-  return lines;
-}
+import { Surface } from "@/shared/ui/surface/surface";
+import { useToastState } from "@/shared/store/toast-store";
 
 export const ProgramCard = memo(
   function ProgramCard({ program }: ProgramCardProps) {
     const canSeePrice = useCanSeePrice();
     const { minPrice } = useProgramCardPricing(program);
-    const description = useMemo(
-      () => buildDescriptionLines(program, minPrice, canSeePrice),
-      [program, minPrice, canSeePrice]
+    const { showToast } = useToastState();
+
+    const priceText = useMemo(() => {
+      if (!canSeePrice) return null;
+      if (minPrice === null || minPrice <= 0)
+        return "Цена по запросу";
+      return `от ${formatPrice(minPrice)} ₽`;
+    }, [canSeePrice, minPrice]);
+
+    const handleAddToCart = useCallback(
+      (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        showToast(
+          "info",
+          "Корзина в разработке. Пока откройте программу и нажмите «Записаться»."
+        );
+      },
+      [showToast]
     );
 
     return (
@@ -46,22 +42,60 @@ export const ProgramCard = memo(
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="flex h-full justify-center"
+        className="flex h-full"
       >
-        <HighlightCard
+        <Link
           href={`/programs/${program.id}`}
-          title={program.title}
-          description={description}
-          icon={<BookOpen className="h-8 w-8 text-white" />}
-          className="h-full w-full max-w-[350px]"
-        />
+          className="block h-full w-full"
+        >
+          <Surface
+            variant="floating"
+            className="group relative h-full w-full overflow-hidden p-4 transition-[border,transform,box-shadow] hover:-translate-y-0.5 hover:border-border/80"
+          >
+            <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+              <div className="absolute -top-24 -right-24 h-[260px] w-[360px] rounded-full bg-primary/10 blur-3xl" />
+              <div className="absolute inset-0 bg-linear-to-b from-transparent via-background/10 to-background/60" />
+            </div>
+
+            <div className="relative z-10 flex h-full min-h-[88px] flex-col justify-between gap-3">
+              <div className="flex items-start gap-3">
+                <h3
+                  className="line-clamp-2 min-w-0 flex-1 text-sm leading-snug font-semibold break-words hyphens-auto text-foreground"
+                  title={program.title}
+                >
+                  {program.title}
+                </h3>
+
+                {canSeePrice && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={handleAddToCart}
+                    className="h-9 w-9 shrink-0 rounded-xl border border-border/60 bg-background/60 text-muted-foreground shadow-sm backdrop-blur hover:bg-muted/20 hover:text-foreground"
+                    aria-label="Добавить в корзину"
+                  >
+                    <ShoppingCart className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+
+              {canSeePrice ? (
+                <div className="text-sm font-semibold text-foreground">
+                  {priceText}
+                </div>
+              ) : (
+                <div className="h-5" />
+              )}
+            </div>
+          </Surface>
+        </Link>
       </motion.div>
     );
   },
   (prevProps, nextProps) =>
     prevProps.program.id === nextProps.program.id &&
     prevProps.program.title === nextProps.program.title &&
-    prevProps.program.description === nextProps.program.description &&
     prevProps.program.pricing === nextProps.program.pricing &&
     prevProps.program.views === nextProps.program.views &&
     prevProps.categoryType === nextProps.categoryType
