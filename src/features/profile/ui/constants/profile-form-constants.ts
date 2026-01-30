@@ -9,7 +9,7 @@ export const PROFILE_FORM_LABELS = {
   snils: "СНИЛС",
   passportRegistrationAddress: "Адрес регистрации по паспорту",
   residentialAddress: "Адрес проживания",
-  workPlaceId: "ID места работы",
+  workPlaceId: "Место работы",
   avatar: "Аватар (URL)",
   // Паспорт
   passportSeries: "Серия паспорта",
@@ -33,7 +33,7 @@ export const PROFILE_FORM_PLACEHOLDERS = {
   snils: "Введите СНИЛС",
   passportRegistrationAddress: "Введите адрес регистрации",
   residentialAddress: "Введите адрес проживания",
-  workPlaceId: "Введите ID места работы",
+  workPlaceId: "Введите ИНН или название организации",
   avatar: "Введите URL аватара",
   passportSeries: "Введите серию паспорта",
   passportNumber: "Введите номер паспорта",
@@ -46,8 +46,8 @@ export const PROFILE_FORM_PLACEHOLDERS = {
 
 export const PROFILE_FORM_CLASSES = {
   section:
-    "space-y-4 p-5 bg-muted/50 rounded-xl border border-border w-full",
+    "relative w-full space-y-4 rounded-2xl border border-border/60 bg-background/60 p-5 shadow-sm backdrop-blur-xl",
   sectionTitle:
-    "text-sm font-semibold text-foreground uppercase tracking-wide mb-2",
-  fieldGrid: "grid grid-cols-1 md:grid-cols-2 gap-4",
+    "text-xs font-semibold text-muted-foreground uppercase tracking-wide",
+  fieldGrid: "grid grid-cols-1 gap-4 md:grid-cols-2",
 } as const;

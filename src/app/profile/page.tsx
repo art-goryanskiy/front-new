@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { useUpdateProfile } from "@/features/profile/api/use-update-profile";
 import { ProfileAdditionalInfoSection } from "@/features/profile/ui/sections/profile-additional-info-section";
 import { ProfileAddressesSection } from "@/features/profile/ui/sections/profile-addresses-section";
@@ -17,7 +16,9 @@ import {
 import { UserAuthGuard } from "@/shared/lib/auth/user-auth-guard";
 import { useAuthUser } from "@/shared/store/auth-store";
 import { useToastState } from "@/shared/store/toast-store";
-import { PublicHeader } from "@/widgets/public/header/public-header";
+import { PublicPageLayout } from "@/shared/ui/layouts/public-page-layout";
+import { Surface } from "@/shared/ui/surface/surface";
+import { cn } from "@/lib/utils";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
@@ -39,13 +40,37 @@ type ProfileSection =
   | "work"
   | "avatar";
 
-const SIDEBAR_ITEMS: Array<{ key: ProfileSection; label: string }> = [
-  { key: "basic", label: "Основная информация" },
-  { key: "personal", label: "Личные данные" },
-  { key: "addresses", label: "Адреса" },
-  { key: "education", label: "Образование" },
-  { key: "work", label: "Место работы" },
-  { key: "avatar", label: "Аватар" },
+const SIDEBAR_ITEMS: Array<{
+  key: ProfileSection;
+  label: string;
+  description: string;
+}> = [
+  {
+    key: "basic",
+    label: "Основная информация",
+    description: "Контакты и дата рождения",
+  },
+  {
+    key: "personal",
+    label: "Личные данные",
+    description: "Паспортные данные",
+  },
+  {
+    key: "addresses",
+    label: "Адреса",
+    description: "Регистрация и проживание",
+  },
+  {
+    key: "education",
+    label: "Образование",
+    description: "Диплом и квалификация",
+  },
+  {
+    key: "work",
+    label: "Место работы",
+    description: "Должность и СНИЛС",
+  },
+  { key: "avatar", label: "Аватар", description: "Фото и ссылка" },
 ];
 
 const ProfilePageContent = memo(function ProfilePageContent() {
@@ -59,16 +84,20 @@ const ProfilePageContent = memo(function ProfilePageContent() {
 
   const [activeSection, setActiveSection] =
     useState<ProfileSection>("basic");
+  const [isEditing, setIsEditing] = useState(false);
 
   const defaultValues = useMemo(
     () => getProfileDefaultValues(user?.profile || null),
     [user?.profile]
   );
 
-  const { control, handleSubmit, reset } = useForm<ProfileFormData>({
-    defaultValues,
-  });
+  const { control, handleSubmit, reset, setValue, formState } =
+    useForm<ProfileFormData>({
+      defaultValues,
+      mode: "onChange",
+    });
 
+  const values = useWatch({ control });
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const avatarUrl = useWatch({ control, name: "avatar" });
   const previousProfileHashRef = useRef<string | null>(null);
@@ -77,6 +106,32 @@ const ProfilePageContent = memo(function ProfilePageContent() {
     () => filePreview || avatarUrl || user?.profile?.avatar || null,
     [filePreview, avatarUrl, user?.profile?.avatar]
   );
+
+  const sectionMeta = useMemo(() => {
+    const item = SIDEBAR_ITEMS.find((i) => i.key === activeSection);
+    return (
+      item ?? {
+        key: activeSection,
+        label: "Профиль",
+        description: "Настройки",
+      }
+    );
+  }, [activeSection]);
+
+  const isBusy = updating || formState.isSubmitting;
+  const isDirty = formState.isDirty;
+  const mode: "view" | "edit" = isEditing ? "edit" : "view";
+
+  useEffect(() => {
+    if (!isEditing || !isDirty || isBusy) return;
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      // Chrome requires returnValue to be set
+      e.returnValue = "";
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [isDirty, isBusy, isEditing]);
 
   useEffect(() => {
     if (user?.profile) {
@@ -114,12 +169,47 @@ const ProfilePageContent = memo(function ProfilePageContent() {
         const input = createProfileInput(data);
         await updateProfile(input);
         showToast("success", "Профиль успешно обновлен");
+        setIsEditing(false);
       } catch (err) {
         console.error("Ошибка при обновлении профиля:", err);
         showToast("error", "Ошибка при обновлении профиля");
       }
     },
     [updateProfile, showToast]
+  );
+
+  const handleReset = useCallback(() => {
+    reset(defaultValues);
+    setFilePreview(null);
+    showToast("info", "Изменения сброшены");
+  }, [defaultValues, reset, showToast]);
+
+  const handleNavigate = useCallback(
+    (next: ProfileSection) => {
+      if (next === activeSection) return;
+
+      if (isEditing && isDirty) {
+        const ok = window.confirm(
+          "Есть несохранённые изменения. Перейти без сохранения?"
+        );
+        if (!ok) return;
+        reset(defaultValues);
+        setFilePreview(null);
+        setIsEditing(false);
+      } else {
+        setIsEditing(false);
+      }
+
+      setActiveSection(next);
+    },
+    [
+      activeSection,
+      defaultValues,
+      isDirty,
+      isEditing,
+      reset,
+      setActiveSection,
+    ]
   );
 
   if (!user) {
@@ -137,32 +227,60 @@ const ProfilePageContent = memo(function ProfilePageContent() {
       case "basic":
         return (
           <div className="space-y-6">
-            <div className="mb-4 rounded-xl border border-border bg-muted/50 p-4">
+            <Surface variant="inset" className="rounded-xl p-4">
               <div className="flex flex-col gap-2">
-                <p className="text-sm font-semibold text-foreground">
+                <p className="text-xs font-semibold text-muted-foreground">
                   Email
                 </p>
-                <p className="text-base text-foreground">
+                <p className="text-base font-semibold text-foreground">
                   {user.email}
                 </p>
               </div>
-            </div>
-            <ProfileBasicInfoSection control={typedControl} />
+            </Surface>
+            <ProfileBasicInfoSection
+              control={typedControl}
+              mode={mode}
+              values={values}
+            />
           </div>
         );
 
       case "personal":
-        return <ProfilePassportSection control={typedControl} />;
+        return (
+          <ProfilePassportSection
+            control={typedControl}
+            mode={mode}
+            values={values}
+          />
+        );
 
       case "addresses":
-        return <ProfileAddressesSection control={typedControl} />;
+        return (
+          <ProfileAddressesSection
+            control={typedControl}
+            mode={mode}
+            values={values}
+            setValue={setValue}
+          />
+        );
 
       case "education":
-        return <ProfileEducationSection control={typedControl} />;
+        return (
+          <ProfileEducationSection
+            control={typedControl}
+            mode={mode}
+            values={values}
+          />
+        );
 
       case "work":
         return (
-          <ProfileAdditionalInfoSection control={typedControl} />
+          <ProfileAdditionalInfoSection
+            control={typedControl}
+            mode={mode}
+            values={values}
+            setValue={setValue}
+          />
         );
 
       case "avatar":
@@ -172,6 +290,8 @@ const ProfilePageContent = memo(function ProfilePageContent() {
             avatarPreview={avatarPreview}
             userEmail={user.email}
             onAvatarFileChange={handleAvatarChange}
+            mode={mode}
+            values={values}
           />
         );
 
@@ -181,66 +301,148 @@ const ProfilePageContent = memo(function ProfilePageContent() {
   };
 
   return (
-    <Card className="flex h-full w-full flex-col shadow-lg">
-      <CardContent className="flex min-h-0 flex-1 flex-col p-0">
-        <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
-          <div className="w-full border-b border-border bg-muted/50 lg:h-full lg:w-64 lg:border-r lg:border-b-0 lg:bg-transparent">
-            <nav className="p-4 lg:p-0">
-              <ul className="flex flex-row gap-2 overflow-x-auto lg:flex-col lg:gap-0">
-                {SIDEBAR_ITEMS.map((item) => (
-                  <li key={item.key}>
+    <Surface
+      variant="floating"
+      className="relative flex h-full min-h-[560px] w-full flex-col overflow-hidden"
+    >
+      <div className="pointer-events-none absolute inset-0 opacity-60">
+        <div className="absolute -top-28 -right-28 h-[360px] w-[520px] rounded-full bg-primary/10 blur-3xl" />
+        <div className="absolute -bottom-32 -left-28 h-[380px] w-[520px] rounded-full bg-blue-500/10 blur-3xl" />
+        <div className="absolute inset-0 bg-linear-to-b from-transparent via-background/10 to-background/60" />
+      </div>
+
+      <div className="relative z-10 flex min-h-0 flex-1 flex-col lg:flex-row">
+        <div className="w-full border-b border-border/60 bg-background/60 backdrop-blur-xl lg:h-full lg:w-72 lg:border-r lg:border-b-0">
+          <div className="border-b border-border/60 p-4">
+            <div className="flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <div className="truncate text-sm font-semibold text-foreground">
+                  {user.profile?.firstName || user.email}
+                </div>
+                <div className="truncate text-xs text-muted-foreground">
+                  {user.email}
+                </div>
+              </div>
+              {isDirty && (
+                <span className="rounded-full border border-border/60 bg-muted/20 px-3 py-1 text-[11px] font-semibold text-muted-foreground">
+                  Есть изменения
+                </span>
+              )}
+            </div>
+          </div>
+
+          <nav className="p-3">
+            <ul className="flex flex-row gap-2 overflow-x-auto pb-2 lg:flex-col lg:gap-1 lg:pb-0">
+              {SIDEBAR_ITEMS.map((item) => {
+                const active = activeSection === item.key;
+                return (
+                  <li key={item.key} className="shrink-0 lg:shrink">
                     <button
                       type="button"
-                      onClick={() => setActiveSection(item.key)}
-                      className={`w-full rounded-lg px-4 py-3 text-left text-sm font-medium transition-colors ${
-                        activeSection === item.key
-                          ? "bg-primary/10 text-primary"
-                          : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                      }`}
+                      onClick={() => handleNavigate(item.key)}
+                      className={cn(
+                        "w-full rounded-xl border px-4 py-2 text-left text-sm font-semibold transition-colors",
+                        active
+                          ? "border-border/80 bg-primary/10 text-foreground"
+                          : "border-transparent text-muted-foreground hover:border-border/60 hover:bg-muted/20 hover:text-foreground"
+                      )}
                     >
                       {item.label}
                     </button>
                   </li>
-                ))}
-              </ul>
-            </nav>
-          </div>
-
-          <div className="flex min-w-0 flex-1 flex-col">
-            <form
-              onSubmit={handleSubmit(onSubmit)}
-              className="flex min-h-0 w-full flex-1 flex-col"
-            >
-              {error && (
-                <div className="m-6 mb-0 shrink-0 rounded-xl border border-destructive/30 bg-destructive/10 p-4">
-                  <p className="text-sm font-medium text-destructive">
-                    {error.message || "Ошибка при обновлении профиля"}
-                  </p>
-                </div>
-              )}
-
-              <div className="min-h-0 w-full flex-1 overflow-y-auto p-6 lg:p-8">
-                {renderContent()}
-              </div>
-
-              <div className="shrink-0 border-t border-border p-6">
-                <div className="flex justify-end gap-3">
-                  <Button
-                    type="submit"
-                    disabled={updating}
-                    className="min-w-32 font-semibold shadow-lg transition-shadow hover:shadow-xl"
-                  >
-                    {updating
-                      ? "Сохранение..."
-                      : "Сохранить изменения"}
-                  </Button>
-                </div>
-              </div>
-            </form>
-          </div>
+                );
+              })}
+            </ul>
+          </nav>
         </div>
-      </CardContent>
-    </Card>
+
+        <div className="flex min-w-0 flex-1 flex-col">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="flex min-h-0 w-full flex-1 flex-col"
+          >
+            <div className="sticky top-0 z-10 border-b border-border/60 bg-background/70 px-6 py-5 backdrop-blur-xl">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                <div className="space-y-1">
+                  <div className="text-xs font-semibold text-muted-foreground">
+                    Личный кабинет
+                  </div>
+                  <div className="text-xl font-bold tracking-tight text-foreground">
+                    {sectionMeta.label}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    {sectionMeta.description}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  {!isEditing ? (
+                    <Button
+                      type="button"
+                      onClick={() => setIsEditing(true)}
+                      className="min-w-40 rounded-xl font-semibold"
+                    >
+                      Редактировать
+                    </Button>
+                  ) : (
+                    <>
+                      {isDirty && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={handleReset}
+                          disabled={isBusy}
+                          className="rounded-xl"
+                        >
+                          Сбросить
+                        </Button>
+                      )}
+                      <Button
+                        type="submit"
+                        disabled={isBusy || !isDirty}
+                        className="min-w-40 rounded-xl font-semibold"
+                      >
+                        {isBusy ? "Сохранение..." : "Сохранить"}
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        disabled={isBusy}
+                        onClick={() => {
+                          if (isDirty) {
+                            const ok = window.confirm(
+                              "Отменить изменения в разделе?"
+                            );
+                            if (!ok) return;
+                            handleReset();
+                          }
+                          setIsEditing(false);
+                        }}
+                        className="rounded-xl"
+                      >
+                        Отмена
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {error && (
+              <div className="mx-6 mt-6 shrink-0 rounded-xl border border-destructive/30 bg-destructive/10 p-4">
+                <p className="text-sm font-medium text-destructive">
+                  {error.message || "Ошибка при обновлении профиля"}
+                </p>
+              </div>
+            )}
+
+            <div className="min-h-0 w-full flex-1 overflow-y-auto p-6 lg:p-8">
+              {renderContent()}
+            </div>
+          </form>
+        </div>
+      </div>
+    </Surface>
   );
 });
 
@@ -249,34 +451,31 @@ export default function ProfilePage() {
 
   return (
     <UserAuthGuard redirectTo="login">
-      <div className="flex min-h-screen flex-col bg-background">
-        <PublicHeader />
-        <main className="mx-auto flex min-h-0 w-full max-w-7xl flex-1 flex-col px-4 py-8 sm:px-6 md:px-8 lg:px-10 xl:px-12">
-          <div className="flex min-h-0 flex-1 flex-col space-y-4 sm:space-y-6 lg:space-y-8">
-            <div className="flex shrink-0 flex-col gap-3">
-              <Button
-                variant="ghost"
-                onClick={() => router.back()}
-                className="mb-2 self-start"
-              >
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Назад
-              </Button>
-              <div className="flex flex-col gap-3">
-                <h1 className="mb-1 bg-linear-to-r from-primary to-primary/80 bg-clip-text text-2xl font-bold wrap-break-word text-transparent sm:mb-2 sm:text-3xl lg:text-4xl">
-                  Личный кабинет
-                </h1>
-                <p className="text-sm text-muted-foreground sm:text-base lg:text-lg">
-                  Управляйте своей личной информацией
-                </p>
-              </div>
+      <PublicPageLayout>
+        <div className="flex min-h-0 flex-1 flex-col gap-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div className="space-y-2">
+              <h1 className="text-2xl font-bold tracking-tight text-balance text-foreground sm:text-3xl">
+                Личный кабинет
+              </h1>
+              <p className="text-sm text-muted-foreground sm:text-base">
+                Управляйте личной информацией и документами.
+              </p>
             </div>
-            <div className="min-h-0 flex-1">
-              <ProfilePageContent />
-            </div>
+
+            <Button
+              variant="ghost"
+              onClick={() => router.back()}
+              className="self-start sm:self-auto"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Назад
+            </Button>
           </div>
-        </main>
-      </div>
+
+          <ProfilePageContent />
+        </div>
+      </PublicPageLayout>
     </UserAuthGuard>
   );
 }

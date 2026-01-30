@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
-const USER_PROFILE_FIELDS = gql`
-  fragment UserProfileFields on UserProfileEntity {
+const MY_USER_PROFILE_FIELDS = gql`
+  fragment MyUserProfileFields on UserProfileEntity {
     lastName
     firstName
     middleName
@@ -84,8 +84,8 @@ export const RESET_PASSWORD = gql`
 export const UPDATE_MY_PROFILE = gql`
   mutation UpdateMyProfile($input: UpdateMyProfileInput!) {
     updateMyProfile(input: $input) {
-      ...UserProfileFields
+      ...MyUserProfileFields
     }
   }
-  ${USER_PROFILE_FIELDS}
+  ${MY_USER_PROFILE_FIELDS}
 `;

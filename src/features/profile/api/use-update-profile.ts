@@ -9,18 +9,15 @@ import type {
 export function useUpdateProfile() {
   const [updateProfile, { loading, error }] = useMutation<{
     updateMyProfile: UserProfileEntity;
-  }>(UPDATE_MY_PROFILE, {
-    refetchQueries: [
-      {
-        query: ME,
-      },
-    ],
-    awaitRefetchQueries: true,
-  });
+  }>(UPDATE_MY_PROFILE);
 
   const handleUpdate = async (input: UpdateMyProfileInput) => {
     try {
-      const result = await updateProfile({ variables: { input } });
+      const result = await updateProfile({
+        variables: { input },
+        refetchQueries: [{ query: ME }],
+        awaitRefetchQueries: true,
+      });
       return result.data?.updateMyProfile;
     } catch (error) {
       throw error;

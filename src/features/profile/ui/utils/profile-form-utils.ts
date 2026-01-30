@@ -103,6 +103,20 @@ export function getProfileDefaultValues(
     passportRegistrationAddress?: string | null;
     residentialAddress?: string | null;
     workPlaceId?: string | null;
+    employments?: Array<{
+      id?: string | null;
+      organizationId?: string | null;
+      position?: string | null;
+      isPrimary?: boolean | null;
+      organization?: {
+        type?: string | null;
+        displayName?: string | null;
+        inn?: string | null;
+        kpp?: string | null;
+        ogrn?: string | null;
+        legalAddress?: string | null;
+      } | null;
+    }> | null;
     avatar?: string | null;
     passport?: {
       series?: string | null;
@@ -130,6 +144,23 @@ export function getProfileDefaultValues(
       profile?.passportRegistrationAddress || "",
     residentialAddress: profile?.residentialAddress || "",
     workPlaceId: profile?.workPlaceId || "",
+    employments:
+      profile?.employments?.map((e) => ({
+        id: e.id || "",
+        organizationId: e.organizationId || "",
+        position: e.position || undefined,
+        isPrimary: Boolean(e.isPrimary),
+        organization: e.organization
+          ? {
+              type: e.organization.type || undefined,
+              displayName: e.organization.displayName || undefined,
+              inn: e.organization.inn || undefined,
+              kpp: e.organization.kpp || undefined,
+              ogrn: e.organization.ogrn || undefined,
+              legalAddress: e.organization.legalAddress || undefined,
+            }
+          : null,
+      })) ?? null,
     avatar: profile?.avatar || "",
     passportSeries: profile?.passport?.series || "",
     passportNumber: profile?.passport?.number || "",

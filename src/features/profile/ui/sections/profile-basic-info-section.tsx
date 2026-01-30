@@ -9,25 +9,79 @@ import {
 } from "../constants/profile-form-constants";
 import type { ProfileFormData } from "../types/profile-form.types";
 import type { Control, FieldPath } from "react-hook-form";
+import { ProfileFieldPreview } from "../components/profile-field-preview";
+import {
+  formatProfileDate,
+  formatProfileValue,
+} from "../utils/profile-preview-utils";
 
 interface ProfileBasicInfoSectionProps<T extends ProfileFormData> {
   control: Control<T>;
+  mode?: "view" | "edit";
+  values?: ProfileFormData;
 }
 
 export const ProfileBasicInfoSection = memo(
   function ProfileBasicInfoSection<
     T extends ProfileFormData = ProfileFormData,
-  >({ control }: ProfileBasicInfoSectionProps<T>) {
+  >({
+    control,
+    mode = "edit",
+    values,
+  }: ProfileBasicInfoSectionProps<T>) {
     const fieldName = <K extends keyof ProfileFormData>(
       name: K
     ): FieldPath<T> => name as unknown as FieldPath<T>;
+
+    if (mode === "view") {
+      const firstName = formatProfileValue(values?.firstName);
+      const lastName = formatProfileValue(values?.lastName);
+      const middleName = formatProfileValue(values?.middleName);
+      const phone = formatProfileValue(values?.phone);
+      const dateOfBirth = formatProfileDate(values?.dateOfBirth);
+      const citizenship = formatProfileValue(values?.citizenship);
+
+      return (
+        <div className={PROFILE_FORM_CLASSES.section}>
+          <h3 className={PROFILE_FORM_CLASSES.sectionTitle}>
+            Основная информация
+          </h3>
+          <div className={PROFILE_FORM_CLASSES.fieldGrid}>
+            <ProfileFieldPreview
+              label={PROFILE_FORM_LABELS.firstName}
+              value={firstName}
+            />
+            <ProfileFieldPreview
+              label={PROFILE_FORM_LABELS.lastName}
+              value={lastName}
+            />
+            <ProfileFieldPreview
+              label={PROFILE_FORM_LABELS.middleName}
+              value={middleName}
+            />
+            <ProfileFieldPreview
+              label={PROFILE_FORM_LABELS.phone}
+              value={phone}
+            />
+            <ProfileFieldPreview
+              label={PROFILE_FORM_LABELS.dateOfBirth}
+              value={dateOfBirth}
+            />
+            <ProfileFieldPreview
+              label={PROFILE_FORM_LABELS.citizenship}
+              value={citizenship}
+            />
+          </div>
+        </div>
+      );
+    }
 
     return (
       <div className={PROFILE_FORM_CLASSES.section}>
         <h3 className={PROFILE_FORM_CLASSES.sectionTitle}>
           Основная информация
         </h3>
-        <div className="space-y-4">
+        <div className={PROFILE_FORM_CLASSES.fieldGrid}>
           <FormField
             control={control}
             name={fieldName("firstName")}

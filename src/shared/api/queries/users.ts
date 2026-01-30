@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
-const USER_PROFILE_FIELDS = gql`
-  fragment UserProfileFields on UserProfileEntity {
+const ADMIN_USER_PROFILE_FIELDS_QUERIES = gql`
+  fragment AdminUserProfileFieldsQueries on UserProfileEntity {
     lastName
     firstName
     middleName
@@ -28,8 +28,8 @@ const USER_PROFILE_FIELDS = gql`
   }
 `;
 
-const USER_FIELDS = gql`
-  fragment UserFields on UserEntity {
+const ADMIN_USER_FIELDS_QUERIES = gql`
+  fragment AdminUserFieldsQueries on UserEntity {
     id
     email
     role
@@ -41,26 +41,26 @@ const USER_FIELDS = gql`
     createdAt
     updatedAt
     profile {
-      ...UserProfileFields
+      ...AdminUserProfileFieldsQueries
     }
   }
-  ${USER_PROFILE_FIELDS}
+  ${ADMIN_USER_PROFILE_FIELDS_QUERIES}
 `;
 
 export const GET_USERS = gql`
   query AdminUsers($filter: AdminUserFilterInput) {
     adminUsers(filter: $filter) {
-      ...UserFields
+      ...AdminUserFieldsQueries
     }
   }
-  ${USER_FIELDS}
+  ${ADMIN_USER_FIELDS_QUERIES}
 `;
 
 export const GET_USER = gql`
   query AdminUser($id: ID!) {
     adminUser(id: $id) {
-      ...UserFields
+      ...AdminUserFieldsQueries
     }
   }
-  ${USER_FIELDS}
+  ${ADMIN_USER_FIELDS_QUERIES}
 `;

@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
-const USER_PROFILE_FIELDS = gql`
-  fragment UserProfileFields on UserProfileEntity {
+const ME_USER_PROFILE_FIELDS = gql`
+  fragment MeUserProfileFields on UserProfileEntity {
     lastName
     firstName
     middleName
@@ -23,13 +23,27 @@ const USER_PROFILE_FIELDS = gql`
     }
     workPlaceId
     position
+    employments {
+      id
+      organizationId
+      position
+      isPrimary
+      organization {
+        type
+        displayName
+        inn
+        kpp
+        ogrn
+        legalAddress
+      }
+    }
     snils
     avatar
   }
 `;
 
-const USER_FIELDS = gql`
-  fragment UserFields on UserEntity {
+const ME_USER_FIELDS = gql`
+  fragment MeUserFields on UserEntity {
     id
     email
     role
@@ -41,17 +55,17 @@ const USER_FIELDS = gql`
     createdAt
     updatedAt
     profile {
-      ...UserProfileFields
+      ...MeUserProfileFields
     }
   }
-  ${USER_PROFILE_FIELDS}
+  ${ME_USER_PROFILE_FIELDS}
 `;
 
 export const ME = gql`
   query Me {
     me {
-      ...UserFields
+      ...MeUserFields
     }
   }
-  ${USER_FIELDS}
+  ${ME_USER_FIELDS}
 `;

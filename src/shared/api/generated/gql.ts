@@ -14,7 +14,7 @@ import { TypedDocumentNode as DocumentNode } from "@graphql-typed-document-node/
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 type Documents = {
-  "\n  fragment UserProfileFields on UserProfileEntity {\n    lastName\n    firstName\n    middleName\n    dateOfBirth\n    citizenship\n    phone\n    passport {\n      series\n      number\n      issuedBy\n      issuedAt\n      departmentCode\n    }\n    passportRegistrationAddress\n    residentialAddress\n    education {\n      qualification\n      documentIssuedAt\n    }\n    workPlaceId\n    position\n    snils\n    avatar\n  }\n": typeof types.UserProfileFieldsFragmentDoc;
+  "\n  fragment MyUserProfileFields on UserProfileEntity {\n    lastName\n    firstName\n    middleName\n    dateOfBirth\n    citizenship\n    phone\n    passport {\n      series\n      number\n      issuedBy\n      issuedAt\n      departmentCode\n    }\n    passportRegistrationAddress\n    residentialAddress\n    education {\n      qualification\n      documentIssuedAt\n    }\n    workPlaceId\n    position\n    snils\n    avatar\n  }\n": typeof types.MyUserProfileFieldsFragmentDoc;
   "\n  mutation Login($input: LoginInput!) {\n    login(input: $input) {\n      id\n      email\n      role\n      firstName\n      lastName\n      phone\n      isBlocked\n      isEmailVerified\n    }\n  }\n": typeof types.LoginDocument;
   "\n  mutation Logout {\n    logout\n  }\n": typeof types.LogoutDocument;
   "\n  mutation Register($input: RegisterInput!) {\n    register(input: $input)\n  }\n": typeof types.RegisterDocument;
@@ -22,31 +22,40 @@ type Documents = {
   "\n  mutation RequestEmailVerification(\n    $input: RequestEmailVerificationInput!\n  ) {\n    requestEmailVerification(input: $input)\n  }\n": typeof types.RequestEmailVerificationDocument;
   "\n  mutation RequestPasswordReset($input: RequestPasswordResetInput!) {\n    requestPasswordReset(input: $input)\n  }\n": typeof types.RequestPasswordResetDocument;
   "\n  mutation ResetPassword($input: ResetPasswordInput!) {\n    resetPassword(input: $input)\n  }\n": typeof types.ResetPasswordDocument;
-  "\n  mutation UpdateMyProfile($input: UpdateMyProfileInput!) {\n    updateMyProfile(input: $input) {\n      ...UserProfileFields\n    }\n  }\n  \n": typeof types.UpdateMyProfileDocument;
+  "\n  mutation UpdateMyProfile($input: UpdateMyProfileInput!) {\n    updateMyProfile(input: $input) {\n      ...MyUserProfileFields\n    }\n  }\n  \n": typeof types.UpdateMyProfileDocument;
   "\n  mutation CreateCategory($input: CreateCategoryInput!) {\n    createCategory(input: $input) {\n      id\n      name\n      slug\n      description\n      image\n      type\n      parent\n      createdAt\n      updatedAt\n      programsCount\n    }\n  }\n": typeof types.CreateCategoryDocument;
   "\n  mutation UpdateCategory($id: ID!, $input: UpdateCategoryInput!) {\n    updateCategory(id: $id, input: $input) {\n      id\n      name\n      slug\n      description\n      image\n      type\n      parent\n      createdAt\n      updatedAt\n      programsCount\n    }\n  }\n": typeof types.UpdateCategoryDocument;
   "\n  mutation DeleteCategory($id: ID!) {\n    deleteCategory(id: $id) {\n      id\n    }\n  }\n": typeof types.DeleteCategoryDocument;
   "\n  mutation CreateProgram($input: CreateProgramInput!) {\n    createProgram(input: $input) {\n      id\n      title\n      slug\n      description\n      image\n      category\n      baseHours\n      studentCategory\n      awardedQualification\n      awardedRankFrom\n      awardedRankTo\n      pricing {\n        hours\n        price\n      }\n      subPrograms {\n        title\n        description\n      }\n      views\n      createdAt\n      updatedAt\n    }\n  }\n": typeof types.CreateProgramDocument;
   "\n  mutation UpdateProgram($id: ID!, $input: UpdateProgramInput!) {\n    updateProgram(id: $id, input: $input) {\n      id\n      title\n      slug\n      description\n      image\n      category\n      baseHours\n      studentCategory\n      awardedQualification\n      awardedRankFrom\n      awardedRankTo\n      pricing {\n        hours\n        price\n      }\n      subPrograms {\n        title\n        description\n      }\n      views\n      createdAt\n      updatedAt\n    }\n  }\n": typeof types.UpdateProgramDocument;
   "\n  mutation DeleteProgram($id: ID!) {\n    deleteProgram(id: $id) {\n      id\n    }\n  }\n": typeof types.DeleteProgramDocument;
-  "\n  fragment UserFields on UserEntity {\n    id\n    email\n    role\n    isBlocked\n    isEmailVerified\n    firstName\n    lastName\n    phone\n    createdAt\n    updatedAt\n    profile {\n      ...UserProfileFields\n    }\n  }\n  \n": typeof types.UserFieldsFragmentDoc;
-  "\n  mutation AdminCreateUser($input: AdminCreateUserInput!) {\n    adminCreateUser(input: $input) {\n      ...UserFields\n    }\n  }\n  \n": typeof types.AdminCreateUserDocument;
-  "\n  mutation AdminUpdateUser($id: ID!, $input: AdminUpdateUserInput!) {\n    adminUpdateUser(id: $id, input: $input) {\n      ...UserFields\n    }\n  }\n  \n": typeof types.AdminUpdateUserDocument;
+  "\n  fragment AdminUserProfileFieldsMutations on UserProfileEntity {\n    lastName\n    firstName\n    middleName\n    dateOfBirth\n    citizenship\n    phone\n    passport {\n      series\n      number\n      issuedBy\n      issuedAt\n      departmentCode\n    }\n    passportRegistrationAddress\n    residentialAddress\n    education {\n      qualification\n      documentIssuedAt\n    }\n    workPlaceId\n    position\n    snils\n    avatar\n  }\n": typeof types.AdminUserProfileFieldsMutationsFragmentDoc;
+  "\n  fragment AdminUserFieldsMutations on UserEntity {\n    id\n    email\n    role\n    isBlocked\n    isEmailVerified\n    firstName\n    lastName\n    phone\n    createdAt\n    updatedAt\n    profile {\n      ...AdminUserProfileFieldsMutations\n    }\n  }\n  \n": typeof types.AdminUserFieldsMutationsFragmentDoc;
+  "\n  mutation AdminCreateUser($input: AdminCreateUserInput!) {\n    adminCreateUser(input: $input) {\n      ...AdminUserFieldsMutations\n    }\n  }\n  \n": typeof types.AdminCreateUserDocument;
+  "\n  mutation AdminUpdateUser($id: ID!, $input: AdminUpdateUserInput!) {\n    adminUpdateUser(id: $id, input: $input) {\n      ...AdminUserFieldsMutations\n    }\n  }\n  \n": typeof types.AdminUpdateUserDocument;
   "\n  mutation AdminDeleteUser($id: ID!) {\n    adminDeleteUser(id: $id)\n  }\n": typeof types.AdminDeleteUserDocument;
-  "\n  mutation AdminSetUserBlocked($id: ID!, $blocked: Boolean!) {\n    adminSetUserBlocked(id: $id, blocked: $blocked) {\n      ...UserFields\n    }\n  }\n  \n": typeof types.AdminSetUserBlockedDocument;
-  "\n  query Me {\n    me {\n      ...UserFields\n    }\n  }\n  \n": typeof types.MeDocument;
+  "\n  mutation AdminSetUserBlocked($id: ID!, $blocked: Boolean!) {\n    adminSetUserBlocked(id: $id, blocked: $blocked) {\n      ...AdminUserFieldsMutations\n    }\n  }\n  \n": typeof types.AdminSetUserBlockedDocument;
+  "\n  mutation SetMyWorkPlaceByInn($input: SetMyWorkPlaceByInnInput!) {\n    setMyWorkPlaceByInn(input: $input) {\n      workPlaceId\n      position\n      employments {\n        id\n        organizationId\n        position\n        isPrimary\n      }\n    }\n  }\n": typeof types.SetMyWorkPlaceByInnDocument;
+  "\n  mutation SetMyWorkPlaceManual($input: SetMyWorkPlaceManualInput!) {\n    setMyWorkPlaceManual(input: $input) {\n      workPlaceId\n    }\n  }\n": typeof types.SetMyWorkPlaceManualDocument;
+  "\n  query AddressSuggestions($query: String!, $count: Int) {\n    addressSuggestions(query: $query, count: $count) {\n      value\n      unrestrictedValue\n      region\n      city\n      street\n      house\n      flat\n      postalCode\n      fiasId\n      kladrId\n      geoLat\n      geoLon\n    }\n  }\n": typeof types.AddressSuggestionsDocument;
+  "\n  fragment MeUserProfileFields on UserProfileEntity {\n    lastName\n    firstName\n    middleName\n    dateOfBirth\n    citizenship\n    phone\n    passport {\n      series\n      number\n      issuedBy\n      issuedAt\n      departmentCode\n    }\n    passportRegistrationAddress\n    residentialAddress\n    education {\n      qualification\n      documentIssuedAt\n    }\n    workPlaceId\n    position\n    employments {\n      id\n      organizationId\n      position\n      isPrimary\n      organization {\n        type\n        displayName\n        inn\n        kpp\n        ogrn\n        legalAddress\n      }\n    }\n    snils\n    avatar\n  }\n": typeof types.MeUserProfileFieldsFragmentDoc;
+  "\n  fragment MeUserFields on UserEntity {\n    id\n    email\n    role\n    isBlocked\n    isEmailVerified\n    firstName\n    lastName\n    phone\n    createdAt\n    updatedAt\n    profile {\n      ...MeUserProfileFields\n    }\n  }\n  \n": typeof types.MeUserFieldsFragmentDoc;
+  "\n  query Me {\n    me {\n      ...MeUserFields\n    }\n  }\n  \n": typeof types.MeDocument;
   "\n  query GetCategories($filter: CategoryFilterInput) {\n    categories(filter: $filter) {\n      id\n      name\n      slug\n      description\n      image\n      type\n      parent\n      createdAt\n      updatedAt\n      programsCount\n    }\n  }\n": typeof types.GetCategoriesDocument;
   "\n  query GetCategory($id: ID!) {\n    category(id: $id) {\n      id\n      name\n      slug\n      description\n      image\n      type\n      parent\n      createdAt\n      updatedAt\n      programsCount\n    }\n  }\n": typeof types.GetCategoryDocument;
+  "\n  query OrganizationSuggestions($query: String!, $count: Int) {\n    organizationSuggestions(query: $query, count: $count) {\n      type\n      inn\n      kpp\n      ogrn\n      displayName\n      legalAddress\n    }\n  }\n": typeof types.OrganizationSuggestionsDocument;
   "\n  query GetPrograms($filter: ProgramFilterInput) {\n    programs(filter: $filter) {\n      id\n      title\n      shortTitle\n      slug\n      description\n      image\n      category\n      baseHours\n      studentCategory\n      awardedQualification\n      awardedRankFrom\n      awardedRankTo\n      pricing {\n        hours\n        price\n      }\n      subPrograms {\n        title\n        description\n      }\n      views\n      createdAt\n      updatedAt\n    }\n  }\n": typeof types.GetProgramsDocument;
   "\n  query ProgramsPage($filter: ProgramFilterInput) {\n    programsPage(filter: $filter) {\n      total\n      items {\n        id\n        title\n        shortTitle\n        slug\n        description\n        image\n        category\n        baseHours\n        studentCategory\n        awardedQualification\n        awardedRankFrom\n        awardedRankTo\n        pricing {\n          hours\n          price\n        }\n        subPrograms {\n          title\n          description\n        }\n        views\n        createdAt\n        updatedAt\n      }\n    }\n  }\n": typeof types.ProgramsPageDocument;
   "\n  query GetTopPrograms($limit: Float) {\n    topPrograms(limit: $limit) {\n      id\n      title\n      shortTitle\n      slug\n      description\n      image\n      category\n      baseHours\n      studentCategory\n      awardedQualification\n      awardedRankFrom\n      awardedRankTo\n      pricing {\n        hours\n        price\n      }\n      subPrograms {\n        title\n        description\n      }\n      views\n      createdAt\n      updatedAt\n    }\n  }\n": typeof types.GetTopProgramsDocument;
   "\n  query GetProgram($id: ID!) {\n    program(id: $id) {\n      id\n      title\n      shortTitle\n      slug\n      description\n      image\n      category\n      baseHours\n      studentCategory\n      awardedQualification\n      awardedRankFrom\n      awardedRankTo\n      pricing {\n        hours\n        price\n      }\n      subPrograms {\n        title\n        description\n      }\n      views\n      createdAt\n      updatedAt\n    }\n  }\n": typeof types.GetProgramDocument;
-  "\n  query AdminUsers($filter: AdminUserFilterInput) {\n    adminUsers(filter: $filter) {\n      ...UserFields\n    }\n  }\n  \n": typeof types.AdminUsersDocument;
-  "\n  query AdminUser($id: ID!) {\n    adminUser(id: $id) {\n      ...UserFields\n    }\n  }\n  \n": typeof types.AdminUserDocument;
+  "\n  fragment AdminUserProfileFieldsQueries on UserProfileEntity {\n    lastName\n    firstName\n    middleName\n    dateOfBirth\n    citizenship\n    phone\n    passport {\n      series\n      number\n      issuedBy\n      issuedAt\n      departmentCode\n    }\n    passportRegistrationAddress\n    residentialAddress\n    education {\n      qualification\n      documentIssuedAt\n    }\n    workPlaceId\n    position\n    snils\n    avatar\n  }\n": typeof types.AdminUserProfileFieldsQueriesFragmentDoc;
+  "\n  fragment AdminUserFieldsQueries on UserEntity {\n    id\n    email\n    role\n    isBlocked\n    isEmailVerified\n    firstName\n    lastName\n    phone\n    createdAt\n    updatedAt\n    profile {\n      ...AdminUserProfileFieldsQueries\n    }\n  }\n  \n": typeof types.AdminUserFieldsQueriesFragmentDoc;
+  "\n  query AdminUsers($filter: AdminUserFilterInput) {\n    adminUsers(filter: $filter) {\n      ...AdminUserFieldsQueries\n    }\n  }\n  \n": typeof types.AdminUsersDocument;
+  "\n  query AdminUser($id: ID!) {\n    adminUser(id: $id) {\n      ...AdminUserFieldsQueries\n    }\n  }\n  \n": typeof types.AdminUserDocument;
 };
 const documents: Documents = {
-  "\n  fragment UserProfileFields on UserProfileEntity {\n    lastName\n    firstName\n    middleName\n    dateOfBirth\n    citizenship\n    phone\n    passport {\n      series\n      number\n      issuedBy\n      issuedAt\n      departmentCode\n    }\n    passportRegistrationAddress\n    residentialAddress\n    education {\n      qualification\n      documentIssuedAt\n    }\n    workPlaceId\n    position\n    snils\n    avatar\n  }\n":
-    types.UserProfileFieldsFragmentDoc,
+  "\n  fragment MyUserProfileFields on UserProfileEntity {\n    lastName\n    firstName\n    middleName\n    dateOfBirth\n    citizenship\n    phone\n    passport {\n      series\n      number\n      issuedBy\n      issuedAt\n      departmentCode\n    }\n    passportRegistrationAddress\n    residentialAddress\n    education {\n      qualification\n      documentIssuedAt\n    }\n    workPlaceId\n    position\n    snils\n    avatar\n  }\n":
+    types.MyUserProfileFieldsFragmentDoc,
   "\n  mutation Login($input: LoginInput!) {\n    login(input: $input) {\n      id\n      email\n      role\n      firstName\n      lastName\n      phone\n      isBlocked\n      isEmailVerified\n    }\n  }\n":
     types.LoginDocument,
   "\n  mutation Logout {\n    logout\n  }\n": types.LogoutDocument,
@@ -60,7 +69,7 @@ const documents: Documents = {
     types.RequestPasswordResetDocument,
   "\n  mutation ResetPassword($input: ResetPasswordInput!) {\n    resetPassword(input: $input)\n  }\n":
     types.ResetPasswordDocument,
-  "\n  mutation UpdateMyProfile($input: UpdateMyProfileInput!) {\n    updateMyProfile(input: $input) {\n      ...UserProfileFields\n    }\n  }\n  \n":
+  "\n  mutation UpdateMyProfile($input: UpdateMyProfileInput!) {\n    updateMyProfile(input: $input) {\n      ...MyUserProfileFields\n    }\n  }\n  \n":
     types.UpdateMyProfileDocument,
   "\n  mutation CreateCategory($input: CreateCategoryInput!) {\n    createCategory(input: $input) {\n      id\n      name\n      slug\n      description\n      image\n      type\n      parent\n      createdAt\n      updatedAt\n      programsCount\n    }\n  }\n":
     types.CreateCategoryDocument,
@@ -74,22 +83,36 @@ const documents: Documents = {
     types.UpdateProgramDocument,
   "\n  mutation DeleteProgram($id: ID!) {\n    deleteProgram(id: $id) {\n      id\n    }\n  }\n":
     types.DeleteProgramDocument,
-  "\n  fragment UserFields on UserEntity {\n    id\n    email\n    role\n    isBlocked\n    isEmailVerified\n    firstName\n    lastName\n    phone\n    createdAt\n    updatedAt\n    profile {\n      ...UserProfileFields\n    }\n  }\n  \n":
-    types.UserFieldsFragmentDoc,
-  "\n  mutation AdminCreateUser($input: AdminCreateUserInput!) {\n    adminCreateUser(input: $input) {\n      ...UserFields\n    }\n  }\n  \n":
+  "\n  fragment AdminUserProfileFieldsMutations on UserProfileEntity {\n    lastName\n    firstName\n    middleName\n    dateOfBirth\n    citizenship\n    phone\n    passport {\n      series\n      number\n      issuedBy\n      issuedAt\n      departmentCode\n    }\n    passportRegistrationAddress\n    residentialAddress\n    education {\n      qualification\n      documentIssuedAt\n    }\n    workPlaceId\n    position\n    snils\n    avatar\n  }\n":
+    types.AdminUserProfileFieldsMutationsFragmentDoc,
+  "\n  fragment AdminUserFieldsMutations on UserEntity {\n    id\n    email\n    role\n    isBlocked\n    isEmailVerified\n    firstName\n    lastName\n    phone\n    createdAt\n    updatedAt\n    profile {\n      ...AdminUserProfileFieldsMutations\n    }\n  }\n  \n":
+    types.AdminUserFieldsMutationsFragmentDoc,
+  "\n  mutation AdminCreateUser($input: AdminCreateUserInput!) {\n    adminCreateUser(input: $input) {\n      ...AdminUserFieldsMutations\n    }\n  }\n  \n":
     types.AdminCreateUserDocument,
-  "\n  mutation AdminUpdateUser($id: ID!, $input: AdminUpdateUserInput!) {\n    adminUpdateUser(id: $id, input: $input) {\n      ...UserFields\n    }\n  }\n  \n":
+  "\n  mutation AdminUpdateUser($id: ID!, $input: AdminUpdateUserInput!) {\n    adminUpdateUser(id: $id, input: $input) {\n      ...AdminUserFieldsMutations\n    }\n  }\n  \n":
     types.AdminUpdateUserDocument,
   "\n  mutation AdminDeleteUser($id: ID!) {\n    adminDeleteUser(id: $id)\n  }\n":
     types.AdminDeleteUserDocument,
-  "\n  mutation AdminSetUserBlocked($id: ID!, $blocked: Boolean!) {\n    adminSetUserBlocked(id: $id, blocked: $blocked) {\n      ...UserFields\n    }\n  }\n  \n":
+  "\n  mutation AdminSetUserBlocked($id: ID!, $blocked: Boolean!) {\n    adminSetUserBlocked(id: $id, blocked: $blocked) {\n      ...AdminUserFieldsMutations\n    }\n  }\n  \n":
     types.AdminSetUserBlockedDocument,
-  "\n  query Me {\n    me {\n      ...UserFields\n    }\n  }\n  \n":
+  "\n  mutation SetMyWorkPlaceByInn($input: SetMyWorkPlaceByInnInput!) {\n    setMyWorkPlaceByInn(input: $input) {\n      workPlaceId\n      position\n      employments {\n        id\n        organizationId\n        position\n        isPrimary\n      }\n    }\n  }\n":
+    types.SetMyWorkPlaceByInnDocument,
+  "\n  mutation SetMyWorkPlaceManual($input: SetMyWorkPlaceManualInput!) {\n    setMyWorkPlaceManual(input: $input) {\n      workPlaceId\n    }\n  }\n":
+    types.SetMyWorkPlaceManualDocument,
+  "\n  query AddressSuggestions($query: String!, $count: Int) {\n    addressSuggestions(query: $query, count: $count) {\n      value\n      unrestrictedValue\n      region\n      city\n      street\n      house\n      flat\n      postalCode\n      fiasId\n      kladrId\n      geoLat\n      geoLon\n    }\n  }\n":
+    types.AddressSuggestionsDocument,
+  "\n  fragment MeUserProfileFields on UserProfileEntity {\n    lastName\n    firstName\n    middleName\n    dateOfBirth\n    citizenship\n    phone\n    passport {\n      series\n      number\n      issuedBy\n      issuedAt\n      departmentCode\n    }\n    passportRegistrationAddress\n    residentialAddress\n    education {\n      qualification\n      documentIssuedAt\n    }\n    workPlaceId\n    position\n    employments {\n      id\n      organizationId\n      position\n      isPrimary\n      organization {\n        type\n        displayName\n        inn\n        kpp\n        ogrn\n        legalAddress\n      }\n    }\n    snils\n    avatar\n  }\n":
+    types.MeUserProfileFieldsFragmentDoc,
+  "\n  fragment MeUserFields on UserEntity {\n    id\n    email\n    role\n    isBlocked\n    isEmailVerified\n    firstName\n    lastName\n    phone\n    createdAt\n    updatedAt\n    profile {\n      ...MeUserProfileFields\n    }\n  }\n  \n":
+    types.MeUserFieldsFragmentDoc,
+  "\n  query Me {\n    me {\n      ...MeUserFields\n    }\n  }\n  \n":
     types.MeDocument,
   "\n  query GetCategories($filter: CategoryFilterInput) {\n    categories(filter: $filter) {\n      id\n      name\n      slug\n      description\n      image\n      type\n      parent\n      createdAt\n      updatedAt\n      programsCount\n    }\n  }\n":
     types.GetCategoriesDocument,
   "\n  query GetCategory($id: ID!) {\n    category(id: $id) {\n      id\n      name\n      slug\n      description\n      image\n      type\n      parent\n      createdAt\n      updatedAt\n      programsCount\n    }\n  }\n":
     types.GetCategoryDocument,
+  "\n  query OrganizationSuggestions($query: String!, $count: Int) {\n    organizationSuggestions(query: $query, count: $count) {\n      type\n      inn\n      kpp\n      ogrn\n      displayName\n      legalAddress\n    }\n  }\n":
+    types.OrganizationSuggestionsDocument,
   "\n  query GetPrograms($filter: ProgramFilterInput) {\n    programs(filter: $filter) {\n      id\n      title\n      shortTitle\n      slug\n      description\n      image\n      category\n      baseHours\n      studentCategory\n      awardedQualification\n      awardedRankFrom\n      awardedRankTo\n      pricing {\n        hours\n        price\n      }\n      subPrograms {\n        title\n        description\n      }\n      views\n      createdAt\n      updatedAt\n    }\n  }\n":
     types.GetProgramsDocument,
   "\n  query ProgramsPage($filter: ProgramFilterInput) {\n    programsPage(filter: $filter) {\n      total\n      items {\n        id\n        title\n        shortTitle\n        slug\n        description\n        image\n        category\n        baseHours\n        studentCategory\n        awardedQualification\n        awardedRankFrom\n        awardedRankTo\n        pricing {\n          hours\n          price\n        }\n        subPrograms {\n          title\n          description\n        }\n        views\n        createdAt\n        updatedAt\n      }\n    }\n  }\n":
@@ -98,9 +121,13 @@ const documents: Documents = {
     types.GetTopProgramsDocument,
   "\n  query GetProgram($id: ID!) {\n    program(id: $id) {\n      id\n      title\n      shortTitle\n      slug\n      description\n      image\n      category\n      baseHours\n      studentCategory\n      awardedQualification\n      awardedRankFrom\n      awardedRankTo\n      pricing {\n        hours\n        price\n      }\n      subPrograms {\n        title\n        description\n      }\n      views\n      createdAt\n      updatedAt\n    }\n  }\n":
     types.GetProgramDocument,
-  "\n  query AdminUsers($filter: AdminUserFilterInput) {\n    adminUsers(filter: $filter) {\n      ...UserFields\n    }\n  }\n  \n":
+  "\n  fragment AdminUserProfileFieldsQueries on UserProfileEntity {\n    lastName\n    firstName\n    middleName\n    dateOfBirth\n    citizenship\n    phone\n    passport {\n      series\n      number\n      issuedBy\n      issuedAt\n      departmentCode\n    }\n    passportRegistrationAddress\n    residentialAddress\n    education {\n      qualification\n      documentIssuedAt\n    }\n    workPlaceId\n    position\n    snils\n    avatar\n  }\n":
+    types.AdminUserProfileFieldsQueriesFragmentDoc,
+  "\n  fragment AdminUserFieldsQueries on UserEntity {\n    id\n    email\n    role\n    isBlocked\n    isEmailVerified\n    firstName\n    lastName\n    phone\n    createdAt\n    updatedAt\n    profile {\n      ...AdminUserProfileFieldsQueries\n    }\n  }\n  \n":
+    types.AdminUserFieldsQueriesFragmentDoc,
+  "\n  query AdminUsers($filter: AdminUserFilterInput) {\n    adminUsers(filter: $filter) {\n      ...AdminUserFieldsQueries\n    }\n  }\n  \n":
     types.AdminUsersDocument,
-  "\n  query AdminUser($id: ID!) {\n    adminUser(id: $id) {\n      ...UserFields\n    }\n  }\n  \n":
+  "\n  query AdminUser($id: ID!) {\n    adminUser(id: $id) {\n      ...AdminUserFieldsQueries\n    }\n  }\n  \n":
     types.AdminUserDocument,
 };
 
@@ -122,8 +149,8 @@ export function gql(source: string): unknown;
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(
-  source: "\n  fragment UserProfileFields on UserProfileEntity {\n    lastName\n    firstName\n    middleName\n    dateOfBirth\n    citizenship\n    phone\n    passport {\n      series\n      number\n      issuedBy\n      issuedAt\n      departmentCode\n    }\n    passportRegistrationAddress\n    residentialAddress\n    education {\n      qualification\n      documentIssuedAt\n    }\n    workPlaceId\n    position\n    snils\n    avatar\n  }\n"
-): (typeof documents)["\n  fragment UserProfileFields on UserProfileEntity {\n    lastName\n    firstName\n    middleName\n    dateOfBirth\n    citizenship\n    phone\n    passport {\n      series\n      number\n      issuedBy\n      issuedAt\n      departmentCode\n    }\n    passportRegistrationAddress\n    residentialAddress\n    education {\n      qualification\n      documentIssuedAt\n    }\n    workPlaceId\n    position\n    snils\n    avatar\n  }\n"];
+  source: "\n  fragment MyUserProfileFields on UserProfileEntity {\n    lastName\n    firstName\n    middleName\n    dateOfBirth\n    citizenship\n    phone\n    passport {\n      series\n      number\n      issuedBy\n      issuedAt\n      departmentCode\n    }\n    passportRegistrationAddress\n    residentialAddress\n    education {\n      qualification\n      documentIssuedAt\n    }\n    workPlaceId\n    position\n    snils\n    avatar\n  }\n"
+): (typeof documents)["\n  fragment MyUserProfileFields on UserProfileEntity {\n    lastName\n    firstName\n    middleName\n    dateOfBirth\n    citizenship\n    phone\n    passport {\n      series\n      number\n      issuedBy\n      issuedAt\n      departmentCode\n    }\n    passportRegistrationAddress\n    residentialAddress\n    education {\n      qualification\n      documentIssuedAt\n    }\n    workPlaceId\n    position\n    snils\n    avatar\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -170,8 +197,8 @@ export function gql(
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(
-  source: "\n  mutation UpdateMyProfile($input: UpdateMyProfileInput!) {\n    updateMyProfile(input: $input) {\n      ...UserProfileFields\n    }\n  }\n  \n"
-): (typeof documents)["\n  mutation UpdateMyProfile($input: UpdateMyProfileInput!) {\n    updateMyProfile(input: $input) {\n      ...UserProfileFields\n    }\n  }\n  \n"];
+  source: "\n  mutation UpdateMyProfile($input: UpdateMyProfileInput!) {\n    updateMyProfile(input: $input) {\n      ...MyUserProfileFields\n    }\n  }\n  \n"
+): (typeof documents)["\n  mutation UpdateMyProfile($input: UpdateMyProfileInput!) {\n    updateMyProfile(input: $input) {\n      ...MyUserProfileFields\n    }\n  }\n  \n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -212,20 +239,26 @@ export function gql(
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(
-  source: "\n  fragment UserFields on UserEntity {\n    id\n    email\n    role\n    isBlocked\n    isEmailVerified\n    firstName\n    lastName\n    phone\n    createdAt\n    updatedAt\n    profile {\n      ...UserProfileFields\n    }\n  }\n  \n"
-): (typeof documents)["\n  fragment UserFields on UserEntity {\n    id\n    email\n    role\n    isBlocked\n    isEmailVerified\n    firstName\n    lastName\n    phone\n    createdAt\n    updatedAt\n    profile {\n      ...UserProfileFields\n    }\n  }\n  \n"];
+  source: "\n  fragment AdminUserProfileFieldsMutations on UserProfileEntity {\n    lastName\n    firstName\n    middleName\n    dateOfBirth\n    citizenship\n    phone\n    passport {\n      series\n      number\n      issuedBy\n      issuedAt\n      departmentCode\n    }\n    passportRegistrationAddress\n    residentialAddress\n    education {\n      qualification\n      documentIssuedAt\n    }\n    workPlaceId\n    position\n    snils\n    avatar\n  }\n"
+): (typeof documents)["\n  fragment AdminUserProfileFieldsMutations on UserProfileEntity {\n    lastName\n    firstName\n    middleName\n    dateOfBirth\n    citizenship\n    phone\n    passport {\n      series\n      number\n      issuedBy\n      issuedAt\n      departmentCode\n    }\n    passportRegistrationAddress\n    residentialAddress\n    education {\n      qualification\n      documentIssuedAt\n    }\n    workPlaceId\n    position\n    snils\n    avatar\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(
-  source: "\n  mutation AdminCreateUser($input: AdminCreateUserInput!) {\n    adminCreateUser(input: $input) {\n      ...UserFields\n    }\n  }\n  \n"
-): (typeof documents)["\n  mutation AdminCreateUser($input: AdminCreateUserInput!) {\n    adminCreateUser(input: $input) {\n      ...UserFields\n    }\n  }\n  \n"];
+  source: "\n  fragment AdminUserFieldsMutations on UserEntity {\n    id\n    email\n    role\n    isBlocked\n    isEmailVerified\n    firstName\n    lastName\n    phone\n    createdAt\n    updatedAt\n    profile {\n      ...AdminUserProfileFieldsMutations\n    }\n  }\n  \n"
+): (typeof documents)["\n  fragment AdminUserFieldsMutations on UserEntity {\n    id\n    email\n    role\n    isBlocked\n    isEmailVerified\n    firstName\n    lastName\n    phone\n    createdAt\n    updatedAt\n    profile {\n      ...AdminUserProfileFieldsMutations\n    }\n  }\n  \n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(
-  source: "\n  mutation AdminUpdateUser($id: ID!, $input: AdminUpdateUserInput!) {\n    adminUpdateUser(id: $id, input: $input) {\n      ...UserFields\n    }\n  }\n  \n"
-): (typeof documents)["\n  mutation AdminUpdateUser($id: ID!, $input: AdminUpdateUserInput!) {\n    adminUpdateUser(id: $id, input: $input) {\n      ...UserFields\n    }\n  }\n  \n"];
+  source: "\n  mutation AdminCreateUser($input: AdminCreateUserInput!) {\n    adminCreateUser(input: $input) {\n      ...AdminUserFieldsMutations\n    }\n  }\n  \n"
+): (typeof documents)["\n  mutation AdminCreateUser($input: AdminCreateUserInput!) {\n    adminCreateUser(input: $input) {\n      ...AdminUserFieldsMutations\n    }\n  }\n  \n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(
+  source: "\n  mutation AdminUpdateUser($id: ID!, $input: AdminUpdateUserInput!) {\n    adminUpdateUser(id: $id, input: $input) {\n      ...AdminUserFieldsMutations\n    }\n  }\n  \n"
+): (typeof documents)["\n  mutation AdminUpdateUser($id: ID!, $input: AdminUpdateUserInput!) {\n    adminUpdateUser(id: $id, input: $input) {\n      ...AdminUserFieldsMutations\n    }\n  }\n  \n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -236,14 +269,44 @@ export function gql(
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(
-  source: "\n  mutation AdminSetUserBlocked($id: ID!, $blocked: Boolean!) {\n    adminSetUserBlocked(id: $id, blocked: $blocked) {\n      ...UserFields\n    }\n  }\n  \n"
-): (typeof documents)["\n  mutation AdminSetUserBlocked($id: ID!, $blocked: Boolean!) {\n    adminSetUserBlocked(id: $id, blocked: $blocked) {\n      ...UserFields\n    }\n  }\n  \n"];
+  source: "\n  mutation AdminSetUserBlocked($id: ID!, $blocked: Boolean!) {\n    adminSetUserBlocked(id: $id, blocked: $blocked) {\n      ...AdminUserFieldsMutations\n    }\n  }\n  \n"
+): (typeof documents)["\n  mutation AdminSetUserBlocked($id: ID!, $blocked: Boolean!) {\n    adminSetUserBlocked(id: $id, blocked: $blocked) {\n      ...AdminUserFieldsMutations\n    }\n  }\n  \n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(
-  source: "\n  query Me {\n    me {\n      ...UserFields\n    }\n  }\n  \n"
-): (typeof documents)["\n  query Me {\n    me {\n      ...UserFields\n    }\n  }\n  \n"];
+  source: "\n  mutation SetMyWorkPlaceByInn($input: SetMyWorkPlaceByInnInput!) {\n    setMyWorkPlaceByInn(input: $input) {\n      workPlaceId\n      position\n      employments {\n        id\n        organizationId\n        position\n        isPrimary\n      }\n    }\n  }\n"
+): (typeof documents)["\n  mutation SetMyWorkPlaceByInn($input: SetMyWorkPlaceByInnInput!) {\n    setMyWorkPlaceByInn(input: $input) {\n      workPlaceId\n      position\n      employments {\n        id\n        organizationId\n        position\n        isPrimary\n      }\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(
+  source: "\n  mutation SetMyWorkPlaceManual($input: SetMyWorkPlaceManualInput!) {\n    setMyWorkPlaceManual(input: $input) {\n      workPlaceId\n    }\n  }\n"
+): (typeof documents)["\n  mutation SetMyWorkPlaceManual($input: SetMyWorkPlaceManualInput!) {\n    setMyWorkPlaceManual(input: $input) {\n      workPlaceId\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(
+  source: "\n  query AddressSuggestions($query: String!, $count: Int) {\n    addressSuggestions(query: $query, count: $count) {\n      value\n      unrestrictedValue\n      region\n      city\n      street\n      house\n      flat\n      postalCode\n      fiasId\n      kladrId\n      geoLat\n      geoLon\n    }\n  }\n"
+): (typeof documents)["\n  query AddressSuggestions($query: String!, $count: Int) {\n    addressSuggestions(query: $query, count: $count) {\n      value\n      unrestrictedValue\n      region\n      city\n      street\n      house\n      flat\n      postalCode\n      fiasId\n      kladrId\n      geoLat\n      geoLon\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(
+  source: "\n  fragment MeUserProfileFields on UserProfileEntity {\n    lastName\n    firstName\n    middleName\n    dateOfBirth\n    citizenship\n    phone\n    passport {\n      series\n      number\n      issuedBy\n      issuedAt\n      departmentCode\n    }\n    passportRegistrationAddress\n    residentialAddress\n    education {\n      qualification\n      documentIssuedAt\n    }\n    workPlaceId\n    position\n    employments {\n      id\n      organizationId\n      position\n      isPrimary\n      organization {\n        type\n        displayName\n        inn\n        kpp\n        ogrn\n        legalAddress\n      }\n    }\n    snils\n    avatar\n  }\n"
+): (typeof documents)["\n  fragment MeUserProfileFields on UserProfileEntity {\n    lastName\n    firstName\n    middleName\n    dateOfBirth\n    citizenship\n    phone\n    passport {\n      series\n      number\n      issuedBy\n      issuedAt\n      departmentCode\n    }\n    passportRegistrationAddress\n    residentialAddress\n    education {\n      qualification\n      documentIssuedAt\n    }\n    workPlaceId\n    position\n    employments {\n      id\n      organizationId\n      position\n      isPrimary\n      organization {\n        type\n        displayName\n        inn\n        kpp\n        ogrn\n        legalAddress\n      }\n    }\n    snils\n    avatar\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(
+  source: "\n  fragment MeUserFields on UserEntity {\n    id\n    email\n    role\n    isBlocked\n    isEmailVerified\n    firstName\n    lastName\n    phone\n    createdAt\n    updatedAt\n    profile {\n      ...MeUserProfileFields\n    }\n  }\n  \n"
+): (typeof documents)["\n  fragment MeUserFields on UserEntity {\n    id\n    email\n    role\n    isBlocked\n    isEmailVerified\n    firstName\n    lastName\n    phone\n    createdAt\n    updatedAt\n    profile {\n      ...MeUserProfileFields\n    }\n  }\n  \n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(
+  source: "\n  query Me {\n    me {\n      ...MeUserFields\n    }\n  }\n  \n"
+): (typeof documents)["\n  query Me {\n    me {\n      ...MeUserFields\n    }\n  }\n  \n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -256,6 +319,12 @@ export function gql(
 export function gql(
   source: "\n  query GetCategory($id: ID!) {\n    category(id: $id) {\n      id\n      name\n      slug\n      description\n      image\n      type\n      parent\n      createdAt\n      updatedAt\n      programsCount\n    }\n  }\n"
 ): (typeof documents)["\n  query GetCategory($id: ID!) {\n    category(id: $id) {\n      id\n      name\n      slug\n      description\n      image\n      type\n      parent\n      createdAt\n      updatedAt\n      programsCount\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(
+  source: "\n  query OrganizationSuggestions($query: String!, $count: Int) {\n    organizationSuggestions(query: $query, count: $count) {\n      type\n      inn\n      kpp\n      ogrn\n      displayName\n      legalAddress\n    }\n  }\n"
+): (typeof documents)["\n  query OrganizationSuggestions($query: String!, $count: Int) {\n    organizationSuggestions(query: $query, count: $count) {\n      type\n      inn\n      kpp\n      ogrn\n      displayName\n      legalAddress\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -284,14 +353,26 @@ export function gql(
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(
-  source: "\n  query AdminUsers($filter: AdminUserFilterInput) {\n    adminUsers(filter: $filter) {\n      ...UserFields\n    }\n  }\n  \n"
-): (typeof documents)["\n  query AdminUsers($filter: AdminUserFilterInput) {\n    adminUsers(filter: $filter) {\n      ...UserFields\n    }\n  }\n  \n"];
+  source: "\n  fragment AdminUserProfileFieldsQueries on UserProfileEntity {\n    lastName\n    firstName\n    middleName\n    dateOfBirth\n    citizenship\n    phone\n    passport {\n      series\n      number\n      issuedBy\n      issuedAt\n      departmentCode\n    }\n    passportRegistrationAddress\n    residentialAddress\n    education {\n      qualification\n      documentIssuedAt\n    }\n    workPlaceId\n    position\n    snils\n    avatar\n  }\n"
+): (typeof documents)["\n  fragment AdminUserProfileFieldsQueries on UserProfileEntity {\n    lastName\n    firstName\n    middleName\n    dateOfBirth\n    citizenship\n    phone\n    passport {\n      series\n      number\n      issuedBy\n      issuedAt\n      departmentCode\n    }\n    passportRegistrationAddress\n    residentialAddress\n    education {\n      qualification\n      documentIssuedAt\n    }\n    workPlaceId\n    position\n    snils\n    avatar\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(
-  source: "\n  query AdminUser($id: ID!) {\n    adminUser(id: $id) {\n      ...UserFields\n    }\n  }\n  \n"
-): (typeof documents)["\n  query AdminUser($id: ID!) {\n    adminUser(id: $id) {\n      ...UserFields\n    }\n  }\n  \n"];
+  source: "\n  fragment AdminUserFieldsQueries on UserEntity {\n    id\n    email\n    role\n    isBlocked\n    isEmailVerified\n    firstName\n    lastName\n    phone\n    createdAt\n    updatedAt\n    profile {\n      ...AdminUserProfileFieldsQueries\n    }\n  }\n  \n"
+): (typeof documents)["\n  fragment AdminUserFieldsQueries on UserEntity {\n    id\n    email\n    role\n    isBlocked\n    isEmailVerified\n    firstName\n    lastName\n    phone\n    createdAt\n    updatedAt\n    profile {\n      ...AdminUserProfileFieldsQueries\n    }\n  }\n  \n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(
+  source: "\n  query AdminUsers($filter: AdminUserFilterInput) {\n    adminUsers(filter: $filter) {\n      ...AdminUserFieldsQueries\n    }\n  }\n  \n"
+): (typeof documents)["\n  query AdminUsers($filter: AdminUserFilterInput) {\n    adminUsers(filter: $filter) {\n      ...AdminUserFieldsQueries\n    }\n  }\n  \n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(
+  source: "\n  query AdminUser($id: ID!) {\n    adminUser(id: $id) {\n      ...AdminUserFieldsQueries\n    }\n  }\n  \n"
+): (typeof documents)["\n  query AdminUser($id: ID!) {\n    adminUser(id: $id) {\n      ...AdminUserFieldsQueries\n    }\n  }\n  \n"];
 
 export function gql(source: string) {
   return (documents as any)[source] ?? {};

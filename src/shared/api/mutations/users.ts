@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
-const USER_PROFILE_FIELDS = gql`
-  fragment UserProfileFields on UserProfileEntity {
+const ADMIN_USER_PROFILE_FIELDS_MUTATIONS = gql`
+  fragment AdminUserProfileFieldsMutations on UserProfileEntity {
     lastName
     firstName
     middleName
@@ -28,8 +28,8 @@ const USER_PROFILE_FIELDS = gql`
   }
 `;
 
-const USER_FIELDS = gql`
-  fragment UserFields on UserEntity {
+const ADMIN_USER_FIELDS_MUTATIONS = gql`
+  fragment AdminUserFieldsMutations on UserEntity {
     id
     email
     role
@@ -41,28 +41,28 @@ const USER_FIELDS = gql`
     createdAt
     updatedAt
     profile {
-      ...UserProfileFields
+      ...AdminUserProfileFieldsMutations
     }
   }
-  ${USER_PROFILE_FIELDS}
+  ${ADMIN_USER_PROFILE_FIELDS_MUTATIONS}
 `;
 
 export const CREATE_USER = gql`
   mutation AdminCreateUser($input: AdminCreateUserInput!) {
     adminCreateUser(input: $input) {
-      ...UserFields
+      ...AdminUserFieldsMutations
     }
   }
-  ${USER_FIELDS}
+  ${ADMIN_USER_FIELDS_MUTATIONS}
 `;
 
 export const UPDATE_USER = gql`
   mutation AdminUpdateUser($id: ID!, $input: AdminUpdateUserInput!) {
     adminUpdateUser(id: $id, input: $input) {
-      ...UserFields
+      ...AdminUserFieldsMutations
     }
   }
-  ${USER_FIELDS}
+  ${ADMIN_USER_FIELDS_MUTATIONS}
 `;
 
 export const DELETE_USER = gql`
@@ -74,8 +74,8 @@ export const DELETE_USER = gql`
 export const SET_USER_BLOCKED = gql`
   mutation AdminSetUserBlocked($id: ID!, $blocked: Boolean!) {
     adminSetUserBlocked(id: $id, blocked: $blocked) {
-      ...UserFields
+      ...AdminUserFieldsMutations
     }
   }
-  ${USER_FIELDS}
+  ${ADMIN_USER_FIELDS_MUTATIONS}
 `;
