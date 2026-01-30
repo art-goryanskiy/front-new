@@ -22,10 +22,7 @@ const nextConfig: NextConfig = {
   },
   // Оптимизация bundle size
   experimental: {
-    optimizePackageImports: [
-      "lucide-react",
-      "framer-motion",
-    ],
+    optimizePackageImports: ["lucide-react", "framer-motion"],
   },
   // Компрессия
   compress: true,

@@ -10,9 +10,9 @@ export function useCategoryImage({
   initialImage,
   editingCategoryImage,
 }: UseCategoryImageOptions = {}) {
-  const [userSelectedPreview, setUserSelectedPreview] = useState<string | null>(
-    null
-  );
+  const [userSelectedPreview, setUserSelectedPreview] = useState<
+    string | null
+  >(null);
   const [uploadingImage, setUploadingImage] = useState(false);
 
   // Вычисляем preview: приоритет у выбранного пользователем изображения, иначе используем initialImage

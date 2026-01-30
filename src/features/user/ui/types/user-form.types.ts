@@ -45,4 +45,6 @@ export interface EditingUser {
 
 export interface UserFormProps {
   editingUser?: EditingUser | null;
+  onDirtyChange?: (dirty: boolean) => void;
+  onBusyChange?: (busy: boolean) => void;
 }

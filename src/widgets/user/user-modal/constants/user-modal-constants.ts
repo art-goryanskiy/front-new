@@ -11,8 +11,7 @@ export const USER_MODAL_CONFIG = {
   scrollBehavior: "inside" as const,
   classNames: {
     base: "bg-background/95 backdrop-blur-xl border border-border shadow-2xl",
-    header:
-      "border-b border-border pb-4 px-6 pt-6 w-full",
+    header: "border-b border-border pb-4 px-6 pt-6 w-full",
     body: "px-6 py-6 w-full",
     wrapper: "w-full",
   },

@@ -7,10 +7,12 @@ export const SIDEBAR_TEXTS = {
 
 export const SIDEBAR_CLASSES = {
   desktop: {
-    base: "hidden lg:flex flex-col h-dvh sticky top-0 border-r border-border/60 bg-background/55 backdrop-blur-xl supports-[backdrop-filter]:bg-background/45",
+    base: "hidden lg:flex flex-col h-dvh sticky top-0 border-r border-border/60 bg-background/55 backdrop-blur-xl supports-backdrop-filter:bg-background/45",
     collapsed: "w-[88px]",
     expanded: "w-[296px]",
     logoSection: "px-4 py-4",
+    logoButton:
+      "group flex items-center justify-center rounded-xl p-2 transition-colors hover:bg-muted/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40",
     nav: "flex-1 p-2 space-y-1",
     footer:
       "p-3 border-t border-border/60 bg-background/35 backdrop-blur",

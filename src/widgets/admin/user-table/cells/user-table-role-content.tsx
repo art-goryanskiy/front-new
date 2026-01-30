@@ -24,7 +24,10 @@ const ROLE_LABELS: Record<UserRole, string> = {
 export const UserTableRoleContent = memo(
   function UserTableRoleContent({ user }: UserTableRoleContentProps) {
     return (
-      <Badge variant={ROLE_VARIANTS[user.role]} className="font-semibold">
+      <Badge
+        variant={ROLE_VARIANTS[user.role]}
+        className="font-semibold"
+      >
         {ROLE_LABELS[user.role]}
       </Badge>
     );

@@ -4,7 +4,8 @@
 export const DELETE_CONFIRM_MODAL_TEXTS = {
   cancel: "Отмена",
   delete: "Удалить",
-  warning: "Это действие нельзя отменить. Все данные, связанные с этой",
+  warning:
+    "Это действие нельзя отменить. Все данные, связанные с этой",
   willBeDeleted: "будут удалены.",
 } as const;
 

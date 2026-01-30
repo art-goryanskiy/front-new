@@ -20,7 +20,11 @@ export const CategoryTableProgramsCountContent = memo(
     );
 
     return (
-      <Badge variant="default" className="font-bold text-sm sm:text-base" aria-label={ariaLabel}>
+      <Badge
+        variant="default"
+        className="text-sm font-bold sm:text-base"
+        aria-label={ariaLabel}
+      >
         {count}
       </Badge>
     );

@@ -6,7 +6,11 @@ import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, Mail } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { Controller } from "react-hook-form";
+import {
+  Controller,
+  type SubmitHandler,
+  type UseFormReturn,
+} from "react-hook-form";
 import {
   EMAIL_REGEX,
   LOGIN_FORM_TEXTS,
@@ -15,6 +19,12 @@ import { REGISTER_FORM_TEXTS } from "../../features/auth/ui/constants/register-f
 import { useLoginForm } from "../../features/auth/ui/hooks/use-login-form";
 import { useRegisterForm } from "../../features/auth/ui/hooks/use-register-form";
 import { HandWrittenTitle } from "./hand-writing-text";
+
+type AuthFormDataCommon = {
+  email: string;
+  password: string;
+  confirmPassword?: string;
+};
 
 interface PupilProps {
   size?: number;
@@ -31,14 +41,36 @@ const Pupil = ({
   forceLookX,
   forceLookY,
 }: PupilProps) => {
-  const [mouseX, setMouseX] = useState<number>(0);
-  const [mouseY, setMouseY] = useState<number>(0);
   const pupilRef = useRef<HTMLDivElement>(null);
+  const [pupilPosition, setPupilPosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      setMouseX(e.clientX);
-      setMouseY(e.clientY);
+      // If forced look direction is provided, use that instead of mouse tracking
+      if (forceLookX !== undefined && forceLookY !== undefined) {
+        setPupilPosition({ x: forceLookX, y: forceLookY });
+        return;
+      }
+
+      const el = pupilRef.current;
+      if (!el) return;
+
+      const rect = el.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
+      const deltaX = e.clientX - centerX;
+      const deltaY = e.clientY - centerY;
+      const distance = Math.min(
+        Math.sqrt(deltaX ** 2 + deltaY ** 2),
+        maxDistance
+      );
+
+      const angle = Math.atan2(deltaY, deltaX);
+      const x = Math.cos(angle) * distance;
+      const y = Math.sin(angle) * distance;
+
+      setPupilPosition({ x, y });
     };
 
     window.addEventListener("mousemove", handleMouseMove);
@@ -46,35 +78,12 @@ const Pupil = ({
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
     };
-  }, []);
+  }, [forceLookX, forceLookY, maxDistance]);
 
-  const calculatePupilPosition = () => {
-    if (!pupilRef.current) return { x: 0, y: 0 };
-
-    // If forced look direction is provided, use that instead of mouse tracking
-    if (forceLookX !== undefined && forceLookY !== undefined) {
-      return { x: forceLookX, y: forceLookY };
-    }
-
-    const pupil = pupilRef.current.getBoundingClientRect();
-    const pupilCenterX = pupil.left + pupil.width / 2;
-    const pupilCenterY = pupil.top + pupil.height / 2;
-
-    const deltaX = mouseX - pupilCenterX;
-    const deltaY = mouseY - pupilCenterY;
-    const distance = Math.min(
-      Math.sqrt(deltaX ** 2 + deltaY ** 2),
-      maxDistance
-    );
-
-    const angle = Math.atan2(deltaY, deltaX);
-    const x = Math.cos(angle) * distance;
-    const y = Math.sin(angle) * distance;
-
-    return { x, y };
-  };
-
-  const pupilPosition = calculatePupilPosition();
+  const effectivePupilPosition =
+    forceLookX !== undefined && forceLookY !== undefined
+      ? { x: forceLookX, y: forceLookY }
+      : pupilPosition;
 
   return (
     <div
@@ -84,7 +93,7 @@ const Pupil = ({
         width: `${size}px`,
         height: `${size}px`,
         backgroundColor: pupilColor,
-        transform: `translate(${pupilPosition.x}px, ${pupilPosition.y}px)`,
+        transform: `translate(${effectivePupilPosition.x}px, ${effectivePupilPosition.y}px)`,
         transition: "transform 0.1s ease-out",
       }}
     />
@@ -112,14 +121,36 @@ const EyeBall = ({
   forceLookX,
   forceLookY,
 }: EyeBallProps) => {
-  const [mouseX, setMouseX] = useState<number>(0);
-  const [mouseY, setMouseY] = useState<number>(0);
   const eyeRef = useRef<HTMLDivElement>(null);
+  const [pupilPosition, setPupilPosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      setMouseX(e.clientX);
-      setMouseY(e.clientY);
+      // If forced look direction is provided, use that instead of mouse tracking
+      if (forceLookX !== undefined && forceLookY !== undefined) {
+        setPupilPosition({ x: forceLookX, y: forceLookY });
+        return;
+      }
+
+      const el = eyeRef.current;
+      if (!el) return;
+
+      const rect = el.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
+      const deltaX = e.clientX - centerX;
+      const deltaY = e.clientY - centerY;
+      const distance = Math.min(
+        Math.sqrt(deltaX ** 2 + deltaY ** 2),
+        maxDistance
+      );
+
+      const angle = Math.atan2(deltaY, deltaX);
+      const x = Math.cos(angle) * distance;
+      const y = Math.sin(angle) * distance;
+
+      setPupilPosition({ x, y });
     };
 
     window.addEventListener("mousemove", handleMouseMove);
@@ -127,35 +158,12 @@ const EyeBall = ({
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
     };
-  }, []);
+  }, [forceLookX, forceLookY, maxDistance]);
 
-  const calculatePupilPosition = () => {
-    if (!eyeRef.current) return { x: 0, y: 0 };
-
-    // If forced look direction is provided, use that instead of mouse tracking
-    if (forceLookX !== undefined && forceLookY !== undefined) {
-      return { x: forceLookX, y: forceLookY };
-    }
-
-    const eye = eyeRef.current.getBoundingClientRect();
-    const eyeCenterX = eye.left + eye.width / 2;
-    const eyeCenterY = eye.top + eye.height / 2;
-
-    const deltaX = mouseX - eyeCenterX;
-    const deltaY = mouseY - eyeCenterY;
-    const distance = Math.min(
-      Math.sqrt(deltaX ** 2 + deltaY ** 2),
-      maxDistance
-    );
-
-    const angle = Math.atan2(deltaY, deltaX);
-    const x = Math.cos(angle) * distance;
-    const y = Math.sin(angle) * distance;
-
-    return { x, y };
-  };
-
-  const pupilPosition = calculatePupilPosition();
+  const effectivePupilPosition =
+    forceLookX !== undefined && forceLookY !== undefined
+      ? { x: forceLookX, y: forceLookY }
+      : pupilPosition;
 
   return (
     <div
@@ -175,7 +183,7 @@ const EyeBall = ({
             width: `${pupilSize}px`,
             height: `${pupilSize}px`,
             backgroundColor: pupilColor,
-            transform: `translate(${pupilPosition.x}px, ${pupilPosition.y}px)`,
+            transform: `translate(${effectivePupilPosition.x}px, ${effectivePupilPosition.y}px)`,
             transition: "transform 0.1s ease-out",
           }}
         />
@@ -200,6 +208,16 @@ export function LoginFormPage() {
     ? registerForm.loading
     : loginForm.loading;
   const error = isRegister ? registerForm.error : loginForm.error;
+
+  // We render login/register in one component, so we use a shared
+  // form shape (email/password + optional confirmPassword) to avoid
+  // union-type issues from react-hook-form generics.
+  const commonForm =
+    form as unknown as UseFormReturn<AuthFormDataCommon>;
+  const commonOnSubmit =
+    onSubmit as unknown as SubmitHandler<AuthFormDataCommon>;
+
+  const handleSubmit = commonForm.handleSubmit(commonOnSubmit);
 
   const texts = isRegister ? REGISTER_FORM_TEXTS : LOGIN_FORM_TEXTS;
 
@@ -234,8 +252,19 @@ export function LoginFormPage() {
   const blackRef = useRef<HTMLDivElement>(null);
   const yellowRef = useRef<HTMLDivElement>(null);
   const orangeRef = useRef<HTMLDivElement>(null);
+  const [characterRects, setCharacterRects] = useState<{
+    purple: DOMRect | null;
+    black: DOMRect | null;
+    yellow: DOMRect | null;
+    orange: DOMRect | null;
+  }>({
+    purple: null,
+    black: null,
+    yellow: null,
+    orange: null,
+  });
 
-  const password = form.watch("password") || "";
+  const password = commonForm.watch("password") || "";
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -291,13 +320,21 @@ export function LoginFormPage() {
   // Looking at each other animation when typing starts
   useEffect(() => {
     if (isTyping) {
-      setIsLookingAtEachOther(true);
+      const start = setTimeout(() => {
+        setIsLookingAtEachOther(true);
+      }, 0);
       const timer = setTimeout(() => {
         setIsLookingAtEachOther(false);
       }, 800); // Look at each other for 1.5 seconds, then back to tracking mouse
-      return () => clearTimeout(timer);
+      return () => {
+        clearTimeout(start);
+        clearTimeout(timer);
+      };
     } else {
-      setIsLookingAtEachOther(false);
+      const stop = setTimeout(() => {
+        setIsLookingAtEachOther(false);
+      }, 0);
+      return () => clearTimeout(stop);
     }
   }, [isTyping]);
 
@@ -320,16 +357,32 @@ export function LoginFormPage() {
       const firstPeek = schedulePeek();
       return () => clearTimeout(firstPeek);
     } else {
-      setIsPurplePeeking(false);
+      const stop = setTimeout(() => {
+        setIsPurplePeeking(false);
+      }, 0);
+      return () => clearTimeout(stop);
     }
   }, [password, showPassword, isPurplePeeking]);
 
-  const calculatePosition = (
-    ref: React.RefObject<HTMLDivElement | null>
-  ) => {
-    if (!ref.current) return { faceX: 0, faceY: 0, bodyRotation: 0 };
+  useEffect(() => {
+    const measure = () => {
+      setCharacterRects({
+        purple: purpleRef.current?.getBoundingClientRect() ?? null,
+        black: blackRef.current?.getBoundingClientRect() ?? null,
+        yellow: yellowRef.current?.getBoundingClientRect() ?? null,
+        orange: orangeRef.current?.getBoundingClientRect() ?? null,
+      });
+    };
 
-    const rect = ref.current.getBoundingClientRect();
+    measure();
+
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [isTyping, showPassword, password.length]);
+
+  const calculatePosition = (rect: DOMRect | null) => {
+    if (!rect) return { faceX: 0, faceY: 0, bodyRotation: 0 };
+
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 3; // Focus on head area
 
@@ -346,12 +399,10 @@ export function LoginFormPage() {
     return { faceX, faceY, bodySkew };
   };
 
-  const purplePos = calculatePosition(purpleRef);
-  const blackPos = calculatePosition(blackRef);
-  const yellowPos = calculatePosition(yellowRef);
-  const orangePos = calculatePosition(orangeRef);
-
-  const handleSubmit = form.handleSubmit(onSubmit);
+  const purplePos = calculatePosition(characterRects.purple);
+  const blackPos = calculatePosition(characterRects.black);
+  const yellowPos = calculatePosition(characterRects.yellow);
+  const orangePos = calculatePosition(characterRects.orange);
 
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
@@ -757,7 +808,7 @@ export function LoginFormPage() {
             <div className="space-y-2">
               <Controller
                 name="email"
-                control={form.control}
+                control={commonForm.control}
                 rules={emailRules}
                 render={({ field, fieldState }) => (
                   <>
@@ -794,7 +845,7 @@ export function LoginFormPage() {
             <div className="space-y-2">
               <Controller
                 name="password"
-                control={form.control}
+                control={commonForm.control}
                 rules={passwordRules}
                 render={({ field, fieldState }) => (
                   <>
@@ -854,12 +905,12 @@ export function LoginFormPage() {
               <div className="space-y-2">
                 <Controller
                   name="confirmPassword"
-                  control={form.control}
+                  control={commonForm.control}
                   rules={{
                     required:
                       REGISTER_FORM_TEXTS.confirmPassword.required,
                     validate: (value) =>
-                      value === form.getValues("password") ||
+                      value === commonForm.getValues("password") ||
                       REGISTER_FORM_TEXTS.confirmPassword.mismatch,
                   }}
                   render={({ field, fieldState }) => (

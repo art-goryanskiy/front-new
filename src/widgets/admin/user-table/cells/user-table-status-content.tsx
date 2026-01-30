@@ -14,10 +14,16 @@ export const UserTableStatusContent = memo(
   }: UserTableStatusContentProps) {
     const statusConfig = useMemo(() => {
       if (user.isBlocked) {
-        return { variant: "destructive" as const, label: "Заблокирован" };
+        return {
+          variant: "destructive" as const,
+          label: "Заблокирован",
+        };
       }
       if (!user.isEmailVerified) {
-        return { variant: "warning" as const, label: "Не подтвержден" };
+        return {
+          variant: "warning" as const,
+          label: "Не подтвержден",
+        };
       }
       return { variant: "success" as const, label: "Активен" };
     }, [user.isBlocked, user.isEmailVerified]);

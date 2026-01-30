@@ -85,7 +85,10 @@ export const UserFormBasicTab = memo(function UserFormBasicTab({
               value={field.value ?? ""}
               onValueChange={(v) => field.onChange(v as UserRole)}
             >
-              <SelectTrigger id="role" aria-invalid={fieldState.invalid}>
+              <SelectTrigger
+                id="role"
+                aria-invalid={fieldState.invalid}
+              >
                 <SelectValue placeholder={FORM_PLACEHOLDERS.role} />
               </SelectTrigger>
               <SelectContent>

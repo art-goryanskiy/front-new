@@ -9,7 +9,9 @@ export function useVerifyEmail() {
 
   const verifyEmail = async (input: VerifyEmailInput) => {
     try {
-      const result = await verifyEmailMutation({ variables: { input } });
+      const result = await verifyEmailMutation({
+        variables: { input },
+      });
       return result.data?.verifyEmail ?? false;
     } catch (error) {
       throw error;

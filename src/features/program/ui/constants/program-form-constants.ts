@@ -46,28 +46,27 @@ export const FORM_MESSAGES = {
 export const FORM_CLASSES = {
   form: "space-y-6 w-full",
   errorContainer:
-    "p-4 bg-danger-50/80 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-xl backdrop-blur-sm w-full",
-  errorText: "text-danger-800 dark:text-danger-200 text-sm font-medium",
+    "w-full rounded-2xl border border-destructive/30 bg-destructive/10 p-4 backdrop-blur",
+  errorText: "text-sm font-medium text-destructive",
   section:
-    "space-y-4 p-5 bg-muted/50 rounded-xl border border-border w-full",
+    "w-full space-y-4 rounded-2xl border border-border/60 bg-background/50 p-5 shadow-sm backdrop-blur-xl",
   sectionTitle:
-    "text-sm font-semibold text-foreground uppercase tracking-wide mb-3",
+    "mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground",
   pricingContainer: "space-y-4 w-full",
   pricingLabel:
-    "text-sm font-semibold text-foreground uppercase tracking-wide",
+    "text-xs font-semibold uppercase tracking-wide text-muted-foreground",
   pricingRow:
-    "flex gap-3 items-end p-4 bg-card rounded-lg border border-border w-full",
+    "flex w-full items-end gap-3 rounded-xl border border-border/60 bg-background/50 p-4",
   pricingInput: "flex-1 w-full",
   subProgramsContainer: "space-y-4 w-full",
   subProgramsLabel:
-    "text-sm font-semibold text-foreground uppercase tracking-wide",
-  subProgramsDescription:
-    "text-xs text-muted-foreground mb-2",
+    "text-xs font-semibold uppercase tracking-wide text-muted-foreground",
+  subProgramsDescription: "text-xs text-muted-foreground mb-2",
   subProgramCard:
-    "space-y-4 p-5 border border-border rounded-xl bg-card shadow-sm hover:shadow-md transition-shadow w-full",
+    "w-full space-y-4 rounded-2xl border border-border/60 bg-background/50 p-5 shadow-sm backdrop-blur transition-shadow hover:shadow-md",
   rankFields: "grid grid-cols-2 gap-4 w-full",
   actions:
-    "flex gap-3 justify-end pt-6 border-t border-border w-full",
+    "-mx-6 sticky bottom-0 z-10 mt-6 flex w-full flex-wrap items-center justify-end gap-3 border-t border-border/60 bg-background/80 px-6 pt-4 pb-3 backdrop-blur-xl sm:flex-nowrap",
 } as const;
 
 export const DEFAULT_VALUES = {

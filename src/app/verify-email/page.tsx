@@ -16,7 +16,7 @@ function VerifyEmailContent() {
   const router = useRouter();
   const email = searchParams.get("email");
   const { verifyEmail, loading: verifying, error } = useVerifyEmail();
-  const { user, loading: meLoading } = useMe();
+  const { loading: meLoading } = useMe();
   const [mounted, setMounted] = useState(false);
   const [token, setToken] = useState<string | null>(null);
   const [isVerified, setIsVerified] = useState(false);
@@ -68,6 +68,7 @@ function VerifyEmailContent() {
     isVerified,
     verificationError,
     verifyEmail,
+    apollo,
   ]);
 
   // После успешной верификации и получения пользователя - редирект

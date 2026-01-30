@@ -15,7 +15,7 @@ export const LoadingState = memo(function LoadingState({
 }: LoadingStateProps) {
   return (
     <Card
-      className={`shadow-lg border ${className}`}
+      className={`border shadow-lg ${className}`}
       role="status"
       aria-live="polite"
       aria-busy="true"
@@ -24,7 +24,7 @@ export const LoadingState = memo(function LoadingState({
         <div className="flex flex-col items-center gap-3">
           <Spinner size={32} aria-label={message || "Загрузка"} />
           {message && (
-            <p className="text-muted-foreground text-sm">{message}</p>
+            <p className="text-sm text-muted-foreground">{message}</p>
           )}
         </div>
       </CardContent>

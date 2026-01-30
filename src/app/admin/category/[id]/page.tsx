@@ -2,11 +2,19 @@
 
 import type { CategoryEntity } from "@/shared/api/generated/graphql";
 import { GET_CATEGORY } from "@/shared/api/queries/categories";
+import { useAdminNavState } from "@/shared/store/admin-nav-store";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
 import { LoadingState } from "@/shared/ui/loading-state/loading-state";
 import { PageHeaderWithBack } from "@/shared/ui/page-header-with-back/page-header-with-back";
 import { useQuery } from "@apollo/client/react";
-import { Suspense, lazy, memo, use, useCallback } from "react";
+import {
+  Suspense,
+  lazy,
+  memo,
+  use,
+  useCallback,
+  useEffect,
+} from "react";
 
 import { useProgramModalState } from "@/shared/store/modal-store";
 import { CategoryProgramsView } from "@/widgets/admin/programs-by-category/category-programs-view";
@@ -44,6 +52,13 @@ const CategoryProgramsPage = memo(function CategoryProgramsPage({
 
   const category = data?.category;
   const categoryType = category?.type ?? null;
+
+  const { setActiveCategoryType } = useAdminNavState();
+
+  // Keep sidebar highlight consistent for `/admin/category/[id]`
+  useEffect(() => {
+    setActiveCategoryType(categoryType);
+  }, [categoryType, setActiveCategoryType]);
 
   // ✅ Hook вызывается всегда, не условно
   const handleCreateProgram = useCallback(() => {

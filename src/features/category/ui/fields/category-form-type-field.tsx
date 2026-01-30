@@ -40,13 +40,22 @@ export const CategoryFormTypeField = memo(
         rules={rules}
         render={({ field, fieldState }) => (
           <div className="space-y-2">
-            <Label htmlFor="type">{FORM_LABELS.type} *</Label>
+            <Label
+              htmlFor="type"
+              className="text-xs font-medium text-muted-foreground"
+            >
+              {FORM_LABELS.type} *
+            </Label>
             <Select
               value={field.value ?? ""}
               onValueChange={field.onChange}
               disabled={isEditMode}
             >
-              <SelectTrigger id="type" aria-invalid={fieldState.invalid}>
+              <SelectTrigger
+                id="type"
+                aria-invalid={fieldState.invalid}
+                className="h-10 bg-background/60"
+              >
                 <SelectValue placeholder={FORM_PLACEHOLDERS.type} />
               </SelectTrigger>
               <SelectContent>

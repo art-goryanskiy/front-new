@@ -1,6 +1,11 @@
 "use client";
 
-import { Home, GraduationCap, BookOpen, Briefcase } from "lucide-react";
+import {
+  Home,
+  GraduationCap,
+  BookOpen,
+  Briefcase,
+} from "lucide-react";
 import type { GlowMenuItem } from "@/components/ui/glow-menu";
 import { CATEGORY_TYPE_LABELS } from "@/shared/constants/categories";
 

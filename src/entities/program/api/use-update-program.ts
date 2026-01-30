@@ -23,7 +23,10 @@ export function useUpdateProgram() {
     },
   });
 
-  const handleUpdate = async (id: string, input: UpdateProgramInput) => {
+  const handleUpdate = async (
+    id: string,
+    input: UpdateProgramInput
+  ) => {
     try {
       const result = await updateProgram({
         variables: { id, input },

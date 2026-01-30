@@ -42,7 +42,12 @@ export const TextareaField = memo(function TextareaField<
       control={control}
       render={({ field, fieldState }) => (
         <div className={cn("space-y-2", className)}>
-          <Label htmlFor={name}>{label}</Label>
+          <Label
+            htmlFor={name}
+            className="text-xs font-medium text-muted-foreground"
+          >
+            {label}
+          </Label>
           <Textarea
             {...field}
             id={name}
@@ -51,9 +56,12 @@ export const TextareaField = memo(function TextareaField<
             disabled={isDisabled}
             aria-invalid={fieldState.invalid}
             aria-label={label}
+            className="bg-background/60"
           />
           {description && !fieldState.error && (
-            <p className="text-sm text-muted-foreground">{description}</p>
+            <p className="text-sm text-muted-foreground">
+              {description}
+            </p>
           )}
           {fieldState.error?.message && (
             <p className="text-sm text-destructive">

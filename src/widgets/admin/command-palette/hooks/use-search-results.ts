@@ -14,8 +14,10 @@ import { useRouter } from "next/navigation";
  */
 export function useSearchResults(query: string, entities?: string[]) {
   const router = useRouter();
-  const shouldSearchCategories = !entities || entities.includes("categories");
-  const shouldSearchPrograms = !entities || entities.includes("programs");
+  const shouldSearchCategories =
+    !entities || entities.includes("categories");
+  const shouldSearchPrograms =
+    !entities || entities.includes("programs");
 
   // Debounce поискового запроса для оптимизации запросов
   const debouncedQuery = useDebounce(query, 300);
@@ -87,11 +89,15 @@ export function useSearchResults(query: string, entities?: string[]) {
         if (programCategory) {
           if (programCategory.parent) {
             // Если у категории программы есть parent, находим родительскую категорию по ID
-            parentCategoryName = categoriesMap.get(programCategory.parent);
+            parentCategoryName = categoriesMap.get(
+              programCategory.parent
+            );
           } else if (programCategory.type) {
             // Если нет parent, но есть type, используем название типа
             parentCategoryName =
-              CATEGORY_TYPE_LABELS[programCategory.type as CategoryType];
+              CATEGORY_TYPE_LABELS[
+                programCategory.type as CategoryType
+              ];
           }
         }
 

@@ -4,7 +4,11 @@ import { memo, useCallback, useMemo } from "react";
 import { Controller, Control } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar";
 import {
   FORM_MESSAGES,
   FORM_CLASSES,
@@ -53,7 +57,10 @@ export const CategoryFormImageField = memo(
           <div className={FORM_CLASSES.imageContainer}>
             <div className={FORM_CLASSES.imagePreview}>
               {imagePreview && (
-                <Avatar className="h-20 w-20 shrink-0" aria-label="Предпросмотр изображения">
+                <Avatar
+                  className="h-20 w-20 shrink-0"
+                  aria-label="Предпросмотр изображения"
+                >
                   <AvatarImage src={imagePreview} alt="Preview" />
                   <AvatarFallback>IMG</AvatarFallback>
                 </Avatar>
@@ -68,11 +75,14 @@ export const CategoryFormImageField = memo(
                   onChange={(e) => handleFileChange(onChange, e)}
                   aria-label={FORM_MESSAGES.selectImage}
                 />
-                <Label htmlFor="category-image-file" className="block w-full cursor-pointer">
+                <Label
+                  htmlFor="category-image-file"
+                  className="block w-full cursor-pointer"
+                >
                   <Button
                     type="button"
                     variant="outline"
-                    className="w-full pointer-events-none"
+                    className="pointer-events-none w-full"
                     disabled={uploadingImage}
                   >
                     {buttonText}

@@ -23,8 +23,10 @@ export const ProgramFormStudentCategoryField = memo(
         name="studentCategory"
         control={control}
         render={({ field }) => (
-          <div className="space-y-2 w-full">
-            <Label htmlFor="studentCategory">{FORM_LABELS.studentCategory}</Label>
+          <div className="w-full space-y-2">
+            <Label htmlFor="studentCategory">
+              {FORM_LABELS.studentCategory}
+            </Label>
             <Input
               {...field}
               id="studentCategory"

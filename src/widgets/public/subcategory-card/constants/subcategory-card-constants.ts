@@ -3,14 +3,13 @@ export const SUBCATEGORY_CARD_CLASSES = {
   imageWrapper: "relative w-full h-48 shrink-0",
   image: "object-contain",
   imageOverlay:
-    "absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/20",
+    "absolute inset-0 bg-linear-to-b from-transparent via-transparent to-black/20",
   imageOverlayTheme:
     "dark:from-transparent dark:via-transparent dark:to-black/40",
   fallbackGradient:
-    "w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-100 to-purple-100 dark:from-primary-900 dark:to-purple-900",
+    "w-full h-full flex items-center justify-center bg-linear-to-br from-primary-100 to-purple-100 dark:from-primary-900 dark:to-purple-900",
   content: "p-6 flex-1 flex flex-col min-h-0",
-  title:
-    "text-xl font-bold text-foreground mb-2 min-h-[3rem]",
+  title: "text-xl font-bold text-foreground mb-2 min-h-[3rem]",
   description:
     "text-sm text-foreground line-clamp-3 flex-1 min-h-[3.75rem] mb-4",
   footer: "flex flex-col gap-2 shrink-0 min-h-[3.5rem]",

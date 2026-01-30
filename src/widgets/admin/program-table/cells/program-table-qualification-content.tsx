@@ -10,12 +10,17 @@ export const ProgramTableQualificationContent = memo(
   }: ProgramTableCellContentProps) {
     const qualification = program.awardedQualification || "-";
     const ariaLabel = useMemo(
-      () => `Квалификация: ${program.awardedQualification || "не указана"}`,
+      () =>
+        `Квалификация: ${program.awardedQualification || "не указана"}`,
       [program.awardedQualification]
     );
 
     return (
-      <Badge variant="success" className="font-semibold" aria-label={ariaLabel}>
+      <Badge
+        variant="success"
+        className="font-semibold"
+        aria-label={ariaLabel}
+      >
         {qualification}
       </Badge>
     );

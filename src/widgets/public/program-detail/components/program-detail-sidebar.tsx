@@ -26,10 +26,7 @@ export const ProgramDetailSidebar = memo(
           <CardContent className="space-y-6 p-6">
             <ProgramDetailPricing pricingList={pricingList} />
             <ProgramDetailAdditionalInfo program={program} />
-            <Button
-              size="lg"
-              className={PROGRAM_DETAIL_CLASSES.cta}
-            >
+            <Button size="lg" className={PROGRAM_DETAIL_CLASSES.cta}>
               <BookOpen className="mr-2 h-5 w-5" />
               Записаться на программу
             </Button>

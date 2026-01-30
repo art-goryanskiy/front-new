@@ -11,10 +11,12 @@ import Link from "next/link";
 import { Suspense, lazy, memo, useCallback, useMemo } from "react";
 
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useCategories } from "@/entities/category/api/use-categories";
 import { CategoryType } from "@/shared/api/generated/graphql";
 import { useCategoryModalState } from "@/shared/store/modal-store";
 import { DashboardSection } from "@/shared/ui/dashboard-section/dashboard-section";
+import { ErrorState } from "@/shared/ui/error-state/error-state";
 import { Surface } from "@/shared/ui/surface/surface";
 
 const CategoryModal = lazy(() =>
@@ -34,7 +36,7 @@ type Tile = {
 };
 
 export const AdminPageClient = memo(function AdminPageClient() {
-  const { categories, loading, error } = useCategories();
+  const { categories, loading, error, refetch } = useCategories();
   const { openCreateCategoryModal } = useCategoryModalState();
 
   const tiles: Tile[] = useMemo(
@@ -116,64 +118,106 @@ export const AdminPageClient = memo(function AdminPageClient() {
       description="Быстрый доступ к типам категорий и созданию"
       actions={headerActions}
     >
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {tiles.map((t) => {
-          const stats = countsByType[t.type];
-
-          return (
-            <Surface
-              key={t.href}
-              variant="floating"
-              className="p-4 sm:p-5"
+      {error ? (
+        <div className="space-y-3">
+          <ErrorState message={error.message} />
+          <div className="flex justify-end">
+            <Button
+              type="button"
+              variant="outline"
+              className="font-semibold"
+              onClick={() => refetch()}
             >
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0 space-y-2">
-                  <div className="flex items-center gap-2">
-                    {t.icon}
-                    <div className="min-w-0">
-                      <div className="truncate font-semibold text-foreground">
-                        {t.title}
-                      </div>
+              Повторить
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {tiles.map((t) => {
+            const stats = countsByType[t.type];
+
+            return (
+              <Surface
+                key={t.href}
+                variant="floating"
+                className="p-4 sm:p-5"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0 space-y-2">
+                    <div className="flex items-center gap-2">
+                      {loading ? (
+                        <>
+                          <Skeleton className="h-5 w-5 rounded-md" />
+                          <Skeleton className="h-5 w-44" />
+                        </>
+                      ) : (
+                        <>
+                          {t.icon}
+                          <div className="min-w-0">
+                            <div className="truncate font-semibold text-foreground">
+                              {t.title}
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </div>
+
+                    <div className="text-sm text-muted-foreground">
+                      {loading ? (
+                        <Skeleton className="h-4 w-full max-w-[18rem]" />
+                      ) : (
+                        t.description
+                      )}
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-2 pt-1">
+                      <span className="inline-flex items-center rounded-full border border-border/60 bg-muted/20 px-2 py-1 text-[11px] text-muted-foreground">
+                        {loading
+                          ? "…"
+                          : `${stats?.categories ?? 0} катег.`}
+                      </span>
+                      <span className="inline-flex items-center rounded-full border border-border/60 bg-muted/20 px-2 py-1 text-[11px] text-muted-foreground">
+                        {loading
+                          ? "…"
+                          : `${stats?.programsSum ?? 0} программ`}
+                      </span>
                     </div>
                   </div>
 
-                  <div className="text-sm text-muted-foreground">
-                    {t.description}
-                  </div>
-
-                  <div className="flex flex-wrap items-center gap-2 pt-1">
-                    <span className="inline-flex items-center rounded-full border border-border/60 bg-muted/20 px-2 py-1 text-[11px] text-muted-foreground">
-                      {loading
-                        ? "…"
-                        : `${stats?.categories ?? 0} катег.`}
-                    </span>
-                    <span className="inline-flex items-center rounded-full border border-border/60 bg-muted/20 px-2 py-1 text-[11px] text-muted-foreground">
-                      {loading
-                        ? "…"
-                        : `${stats?.programsSum ?? 0} программ`}
-                    </span>
+                  <div className="flex shrink-0 flex-col gap-2">
+                    {loading ? (
+                      <>
+                        <Skeleton className="h-9 w-24 rounded-md" />
+                        <Skeleton className="h-9 w-28 rounded-md" />
+                      </>
+                    ) : (
+                      <>
+                        <Button
+                          asChild
+                          size="sm"
+                          className="font-semibold"
+                        >
+                          <Link href={t.href}>Открыть</Link>
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleCreate(t.type)}
+                          className="font-semibold"
+                        >
+                          <Plus className="mr-2 h-4 w-4" />
+                          Создать
+                        </Button>
+                      </>
+                    )}
                   </div>
                 </div>
-
-                <div className="flex shrink-0 flex-col gap-2">
-                  <Button asChild size="sm" className="font-semibold">
-                    <Link href={t.href}>Открыть</Link>
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleCreate(t.type)}
-                    className="font-semibold"
-                  >
-                    <Plus className="mr-2 h-4 w-4" />
-                    Создать
-                  </Button>
-                </div>
-              </div>
-            </Surface>
-          );
-        })}
-      </div>
+              </Surface>
+            );
+          })}
+        </div>
+      )}
 
       <Suspense fallback={null}>
         <CategoryModal />

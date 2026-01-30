@@ -17,20 +17,24 @@ export const EmptyState = memo(function EmptyState({
   className = "",
 }: EmptyStateProps) {
   return (
-    <Card className={`shadow-lg border ${className}`} role="status">
-      <CardContent className="text-center py-16">
+    <Card className={`border shadow-lg ${className}`} role="status">
+      <CardContent className="py-16 text-center">
         {icon && (
           <div
-            className="w-20 h-20 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center"
+            className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-muted"
             role="img"
             aria-hidden="true"
           >
             {icon}
           </div>
         )}
-        <h3 className="text-foreground text-lg font-semibold mb-2">{title}</h3>
+        <h3 className="mb-2 text-lg font-semibold text-foreground">
+          {title}
+        </h3>
         {description && (
-          <p className="text-muted-foreground text-sm">{description}</p>
+          <p className="text-sm text-muted-foreground">
+            {description}
+          </p>
         )}
       </CardContent>
     </Card>

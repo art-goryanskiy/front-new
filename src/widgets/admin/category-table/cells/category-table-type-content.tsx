@@ -22,24 +22,30 @@ const COLOR_TO_VARIANT: Record<
   default: "secondary",
 };
 
-export const CategoryTableTypeContent = memo(function CategoryTableTypeContent({
-  category,
-}: CategoryTableTypeContentProps) {
-  const typeName = useMemo(
-    () => getCategoryTypeName(category.type),
-    [category.type]
-  );
+export const CategoryTableTypeContent = memo(
+  function CategoryTableTypeContent({
+    category,
+  }: CategoryTableTypeContentProps) {
+    const typeName = useMemo(
+      () => getCategoryTypeName(category.type),
+      [category.type]
+    );
 
-  const variant = useMemo(
-    () => COLOR_TO_VARIANT[getCategoryTypeColor(category.type)],
-    [category.type]
-  );
+    const variant = useMemo(
+      () => COLOR_TO_VARIANT[getCategoryTypeColor(category.type)],
+      [category.type]
+    );
 
-  const ariaLabel = useMemo(() => `Тип: ${typeName}`, [typeName]);
+    const ariaLabel = useMemo(() => `Тип: ${typeName}`, [typeName]);
 
-  return (
-    <Badge variant={variant} className="font-semibold" aria-label={ariaLabel}>
-      {typeName}
-    </Badge>
-  );
-});
+    return (
+      <Badge
+        variant={variant}
+        className="font-semibold"
+        aria-label={ariaLabel}
+      >
+        {typeName}
+      </Badge>
+    );
+  }
+);

@@ -1,10 +1,8 @@
 import type { IconName } from "@/shared/ui/icons/icon";
+import type { UserEntity } from "@/shared/api/generated/graphql";
 
 export interface UserMenuProps {
-  user: {
-    email?: string | null;
-    name?: string | null;
-  } | null;
+  user: UserEntity | null;
   onLogout: () => void;
   role?: string;
   menuItems?: ReadonlyArray<{

@@ -50,8 +50,10 @@ export const ProgramFormPricingFields = memo(
               name={`pricing.${index}.hours`}
               control={control}
               render={({ field }) => (
-                <div className="space-y-2 flex-1">
-                  <Label htmlFor={`pricing-${index}-hours`}>{FORM_LABELS.hours}</Label>
+                <div className="flex-1 space-y-2">
+                  <Label htmlFor={`pricing-${index}-hours`}>
+                    {FORM_LABELS.hours}
+                  </Label>
                   <Input
                     {...field}
                     id={`pricing-${index}-hours`}
@@ -72,8 +74,10 @@ export const ProgramFormPricingFields = memo(
               name={`pricing.${index}.price`}
               control={control}
               render={({ field }) => (
-                <div className="space-y-2 flex-1">
-                  <Label htmlFor={`pricing-${index}-price`}>{FORM_LABELS.price}</Label>
+                <div className="flex-1 space-y-2">
+                  <Label htmlFor={`pricing-${index}-price`}>
+                    {FORM_LABELS.price}
+                  </Label>
                   <Input
                     type="number"
                     step="0.01"
@@ -84,7 +88,8 @@ export const ProgramFormPricingFields = memo(
                     }
                     onChange={(e) => {
                       const value = e.target.value;
-                      const numValue = value === "" ? 0 : Number(value);
+                      const numValue =
+                        value === "" ? 0 : Number(value);
                       field.onChange(isNaN(numValue) ? 0 : numValue);
                     }}
                     onBlur={field.onBlur}

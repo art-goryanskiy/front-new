@@ -1,14 +1,6 @@
 import type { Metadata } from "next";
 import { Providers } from "@/shared/lib/providers";
-import { Marck_Script } from "next/font/google";
 import "./globals.css";
-
-const marckScript = Marck_Script({
-  subsets: ["latin", "cyrillic"],
-  weight: ["400"],
-  variable: "--font-handwriting",
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: {
@@ -37,7 +29,8 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "ru_RU",
-    url: process.env.NEXT_PUBLIC_SITE_URL || "https://www.standart82.ru",
+    url:
+      process.env.NEXT_PUBLIC_SITE_URL || "https://www.standart82.ru",
     siteName: "ООО ЦОК СТАНДАРТ ПЛЮС",
     title: "ООО ЦОК СТАНДАРТ ПЛЮС - Профессиональное обучение",
     description:
@@ -51,7 +44,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ru" className={marckScript.variable} suppressHydrationWarning>
+    <html lang="ru" suppressHydrationWarning>
       <body className="bg-background text-foreground antialiased">
         <Providers>{children}</Providers>
       </body>

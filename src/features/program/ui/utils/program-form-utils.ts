@@ -146,7 +146,10 @@ export function getDefaultValues(
     awardedQualification?: string | null;
     awardedRankFrom?: number | null;
     awardedRankTo?: number | null;
-    subPrograms?: Array<{ title: string; description?: string | null }> | null;
+    subPrograms?: Array<{
+      title: string;
+      description?: string | null;
+    }> | null;
   } | null
 ): ProgramFormData {
   return {

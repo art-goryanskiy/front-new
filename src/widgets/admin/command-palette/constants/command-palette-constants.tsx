@@ -1,6 +1,12 @@
 import type { ReactElement } from "react";
 import type { Command } from "../types/command-palette.types";
-import { BookOpen, Briefcase, GraduationCap, Home, Folder } from "lucide-react";
+import {
+  BookOpen,
+  Briefcase,
+  GraduationCap,
+  Home,
+  Folder,
+} from "lucide-react";
 import { Icon } from "@/shared/ui/icons/icon";
 import type { IconName } from "@/shared/ui/icons/icon";
 
@@ -38,11 +44,11 @@ export const COMMANDS: ReadonlyArray<Command> = [
  * Маппинг иконок для команд (legacy, используется для обратной совместимости)
  */
 export const COMMAND_ICONS: Record<string, ReactElement> = {
-  home: <Home className="w-5 h-5" />,
-  book: <BookOpen className="w-5 h-5" />,
-  "graduation-cap": <GraduationCap className="w-5 h-5" />,
-  briefcase: <Briefcase className="w-5 h-5" />,
-  folder: <Folder className="w-5 h-5" />,
+  home: <Home className="h-5 w-5" />,
+  book: <BookOpen className="h-5 w-5" />,
+  "graduation-cap": <GraduationCap className="h-5 w-5" />,
+  briefcase: <Briefcase className="h-5 w-5" />,
+  folder: <Folder className="h-5 w-5" />,
 };
 
 /**
@@ -55,7 +61,9 @@ export function getCommandIcon(iconName: string): ReactElement {
   }
 
   // Используем компонент Icon для остальных случаев
-  return <Icon name={iconName as IconName} className="w-5 h-5" size={20} />;
+  return (
+    <Icon name={iconName as IconName} className="h-5 w-5" size={20} />
+  );
 }
 
 /**
@@ -85,8 +93,7 @@ export const COMMAND_PALETTE_CLASSES = {
   commandItem: "w-full text-left px-4 py-3 rounded-lg transition-all",
   commandItemSelected:
     "bg-primary-100 dark:bg-primary-900/30 text-primary-900 dark:text-primary-100",
-  commandItemDefault:
-    "hover:bg-muted text-foreground",
+  commandItemDefault: "hover:bg-muted text-foreground",
   commandItemContent: "flex items-center gap-3",
   commandIcon: "text-2xl",
   commandLabel: "font-medium",

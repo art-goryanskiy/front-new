@@ -34,8 +34,8 @@ export const SubcategoryCardImage = memo(
             }}
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center bg-linear-to-br from-primary-100 to-purple-100 dark:from-primary-900 dark:to-purple-900">
-            <FolderOpen className="h-16 w-16 text-primary-400" />
+          <div className="from-primary-100 dark:from-primary-900 flex h-full w-full items-center justify-center bg-linear-to-br to-purple-100 dark:to-purple-900">
+            <FolderOpen className="text-primary-400 h-16 w-16" />
           </div>
         )}
       </div>

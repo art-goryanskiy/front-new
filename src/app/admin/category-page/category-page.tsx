@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/select";
 import { useCategoryModalState } from "@/shared/store/modal-store";
 import { AdminPageHeader } from "@/shared/ui/admin-page-header/admin-page-header";
+import { DashboardSection } from "@/shared/ui/dashboard-section/dashboard-section";
 import { DataToolbar } from "@/shared/ui/data-toolbar/data-toolbar";
 import { CategoryTable } from "@/widgets/admin/category-table/category-table";
 import { Suspense, lazy, memo, useCallback, useState } from "react";
@@ -24,7 +25,9 @@ const CategoryModal = lazy(() =>
 
 const DeleteCategoryModal = lazy(() =>
   import("@/widgets/category/delete-category-modal/delete-category-modal").then(
-    (mod) => ({ default: mod.DeleteCategoryModal })
+    (mod) => ({
+      default: mod.DeleteCategoryModal,
+    })
   )
 );
 
@@ -59,16 +62,19 @@ export const CategoryPage = memo(function CategoryPage({
         }}
       />
 
-      <DataToolbar
-        searchValue={q}
-        onSearchValueChange={setQ}
-        searchPlaceholder="Поиск по названию / slug / описанию…"
-        rightSlot={
-          <div className="flex items-center gap-2">
-            <span className="hidden rounded-full border border-border/60 bg-muted/20 px-2.5 py-1 text-xs text-muted-foreground sm:inline-flex">
-              {counts.shown} / {counts.total}
-            </span>
-
+      <DashboardSection
+        title="Список категорий"
+        actions={
+          <span className="hidden rounded-full border border-border/60 bg-muted/20 px-2.5 py-1 text-xs text-muted-foreground sm:inline-flex">
+            {counts.shown} / {counts.total}
+          </span>
+        }
+      >
+        <DataToolbar
+          searchValue={q}
+          onSearchValueChange={setQ}
+          searchPlaceholder="Поиск по названию / slug / описанию…"
+          rightSlot={
             <Select
               value={programsFilter}
               onValueChange={(v) =>
@@ -86,16 +92,16 @@ export const CategoryPage = memo(function CategoryPage({
                 <SelectItem value="empty">Без программ</SelectItem>
               </SelectContent>
             </Select>
-          </div>
-        }
-      />
+          }
+        />
 
-      <CategoryTable
-        type={type}
-        searchQuery={q}
-        programsFilter={programsFilter}
-        onCountsChange={setCounts}
-      />
+        <CategoryTable
+          type={type}
+          searchQuery={q}
+          programsFilter={programsFilter}
+          onCountsChange={setCounts}
+        />
+      </DashboardSection>
 
       <Suspense fallback={null}>
         <CategoryModal />

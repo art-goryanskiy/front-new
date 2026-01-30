@@ -48,7 +48,9 @@ export const DeleteConfirmModal = memo(function DeleteConfirmModal({
         </DialogHeader>
         <div className="space-y-4 py-4">
           {error && (
-            <div className={DELETE_CONFIRM_MODAL_CLASSES.errorContainer}>
+            <div
+              className={DELETE_CONFIRM_MODAL_CLASSES.errorContainer}
+            >
               <p className={DELETE_CONFIRM_MODAL_CLASSES.errorText}>
                 {errorMessage}
               </p>

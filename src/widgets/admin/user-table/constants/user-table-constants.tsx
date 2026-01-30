@@ -4,7 +4,7 @@ import type { ReactElement } from "react";
 export const TABLE_CLASSES = {
   // более “дорогая” панель
   wrapper:
-    "min-h-[420px] overflow-hidden bg-gradient-to-b from-card/70 to-card/40",
+    "min-h-[420px] overflow-hidden bg-linear-to-b from-card/70 to-card/40",
 
   // sticky thead (фон + blur)
   thead:

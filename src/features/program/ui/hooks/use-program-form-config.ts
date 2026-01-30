@@ -4,10 +4,13 @@ import type { CategoryType } from "@/shared/api/generated/graphql";
 /**
  * Хук для конфигурации видимости полей формы программы
  */
-export function useProgramFormConfig(categoryType?: CategoryType | null) {
+export function useProgramFormConfig(
+  categoryType?: CategoryType | null
+) {
   return useMemo(
     () => ({
-      showAwardedQualification: categoryType === "PROFESSIONAL_RETRAINING",
+      showAwardedQualification:
+        categoryType === "PROFESSIONAL_RETRAINING",
       showAwardedRank: categoryType === "PROFESSIONAL_EDUCATION",
       showSubPrograms: categoryType === "QUALIFICATION_UPGRADE",
     }),

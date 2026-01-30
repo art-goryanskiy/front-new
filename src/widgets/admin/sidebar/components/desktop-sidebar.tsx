@@ -2,6 +2,7 @@
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { MENU_ITEMS } from "@/shared/constants/categories";
+import { useAdminNavState } from "@/shared/store/admin-nav-store";
 import { useSidebarStore } from "@/shared/store/sidebar-store";
 import { usePathname, useRouter } from "next/navigation";
 import { memo, useCallback, useMemo } from "react";
@@ -24,9 +25,18 @@ const USERS_MENU_ITEM = {
   color: "default" as const,
 };
 
+function isNavItemActive(
+  pathname: string,
+  itemPath: string
+): boolean {
+  if (itemPath === "/admin") return pathname === "/admin";
+  return pathname === itemPath || pathname.startsWith(`${itemPath}/`);
+}
+
 export const DesktopSidebar = memo(function DesktopSidebar() {
   const router = useRouter();
   const pathname = usePathname();
+  const { activeCategoryType } = useAdminNavState();
   const isCollapsed = useSidebarStore((state) => state.isCollapsed);
   const toggleSidebar = useSidebarStore(
     (state) => state.toggleSidebar
@@ -59,14 +69,14 @@ export const DesktopSidebar = memo(function DesktopSidebar() {
         <nav className="space-y-1 p-2">
           <SidebarNavItem
             item={HOME_MENU_ITEM}
-            isActive={pathname === "/admin"}
+            isActive={isNavItemActive(pathname, HOME_MENU_ITEM.path)}
             isCollapsed={isCollapsed}
             onNavigate={handleNavigate}
           />
 
           <SidebarNavItem
             item={USERS_MENU_ITEM}
-            isActive={pathname === "/admin/users"}
+            isActive={isNavItemActive(pathname, USERS_MENU_ITEM.path)}
             isCollapsed={isCollapsed}
             onNavigate={handleNavigate}
           />
@@ -75,7 +85,12 @@ export const DesktopSidebar = memo(function DesktopSidebar() {
             <SidebarNavItem
               key={item.path}
               item={item}
-              isActive={pathname === item.path}
+              isActive={
+                pathname.startsWith("/admin/category/") &&
+                activeCategoryType
+                  ? activeCategoryType === item.type
+                  : isNavItemActive(pathname, item.path)
+              }
               isCollapsed={isCollapsed}
               onNavigate={handleNavigate}
             />

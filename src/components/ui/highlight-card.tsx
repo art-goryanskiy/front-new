@@ -24,7 +24,7 @@ export const HighlightCard: FC<HighlightCardProps> = ({
   const cardContent = (
     <Card
       className={cn(
-        "relative overflow-hidden flex h-full w-full max-w-[350px] min-w-0 flex-col rounded-2xl shadow-xl backdrop-blur-xl",
+        "relative flex h-full w-full max-w-[350px] min-w-0 flex-col overflow-hidden rounded-2xl shadow-xl backdrop-blur-xl",
         "border border-border bg-linear-to-br from-white via-neutral-50/80 to-white",
         "hover:border-neutral-300 hover:shadow-2xl hover:shadow-neutral-200/50",
         "dark:border-white/10 dark:bg-linear-to-br dark:from-[#010101] dark:via-[#090909] dark:to-[#010101] dark:text-white",
@@ -34,11 +34,11 @@ export const HighlightCard: FC<HighlightCardProps> = ({
     >
       {/* Light: баннерный декор — радиальное свечение как в hero */}
       <div
-        className="absolute inset-0 z-0 overflow-hidden pointer-events-none"
+        className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
         aria-hidden
       >
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(0,0,0,0.03),transparent_50%)] dark:hidden" />
-        <div className="absolute -bottom-20 -left-20 h-48 w-48 rounded-full bg-neutral-200/50 blur-3xl opacity-70 transition-all duration-700 group-hover:scale-110 group-hover:opacity-90 dark:hidden" />
+        <div className="absolute -bottom-20 -left-20 h-48 w-48 rounded-full bg-neutral-200/50 opacity-70 blur-3xl transition-all duration-700 group-hover:scale-110 group-hover:opacity-90 dark:hidden" />
         <div className="absolute top-0 right-0 h-32 w-32 rounded-full bg-neutral-100/80 blur-2xl dark:hidden" />
         {/* Dark: прежние декорации */}
         <div className="absolute inset-0 hidden bg-linear-to-tr from-white/5 to-white/10 opacity-40 transition-opacity duration-500 group-hover:opacity-60 dark:block" />
@@ -56,7 +56,7 @@ export const HighlightCard: FC<HighlightCardProps> = ({
             className={cn(
               "transform rounded-full border border-neutral-200 bg-neutral-100/80 p-6 shadow-xl backdrop-blur-lg transition-all duration-500 group-hover:scale-110 group-hover:rotate-12",
               "[&_svg]:text-primary",
-              "dark:border-white/20 dark:bg-neutral-900 dark:[&_svg]:text-white dark:hover:shadow-white/20"
+              "dark:border-white/20 dark:bg-neutral-900 dark:hover:shadow-white/20 dark:[&_svg]:text-white"
             )}
           >
             <div className="transform transition-transform duration-700 group-hover:rotate-180">
@@ -67,7 +67,7 @@ export const HighlightCard: FC<HighlightCardProps> = ({
 
         <h3
           className={cn(
-            "mb-4 line-clamp-3 min-h-18 shrink-0 text-xl font-bold leading-tight transition-transform duration-300 group-hover:scale-105",
+            "mb-4 line-clamp-3 min-h-18 shrink-0 text-xl leading-tight font-bold transition-transform duration-300 group-hover:scale-105",
             "text-foreground",
             "dark:animate-pulse dark:bg-linear-to-r dark:from-white dark:via-gray-100 dark:to-white dark:bg-clip-text dark:text-transparent"
           )}

@@ -10,6 +10,7 @@ import {
 import type { UserRole } from "@/shared/api/generated/graphql";
 import { useUserModalState } from "@/shared/store/modal-store";
 import { AdminPageHeader } from "@/shared/ui/admin-page-header/admin-page-header";
+import { DashboardSection } from "@/shared/ui/dashboard-section/dashboard-section";
 import { DataToolbar } from "@/shared/ui/data-toolbar/data-toolbar";
 import { UserTable } from "@/widgets/admin/user-table/user-table";
 import { Suspense, lazy, memo, useCallback, useState } from "react";
@@ -56,24 +57,20 @@ const AdminUsersPage = memo(function AdminUsersPage() {
         }}
       />
 
-      <div className="space-y-3">
-        <div className="flex items-end justify-between gap-3">
-          <h2 className="text-xl font-bold text-foreground sm:text-2xl">
-            Все пользователи
-          </h2>
-        </div>
-
+      <DashboardSection
+        title="Все пользователи"
+        actions={
+          <span className="hidden rounded-full border border-border/60 bg-muted/20 px-2.5 py-1 text-xs text-muted-foreground sm:inline-flex">
+            {counts.shown} / {counts.total}
+          </span>
+        }
+      >
         <DataToolbar
           searchValue={q}
           onSearchValueChange={setQ}
           searchPlaceholder="Поиск по имени, email или телефону…"
           rightSlot={
             <div className="flex items-center gap-2">
-              {/* Счётчик — “дорогая” деталь (скрыт на мобиле) */}
-              <span className="hidden rounded-full border border-border/60 bg-muted/20 px-2.5 py-1 text-xs text-muted-foreground sm:inline-flex">
-                {counts.shown} / {counts.total}
-              </span>
-
               <Select
                 value={role}
                 onValueChange={(v) => setRole(v as UserRole | "all")}
@@ -113,14 +110,14 @@ const AdminUsersPage = memo(function AdminUsersPage() {
             </div>
           }
         />
-      </div>
 
-      <UserTable
-        searchQuery={q}
-        roleFilter={role}
-        statusFilter={status}
-        onCountsChange={setCounts}
-      />
+        <UserTable
+          searchQuery={q}
+          roleFilter={role}
+          statusFilter={status}
+          onCountsChange={setCounts}
+        />
+      </DashboardSection>
 
       <Suspense fallback={null}>
         <UserModal />

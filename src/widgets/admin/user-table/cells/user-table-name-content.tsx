@@ -1,7 +1,11 @@
 "use client";
 
 import { memo, useMemo } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar";
 import type { UserEntity } from "@/shared/api/generated/graphql";
 
 interface UserTableNameContentProps {
@@ -60,7 +64,10 @@ export const UserTableNameContent = memo(
     return (
       <div className="flex w-full min-w-0 items-center gap-2 sm:gap-3 lg:gap-4">
         <Avatar className="hidden h-9 w-9 shrink-0 shadow-md transition-transform group-hover:scale-110 sm:flex">
-          <AvatarImage src={user.profile?.avatar} alt={avatarAlt} />
+          <AvatarImage
+            src={user.profile?.avatar ?? undefined}
+            alt={avatarAlt}
+          />
           <AvatarFallback className="text-xs font-bold text-primary sm:text-sm">
             {initials}
           </AvatarFallback>

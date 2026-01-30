@@ -45,7 +45,7 @@ export const MobileMenu = memo(function MobileMenu({
             damping: 25,
             stiffness: 200,
           }}
-          className="fixed top-16 right-0 bottom-0 z-50 w-80 max-w-[85vw] overflow-y-auto bg-background shadow-xl md:hidden bg-background"
+          className="fixed top-16 right-0 bottom-0 z-50 w-80 max-w-[85vw] overflow-y-auto bg-background shadow-xl md:hidden"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex flex-col gap-4 p-4">
@@ -59,20 +59,20 @@ export const MobileMenu = memo(function MobileMenu({
                   onClick={onClose}
                   className={`group flex items-center gap-3 rounded-lg px-4 py-3 transition-colors ${
                     isActive
-                      ? "bg-primary/10 font-semibold text-primary dark:bg-primary/20 dark:text-primary-400"
+                      ? "dark:text-primary-400 bg-primary/10 font-semibold text-primary dark:bg-primary/20"
                       : "text-muted-foreground hover:bg-muted hover:text-foreground dark:text-foreground dark:hover:bg-muted"
                   }`}
                 >
                   <Icon
                     className={`h-5 w-5 shrink-0 ${
                       isActive
-                        ? "text-primary dark:text-primary-400"
+                        ? "dark:text-primary-400 text-primary"
                         : ""
                     }`}
                   />
                   <span>{item.label}</span>
                   {isActive && (
-                    <div className="ml-auto h-2 w-2 shrink-0 rounded-full bg-primary dark:bg-primary-400" />
+                    <div className="dark:bg-primary-400 ml-auto h-2 w-2 shrink-0 rounded-full bg-primary" />
                   )}
                 </Link>
               );

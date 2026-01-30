@@ -38,7 +38,9 @@ export const SidebarFooter = memo(function SidebarFooter({
             size={ICON_SIZES.footer}
             aria-label={SIDEBAR_TEXTS.collapseMenu}
           />
-          <span className={SIDEBAR_CLASSES.desktop.collapseButtonText}>
+          <span
+            className={SIDEBAR_CLASSES.desktop.collapseButtonText}
+          >
             {SIDEBAR_TEXTS.collapseMenu}
           </span>
         </Button>
@@ -61,7 +63,9 @@ export const SidebarFooter = memo(function SidebarFooter({
                 />
               </Button>
             </TooltipTrigger>
-            <TooltipContent side="right">{SIDEBAR_TEXTS.expandMenu}</TooltipContent>
+            <TooltipContent side="right">
+              {SIDEBAR_TEXTS.expandMenu}
+            </TooltipContent>
           </Tooltip>
         </TooltipProvider>
       )}

@@ -7,7 +7,6 @@ import { getCategoriesServer } from "@/shared/api/server/categories";
 import { cookies } from "next/headers";
 import { generateMetadata as generateSeoMetadata } from "@/shared/lib/seo/metadata";
 import { generateOrganizationSchema } from "@/shared/lib/seo/structured-data";
-import { BackgroundPaths } from "@/components/ui/background-paths";
 import { Component } from "@/components/ui/the-infinite-grid";
 
 export const metadata: Metadata = generateSeoMetadata({

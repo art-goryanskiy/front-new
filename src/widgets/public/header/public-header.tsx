@@ -5,16 +5,12 @@ import { motion } from "framer-motion";
 import {
   PUBLIC_HEADER_CLASSES,
   PUBLIC_HEADER_ANIMATIONS,
-  FLOATING_NAV_ITEMS,
 } from "./constants/public-header-constants";
 import { HeaderLogo } from "./components/header-logo";
 import { HeaderActions } from "./components/header-actions";
 import { MobileMenu } from "./components/mobile-menu";
 import { SearchPanel } from "./components/search-panel";
 import { usePublicHeaderState } from "./hooks/use-public-header-state";
-import { FloatingNav } from "@/components/ui/floating-navbar";
-import { Button } from "@/components/ui/button";
-import { UserMenu } from "@/shared/ui/user-menu/user-menu";
 import { MenuBar } from "@/components/ui/glow-menu";
 import { GLOW_MENU_HEADER_ITEMS } from "./constants/glow-menu-header-items";
 import { usePathname } from "next/navigation";

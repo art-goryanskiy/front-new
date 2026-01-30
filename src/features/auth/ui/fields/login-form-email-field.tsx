@@ -35,8 +35,10 @@ export const LoginFormEmailField = memo(function LoginFormEmailField({
       control={control}
       rules={rules}
       render={({ field, fieldState }) => (
-        <div className={cn("space-y-2 w-full")}>
-          <Label htmlFor="email">{LOGIN_FORM_TEXTS.email.label} *</Label>
+        <div className={cn("w-full space-y-2")}>
+          <Label htmlFor="email">
+            {LOGIN_FORM_TEXTS.email.label} *
+          </Label>
           <Input
             {...field}
             id="email"

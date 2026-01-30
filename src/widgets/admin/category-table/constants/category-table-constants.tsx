@@ -3,7 +3,7 @@ import type { ReactElement } from "react";
 
 export const TABLE_CLASSES = {
   wrapper:
-    "min-h-[420px] overflow-hidden bg-gradient-to-b from-card/70 to-card/40",
+    "min-h-[420px] overflow-hidden bg-linear-to-b from-card/70 to-card/40",
 
   thead:
     "sticky top-0 z-10 bg-background/75 backdrop-blur-xl supports-[backdrop-filter]:bg-background/55",

@@ -17,12 +17,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useProgramModalState } from "@/shared/store/modal-store";
+import { DashboardSection } from "@/shared/ui/dashboard-section/dashboard-section";
 import { DataToolbar } from "@/shared/ui/data-toolbar/data-toolbar";
 import { EmptyState } from "@/shared/ui/empty-state/empty-state";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
 import { LoadingState } from "@/shared/ui/loading-state/loading-state";
 
-import { useProgramModalState } from "@/shared/store/modal-store";
 import { POPULAR_VIEWS_THRESHOLD } from "@/widgets/admin/program-table/constants/program-table-constants";
 import { ProgramList } from "@/widgets/admin/program-table/program-list";
 import { hasValidPricing } from "@/widgets/admin/program-table/utils/program-table-utils";
@@ -85,8 +86,7 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
 }) {
   const { openCreateProgramModal } = useProgramModalState();
 
-  // Пагинация “дорого и просто”: увеличиваем limit, offset всегда 0.
-  // Так не нужно аккумулировать страницы и не нужны эффекты.
+  // pagination: increase limit, offset always 0
   const [page, setPage] = useState(1);
   const limit = PAGE_SIZE * page;
 
@@ -121,22 +121,19 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
 
   const filteredItems = useMemo(() => {
     return items.filter((p) => {
-      // views
       if (
         views === "popular" &&
         (p.views || 0) <= POPULAR_VIEWS_THRESHOLD
-      ) {
+      )
         return false;
-      }
 
-      // pricing
       if (pricing !== "all") {
         const hasPrice = hasValidPricing(p.pricing);
         if (pricing === "withPrice" && !hasPrice) return false;
         if (pricing === "noPrice" && hasPrice) return false;
       }
 
-      // локальный поиск (чтобы реагировало сразу, пока debouncedQ ждёт)
+      // local search (instant), while debouncedQ used for server
       if (!localQuery) return true;
       const haystack =
         `${p.title} ${p.slug} ${p.description || ""}`.toLowerCase();
@@ -144,11 +141,10 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
     });
   }, [items, views, pricing, localQuery]);
 
-  const countsText = useMemo(() => {
-    // total — это total по серверному фильтру (category/categoryIds/search),
-    // остальные фильтры (popular/price/локальный поиск) применяются на клиенте.
-    return `${filteredItems.length} / ${total}`;
-  }, [filteredItems.length, total]);
+  const countsText = useMemo(
+    () => `${filteredItems.length} / ${total}`,
+    [filteredItems.length, total]
+  );
 
   const canLoadMore = useMemo(
     () => items.length < total,
@@ -174,126 +170,130 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
   if (error) return <ErrorState message={error.message} />;
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-end justify-between gap-3">
-        <h2 className="text-xl font-bold text-foreground sm:text-2xl">
-          {title}
-        </h2>
-      </div>
-
-      <DataToolbar
-        searchValue={q}
-        onSearchValueChange={setQ}
-        searchPlaceholder="Поиск по программам…"
-        rightSlot={
-          <div className="flex items-center gap-2">
-            <span className="hidden rounded-full border border-border/60 bg-muted/20 px-2.5 py-1 text-xs text-muted-foreground sm:inline-flex">
-              {countsText}
-            </span>
-
-            <Select value={categoryId} onValueChange={setCategoryId}>
-              <SelectTrigger className="h-9 w-[220px] bg-background/60">
-                <SelectValue placeholder="Категория" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">
-                  Все категории типа
-                </SelectItem>
-                {categoriesOfType.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    {c.name}
+    <DashboardSection
+      title={title}
+      actions={
+        <span className="hidden rounded-full border border-border/60 bg-muted/20 px-2.5 py-1 text-xs text-muted-foreground sm:inline-flex">
+          {countsText}
+        </span>
+      }
+    >
+      <div className="space-y-4">
+        <DataToolbar
+          searchValue={q}
+          onSearchValueChange={setQ}
+          searchPlaceholder="Поиск по программам…"
+          rightSlot={
+            <div className="flex items-center gap-2">
+              <Select
+                value={categoryId}
+                onValueChange={setCategoryId}
+              >
+                <SelectTrigger className="h-9 w-[220px] bg-background/60">
+                  <SelectValue placeholder="Категория" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">
+                    Все категории типа
                   </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+                  {categoriesOfType.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>
+                      {c.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
 
-            <Select
-              value={views}
-              onValueChange={(v) => setViews(v as ViewsFilter)}
-            >
-              <SelectTrigger className="h-9 w-[150px] bg-background/60">
-                <SelectValue placeholder="Просмотры" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Все</SelectItem>
-                <SelectItem value="popular">Популярные</SelectItem>
-              </SelectContent>
-            </Select>
+              <Select
+                value={views}
+                onValueChange={(v) => setViews(v as ViewsFilter)}
+              >
+                <SelectTrigger className="h-9 w-[150px] bg-background/60">
+                  <SelectValue placeholder="Просмотры" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Все</SelectItem>
+                  <SelectItem value="popular">Популярные</SelectItem>
+                </SelectContent>
+              </Select>
 
-            <Select
-              value={pricing}
-              onValueChange={(v) => setPricing(v as PricingFilter)}
-            >
-              <SelectTrigger className="h-9 w-[150px] bg-background/60">
-                <SelectValue placeholder="Цена" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Любая</SelectItem>
-                <SelectItem value="withPrice">С ценой</SelectItem>
-                <SelectItem value="noPrice">Без цены</SelectItem>
-              </SelectContent>
-            </Select>
+              <Select
+                value={pricing}
+                onValueChange={(v) => setPricing(v as PricingFilter)}
+              >
+                <SelectTrigger className="h-9 w-[150px] bg-background/60">
+                  <SelectValue placeholder="Цена" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Любая</SelectItem>
+                  <SelectItem value="withPrice">С ценой</SelectItem>
+                  <SelectItem value="noPrice">Без цены</SelectItem>
+                </SelectContent>
+              </Select>
 
-            <Select
-              value={sort}
-              onValueChange={(v) => setSort(v as Sort)}
-            >
-              <SelectTrigger className="h-9 w-[170px] bg-background/60">
-                <SelectValue placeholder="Сортировка" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="updatedDesc">
-                  Сначала новые
-                </SelectItem>
-                <SelectItem value="viewsDesc">
-                  По просмотрам
-                </SelectItem>
-                <SelectItem value="titleAsc">По названию</SelectItem>
-              </SelectContent>
-            </Select>
+              <Select
+                value={sort}
+                onValueChange={(v) => setSort(v as Sort)}
+              >
+                <SelectTrigger className="h-9 w-[170px] bg-background/60">
+                  <SelectValue placeholder="Сортировка" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="updatedDesc">
+                    Сначала новые
+                  </SelectItem>
+                  <SelectItem value="viewsDesc">
+                    По просмотрам
+                  </SelectItem>
+                  <SelectItem value="titleAsc">
+                    По названию
+                  </SelectItem>
+                </SelectContent>
+              </Select>
 
-            <Button
-              className="font-semibold"
-              onClick={handleCreate}
-              disabled={!canCreateProgram}
-              title={
-                canCreateProgram
-                  ? "Создать программу"
-                  : "Выберите конкретную категорию, чтобы создать программу"
-              }
-            >
-              + Программа
-            </Button>
-          </div>
-        }
-      />
-
-      {filteredItems.length === 0 ? (
-        <EmptyState
-          title="Программы не найдены"
-          description="Попробуйте изменить фильтры или выберите другую категорию."
+              <Button
+                className="font-semibold"
+                onClick={handleCreate}
+                disabled={!canCreateProgram}
+                title={
+                  canCreateProgram
+                    ? "Создать программу"
+                    : "Выберите конкретную категорию, чтобы создать программу"
+                }
+              >
+                + Программа
+              </Button>
+            </div>
+          }
         />
-      ) : (
-        <>
-          <ProgramList
-            programs={filteredItems}
-            categoryType={type}
-            caption={`Показано ${filteredItems.length} из ${total}`}
-          />
 
-          <div className="flex justify-center">
-            <Button
-              variant="outline"
-              className="font-semibold"
-              onClick={handleLoadMore}
-              disabled={!canLoadMore || loading}
-            >
-              {loading ? "Загрузка…" : "Показать ещё"}
-            </Button>
-          </div>
-        </>
-      )}
-    </div>
+        {filteredItems.length === 0 ? (
+          <EmptyState
+            title="Программы не найдены"
+            description="Попробуйте изменить фильтры или выберите другую категорию."
+          />
+        ) : (
+          <>
+            <ProgramList
+              programs={filteredItems}
+              categoryType={type}
+              caption={`Показано ${filteredItems.length} из ${total}`}
+            />
+
+            <div className="flex justify-center">
+              <Button
+                variant="outline"
+                className="font-semibold"
+                onClick={handleLoadMore}
+                disabled={!canLoadMore || loading}
+              >
+                {loading ? "Загрузка…" : "Показать ещё"}
+              </Button>
+            </div>
+          </>
+        )}
+      </div>
+    </DashboardSection>
   );
 });
 
@@ -329,7 +329,6 @@ export const ProgramsByTypeView = memo(function ProgramsByTypeView({
     [categoriesOfType]
   );
 
-  // reset пагинации без useEffect: при изменении ключевых фильтров ремоунтим Results
   const paginationKey = useMemo(
     () =>
       `${type}|${categoryId}|${debouncedQ}|${pricing}|${views}|${sort}`,

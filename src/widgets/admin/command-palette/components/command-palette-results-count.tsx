@@ -25,9 +25,13 @@ export const CommandPaletteResultsCount = memo(
           `${categories} категори${getPlural(categories, "я", "и", "й")}`
         );
       if (programs > 0)
-        parts.push(`${programs} программ${getPlural(programs, "а", "ы", "")}`);
+        parts.push(
+          `${programs} программ${getPlural(programs, "а", "ы", "")}`
+        );
       if (commands > 0)
-        parts.push(`${commands} команд${getPlural(commands, "а", "ы", "")}`);
+        parts.push(
+          `${commands} команд${getPlural(commands, "а", "ы", "")}`
+        );
 
       return `Найдено: ${parts.join(", ")} (${total} ${getPlural(total, "результат", "результата", "результатов")})`;
     }, [total, categories, programs, commands]);
@@ -35,7 +39,7 @@ export const CommandPaletteResultsCount = memo(
     if (!countText) return null;
 
     return (
-      <div className="px-4 py-2 text-xs text-muted-foreground border-b border-border">
+      <div className="border-b border-border px-4 py-2 text-xs text-muted-foreground">
         {countText}
       </div>
     );
@@ -52,6 +56,7 @@ function getPlural(
   const mod100 = count % 100;
 
   if (mod10 === 1 && mod100 !== 11) return one;
-  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return few;
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20))
+    return few;
   return many;
 }

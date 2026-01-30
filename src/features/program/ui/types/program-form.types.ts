@@ -21,11 +21,16 @@ export interface EditingProgram {
   awardedQualification?: string | null;
   awardedRankFrom?: number | null;
   awardedRankTo?: number | null;
-  subPrograms?: Array<{ title: string; description?: string | null }> | null;
+  subPrograms?: Array<{
+    title: string;
+    description?: string | null;
+  }> | null;
 }
 
 export interface ProgramFormProps {
   editingProgram?: EditingProgram | null;
   categoryId: string;
   categoryType?: CategoryType | null;
+  onDirtyChange?: (dirty: boolean) => void;
+  onBusyChange?: (busy: boolean) => void;
 }

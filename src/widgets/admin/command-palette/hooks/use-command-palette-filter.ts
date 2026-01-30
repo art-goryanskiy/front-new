@@ -14,6 +14,8 @@ export function useCommandPaletteFilter(
     }
 
     const query = searchQuery.toLowerCase();
-    return commands.filter((cmd) => cmd.label.toLowerCase().includes(query));
+    return commands.filter((cmd) =>
+      cmd.label.toLowerCase().includes(query)
+    );
   }, [commands, searchQuery]);
 }

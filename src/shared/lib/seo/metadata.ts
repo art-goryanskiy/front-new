@@ -87,7 +87,9 @@ export function generateMetadata({
   };
 }
 
-export function generateProgramMetadata(program: ProgramEntity): Metadata {
+export function generateProgramMetadata(
+  program: ProgramEntity
+): Metadata {
   const description =
     program.description ||
     `Программа обучения: ${program.title}. ${COMPANY_NAME} - профессиональное образование, повышение квалификации, переподготовка.`;
@@ -115,7 +117,9 @@ export function generateProgramMetadata(program: ProgramEntity): Metadata {
   });
 }
 
-export function generateCategoryMetadata(category: CategoryEntity): Metadata {
+export function generateCategoryMetadata(
+  category: CategoryEntity
+): Metadata {
   const description =
     category.description ||
     `Категория: ${category.name}. Образовательные программы от ${COMPANY_NAME}. Профессиональное обучение, повышение квалификации, переподготовка.`;

@@ -26,15 +26,17 @@ export const ProgramTableSubprogramsContent = memo(
 
     const ariaLabel = useMemo(
       () =>
-        hasSubPrograms ? `${subProgramsCount} подпрограмм` : "Нет подпрограмм",
+        hasSubPrograms
+          ? `${subProgramsCount} подпрограмм`
+          : "Нет подпрограмм",
       [hasSubPrograms, subProgramsCount]
     );
 
     const tooltipContent = useMemo(
       () => (
         <div className="max-w-xs">
-          <p className="font-semibold mb-2">Подпрограммы:</p>
-          <ul className="list-disc list-inside space-y-1">
+          <p className="mb-2 font-semibold">Подпрограммы:</p>
+          <ul className="list-inside list-disc space-y-1">
             {program.subPrograms?.map((sub, index) => (
               <li key={`${sub.title}-${index}`} className="text-sm">
                 {sub.title}
@@ -55,18 +57,23 @@ export const ProgramTableSubprogramsContent = memo(
                 <span className="inline-block cursor-help">
                   <Badge
                     variant="secondary"
-                    className="font-semibold cursor-help"
+                    className="cursor-help font-semibold"
                     aria-label={ariaLabel}
                   >
                     {subProgramsCount} шт.
                   </Badge>
                 </span>
               </TooltipTrigger>
-              <TooltipContent side="left">{tooltipContent}</TooltipContent>
+              <TooltipContent side="left">
+                {tooltipContent}
+              </TooltipContent>
             </Tooltip>
           </TooltipProvider>
         ) : (
-          <span className="text-muted-foreground" aria-label={ariaLabel}>
+          <span
+            className="text-muted-foreground"
+            aria-label={ariaLabel}
+          >
             -
           </span>
         )}

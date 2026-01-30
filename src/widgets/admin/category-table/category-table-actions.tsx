@@ -8,16 +8,18 @@ interface CategoryTableActionsProps {
   onDelete: () => void;
 }
 
-export const CategoryTableActions = memo(function CategoryTableActions({
-  onEdit,
-  onDelete,
-}: CategoryTableActionsProps) {
-  return (
-    <TableActions
-      onEdit={onEdit}
-      onDelete={onDelete}
-      editLabel="Редактировать категорию"
-      deleteLabel="Удалить категорию"
-    />
-  );
-});
+export const CategoryTableActions = memo(
+  function CategoryTableActions({
+    onEdit,
+    onDelete,
+  }: CategoryTableActionsProps) {
+    return (
+      <TableActions
+        onEdit={onEdit}
+        onDelete={onDelete}
+        editLabel="Редактировать категорию"
+        deleteLabel="Удалить категорию"
+      />
+    );
+  }
+);

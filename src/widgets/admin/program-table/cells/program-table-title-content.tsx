@@ -22,7 +22,11 @@ export const ProgramTableTitleContent = memo(
               {program.title}
             </p>
             {isPopular && (
-              <Badge variant="secondary" className="shrink-0" aria-label="Популярная программа">
+              <Badge
+                variant="secondary"
+                className="shrink-0"
+                aria-label="Популярная программа"
+              >
                 🔥
               </Badge>
             )}

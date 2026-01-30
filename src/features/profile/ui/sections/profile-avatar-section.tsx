@@ -1,7 +1,11 @@
 "use client";
 
 import { memo, useCallback, useRef } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { FormField } from "@/shared/ui/form-field/form-field";
 import { PROFILE_FORM_CLASSES } from "../constants/profile-form-constants";
@@ -46,8 +50,13 @@ export const ProfileAvatarSection = memo(
         <div className="space-y-4">
           <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
             <Avatar className="h-24 w-24 text-lg">
-              <AvatarImage src={avatarPreview || undefined} alt={userEmail} />
-              <AvatarFallback className="text-lg">{initial}</AvatarFallback>
+              <AvatarImage
+                src={avatarPreview || undefined}
+                alt={userEmail}
+              />
+              <AvatarFallback className="text-lg">
+                {initial}
+              </AvatarFallback>
             </Avatar>
             <div className="flex-1">
               <input

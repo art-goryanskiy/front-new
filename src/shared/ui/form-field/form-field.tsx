@@ -52,7 +52,10 @@ export const FormField = memo(function FormField<
       rules={rules}
       render={({ field, fieldState }) => (
         <div className={cn("space-y-2", className)}>
-          <Label htmlFor={name}>
+          <Label
+            htmlFor={name}
+            className="text-xs font-medium text-muted-foreground"
+          >
             {label}
             {isRequired && " *"}
           </Label>
@@ -71,7 +74,14 @@ export const FormField = memo(function FormField<
               disabled={isDisabled}
               aria-invalid={fieldState.invalid}
               aria-label={label}
-              className={startContent ? "pl-9" : endContent ? "pr-9" : undefined}
+              className={cn(
+                "bg-background/60",
+                startContent
+                  ? "pl-9"
+                  : endContent
+                    ? "pr-9"
+                    : undefined
+              )}
             />
             {endContent && (
               <div className="absolute right-3 text-muted-foreground">
@@ -80,7 +90,9 @@ export const FormField = memo(function FormField<
             )}
           </div>
           {description && !fieldState.error && (
-            <p className="text-sm text-muted-foreground">{description}</p>
+            <p className="text-sm text-muted-foreground">
+              {description}
+            </p>
           )}
           {fieldState.error?.message && (
             <p className="text-sm text-destructive">

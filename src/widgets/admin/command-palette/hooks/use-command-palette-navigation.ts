@@ -1,6 +1,9 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import type { Command, SearchResult } from "../types/command-palette.types";
+import type {
+  Command,
+  SearchResult,
+} from "../types/command-palette.types";
 
 type CommandPaletteItem = Command | SearchResult;
 

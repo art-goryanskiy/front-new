@@ -82,7 +82,7 @@ const NAV_GLOW_DARK =
 export const MenuBar = React.forwardRef<
   HTMLDivElement,
   GlowMenuProps
->(({ className, items, activeItem, onItemClick, ...props }, ref) => {
+>(({ className, items, activeItem, onItemClick }, ref) => {
   const { theme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
   const isDarkTheme = mounted && theme === "dark";

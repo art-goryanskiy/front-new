@@ -30,10 +30,10 @@ export const TOP_PROGRAMS_TABS: ReadonlyArray<{
 
 export const TOP_PROGRAMS_CLASSES = {
   section: "py-16 sm:py-20 lg:py-24 bg-background",
-  container: "mx-auto w-full max-w-7xl px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12",
+  container:
+    "mx-auto w-full max-w-7xl px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12",
   header: "text-center space-y-4 mb-12",
-  title:
-    "text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground",
+  title: "text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground",
   subtitle:
     "text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto",
   tabs: "flex flex-wrap justify-center gap-2 mb-8",

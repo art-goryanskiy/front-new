@@ -42,7 +42,7 @@ export const AUTH_FORM_CONTAINER_CLASSES = {
     "hidden max-md:flex flex-col items-center justify-center px-4 py-3 flex-shrink-0 " +
     "max-sm:px-3 max-sm:py-2 max-[639px]:px-4",
   mobileTogglePanelContent:
-    "w-full max-w-md mx-auto bg-gradient-to-br from-primary-50/80 to-primary-100/80 " +
+    "w-full max-w-md mx-auto bg-linear-to-br from-primary-50/80 to-primary-100/80 " +
     "dark:from-primary-900/30 dark:to-primary-800/30 backdrop-blur-md rounded-xl p-5 " +
     "border-2 border-primary-200/60 dark:border-primary-600/40 shadow-lg max-sm:p-4 " +
     "max-sm:rounded-lg",
@@ -111,7 +111,7 @@ export const AUTH_FORM_CONTAINER_CLASSES = {
     "transition-opacity duration-500 scale-[1.25] dark:brightness-75",
   // Улучшенный оверлей для читаемости в светлой и темной теме
   bannerOverlay:
-    "absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-black/20 " +
+    "absolute inset-0 bg-linear-to-r from-black/60 via-black/40 to-black/20 " +
     "dark:from-black/70 dark:via-black/50 dark:to-black/30 z-[1]",
 
   // Панели переключения - для десктопа, скрыта на md и ниже (планшеты и мобильные)

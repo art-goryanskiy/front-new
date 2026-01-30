@@ -1,27 +1,38 @@
 "use client";
 
 import { MENU_ITEMS } from "@/shared/constants/categories";
+import { useAdminNavState } from "@/shared/store/admin-nav-store";
 import { usePathname, useRouter } from "next/navigation";
 import { memo, useCallback, useMemo } from "react";
 import { MobileSidebarNavItem } from "./mobile-sidebar-nav-item";
+import type { MenuItem } from "../types/sidebar.types";
 
-const HOME_MENU_ITEM = {
+const HOME_MENU_ITEM: MenuItem = {
   label: "Главная",
   icon: "home" as const,
   path: "/admin",
   color: "default" as const,
 };
 
-const USERS_MENU_ITEM = {
+const USERS_MENU_ITEM: MenuItem = {
   label: "Пользователи",
   icon: "users" as const,
   path: "/admin/users",
   color: "default" as const,
 };
 
+function isNavItemActive(
+  pathname: string,
+  itemPath: string
+): boolean {
+  if (itemPath === "/admin") return pathname === "/admin";
+  return pathname === itemPath || pathname.startsWith(`${itemPath}/`);
+}
+
 export const MobileSidebar = memo(function MobileSidebar() {
   const router = useRouter();
   const pathname = usePathname();
+  const { activeCategoryType } = useAdminNavState();
 
   const handleNavigate = useCallback(
     (path: string) => {
@@ -30,7 +41,7 @@ export const MobileSidebar = memo(function MobileSidebar() {
     [router]
   );
 
-  const items = useMemo(
+  const items = useMemo<MenuItem[]>(
     () => [HOME_MENU_ITEM, USERS_MENU_ITEM, ...MENU_ITEMS],
     []
   );
@@ -44,7 +55,13 @@ export const MobileSidebar = memo(function MobileSidebar() {
               <MobileSidebarNavItem
                 key={item.path}
                 item={item}
-                isActive={pathname === item.path}
+                isActive={
+                  pathname.startsWith("/admin/category/") &&
+                  activeCategoryType &&
+                  item.type
+                    ? activeCategoryType === item.type
+                    : isNavItemActive(pathname, item.path)
+                }
                 onNavigate={handleNavigate}
               />
             ))}

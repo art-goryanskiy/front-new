@@ -23,8 +23,10 @@ export const ProgramFormAwardedQualificationField = memo(
         name="awardedQualification"
         control={control}
         render={({ field }) => (
-          <div className="space-y-2 w-full">
-            <Label htmlFor="awardedQualification">{FORM_LABELS.awardedQualification}</Label>
+          <div className="w-full space-y-2">
+            <Label htmlFor="awardedQualification">
+              {FORM_LABELS.awardedQualification}
+            </Label>
             <Input
               {...field}
               id="awardedQualification"

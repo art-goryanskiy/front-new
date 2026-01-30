@@ -1,6 +1,5 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
 import {
   Table,
   TableHeader,
@@ -10,6 +9,8 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
+import { Surface } from "@/shared/ui/surface/surface";
 import { memo, useMemo } from "react";
 
 interface TableSkeletonProps {
@@ -34,31 +35,32 @@ export const TableSkeleton = memo(function TableSkeleton({
   );
 
   return (
-    <Card className={`shadow-lg ${className}`}>
-      <CardContent className="p-0">
-        <Table aria-label="Загрузка">
-          <TableHeader>
-            <TableRow>
-              {columnIndices.map((index) => (
-                <TableHead key={index}>
-                  <Skeleton className="h-4 w-20" />
-                </TableHead>
+    <Surface
+      variant="floating"
+      className={cn("overflow-hidden", className)}
+    >
+      <Table aria-label="Загрузка">
+        <TableHeader className="sticky top-0 z-10 bg-background/75 backdrop-blur-xl supports-backdrop-filter:bg-background/55">
+          <TableRow>
+            {columnIndices.map((index) => (
+              <TableHead key={index} className="px-4 py-3">
+                <Skeleton className="h-4 w-20 rounded-md" />
+              </TableHead>
+            ))}
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {rowIndices.map((rowIndex) => (
+            <TableRow key={rowIndex} className="hover:bg-muted/20">
+              {columnIndices.map((colIndex) => (
+                <TableCell key={colIndex} className="px-4 py-3">
+                  <Skeleton className="h-4 w-full rounded-md" />
+                </TableCell>
               ))}
             </TableRow>
-          </TableHeader>
-          <TableBody>
-            {rowIndices.map((rowIndex) => (
-              <TableRow key={rowIndex}>
-                {columnIndices.map((colIndex) => (
-                  <TableCell key={colIndex}>
-                    <Skeleton className="h-4 w-full" />
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
+          ))}
+        </TableBody>
+      </Table>
+    </Surface>
   );
 });

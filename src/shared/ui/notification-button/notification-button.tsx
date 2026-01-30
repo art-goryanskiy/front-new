@@ -25,7 +25,10 @@ export const NotificationButton = memo(function NotificationButton({
   );
   const showBadge = useMemo(() => count > 0, [count]);
   const formattedCount = useMemo(() => formatCount(count), [count]);
-  const badgeId = useMemo(() => `notification-count-${count}`, [count]);
+  const badgeId = useMemo(
+    () => `notification-count-${count}`,
+    [count]
+  );
 
   const handleClick = useCallback(() => {
     onClick?.();
@@ -46,7 +49,7 @@ export const NotificationButton = memo(function NotificationButton({
         aria-describedby={showBadge ? badgeId : undefined}
       >
         <Bell
-          className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground"
+          className="h-4 w-4 text-muted-foreground sm:h-5 sm:w-5"
           size={iconSize}
         />
         {showBadge && (

@@ -5,7 +5,8 @@ import { Spinner } from "@/components/ui/spinner";
 import { useCreateCategory } from "@/entities/category/api/use-create-category";
 import { useUpdateCategory } from "@/entities/category/api/use-update-category";
 import { useCategoryModalState } from "@/shared/store/modal-store";
-import { memo, useCallback, useEffect, useMemo, useRef } from "react";
+import { useToastState } from "@/shared/store/toast-store";
+import { memo, useCallback, useEffect, useMemo } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import {
   FORM_CLASSES,
@@ -28,6 +29,8 @@ import {
 
 export const CategoryForm = memo(function CategoryForm({
   editingCategory,
+  onDirtyChange,
+  onBusyChange,
 }: CategoryFormProps) {
   const isEditMode = !!editingCategory;
   const {
@@ -43,6 +46,7 @@ export const CategoryForm = memo(function CategoryForm({
 
   const { closeCategoryModal: closeModal, categoryType } =
     useCategoryModalState();
+  const { showToast } = useToastState();
 
   const loading = creating || updating;
   const error = createError || updateError;
@@ -53,18 +57,19 @@ export const CategoryForm = memo(function CategoryForm({
     handleImageFile,
     uploadImageFile,
     resetImageState,
-    setImagePreview,
   } = useCategoryImage({
     initialImage: editingCategory?.image || null,
     editingCategoryImage: editingCategory?.image || null,
   });
+
+  const busy = loading || uploadingImage;
 
   const defaultValues = useMemo(
     () => getDefaultValues(editingCategory, categoryType),
     [editingCategory, categoryType]
   );
 
-  const { control, handleSubmit, reset, setValue } =
+  const { control, handleSubmit, reset, setValue, formState } =
     useForm<CategoryFormData>({
       defaultValues,
     });
@@ -74,55 +79,21 @@ export const CategoryForm = memo(function CategoryForm({
     name: "image",
   });
 
-  const editingCategoryIdRef = useRef<string | null>(null);
-  const previousCategoryTypeRef =
-    useRef<typeof categoryType>(categoryType);
-
-  // Объединенный эффект для редактирования категории и установки типа
+  // Note: the modal remounts the form via `key`, so defaultValues are enough.
+  // Keep type in sync for create-mode when the modal's categoryType changes.
   useEffect(() => {
-    // Обработка редактирования категории
-    if (
-      editingCategory &&
-      editingCategory.id !== editingCategoryIdRef.current
-    ) {
-      editingCategoryIdRef.current = editingCategory.id;
-      reset({
-        name: editingCategory.name,
-        description: editingCategory.description || "",
-        type: editingCategory.type || undefined,
-        image: null,
-      });
-      setImagePreview(editingCategory.image || null);
-    } else if (
-      !editingCategory &&
-      editingCategoryIdRef.current !== null
-    ) {
-      editingCategoryIdRef.current = null;
-    }
-
-    // Установка типа категории при создании
-    if (
-      categoryType &&
-      !editingCategory &&
-      previousCategoryTypeRef.current !== categoryType
-    ) {
+    if (categoryType && !editingCategory) {
       setValue("type", categoryType as CategoryFormData["type"]);
-      previousCategoryTypeRef.current = categoryType;
     }
+  }, [categoryType, editingCategory, setValue]);
 
-    // Сброс ref при завершении загрузки
-    if (!loading && !editingCategory) {
-      editingCategoryIdRef.current = null;
-    }
-  }, [
-    editingCategory,
-    editingCategory?.id,
-    categoryType,
-    loading,
-    reset,
-    setValue,
-    setImagePreview,
-  ]);
+  useEffect(() => {
+    onDirtyChange?.(formState.isDirty);
+  }, [formState.isDirty, onDirtyChange]);
+
+  useEffect(() => {
+    onBusyChange?.(busy);
+  }, [busy, onBusyChange]);
 
   // Обработка изменения файла изображения
   useEffect(() => {
@@ -137,19 +108,26 @@ export const CategoryForm = memo(function CategoryForm({
         if (isEditMode && editingCategory) {
           const input = updateCategoryInput(data, imageUrl);
           await updateCategory(editingCategory.id, input);
+          showToast("success", "Категория обновлена");
           closeModal();
         } else {
           const input = createCategoryInput(data, imageUrl);
           await createCategory(input);
+          showToast("success", "Категория создана");
           closeModal();
         }
 
         reset();
         resetImageState();
+        onDirtyChange?.(false);
       } catch (err) {
         console.error(
           `Ошибка при ${isEditMode ? "обновлении" : "создании"} категории:`,
           err
+        );
+        showToast(
+          "error",
+          `Ошибка при ${isEditMode ? "обновлении" : "создании"} категории`
         );
       }
     },
@@ -162,6 +140,8 @@ export const CategoryForm = memo(function CategoryForm({
       closeModal,
       reset,
       resetImageState,
+      showToast,
+      onDirtyChange,
     ]
   );
 

@@ -10,8 +10,8 @@ export const CATEGORY_MODAL_CONFIG = {
   size: "3xl" as const,
   scrollBehavior: "inside" as const,
   classNames: {
-base: "bg-background/95 backdrop-blur-xl border border-border shadow-2xl",
-  header: "border-b border-border pb-4",
+    base: "bg-background/95 backdrop-blur-xl border border-border shadow-2xl",
+    header: "border-b border-border pb-4",
     body: "py-6",
   },
 } as const;

@@ -21,7 +21,7 @@ export const ErrorState = memo(function ErrorState({
       aria-live="assertive"
     >
       <CardContent className="pt-6">
-        <p className="text-destructive font-semibold">
+        <p className="font-semibold text-destructive">
           {title}: {message}
         </p>
       </CardContent>

@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { Surface } from "@/shared/ui/surface/surface";
 import { Search, X } from "lucide-react";
 
 export function DataToolbar({
@@ -16,16 +17,17 @@ export function DataToolbar({
   searchValue: string;
   onSearchValueChange: (v: string) => void;
   searchPlaceholder?: string;
-  leftSlot?: React.ReactNode; // фильтры/чипы слева
-  rightSlot?: React.ReactNode; // сортировка/колонки/кнопки справа
+  leftSlot?: React.ReactNode;
+  rightSlot?: React.ReactNode;
   className?: string;
 }) {
   const hasValue = searchValue.trim().length > 0;
 
   return (
-    <div
+    <Surface
+      variant="default"
       className={cn(
-        "sticky top-(--admin-header-offset) z-30 rounded-2xl border border-border/60 bg-background/70 shadow-sm backdrop-blur-xl",
+        "sticky top-[calc(var(--admin-header-offset)+var(--admin-tabs-offset,0px))] z-30 bg-background/70 shadow-sm backdrop-blur-xl",
         className
       )}
     >
@@ -37,9 +39,9 @@ export function DataToolbar({
               value={searchValue}
               onChange={(e) => onSearchValueChange(e.target.value)}
               placeholder={searchPlaceholder}
-              className="pr-10 pl-9"
+              className="h-9 bg-background/60 pr-10 pl-9"
             />
-            {hasValue && (
+            {hasValue ? (
               <Button
                 type="button"
                 variant="ghost"
@@ -50,16 +52,16 @@ export function DataToolbar({
               >
                 <X className="h-4 w-4 text-muted-foreground" />
               </Button>
-            )}
+            ) : null}
           </div>
 
           {leftSlot}
         </div>
 
-        <div className="flex items-center justify-between gap-2 sm:justify-end">
+        <div className="flex w-full items-center gap-2 overflow-x-auto pb-1 [-webkit-overflow-scrolling:touch] sm:w-auto sm:justify-end sm:overflow-visible sm:pb-0">
           {rightSlot}
         </div>
       </div>
-    </div>
+    </Surface>
   );
 }

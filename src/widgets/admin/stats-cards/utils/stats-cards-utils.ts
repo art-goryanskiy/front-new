@@ -3,8 +3,13 @@ import type { ProgramEntity } from "@/shared/api/generated/graphql";
 /**
  * Вычисляет общее количество просмотров всех программ
  */
-export function calculateTotalViews(programs: ProgramEntity[]): number {
-  return programs.reduce((sum, program) => sum + (program.views || 0), 0);
+export function calculateTotalViews(
+  programs: ProgramEntity[]
+): number {
+  return programs.reduce(
+    (sum, program) => sum + (program.views || 0),
+    0
+  );
 }
 
 /**

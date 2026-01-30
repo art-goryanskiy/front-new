@@ -22,7 +22,7 @@ export const CategoryTableNameContent = memo(
       <div className="flex w-full min-w-0 items-center gap-2 sm:gap-3 lg:gap-4">
         <Avatar className="hidden h-9 w-9 shrink-0 shadow-md transition-transform group-hover:scale-110 sm:flex">
           <AvatarImage
-            src={category.image}
+            src={category.image ?? undefined}
             alt={`Аватар категории ${category.name}`}
           />
           <AvatarFallback className="text-xs font-bold text-primary sm:text-sm">

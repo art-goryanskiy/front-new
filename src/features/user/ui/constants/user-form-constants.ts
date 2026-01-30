@@ -32,15 +32,14 @@ export const FORM_MESSAGES = {
 export const FORM_CLASSES = {
   form: "space-y-6 w-full",
   errorContainer:
-    "p-4 bg-danger-50/80 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-xl backdrop-blur-sm w-full",
-  errorText:
-    "text-danger-800 dark:text-danger-200 text-sm font-medium",
+    "w-full rounded-2xl border border-destructive/30 bg-destructive/10 p-4 backdrop-blur",
+  errorText: "text-sm font-medium text-destructive",
   section:
-    "space-y-4 p-5 bg-muted/50 rounded-xl border border-border w-full",
+    "w-full space-y-4 rounded-2xl border border-border/60 bg-background/50 p-5 shadow-sm backdrop-blur-xl",
   sectionTitle:
-    "text-sm font-semibold text-foreground uppercase tracking-wide mb-2",
+    "mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground",
   actions:
-    "flex gap-3 justify-end pt-6 border-t border-border w-full",
+    "-mx-6 sticky bottom-0 z-10 mt-6 flex w-full flex-wrap items-center justify-end gap-3 border-t border-border/60 bg-background/80 px-6 pt-4 pb-3 backdrop-blur-xl sm:flex-nowrap",
 } as const;
 
 export const USER_ROLE_OPTIONS: ReadonlyArray<{

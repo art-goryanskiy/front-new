@@ -54,8 +54,10 @@ export const ProgramFormSubProgramsFields = memo(
               name={`subPrograms.${index}.title`}
               control={control}
               render={({ field }) => (
-                <div className="space-y-2 w-full">
-                  <Label htmlFor={`subprogram-title-${index}`}>{FORM_LABELS.subProgramTitle}</Label>
+                <div className="w-full space-y-2">
+                  <Label htmlFor={`subprogram-title-${index}`}>
+                    {FORM_LABELS.subProgramTitle}
+                  </Label>
                   <Input
                     {...field}
                     id={`subprogram-title-${index}`}
@@ -70,17 +72,23 @@ export const ProgramFormSubProgramsFields = memo(
               name={`subPrograms.${index}.description`}
               control={control}
               render={({ field }) => (
-                <div className="space-y-2 w-full">
-                  <Label htmlFor={`subprogram-desc-${index}`}>{FORM_LABELS.subProgramDescription}</Label>
+                <div className="w-full space-y-2">
+                  <Label htmlFor={`subprogram-desc-${index}`}>
+                    {FORM_LABELS.subProgramDescription}
+                  </Label>
                   <Textarea
                     {...field}
                     id={`subprogram-desc-${index}`}
-                    placeholder={FORM_PLACEHOLDERS.subProgramDescription}
+                    placeholder={
+                      FORM_PLACEHOLDERS.subProgramDescription
+                    }
                     rows={2}
                     aria-label={`${FORM_LABELS.subProgramDescription} ${index + 1}`}
                     className="w-full"
                   />
-                  <p className="text-sm text-muted-foreground">{FORM_MESSAGES.subProgramOptional}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {FORM_MESSAGES.subProgramOptional}
+                  </p>
                 </div>
               )}
             />

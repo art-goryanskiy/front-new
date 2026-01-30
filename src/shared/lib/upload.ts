@@ -12,7 +12,8 @@ export async function uploadImage(
   formData.append("file", file);
 
   const uploadUrl =
-    process.env.NEXT_PUBLIC_UPLOAD_URL || "http://localhost:3000/upload/image";
+    process.env.NEXT_PUBLIC_UPLOAD_URL ||
+    "http://localhost:3000/upload/image";
   const url = `${uploadUrl}?folder=${folder}`;
 
   const response = await fetch(url, {

@@ -26,14 +26,18 @@ export function usePublicSearchResults(query: string) {
 
   // Загружаем найденные категории
   const { categories, loading: categoriesLoading } = useCategories(
-    debouncedQuery.length > 0 ? { search: debouncedQuery, limit: 5 } : undefined
+    debouncedQuery.length > 0
+      ? { search: debouncedQuery, limit: 5 }
+      : undefined
   );
 
   // Загружаем все категории для поиска родительских (всегда загружаем, без фильтра)
   const { categories: allCategories } = useCategories();
 
   const { programs, loading: programsLoading } = usePrograms(
-    debouncedQuery.length > 0 ? { search: debouncedQuery, limit: 5 } : undefined
+    debouncedQuery.length > 0
+      ? { search: debouncedQuery, limit: 5 }
+      : undefined
   );
 
   // Создаем мапу категорий по ID для быстрого поиска родительских
@@ -87,11 +91,15 @@ export function usePublicSearchResults(query: string) {
         if (programCategory) {
           if (programCategory.parent) {
             // Если у категории программы есть parent, находим родительскую категорию по ID
-            parentCategoryName = categoriesMap.get(programCategory.parent);
+            parentCategoryName = categoriesMap.get(
+              programCategory.parent
+            );
           } else if (programCategory.type) {
             // Если нет parent, но есть type, используем название типа
             parentCategoryName =
-              CATEGORY_TYPE_LABELS[programCategory.type as CategoryType];
+              CATEGORY_TYPE_LABELS[
+                programCategory.type as CategoryType
+              ];
           }
         }
 

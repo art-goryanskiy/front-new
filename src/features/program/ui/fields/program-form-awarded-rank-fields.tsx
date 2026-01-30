@@ -34,8 +34,10 @@ export const ProgramFormAwardedRankFields = memo(
           name="awardedRankFrom"
           control={control}
           render={({ field }) => (
-            <div className="space-y-2 w-full">
-              <Label htmlFor="awardedRankFrom">{FORM_LABELS.awardedRankFrom}</Label>
+            <div className="w-full space-y-2">
+              <Label htmlFor="awardedRankFrom">
+                {FORM_LABELS.awardedRankFrom}
+              </Label>
               <Input
                 {...field}
                 id="awardedRankFrom"
@@ -53,8 +55,10 @@ export const ProgramFormAwardedRankFields = memo(
           name="awardedRankTo"
           control={control}
           render={({ field }) => (
-            <div className="space-y-2 w-full">
-              <Label htmlFor="awardedRankTo">{FORM_LABELS.awardedRankTo}</Label>
+            <div className="w-full space-y-2">
+              <Label htmlFor="awardedRankTo">
+                {FORM_LABELS.awardedRankTo}
+              </Label>
               <Input
                 {...field}
                 id="awardedRankTo"

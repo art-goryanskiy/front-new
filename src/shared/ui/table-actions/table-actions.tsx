@@ -36,7 +36,7 @@ export const TableActions = memo(function TableActions({
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 shrink-0 hover:scale-110 transition-all text-primary hover:bg-primary/10"
+              className="h-8 w-8 shrink-0 text-primary transition-all hover:scale-110 hover:bg-primary/10"
               aria-label={editLabel}
               onClick={onEdit}
             >
@@ -50,7 +50,7 @@ export const TableActions = memo(function TableActions({
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 shrink-0 hover:scale-110 transition-all text-destructive hover:bg-destructive/10"
+              className="h-8 w-8 shrink-0 text-destructive transition-all hover:scale-110 hover:bg-destructive/10"
               aria-label={deleteLabel}
               onClick={onDelete}
             >

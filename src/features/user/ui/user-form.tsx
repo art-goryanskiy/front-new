@@ -11,7 +11,8 @@ import {
 import { useCreateUser } from "@/entities/user/api/use-create-user";
 import { useUpdateUser } from "@/entities/user/api/use-update-user";
 import { useUserModalState } from "@/shared/store/modal-store";
-import { memo, useCallback, useMemo } from "react";
+import { useToastState } from "@/shared/store/toast-store";
+import { memo, useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { UserFormBasicTab } from "./components/user-form-basic-tab";
 import { UserFormError } from "./components/user-form-error";
@@ -32,6 +33,8 @@ import {
 
 export const UserForm = memo(function UserForm({
   editingUser,
+  onDirtyChange,
+  onBusyChange,
 }: UserFormProps) {
   const isEditMode = !!editingUser;
   const {
@@ -46,6 +49,7 @@ export const UserForm = memo(function UserForm({
   } = useUpdateUser();
 
   const { closeUserModal: closeModal } = useUserModalState();
+  const { showToast } = useToastState();
 
   const loading = creating || updating;
   const error = createError || updateError;
@@ -55,9 +59,18 @@ export const UserForm = memo(function UserForm({
     [editingUser]
   );
 
-  const { control, handleSubmit, reset } = useForm<UserFormData>({
-    defaultValues,
-  });
+  const { control, handleSubmit, reset, formState } =
+    useForm<UserFormData>({
+      defaultValues,
+    });
+
+  useEffect(() => {
+    onDirtyChange?.(formState.isDirty);
+  }, [formState.isDirty, onDirtyChange]);
+
+  useEffect(() => {
+    onBusyChange?.(loading);
+  }, [loading, onBusyChange]);
 
   const onSubmit = useCallback(
     async (data: UserFormData) => {
@@ -65,18 +78,25 @@ export const UserForm = memo(function UserForm({
         if (isEditMode && editingUser) {
           const input = updateUserInput(data);
           await updateUser(editingUser.id, input);
+          showToast("success", "Пользователь обновлен");
           closeModal();
         } else {
           const input = createUserInput(data);
           await createUser(input);
+          showToast("success", "Пользователь создан");
           closeModal();
         }
 
         reset();
+        onDirtyChange?.(false);
       } catch (err) {
         console.error(
           `Ошибка при ${isEditMode ? "обновлении" : "создании"} пользователя:`,
           err
+        );
+        showToast(
+          "error",
+          `Ошибка при ${isEditMode ? "обновлении" : "создании"} пользователя`
         );
       }
     },
@@ -87,6 +107,8 @@ export const UserForm = memo(function UserForm({
       createUser,
       closeModal,
       reset,
+      showToast,
+      onDirtyChange,
     ]
   );
 

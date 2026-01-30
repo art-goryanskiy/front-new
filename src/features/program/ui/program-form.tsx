@@ -5,7 +5,8 @@ import { Spinner } from "@/components/ui/spinner";
 import { useCreateProgram } from "@/entities/program/api/use-create-programs";
 import { useUpdateProgram } from "@/entities/program/api/use-update-program";
 import { useProgramModalState } from "@/shared/store/modal-store";
-import { memo, useCallback, useMemo } from "react";
+import { useToastState } from "@/shared/store/toast-store";
+import { memo, useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import {
   FORM_CLASSES,
@@ -58,6 +59,8 @@ export const ProgramForm = memo(function ProgramForm({
   editingProgram,
   categoryId,
   categoryType,
+  onDirtyChange,
+  onBusyChange,
 }: ProgramFormProps) {
   const isEditMode = !!editingProgram;
   const {
@@ -72,20 +75,35 @@ export const ProgramForm = memo(function ProgramForm({
   } = useUpdateProgram();
 
   const { closeProgramModal: closeModal } = useProgramModalState();
+  const { showToast } = useToastState();
 
   const loading = creating || updating;
   const error = createError || updateError;
 
   const config = useProgramFormConfig(categoryType);
 
+  const missingCategory = useMemo(
+    () => !isEditMode && !categoryId,
+    [isEditMode, categoryId]
+  );
+
   const defaultValues = useMemo(
     () => getDefaultValues(editingProgram),
     [editingProgram]
   );
 
-  const { control, handleSubmit, reset } = useForm<ProgramFormData>({
-    defaultValues,
-  });
+  const { control, handleSubmit, reset, formState } =
+    useForm<ProgramFormData>({
+      defaultValues,
+    });
+
+  useEffect(() => {
+    onDirtyChange?.(formState.isDirty);
+  }, [formState.isDirty, onDirtyChange]);
+
+  useEffect(() => {
+    onBusyChange?.(loading);
+  }, [loading, onBusyChange]);
 
   const onSubmit = useCallback(
     async (data: ProgramFormData) => {
@@ -93,18 +111,29 @@ export const ProgramForm = memo(function ProgramForm({
         if (isEditMode && editingProgram) {
           const input = updateProgramInput(data, config);
           await updateProgram(editingProgram.id, input);
+          showToast("success", "Программа обновлена");
           closeModal();
         } else {
+          if (!categoryId) {
+            showToast("error", "Выберите категорию для программы");
+            return;
+          }
           const input = createProgramInput(data, categoryId, config);
           await createProgram(input);
+          showToast("success", "Программа создана");
           closeModal();
         }
 
         reset();
+        onDirtyChange?.(false);
       } catch (err) {
         console.error(
           `Ошибка при ${isEditMode ? "обновлении" : "создании"} программы:`,
           err
+        );
+        showToast(
+          "error",
+          `Ошибка при ${isEditMode ? "обновлении" : "создании"} программы`
         );
       }
     },
@@ -117,6 +146,8 @@ export const ProgramForm = memo(function ProgramForm({
       createProgram,
       closeModal,
       reset,
+      showToast,
+      onDirtyChange,
     ]
   );
 
@@ -125,7 +156,17 @@ export const ProgramForm = memo(function ProgramForm({
       onSubmit={handleSubmit(onSubmit)}
       className={FORM_CLASSES.form}
     >
-      <ProgramFormError error={error} isEditMode={isEditMode} />
+      <ProgramFormError
+        error={
+          missingCategory
+            ? {
+                message:
+                  "Выберите категорию, чтобы создать программу.",
+              }
+            : error
+        }
+        isEditMode={isEditMode}
+      />
 
       {/* Основная информация */}
       <div className={FORM_CLASSES.section}>
@@ -178,7 +219,7 @@ export const ProgramForm = memo(function ProgramForm({
         </Button>
         <Button
           type="submit"
-          disabled={loading}
+          disabled={loading || missingCategory}
           className="min-w-32 font-semibold shadow-lg transition-shadow hover:shadow-xl"
         >
           {loading ? (

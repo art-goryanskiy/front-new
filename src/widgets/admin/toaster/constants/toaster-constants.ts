@@ -35,7 +35,9 @@ export const TOASTER_ICONS = {
   info: "ℹ",
 } as const;
 
-export function getToastClasses(type: "success" | "error" | "info"): string {
+export function getToastClasses(
+  type: "success" | "error" | "info"
+): string {
   return `${TOASTER_CLASSES.toast.base} ${
     type === "success"
       ? TOASTER_CLASSES.toast.success

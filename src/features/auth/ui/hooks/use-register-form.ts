@@ -25,7 +25,9 @@ export function useRegisterForm() {
       const input = prepareRegisterInput(data);
       await registerUser(input);
       // После успешной регистрации перенаправляем на страницу верификации
-      router.push("/verify-email?email=" + encodeURIComponent(data.email));
+      router.push(
+        "/verify-email?email=" + encodeURIComponent(data.email)
+      );
     } catch (err) {
       console.error("Ошибка при регистрации:", err);
     }

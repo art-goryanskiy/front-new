@@ -65,7 +65,10 @@ export const UserMenu = memo(function UserMenu({
           aria-label="Меню пользователя"
         >
           <Avatar className={USER_MENU_CLASSES.avatar}>
-            <AvatarImage src={user?.avatarUrl} alt={userEmail} />
+            <AvatarImage
+              src={user?.profile?.avatar ?? undefined}
+              alt={userEmail}
+            />
             <AvatarFallback className="bg-primary text-xs font-semibold text-primary-foreground sm:text-sm">
               {userInitial}
             </AvatarFallback>

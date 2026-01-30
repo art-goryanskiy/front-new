@@ -2,7 +2,10 @@
 
 import { memo } from "react";
 import { CommandPaletteCommandItem } from "./command-palette-command-item";
-import type { Command, SearchResult } from "../types/command-palette.types";
+import type {
+  Command,
+  SearchResult,
+} from "../types/command-palette.types";
 
 interface CommandPaletteResultsGroupProps {
   title: string;
@@ -26,7 +29,7 @@ export const CommandPaletteResultsGroup = memo(
 
     return (
       <div className="py-2">
-        <div className="px-4 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+        <div className="px-4 py-2 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
           {title}
         </div>
         <div className="space-y-1">

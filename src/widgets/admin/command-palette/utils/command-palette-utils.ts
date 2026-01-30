@@ -1,4 +1,7 @@
-import type { Command, SearchResult } from "../types/command-palette.types";
+import type {
+  Command,
+  SearchResult,
+} from "../types/command-palette.types";
 
 export interface GroupedResults {
   categories: SearchResult[];

@@ -12,8 +12,7 @@ export const USER_MENU_TEXTS = {
 export const USER_MENU_CLASSES = {
   trigger:
     "flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 rounded-xl hover:bg-muted transition-all",
-  avatar:
-    "ring-2 shadow-lg bg-primary ring-primary/20 shrink-0",
+  avatar: "ring-2 shadow-lg bg-primary ring-primary/20 shrink-0",
   userInfo: "hidden text-left md:block",
   userName:
     "text-sm font-semibold text-foreground truncate max-w-[120px] lg:max-w-none",

@@ -13,7 +13,10 @@ export function useUpdateCategory() {
     refetchQueries: [{ query: GET_CATEGORIES }],
   });
 
-  const handleUpdate = async (id: string, input: UpdateCategoryInput) => {
+  const handleUpdate = async (
+    id: string,
+    input: UpdateCategoryInput
+  ) => {
     try {
       const result = await updateCategory({
         variables: { id, input },

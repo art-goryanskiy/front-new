@@ -33,7 +33,10 @@ export const ProgramTablePricingContent = memo(
               </Badge>
             ))
           ) : (
-            <span className="text-muted-foreground text-sm" aria-label="Нет данных">
+            <span
+              className="text-sm text-muted-foreground"
+              aria-label="Нет данных"
+            >
               -
             </span>
           )}
