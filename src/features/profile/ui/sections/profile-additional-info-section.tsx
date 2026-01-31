@@ -1,26 +1,20 @@
 "use client";
 
-import { FormField } from "@/shared/ui/form-field/form-field";
 import {
   PROFILE_FORM_LABELS,
   PROFILE_FORM_PLACEHOLDERS,
   PROFILE_FORM_CLASSES,
 } from "../constants/profile-form-constants";
-import type { ProfileFormData } from "../types/profile-form.types";
+import type { ProfileFormData, WorkPlaceFormData } from "../types/profile-form.types";
 import type {
   Control,
   FieldPath,
   UseFormSetValue,
 } from "react-hook-form";
-import { ProfileFieldPreview } from "../components/profile-field-preview";
-import { formatProfileValue } from "../utils/profile-preview-utils";
-import { memo, useMemo, useState } from "react";
+import { memo, useState } from "react";
 import { OrganizationSuggestInput } from "@/shared/ui/form-fields/organization-suggest-input";
 import { useMutation } from "@apollo/client/react";
-import {
-  SET_MY_WORK_PLACE_BY_INN,
-  SET_MY_WORK_PLACE_MANUAL,
-} from "@/shared/api/mutations/work-place";
+import { SET_MY_WORK_PLACE_MANUAL } from "@/shared/api/mutations/work-place";
 import { ME } from "@/shared/api/queries/auth";
 import { useToastState } from "@/shared/store/toast-store";
 import type { FetchResult } from "@apollo/client";
@@ -44,11 +38,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Controller, useForm } from "react-hook-form";
-import type { ProfileEmploymentData } from "../types/profile-form.types";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Building2, Star, Trash2 } from "lucide-react";
 
-interface ProfileAdditionalInfoSectionProps<
-  T extends ProfileFormData,
-> {
+const MAX_WORK_PLACES = 5;
+
+interface ProfileAdditionalInfoSectionProps<T extends ProfileFormData> {
   control: Control<T>;
   mode?: "view" | "edit";
   values?: ProfileFormData;
@@ -69,52 +65,23 @@ export const ProfileAdditionalInfoSection = memo(
     ): FieldPath<T> => name as unknown as FieldPath<T>;
 
     const { showToast } = useToastState();
-
-    const apiWorkPlaceName = useMemo(() => {
-      const items = (values?.employments ||
-        []) as ProfileEmploymentData[];
-      const primary =
-        items.find((e) => Boolean(e?.isPrimary)) || items[0];
-      const v = primary?.organization?.displayName?.trim();
-      return v ? v : null;
-    }, [values?.employments]);
-
-    // Локальный оверрайд: чтобы имя появлялось сразу после выбора подсказки,
-    // пока идёт refetch `ME` (серверный источник истины).
-    const [workPlaceNameOverride, setWorkPlaceNameOverride] =
-      useState<string | null>(null);
-
-    const workPlaceNameRaw =
-      apiWorkPlaceName ?? workPlaceNameOverride;
-
-    const workPlaceNamePretty = useMemo(() => {
-      if (!workPlaceNameRaw) return null;
-      const n = workPlaceNameRaw.trim().replace(/\s+/g, " ");
-      if (n.length <= 60) return n;
-      return `${n.slice(0, 57)}…`;
-    }, [workPlaceNameRaw]);
+    const workPlaces = (values?.workPlaces ?? []) as WorkPlaceFormData[];
+    const hasReachedMax = workPlaces.length >= MAX_WORK_PLACES;
 
     const [binding, setBinding] = useState(false);
     const [manualOpen, setManualOpen] = useState(false);
     const [orgApiUnavailable, setOrgApiUnavailable] = useState(false);
+    const [addPosition, setAddPosition] = useState("");
+    const [addIsPrimary, setAddIsPrimary] = useState(false);
 
-    const [setMyWorkPlaceByInn] = useMutation<{
-      setMyWorkPlaceByInn: {
-        workPlaceId?: string | null;
-        position?: string | null;
-        employments?: Array<{
-          id: string;
-          organizationId: string;
+    const [setMyWorkPlaceManual] = useMutation<{
+      setMyWorkPlaceManual: {
+        workPlaces?: Array<{
+          organization: { id: string; displayName?: string | null };
           position?: string | null;
           isPrimary: boolean;
         }> | null;
       };
-    }>(SET_MY_WORK_PLACE_BY_INN, {
-      errorPolicy: "all",
-    });
-
-    const [setMyWorkPlaceManual] = useMutation<{
-      setMyWorkPlaceManual: { workPlaceId?: string | null };
     }>(SET_MY_WORK_PLACE_MANUAL, {
       errorPolicy: "all",
     });
@@ -139,6 +106,8 @@ export const ProfileAdditionalInfoSection = memo(
       actualSameAsLegal?: boolean;
       email?: string;
       phone?: string;
+      position?: string;
+      isPrimary?: boolean;
     };
 
     const manualForm = useForm<ManualForm>({
@@ -161,6 +130,8 @@ export const ProfileAdditionalInfoSection = memo(
         actualSameAsLegal: true,
         email: "",
         phone: "",
+        position: "",
+        isPrimary: false,
       },
       mode: "onChange",
     });
@@ -189,34 +160,103 @@ export const ProfileAdditionalInfoSection = memo(
       return opf ? `${opf} ${base}` : base;
     };
 
-    if (mode === "view") {
-      const position = formatProfileValue(values?.position);
-      const snils = formatProfileValue(values?.snils);
-      const avatar = formatProfileValue(values?.avatar);
+    const setWorkPlacePrimary = (index: number) => {
+      if (!setValue) return;
+      const next = workPlaces.map((wp, i) => ({
+        ...wp,
+        isPrimary: i === index,
+      }));
+      setValue("workPlaces", next, {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
+    };
 
+    const removeWorkPlace = (index: number) => {
+      if (!setValue) return;
+      const next = workPlaces.filter((_, i) => i !== index);
+      if (next.length > 0 && !next.some((wp) => wp.isPrimary)) {
+        next[0].isPrimary = true;
+      }
+      setValue("workPlaces", next, {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
+    };
+
+    const updateWorkPlacePosition = (index: number, position: string) => {
+      if (!setValue) return;
+      const next = [...workPlaces];
+      next[index] = { ...next[index], position: position || undefined };
+      setValue("workPlaces", next, {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
+    };
+
+    if (mode === "view") {
       return (
         <div className={PROFILE_FORM_CLASSES.section}>
           <h3 className={PROFILE_FORM_CLASSES.sectionTitle}>
-            Дополнительная информация
+            Места работы
           </h3>
           <div className={PROFILE_FORM_CLASSES.fieldGrid}>
-            <ProfileFieldPreview
-              label={PROFILE_FORM_LABELS.position}
-              value={position}
-            />
-            <ProfileFieldPreview
-              label={PROFILE_FORM_LABELS.snils}
-              value={snils}
-            />
-            <ProfileFieldPreview
-              label={PROFILE_FORM_LABELS.workPlaceId}
-              value={workPlaceNamePretty}
-            />
-            <ProfileFieldPreview
-              className="md:col-span-2"
-              label={PROFILE_FORM_LABELS.avatar}
-              value={avatar}
-            />
+            <div className="md:col-span-2 space-y-3">
+              <p className="text-sm font-medium text-foreground">
+                {PROFILE_FORM_LABELS.workPlaces}
+              </p>
+              {workPlaces.length === 0 ? (
+                <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-muted/20 py-12 text-center">
+                  <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+                    <Building2 className="h-6 w-6 text-muted-foreground" />
+                  </div>
+                  <p className="text-sm font-medium text-foreground">
+                    Места работы не указаны
+                  </p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Добавьте организации при редактировании профиля
+                  </p>
+                </div>
+              ) : (
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {workPlaces.map((wp, i) => (
+                    <Card
+                      key={i}
+                      className="overflow-hidden transition-colors hover:bg-muted/30"
+                    >
+                      <CardContent className="flex flex-col gap-2 p-4">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex min-w-0 items-center gap-2">
+                            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                              <Building2 className="h-4 w-4 text-primary" />
+                            </div>
+                            <div className="min-w-0">
+                              <p className="truncate text-sm font-medium text-foreground">
+                                {wp.organization?.displayName || "Организация"}
+                              </p>
+                              {wp.position && (
+                                <p className="text-xs text-muted-foreground">
+                                  {wp.position}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                          {wp.isPrimary && (
+                            <Badge
+                              variant="secondary"
+                              className="shrink-0 gap-1 bg-primary/10 text-primary"
+                            >
+                              <Star className="h-3 w-3 fill-current" />
+                              Основное
+                            </Badge>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       );
@@ -225,123 +265,183 @@ export const ProfileAdditionalInfoSection = memo(
     return (
       <div className={PROFILE_FORM_CLASSES.section}>
         <h3 className={PROFILE_FORM_CLASSES.sectionTitle}>
-          Дополнительная информация
+          Места работы
         </h3>
         <div className={PROFILE_FORM_CLASSES.fieldGrid}>
-          <FormField
-            control={control}
-            name={fieldName("position")}
-            label={PROFILE_FORM_LABELS.position}
-            placeholder={PROFILE_FORM_PLACEHOLDERS.position}
-            type="text"
-          />
-          <FormField
-            control={control}
-            name={fieldName("snils")}
-            label={PROFILE_FORM_LABELS.snils}
-            placeholder={PROFILE_FORM_PLACEHOLDERS.snils}
-            type="text"
-          />
-          <OrganizationSuggestInput
-            className="md:col-span-2"
-            label="Место работы"
-            placeholder="Введите ИНН или название организации"
-            description={
-              workPlaceNamePretty
-                ? `Место работы: ${workPlaceNamePretty}`
-                : "Выберите организацию из подсказок — профиль привяжется автоматически."
-            }
-            isDisabled={binding}
-            debounceMs={350}
-            minQueryLength={3}
-            count={8}
-            onApiUnavailableChange={(v) => setOrgApiUnavailable(v)}
-            onSelect={async (sug) => {
-              try {
-                setBinding(true);
-                const input = {
-                  inn: sug.inn,
-                  kpp: sug.kpp ?? undefined,
-                };
-                const result: FetchResult<{
-                  setMyWorkPlaceByInn: {
-                    workPlaceId?: string | null;
-                    position?: string | null;
-                    employments?: Array<{
-                      id: string;
-                      organizationId: string;
-                      position?: string | null;
-                      isPrimary: boolean;
-                    }> | null;
-                  };
-                }> = await setMyWorkPlaceByInn({
-                  variables: { input },
-                  refetchQueries: [{ query: ME }],
-                  awaitRefetchQueries: true,
-                });
-                if (result.errors?.length) {
-                  const msg = toUserFriendlyMessage(
-                    result.errors[0]?.message || ""
-                  );
-                  showToast(
-                    "error",
-                    msg || "Не удалось привязать организацию"
-                  );
-                  return;
-                }
-                const id =
-                  result.data?.setMyWorkPlaceByInn?.workPlaceId ?? "";
-                if (setValue) {
-                  setValue("workPlaceId", id, {
-                    shouldDirty: true,
-                    shouldValidate: true,
-                  });
-                }
-                const pos =
-                  result.data?.setMyWorkPlaceByInn?.position ?? "";
-                if (setValue && pos) {
-                  setValue("position", pos, {
-                    shouldDirty: true,
-                    shouldValidate: true,
-                  });
-                }
-                if (id) {
-                  setWorkPlaceNameOverride(sug.displayName);
-                }
-                showToast("success", "Место работы обновлено");
-              } catch (e) {
-                const msg =
-                  e instanceof Error
-                    ? toUserFriendlyMessage(e.message)
-                    : "Не удалось привязать организацию";
-                showToast("error", msg);
-              } finally {
-                setBinding(false);
-              }
-            }}
-          />
+          <div className="md:col-span-2 space-y-4">
+            <div className="flex items-baseline justify-between">
+              <Label className="text-sm font-medium">
+                {PROFILE_FORM_LABELS.workPlaces}
+              </Label>
+              {workPlaces.length > 0 && (
+                <span className="text-xs text-muted-foreground">
+                  {workPlaces.length} из {MAX_WORK_PLACES}
+                </span>
+              )}
+            </div>
+            {workPlaces.length > 0 && (
+              <div className="grid gap-3 sm:grid-cols-2">
+                {workPlaces.map((wp, i) => (
+                  <Card
+                    key={i}
+                    className="overflow-hidden transition-shadow hover:shadow-md"
+                  >
+                    <CardContent className="p-4">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex min-w-0 flex-1 items-start gap-3">
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                            <Building2 className="h-5 w-5 text-primary" />
+                          </div>
+                          <div className="min-w-0 flex-1 space-y-2">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span className="truncate text-sm font-medium">
+                                {wp.organization?.displayName || "Организация"}
+                              </span>
+                              {wp.isPrimary && (
+                                <Badge
+                                  variant="secondary"
+                                  className="shrink-0 gap-1 bg-primary/10 text-primary"
+                                >
+                                  <Star className="h-3 w-3 fill-current" />
+                                  Основное
+                                </Badge>
+                              )}
+                            </div>
+                            <Input
+                              placeholder="Должность"
+                              value={wp.position ?? ""}
+                              onChange={(e) =>
+                                updateWorkPlacePosition(i, e.target.value)
+                              }
+                              className="h-9 text-sm"
+                            />
+                          </div>
+                        </div>
+                        <div className="flex shrink-0 gap-1">
+                          {!wp.isPrimary && (
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              className="text-muted-foreground hover:text-foreground"
+                              onClick={() => setWorkPlacePrimary(i)}
+                            >
+                              Основное
+                            </Button>
+                          )}
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="h-9 w-9 text-muted-foreground hover:text-destructive"
+                            onClick={() => removeWorkPlace(i)}
+                            aria-label="Удалить"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
 
-          {orgApiUnavailable && (
-            <div className="md:col-span-2">
+            {!hasReachedMax && (
+              <Card className="overflow-visible border-dashed">
+                <CardContent className="space-y-4 p-4">
+                  <p className="text-xs text-muted-foreground">
+                    Добавленные места работы сохранятся при нажатии «Сохранить»
+                  </p>
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:gap-4">
+                    <div className="min-w-0 flex-1 space-y-2">
+                      <OrganizationSuggestInput
+                        label="Добавить организацию"
+                        placeholder="Введите ИНН или название"
+                        description={
+                          workPlaces.length === 0
+                            ? "Выберите организацию из подсказок"
+                            : undefined
+                        }
+                        isDisabled={binding}
+                        debounceMs={350}
+                        minQueryLength={3}
+                        count={15}
+                        onApiUnavailableChange={(v) => setOrgApiUnavailable(v)}
+                        onSelect={(sug) => {
+                          if (!setValue) return;
+                          const isFirst = workPlaces.length === 0;
+                          const newEntry: WorkPlaceFormData = {
+                            organizationId: "",
+                            organization: {
+                              displayName: sug.displayName,
+                              inn: sug.inn,
+                              kpp: sug.kpp ?? undefined,
+                            },
+                            position: addPosition.trim() || undefined,
+                            isPrimary: addIsPrimary || isFirst,
+                          };
+                          setValue(
+                            "workPlaces",
+                            [...workPlaces, newEntry],
+                            { shouldDirty: true, shouldValidate: true }
+                          );
+                          setAddPosition("");
+                          setAddIsPrimary(false);
+                        }}
+                />
+                    </div>
+                    <div className="flex shrink-0 flex-col gap-2 sm:flex-row sm:items-center">
+                      <Input
+                        placeholder="Должность (опц.)"
+                        value={addPosition}
+                        onChange={(e) => setAddPosition(e.target.value)}
+                        className="h-9 w-full sm:w-36"
+                      />
+                      <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm transition-colors hover:bg-muted/50">
+                        <input
+                          type="checkbox"
+                          checked={addIsPrimary}
+                          onChange={(e) => setAddIsPrimary(e.target.checked)}
+                          className="rounded border-border"
+                        />
+                        <span className="text-muted-foreground">Основное</span>
+                      </label>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {hasReachedMax && (
+              <p className="rounded-lg border border-border bg-muted/50 px-3 py-2 text-sm text-muted-foreground">
+                Максимум {MAX_WORK_PLACES} мест работы. Удалите одно, чтобы добавить новое.
+              </p>
+            )}
+
+            {orgApiUnavailable && !hasReachedMax && (
               <Button
                 type="button"
                 variant="outline"
                 disabled={binding}
                 onClick={() => setManualOpen(true)}
-                className="w-full"
+                className="w-full border-dashed"
               >
                 Ввести организацию вручную
               </Button>
-            </div>
-          )}
+            )}
+          </div>
 
           {orgApiUnavailable && (
             <Dialog open={manualOpen} onOpenChange={setManualOpen}>
-              <DialogContent className="max-w-2xl">
-                <DialogHeader>
-                  <DialogTitle>
+              <DialogContent className="max-w-2xl gap-6">
+                <DialogHeader className="space-y-1.5">
+                  <DialogTitle className="text-lg">
                     Место работы — ручной ввод
                   </DialogTitle>
+                  <p className="text-sm text-muted-foreground">
+                    Заполните данные организации, если она не найдена по ИНН
+                  </p>
                 </DialogHeader>
 
                 <form
@@ -381,6 +481,7 @@ export const ProfileAdditionalInfoSection = memo(
                         return;
                       }
 
+                      const isFirst = workPlaces.length === 0;
                       const input = {
                         type: data.type,
                         inn,
@@ -411,11 +512,24 @@ export const ProfileAdditionalInfoSection = memo(
                           : data.actualAddress?.trim() || undefined,
                         email: data.email?.trim() || undefined,
                         phone: data.phone?.trim() || undefined,
+                        position:
+                          data.position?.trim() || undefined,
+                        isPrimary:
+                          data.isPrimary || isFirst
+                            ? true
+                            : undefined,
                       };
 
                       const result: FetchResult<{
                         setMyWorkPlaceManual: {
-                          workPlaceId?: string | null;
+                          workPlaces?: Array<{
+                            organization: {
+                              id: string;
+                              displayName?: string | null;
+                            };
+                            position?: string | null;
+                            isPrimary: boolean;
+                          }> | null;
                         };
                       }> = await setMyWorkPlaceManual({
                         variables: { input },
@@ -433,27 +547,24 @@ export const ProfileAdditionalInfoSection = memo(
                         return;
                       }
 
-                      const id =
-                        result.data?.setMyWorkPlaceManual
-                          ?.workPlaceId ?? "";
-                      if (setValue) {
-                        setValue("workPlaceId", id, {
-                          shouldDirty: true,
-                          shouldValidate: true,
-                        });
-                      }
-
-                      setWorkPlaceNameOverride(
-                        buildManualDisplayName(data)
-                      );
-                      showToast("success", "Место работы обновлено");
+                      manualForm.reset({
+                        ...manualForm.getValues(),
+                        inn: "",
+                        ogrn: "",
+                        kpp: "",
+                        displayName: "",
+                        position: "",
+                        isPrimary: false,
+                      });
+                      showToast("success", "Место работы добавлено");
                       setManualOpen(false);
                     } catch (e) {
-                      const msg =
+                      showToast(
+                        "error",
                         e instanceof Error
                           ? toUserFriendlyMessage(e.message)
-                          : "Не удалось сохранить место работы";
-                      showToast("error", msg);
+                          : "Не удалось сохранить место работы"
+                      );
                     } finally {
                       setBinding(false);
                     }
@@ -531,6 +642,28 @@ export const ProfileAdditionalInfoSection = memo(
                       <Input
                         {...manualForm.register("displayName")}
                         placeholder="Можно оставить пустым — бэк сгенерирует"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Должность (опционально)</Label>
+                      <Input
+                        {...manualForm.register("position")}
+                        placeholder="Менеджер"
+                      />
+                    </div>
+
+                    <div className="flex items-center gap-2 space-y-2">
+                      <Label>Сделать основным</Label>
+                      <Controller
+                        control={manualForm.control}
+                        name="isPrimary"
+                        render={({ field }) => (
+                          <Switch
+                            checked={Boolean(field.value)}
+                            onCheckedChange={field.onChange}
+                          />
+                        )}
                       />
                     </div>
 
@@ -672,14 +805,6 @@ export const ProfileAdditionalInfoSection = memo(
               </DialogContent>
             </Dialog>
           )}
-          <FormField
-            control={control}
-            name={fieldName("avatar")}
-            label={PROFILE_FORM_LABELS.avatar}
-            placeholder={PROFILE_FORM_PLACEHOLDERS.avatar}
-            type="url"
-            className="md:col-span-2"
-          />
         </div>
       </div>
     );

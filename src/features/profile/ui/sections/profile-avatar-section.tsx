@@ -7,42 +7,24 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { FormField } from "@/shared/ui/form-field/form-field";
 import { PROFILE_FORM_CLASSES } from "../constants/profile-form-constants";
-import type { ProfileFormData } from "../types/profile-form.types";
-import type { Control, FieldPath } from "react-hook-form";
-import { ProfileFieldPreview } from "../components/profile-field-preview";
-import { formatProfileValue } from "../utils/profile-preview-utils";
-
-interface ProfileAvatarSectionProps<T extends ProfileFormData> {
-  control: Control<T>;
+interface ProfileAvatarSectionProps {
   avatarPreview: string | null;
   userEmail?: string;
   onAvatarFileChange: (
     e: React.ChangeEvent<HTMLInputElement>
   ) => void;
   mode?: "view" | "edit";
-  values?: ProfileFormData;
 }
 
 export const ProfileAvatarSection = memo(
-  function ProfileAvatarSection<
-    T extends ProfileFormData = ProfileFormData,
-  >({
-    control,
+  function ProfileAvatarSection({
     avatarPreview,
     userEmail,
     onAvatarFileChange,
     mode = "edit",
-    values,
-  }: ProfileAvatarSectionProps<T>) {
+  }: ProfileAvatarSectionProps) {
     const fileInputRef = useRef<HTMLInputElement>(null);
-
-    const fieldName = useCallback(
-      <K extends keyof ProfileFormData>(name: K): FieldPath<T> =>
-        name as unknown as FieldPath<T>,
-      []
-    );
 
     const handleButtonClick = useCallback(() => {
       fileInputRef.current?.click();
@@ -51,8 +33,6 @@ export const ProfileAvatarSection = memo(
     const initial = (userEmail || "User").charAt(0).toUpperCase();
 
     if (mode === "view") {
-      const avatarUrl = formatProfileValue(values?.avatar);
-
       return (
         <div className={PROFILE_FORM_CLASSES.section}>
           <h3 className={PROFILE_FORM_CLASSES.sectionTitle}>
@@ -73,11 +53,6 @@ export const ProfileAvatarSection = memo(
                 Чтобы изменить аватар — включите режим редактирования.
               </div>
             </div>
-
-            <ProfileFieldPreview
-              label="URL аватара"
-              value={avatarUrl}
-            />
           </div>
         </div>
       );
@@ -101,7 +76,6 @@ export const ProfileAvatarSection = memo(
               <input
                 ref={fileInputRef}
                 type="file"
-                accept="image/*"
                 onChange={onAvatarFileChange}
                 className="hidden"
               />
@@ -113,18 +87,10 @@ export const ProfileAvatarSection = memo(
                 Выбрать изображение
               </Button>
               <p className="mt-2 text-sm text-muted-foreground">
-                Рекомендуемый размер: 200x200px. Форматы: JPG, PNG
+                Бэкенд конвертирует изображения автоматически
               </p>
             </div>
           </div>
-          <FormField
-            control={control}
-            name={fieldName("avatar")}
-            label="URL аватара"
-            placeholder="Или введите URL изображения"
-            type="url"
-            description="Если вы загрузили файл, URL будет заполнен автоматически"
-          />
         </div>
       </div>
     );

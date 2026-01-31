@@ -1,6 +1,7 @@
 import type { Control } from "react-hook-form";
 
-export interface ProfileEmploymentOrganizationData {
+export interface WorkPlaceOrganizationData {
+  id?: string;
   type?: "LEGAL" | "INDIVIDUAL" | string;
   displayName?: string;
   inn?: string;
@@ -9,12 +10,11 @@ export interface ProfileEmploymentOrganizationData {
   legalAddress?: string;
 }
 
-export interface ProfileEmploymentData {
-  id?: string;
-  organizationId?: string;
+export interface WorkPlaceFormData {
+  organizationId?: string; // required for update; filter invalid before submit
+  organization?: WorkPlaceOrganizationData | null;
   position?: string;
-  isPrimary?: boolean;
-  organization?: ProfileEmploymentOrganizationData | null;
+  isPrimary?: boolean; // default false when undefined
 }
 
 export interface ProfileFormData {
@@ -24,12 +24,10 @@ export interface ProfileFormData {
   phone?: string;
   dateOfBirth?: string;
   citizenship?: string;
-  position?: string;
   snils?: string;
   passportRegistrationAddress?: string;
   residentialAddress?: string;
-  workPlaceId?: string;
-  employments?: ProfileEmploymentData[] | null;
+  workPlaces?: WorkPlaceFormData[];
   avatar?: string;
   // Паспорт
   passportSeries?: string;

@@ -23,11 +23,15 @@ export interface EditingUser {
     dateOfBirth?: string | null;
     citizenship?: string | null;
     phone?: string | null;
-    position?: string | null;
     snils?: string | null;
     passportRegistrationAddress?: string | null;
     residentialAddress?: string | null;
-    workPlaceId?: string | null;
+    workPlaces?: Array<{
+      organizationId?: string | null;
+      position?: string | null;
+      isPrimary?: boolean | null;
+      organization?: { id?: string | null; displayName?: string | null } | null;
+    }> | null;
     avatar?: string | null;
     passport?: {
       series?: string | null;

@@ -106,7 +106,7 @@ export const OrganizationSuggestInput = memo(
     isDisabled,
     minQueryLength = 3,
     debounceMs = 350,
-    count = 8,
+    count = 15,
     onSelect,
     onApiUnavailableChange,
   }: OrganizationSuggestInputProps) {
@@ -309,7 +309,7 @@ export const OrganizationSuggestInput = memo(
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.16 }}
-                  className="absolute top-full right-0 left-0 z-50 max-h-72 overflow-y-auto rounded-b-xl border border-t-0 border-border bg-background/85 shadow-lg backdrop-blur-xl"
+                  className="absolute top-full right-0 left-0 z-[100] max-h-72 overflow-y-auto rounded-b-xl border border-t-0 border-border bg-background shadow-lg"
                   role="listbox"
                   id={`${baseId}-listbox`}
                 >

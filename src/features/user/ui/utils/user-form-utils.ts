@@ -63,11 +63,18 @@ export function getDefaultValues(
       dateOfBirth?: string | null;
       citizenship?: string | null;
       phone?: string | null;
-      position?: string | null;
       snils?: string | null;
       passportRegistrationAddress?: string | null;
       residentialAddress?: string | null;
-      workPlaceId?: string | null;
+      workPlaces?: Array<{
+        organizationId?: string | null;
+        position?: string | null;
+        isPrimary?: boolean | null;
+        organization?: {
+          id?: string | null;
+          displayName?: string | null;
+        } | null;
+      }> | null;
       avatar?: string | null;
       passport?: {
         series?: string | null;
@@ -96,13 +103,23 @@ export function getDefaultValues(
     isBlocked: editingUser?.isBlocked || false,
     dateOfBirth: editingUser?.profile?.dateOfBirth || "",
     citizenship: editingUser?.profile?.citizenship || "",
-    position: editingUser?.profile?.position || "",
     snils: editingUser?.profile?.snils || "",
     passportRegistrationAddress:
       editingUser?.profile?.passportRegistrationAddress || "",
     residentialAddress:
       editingUser?.profile?.residentialAddress || "",
-    workPlaceId: editingUser?.profile?.workPlaceId || "",
+    workPlaces:
+      editingUser?.profile?.workPlaces?.map((wp) => ({
+        organizationId: wp.organizationId || wp.organization?.id || "",
+        position: wp.position || undefined,
+        isPrimary: Boolean(wp.isPrimary),
+        organization: wp.organization
+          ? {
+              id: wp.organization.id ?? undefined,
+              displayName: wp.organization.displayName ?? undefined,
+            }
+          : null,
+      })) ?? [],
     avatar: editingUser?.profile?.avatar || "",
     passportSeries: editingUser?.profile?.passport?.series || "",
     passportNumber: editingUser?.profile?.passport?.number || "",

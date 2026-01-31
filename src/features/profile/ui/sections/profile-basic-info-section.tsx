@@ -1,7 +1,11 @@
 "use client";
 
 import { memo } from "react";
+import { InputMask } from "@react-input/mask";
+import { Controller } from "react-hook-form";
 import { FormField } from "@/shared/ui/form-field/form-field";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   PROFILE_FORM_LABELS,
   PROFILE_FORM_PLACEHOLDERS,
@@ -14,6 +18,7 @@ import {
   formatProfileDate,
   formatProfileValue,
 } from "../utils/profile-preview-utils";
+import { cn } from "@/lib/utils";
 
 interface ProfileBasicInfoSectionProps<T extends ProfileFormData> {
   control: Control<T>;
@@ -103,12 +108,43 @@ export const ProfileBasicInfoSection = memo(
             placeholder={PROFILE_FORM_PLACEHOLDERS.middleName}
             type="text"
           />
-          <FormField
+          <Controller
             control={control}
             name={fieldName("phone")}
-            label={PROFILE_FORM_LABELS.phone}
-            placeholder={PROFILE_FORM_PLACEHOLDERS.phone}
-            type="tel"
+            render={({ field }) => (
+              <div className="space-y-2 w-full">
+                <div className="group relative pt-2">
+                  <Label
+                    htmlFor="phone"
+                    className={cn(
+                      "absolute top-2 left-3 z-10 -translate-y-1/2 rounded-md bg-background/80 px-1 text-[11px] font-medium backdrop-blur-sm transition-colors text-muted-foreground group-focus-within:text-foreground"
+                    )}
+                  >
+                    {PROFILE_FORM_LABELS.phone}
+                  </Label>
+                  <InputMask
+                    component={Input}
+                    mask="+7 (___) ___-__-__"
+                    replacement={{ _: /\d/ }}
+                    showMask
+                    ref={field.ref}
+                    id="phone"
+                    type="tel"
+                    inputMode="tel"
+                    autoComplete="tel"
+                    placeholder={PROFILE_FORM_PLACEHOLDERS.phone}
+                    lang="ru"
+                    aria-label={PROFILE_FORM_LABELS.phone}
+                    className="peer bg-background/60"
+                    value={
+                      typeof field.value === "string" ? field.value : ""
+                    }
+                    onChange={field.onChange}
+                    onBlur={field.onBlur}
+                  />
+                </div>
+              </div>
+            )}
           />
           <FormField
             control={control}

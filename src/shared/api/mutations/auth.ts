@@ -21,8 +21,19 @@ const MY_USER_PROFILE_FIELDS = gql`
       qualification
       documentIssuedAt
     }
-    workPlaceId
-    position
+    workPlaces {
+      organization {
+        id
+        type
+        displayName
+        inn
+        kpp
+        ogrn
+        legalAddress
+      }
+      position
+      isPrimary
+    }
     snils
     avatar
   }

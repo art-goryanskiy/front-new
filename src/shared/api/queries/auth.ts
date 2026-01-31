@@ -21,14 +21,9 @@ const ME_USER_PROFILE_FIELDS = gql`
       qualification
       documentIssuedAt
     }
-    workPlaceId
-    position
-    employments {
-      id
-      organizationId
-      position
-      isPrimary
+    workPlaces {
       organization {
+        id
         type
         displayName
         inn
@@ -36,6 +31,8 @@ const ME_USER_PROFILE_FIELDS = gql`
         ogrn
         legalAddress
       }
+      position
+      isPrimary
     }
     snils
     avatar

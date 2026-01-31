@@ -1,5 +1,30 @@
 import type { UpdateMyProfileInput } from "@/shared/api/generated/graphql";
-import type { ProfileFormData } from "../types/profile-form.types";
+import type {
+  ProfileFormData,
+  WorkPlaceFormData,
+} from "../types/profile-form.types";
+import {
+  stripPassportNumber,
+  stripPassportSeries,
+  formatPassportNumber,
+  formatPassportSeries,
+  stripPassportDepartmentCode,
+  formatPassportDepartmentCode,
+} from "./passport-utils";
+import { formatPhone, toApiPhone } from "./phone-utils";
+import { formatSnils, stripSnils } from "./snils-utils";
+
+/** Преобразует ISO дату (2014-04-04T00:00:00.000Z) в формат YYYY-MM-DD для input[type="date"]. */
+function toDateInputValue(isoDate: string | null | undefined): string {
+  if (!isoDate) return "";
+  // Берём первые 10 символов: YYYY-MM-DD
+  const dateOnly = isoDate.slice(0, 10);
+  // Проверяем валидность формата
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateOnly)) {
+    return dateOnly;
+  }
+  return "";
+}
 
 export function createProfileInput(
   data: ProfileFormData
@@ -15,8 +40,9 @@ export function createProfileInput(
   if (data.middleName?.trim()) {
     profile.middleName = data.middleName.trim();
   }
-  if (data.phone?.trim()) {
-    profile.phone = data.phone.trim();
+  const phoneApi = data.phone ? toApiPhone(data.phone) : "";
+  if (phoneApi) {
+    profile.phone = phoneApi;
   }
   if (data.dateOfBirth) {
     profile.dateOfBirth = data.dateOfBirth;
@@ -24,11 +50,9 @@ export function createProfileInput(
   if (data.citizenship?.trim()) {
     profile.citizenship = data.citizenship.trim();
   }
-  if (data.position?.trim()) {
-    profile.position = data.position.trim();
-  }
-  if (data.snils?.trim()) {
-    profile.snils = data.snils.trim();
+  const snilsCleaned = data.snils ? stripSnils(data.snils) : "";
+  if (snilsCleaned.length === 11) {
+    profile.snils = snilsCleaned.slice(0, 11);
   }
   if (data.passportRegistrationAddress?.trim()) {
     profile.passportRegistrationAddress =
@@ -37,27 +61,45 @@ export function createProfileInput(
   if (data.residentialAddress?.trim()) {
     profile.residentialAddress = data.residentialAddress.trim();
   }
-  if (data.workPlaceId?.trim()) {
-    profile.workPlaceId = data.workPlaceId.trim();
+  if (Array.isArray(data.workPlaces) && data.workPlaces.length > 0) {
+    (profile as Record<string, unknown>).workPlaces = data.workPlaces
+      .filter(
+        (wp: WorkPlaceFormData): wp is WorkPlaceFormData & { organizationId: string } =>
+          Boolean(wp.organizationId?.trim())
+      )
+      .map((wp) => ({
+        organizationId: wp.organizationId.trim(),
+        position: wp.position?.trim() || undefined,
+        isPrimary: Boolean(wp.isPrimary),
+      }));
   }
   if (data.avatar?.trim()) {
     profile.avatar = data.avatar.trim();
   }
 
   // Паспорт
+  const passportSeriesCleaned = data.passportSeries
+    ? stripPassportSeries(data.passportSeries)
+    : "";
+  const passportNumberCleaned = data.passportNumber
+    ? stripPassportNumber(data.passportNumber)
+    : "";
+  const passportDepartmentCodeCleaned = data.passportDepartmentCode
+    ? stripPassportDepartmentCode(data.passportDepartmentCode)
+    : "";
   if (
-    data.passportSeries?.trim() ||
-    data.passportNumber?.trim() ||
+    passportSeriesCleaned ||
+    passportNumberCleaned ||
     data.passportIssuedBy?.trim() ||
     data.passportIssuedAt ||
-    data.passportDepartmentCode?.trim()
+    passportDepartmentCodeCleaned
   ) {
     profile.passport = {};
-    if (data.passportSeries?.trim()) {
-      profile.passport.series = data.passportSeries.trim();
+    if (passportSeriesCleaned) {
+      profile.passport.series = passportSeriesCleaned;
     }
-    if (data.passportNumber?.trim()) {
-      profile.passport.number = data.passportNumber.trim();
+    if (passportNumberCleaned) {
+      profile.passport.number = passportNumberCleaned;
     }
     if (data.passportIssuedBy?.trim()) {
       profile.passport.issuedBy = data.passportIssuedBy.trim();
@@ -65,9 +107,8 @@ export function createProfileInput(
     if (data.passportIssuedAt) {
       profile.passport.issuedAt = data.passportIssuedAt;
     }
-    if (data.passportDepartmentCode?.trim()) {
-      profile.passport.departmentCode =
-        data.passportDepartmentCode.trim();
+    if (passportDepartmentCodeCleaned) {
+      profile.passport.departmentCode = passportDepartmentCodeCleaned;
     }
   }
 
@@ -98,17 +139,15 @@ export function getProfileDefaultValues(
     dateOfBirth?: string | null;
     citizenship?: string | null;
     phone?: string | null;
-    position?: string | null;
     snils?: string | null;
     passportRegistrationAddress?: string | null;
     residentialAddress?: string | null;
-    workPlaceId?: string | null;
-    employments?: Array<{
-      id?: string | null;
+    workPlaces?: Array<{
       organizationId?: string | null;
       position?: string | null;
       isPrimary?: boolean | null;
       organization?: {
+        id?: string | null;
         type?: string | null;
         displayName?: string | null;
         inn?: string | null;
@@ -135,40 +174,49 @@ export function getProfileDefaultValues(
     firstName: profile?.firstName || "",
     lastName: profile?.lastName || "",
     middleName: profile?.middleName || "",
-    phone: profile?.phone || "",
-    dateOfBirth: profile?.dateOfBirth || "",
+    phone: profile?.phone ? formatPhone(profile.phone) : "",
+    dateOfBirth: toDateInputValue(profile?.dateOfBirth),
     citizenship: profile?.citizenship || "",
-    position: profile?.position || "",
-    snils: profile?.snils || "",
+    snils: formatSnils(profile?.snils ?? ""),
     passportRegistrationAddress:
       profile?.passportRegistrationAddress || "",
     residentialAddress: profile?.residentialAddress || "",
-    workPlaceId: profile?.workPlaceId || "",
-    employments:
-      profile?.employments?.map((e) => ({
-        id: e.id || "",
-        organizationId: e.organizationId || "",
-        position: e.position || undefined,
-        isPrimary: Boolean(e.isPrimary),
-        organization: e.organization
-          ? {
-              type: e.organization.type || undefined,
-              displayName: e.organization.displayName || undefined,
-              inn: e.organization.inn || undefined,
-              kpp: e.organization.kpp || undefined,
-              ogrn: e.organization.ogrn || undefined,
-              legalAddress: e.organization.legalAddress || undefined,
-            }
-          : null,
-      })) ?? null,
+    workPlaces:
+      profile?.workPlaces?.map((wp) => {
+        const orgId: string =
+          wp.organizationId || wp.organization?.id || "";
+        return {
+          organizationId: orgId,
+          position: wp.position || undefined,
+          isPrimary: Boolean(wp.isPrimary),
+          organization: wp.organization
+            ? {
+                id: wp.organization.id || orgId || undefined,
+                type: wp.organization.type || undefined,
+                displayName: wp.organization.displayName || undefined,
+                inn: wp.organization.inn || undefined,
+                kpp: wp.organization.kpp || undefined,
+                ogrn: wp.organization.ogrn || undefined,
+                legalAddress: wp.organization.legalAddress || undefined,
+              }
+            : null,
+        };
+      }) ?? [],
     avatar: profile?.avatar || "",
-    passportSeries: profile?.passport?.series || "",
-    passportNumber: profile?.passport?.number || "",
+    passportSeries: formatPassportSeries(
+      profile?.passport?.series ?? ""
+    ),
+    passportNumber: formatPassportNumber(
+      profile?.passport?.number ?? ""
+    ),
     passportIssuedBy: profile?.passport?.issuedBy || "",
-    passportIssuedAt: profile?.passport?.issuedAt || "",
-    passportDepartmentCode: profile?.passport?.departmentCode || "",
+    passportIssuedAt: toDateInputValue(profile?.passport?.issuedAt),
+    passportDepartmentCode: formatPassportDepartmentCode(
+      profile?.passport?.departmentCode ?? ""
+    ),
     educationQualification: profile?.education?.qualification || "",
-    educationDocumentIssuedAt:
-      profile?.education?.documentIssuedAt || "",
+    educationDocumentIssuedAt: toDateInputValue(
+      profile?.education?.documentIssuedAt
+    ),
   };
 }

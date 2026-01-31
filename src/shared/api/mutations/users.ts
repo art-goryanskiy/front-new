@@ -21,8 +21,19 @@ const ADMIN_USER_PROFILE_FIELDS_MUTATIONS = gql`
       qualification
       documentIssuedAt
     }
-    workPlaceId
-    position
+    workPlaces {
+      organization {
+        id
+        type
+        displayName
+        inn
+        kpp
+        ogrn
+        legalAddress
+      }
+      position
+      isPrimary
+    }
     snils
     avatar
   }

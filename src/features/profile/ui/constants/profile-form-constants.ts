@@ -9,7 +9,7 @@ export const PROFILE_FORM_LABELS = {
   snils: "СНИЛС",
   passportRegistrationAddress: "Адрес регистрации по паспорту",
   residentialAddress: "Адрес проживания",
-  workPlaceId: "Место работы",
+  workPlaces: "Места работы",
   avatar: "Аватар (URL)",
   // Паспорт
   passportSeries: "Серия паспорта",
@@ -26,28 +26,28 @@ export const PROFILE_FORM_PLACEHOLDERS = {
   firstName: "Введите имя",
   lastName: "Введите фамилию",
   middleName: "Введите отчество",
-  phone: "Введите телефон",
+  phone: "+7 (978) 742-90-42",
   dateOfBirth: "Выберите дату рождения",
   citizenship: "Введите гражданство",
   position: "Введите должность",
-  snils: "Введите СНИЛС",
+  snils: "000-000-000 00",
   passportRegistrationAddress: "Введите адрес регистрации",
   residentialAddress: "Введите адрес проживания",
-  workPlaceId: "Введите ИНН или название организации",
+  workPlaces: "Добавьте места работы по ИНН или вручную",
   avatar: "Введите URL аватара",
-  passportSeries: "Введите серию паспорта",
-  passportNumber: "Введите номер паспорта",
+  passportSeries: "00 00",
+  passportNumber: "000000",
   passportIssuedBy: "Введите кем выдан паспорт",
   passportIssuedAt: "Выберите дату выдачи",
-  passportDepartmentCode: "Введите код подразделения",
+  passportDepartmentCode: "000-000",
   educationQualification: "Введите квалификацию",
   educationDocumentIssuedAt: "Выберите дату выдачи документа",
 } as const;
 
 export const PROFILE_FORM_CLASSES = {
   section:
-    "relative w-full space-y-4 rounded-2xl border border-border/60 bg-background/60 p-5 shadow-sm backdrop-blur-xl",
+    "relative w-full space-y-6 rounded-2xl border border-border bg-card p-6 shadow-sm",
   sectionTitle:
-    "text-xs font-semibold text-muted-foreground uppercase tracking-wide",
-  fieldGrid: "grid grid-cols-1 gap-4 md:grid-cols-2",
+    "text-sm font-semibold text-foreground tracking-tight",
+  fieldGrid: "grid grid-cols-1 gap-5 md:grid-cols-2",
 } as const;

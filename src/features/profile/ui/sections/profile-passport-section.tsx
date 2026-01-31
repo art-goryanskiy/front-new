@@ -1,7 +1,10 @@
 "use client";
 
 import { memo } from "react";
+import { Controller } from "react-hook-form";
 import { FormField } from "@/shared/ui/form-field/form-field";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   PROFILE_FORM_LABELS,
   PROFILE_FORM_PLACEHOLDERS,
@@ -14,6 +17,17 @@ import {
   formatProfileDate,
   formatProfileValue,
 } from "../utils/profile-preview-utils";
+import {
+  formatPassportDepartmentCode,
+  formatPassportNumber,
+  formatPassportSeries,
+} from "../utils/passport-utils";
+import {
+  formatSnils,
+  isSnilsLengthValid,
+  isSnilsValid,
+} from "../utils/snils-utils";
+import { cn } from "@/lib/utils";
 
 interface ProfilePassportSectionProps<T extends ProfileFormData> {
   control: Control<T>;
@@ -34,6 +48,7 @@ export const ProfilePassportSection = memo(
     ): FieldPath<T> => name as unknown as FieldPath<T>;
 
     if (mode === "view") {
+      const snils = formatProfileValue(values?.snils);
       const passportSeries = formatProfileValue(
         values?.passportSeries
       );
@@ -53,17 +68,23 @@ export const ProfilePassportSection = memo(
       return (
         <div className={PROFILE_FORM_CLASSES.section}>
           <h3 className={PROFILE_FORM_CLASSES.sectionTitle}>
-            Паспорт
+            Личные данные
           </h3>
           <div className={PROFILE_FORM_CLASSES.fieldGrid}>
             <ProfileFieldPreview
-              label={PROFILE_FORM_LABELS.passportSeries}
-              value={passportSeries}
+              label={PROFILE_FORM_LABELS.snils}
+              value={snils}
             />
-            <ProfileFieldPreview
-              label={PROFILE_FORM_LABELS.passportNumber}
-              value={passportNumber}
-            />
+            <div className="grid grid-cols-2 gap-4 md:col-span-2">
+              <ProfileFieldPreview
+                label={PROFILE_FORM_LABELS.passportSeries}
+                value={passportSeries}
+              />
+              <ProfileFieldPreview
+                label={PROFILE_FORM_LABELS.passportNumber}
+                value={passportNumber}
+              />
+            </div>
             <ProfileFieldPreview
               className="md:col-span-2"
               label={PROFILE_FORM_LABELS.passportIssuedBy}
@@ -84,22 +105,133 @@ export const ProfilePassportSection = memo(
 
     return (
       <div className={PROFILE_FORM_CLASSES.section}>
-        <h3 className={PROFILE_FORM_CLASSES.sectionTitle}>Паспорт</h3>
+        <h3 className={PROFILE_FORM_CLASSES.sectionTitle}>
+          Личные данные
+        </h3>
         <div className={PROFILE_FORM_CLASSES.fieldGrid}>
-          <FormField
+          <Controller
             control={control}
-            name={fieldName("passportSeries")}
-            label={PROFILE_FORM_LABELS.passportSeries}
-            placeholder={PROFILE_FORM_PLACEHOLDERS.passportSeries}
-            type="text"
+            name={fieldName("snils")}
+            rules={{
+              validate: (v: unknown) => {
+                if (!v || typeof v !== "string") return true;
+                if (!isSnilsLengthValid(v)) return "СНИЛС должен содержать 11 цифр";
+                if (!isSnilsValid(v)) return "Неверная контрольная сумма СНИЛС";
+                return true;
+              },
+            }}
+            render={({ field, fieldState }) => (
+              <div className="space-y-2 w-full">
+                <div className="group relative pt-2">
+                  <Label
+                    htmlFor="snils"
+                    className={cn(
+                      "absolute top-2 left-3 z-10 -translate-y-1/2 rounded-md bg-background/80 px-1 text-[11px] font-medium backdrop-blur-sm transition-colors",
+                      fieldState.invalid
+                        ? "text-destructive"
+                        : "text-muted-foreground group-focus-within:text-foreground"
+                    )}
+                  >
+                    {PROFILE_FORM_LABELS.snils}
+                  </Label>
+                  <Input
+                    {...field}
+                    id="snils"
+                    type="text"
+                    inputMode="numeric"
+                    autoComplete="off"
+                    placeholder={PROFILE_FORM_PLACEHOLDERS.snils}
+                    lang="ru"
+                    aria-invalid={fieldState.invalid}
+                    aria-label={PROFILE_FORM_LABELS.snils}
+                    className="peer bg-background/60"
+                    value={typeof field.value === "string" ? field.value : ""}
+                    onChange={(e) => {
+                      const formatted = formatSnils(e.target.value);
+                      field.onChange(formatted);
+                    }}
+                  />
+                </div>
+                {fieldState.error?.message && (
+                  <p className="text-sm text-destructive">
+                    {fieldState.error.message}
+                  </p>
+                )}
+              </div>
+            )}
           />
-          <FormField
-            control={control}
-            name={fieldName("passportNumber")}
-            label={PROFILE_FORM_LABELS.passportNumber}
-            placeholder={PROFILE_FORM_PLACEHOLDERS.passportNumber}
-            type="text"
-          />
+          <div className="grid grid-cols-2 gap-4 md:col-span-2">
+            <Controller
+              control={control}
+              name={fieldName("passportSeries")}
+              render={({ field }) => (
+                <div className="space-y-2 w-full">
+                  <div className="group relative pt-2">
+                    <Label
+                      htmlFor="passportSeries"
+                      className="absolute top-2 left-3 z-10 -translate-y-1/2 rounded-md bg-background/80 px-1 text-[11px] font-medium backdrop-blur-sm transition-colors text-muted-foreground group-focus-within:text-foreground"
+                    >
+                      {PROFILE_FORM_LABELS.passportSeries}
+                    </Label>
+                    <Input
+                      {...field}
+                      id="passportSeries"
+                      type="text"
+                      inputMode="numeric"
+                      autoComplete="off"
+                      placeholder={PROFILE_FORM_PLACEHOLDERS.passportSeries}
+                      lang="ru"
+                      aria-label={PROFILE_FORM_LABELS.passportSeries}
+                      className="peer bg-background/60"
+                      value={
+                        typeof field.value === "string" ? field.value : ""
+                      }
+                      onChange={(e) => {
+                        field.onChange(
+                          formatPassportSeries(e.target.value)
+                        );
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+            />
+            <Controller
+              control={control}
+              name={fieldName("passportNumber")}
+              render={({ field }) => (
+                <div className="space-y-2 w-full">
+                  <div className="group relative pt-2">
+                    <Label
+                      htmlFor="passportNumber"
+                      className="absolute top-2 left-3 z-10 -translate-y-1/2 rounded-md bg-background/80 px-1 text-[11px] font-medium backdrop-blur-sm transition-colors text-muted-foreground group-focus-within:text-foreground"
+                    >
+                      {PROFILE_FORM_LABELS.passportNumber}
+                    </Label>
+                    <Input
+                      {...field}
+                      id="passportNumber"
+                      type="text"
+                      inputMode="numeric"
+                      autoComplete="off"
+                      placeholder={PROFILE_FORM_PLACEHOLDERS.passportNumber}
+                      lang="ru"
+                      aria-label={PROFILE_FORM_LABELS.passportNumber}
+                      className="peer bg-background/60"
+                      value={
+                        typeof field.value === "string" ? field.value : ""
+                      }
+                      onChange={(e) => {
+                        field.onChange(
+                          formatPassportNumber(e.target.value)
+                        );
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+            />
+          </div>
           <FormField
             control={control}
             name={fieldName("passportIssuedBy")}
@@ -115,14 +247,42 @@ export const ProfilePassportSection = memo(
             placeholder={PROFILE_FORM_PLACEHOLDERS.passportIssuedAt}
             type="date"
           />
-          <FormField
+          <Controller
             control={control}
             name={fieldName("passportDepartmentCode")}
-            label={PROFILE_FORM_LABELS.passportDepartmentCode}
-            placeholder={
-              PROFILE_FORM_PLACEHOLDERS.passportDepartmentCode
-            }
-            type="text"
+            render={({ field }) => (
+              <div className="space-y-2 w-full">
+                <div className="group relative pt-2">
+                  <Label
+                    htmlFor="passportDepartmentCode"
+                    className="absolute top-2 left-3 z-10 -translate-y-1/2 rounded-md bg-background/80 px-1 text-[11px] font-medium backdrop-blur-sm transition-colors text-muted-foreground group-focus-within:text-foreground"
+                  >
+                    {PROFILE_FORM_LABELS.passportDepartmentCode}
+                  </Label>
+                  <Input
+                    {...field}
+                    id="passportDepartmentCode"
+                    type="text"
+                    inputMode="numeric"
+                    autoComplete="off"
+                    placeholder={
+                      PROFILE_FORM_PLACEHOLDERS.passportDepartmentCode
+                    }
+                    lang="ru"
+                    aria-label={PROFILE_FORM_LABELS.passportDepartmentCode}
+                    className="peer bg-background/60"
+                    value={
+                      typeof field.value === "string" ? field.value : ""
+                    }
+                    onChange={(e) => {
+                      field.onChange(
+                        formatPassportDepartmentCode(e.target.value)
+                      );
+                    }}
+                  />
+                </div>
+              </div>
+            )}
           />
         </div>
       </div>

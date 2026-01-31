@@ -14,7 +14,7 @@ import { useUserModalState } from "@/shared/store/modal-store";
 import { useToastState } from "@/shared/store/toast-store";
 import { FormErrorSummary } from "@/shared/ui/form-error-summary/form-error-summary";
 import { memo, useCallback, useEffect, useMemo } from "react";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { UserFormBasicTab } from "./components/user-form-basic-tab";
 import { UserFormError } from "./components/user-form-error";
 import { UserFormProfileTab } from "./components/user-form-profile-tab";
@@ -61,10 +61,10 @@ export const UserForm = memo(function UserForm({
     [editingUser]
   );
 
-  const { control, handleSubmit, reset, formState } =
-    useForm<UserFormData>({
-      defaultValues,
-    });
+  const form = useForm<UserFormData>({
+    defaultValues,
+  });
+  const { control, handleSubmit, reset, formState } = form;
 
   useEffect(() => {
     onDirtyChange?.(formState.isDirty);
@@ -115,6 +115,7 @@ export const UserForm = memo(function UserForm({
   );
 
   return (
+    <FormProvider {...form}>
     <form
       onSubmit={handleSubmit(onSubmit, () => {
         const el = document.getElementById("form-error-summary");
@@ -183,5 +184,6 @@ export const UserForm = memo(function UserForm({
         </Button>
       </div>
     </form>
+    </FormProvider>
   );
 });

@@ -2,7 +2,10 @@
 
 import { Button } from "@/components/ui/button";
 import { useUpdateProfile } from "@/features/profile/api/use-update-profile";
+import { uploadImage } from "@/shared/lib/upload";
 import { ProfileAdditionalInfoSection } from "@/features/profile/ui/sections/profile-additional-info-section";
+import { SET_MY_WORK_PLACE_BY_INN } from "@/shared/api/mutations/work-place";
+import { useMutation } from "@apollo/client/react";
 import { ProfileAddressesSection } from "@/features/profile/ui/sections/profile-addresses-section";
 import { ProfileAvatarSection } from "@/features/profile/ui/sections/profile-avatar-section";
 import { ProfileBasicInfoSection } from "@/features/profile/ui/sections/profile-basic-info-section";
@@ -70,7 +73,7 @@ const SIDEBAR_ITEMS: Array<{
     label: "Место работы",
     description: "Должность и СНИЛС",
   },
-  { key: "avatar", label: "Аватар", description: "Фото и ссылка" },
+  { key: "avatar", label: "Аватар", description: "Фото" },
 ];
 
 const ProfilePageContent = memo(function ProfilePageContent() {
@@ -81,6 +84,15 @@ const ProfilePageContent = memo(function ProfilePageContent() {
     error,
   } = useUpdateProfile();
   const { showToast } = useToastState();
+  const [setMyWorkPlaceByInn] = useMutation<{
+    setMyWorkPlaceByInn: {
+      workPlaces?: Array<{
+        organization: { id: string; inn?: string | null };
+        position?: string | null;
+        isPrimary: boolean;
+      }> | null;
+    };
+  }>(SET_MY_WORK_PLACE_BY_INN, { errorPolicy: "all" });
 
   const [activeSection, setActiveSection] =
     useState<ProfileSection>("basic");
@@ -99,12 +111,12 @@ const ProfilePageContent = memo(function ProfilePageContent() {
 
   const values = useWatch({ control });
   const [filePreview, setFilePreview] = useState<string | null>(null);
-  const avatarUrl = useWatch({ control, name: "avatar" });
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const previousProfileHashRef = useRef<string | null>(null);
 
   const avatarPreview = useMemo(
-    () => filePreview || avatarUrl || user?.profile?.avatar || null,
-    [filePreview, avatarUrl, user?.profile?.avatar]
+    () => filePreview || user?.profile?.avatar || null,
+    [filePreview, user?.profile?.avatar]
   );
 
   const sectionMeta = useMemo(() => {
@@ -119,7 +131,7 @@ const ProfilePageContent = memo(function ProfilePageContent() {
   }, [activeSection]);
 
   const isBusy = updating || formState.isSubmitting;
-  const isDirty = formState.isDirty;
+  const isDirty = formState.isDirty || !!avatarFile;
   const mode: "view" | "edit" = isEditing ? "edit" : "view";
 
   useEffect(() => {
@@ -153,6 +165,7 @@ const ProfilePageContent = memo(function ProfilePageContent() {
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (file) {
+        setAvatarFile(file);
         const reader = new FileReader();
         reader.onloadend = () => {
           setFilePreview(reader.result as string);
@@ -166,8 +179,61 @@ const ProfilePageContent = memo(function ProfilePageContent() {
   const onSubmit = useCallback(
     async (data: ProfileFormData) => {
       try {
-        const input = createProfileInput(data);
+        const workPlaces = data.workPlaces ?? [];
+        const pending = workPlaces.filter(
+          (wp) =>
+            !wp.organizationId?.trim() &&
+            wp.organization?.inn?.trim()
+        );
+        let resolvedWorkPlaces = workPlaces;
+
+        for (const wp of pending) {
+          const inn = wp.organization?.inn?.trim();
+          if (!inn) continue;
+          const result = await setMyWorkPlaceByInn({
+            variables: {
+              input: {
+                inn,
+                kpp: wp.organization?.kpp?.trim() || undefined,
+                position: wp.position?.trim() || undefined,
+                isPrimary: Boolean(wp.isPrimary),
+              },
+            },
+          });
+          const list =
+            result.data?.setMyWorkPlaceByInn?.workPlaces ?? [];
+          const added = list.find((x) => x.organization?.inn === inn);
+          if (added?.organization?.id) {
+            resolvedWorkPlaces = resolvedWorkPlaces.map((item) =>
+              item === wp
+                ? {
+                    ...item,
+                    organizationId: added.organization!.id,
+                    organization: item.organization
+                      ? {
+                          ...item.organization,
+                          id: added.organization.id,
+                        }
+                      : item.organization,
+                  }
+                : item
+            );
+          }
+        }
+
+        let avatarUrl: string | undefined;
+        if (avatarFile) {
+          avatarUrl = await uploadImage(avatarFile, "avatars");
+        }
+
+        const input = createProfileInput({
+          ...data,
+          workPlaces: resolvedWorkPlaces,
+          ...(avatarUrl && { avatar: avatarUrl }),
+        });
         await updateProfile(input);
+        setAvatarFile(null);
+        setFilePreview(avatarUrl ?? null);
         showToast("success", "Профиль успешно обновлен");
         setIsEditing(false);
       } catch (err) {
@@ -175,12 +241,13 @@ const ProfilePageContent = memo(function ProfilePageContent() {
         showToast("error", "Ошибка при обновлении профиля");
       }
     },
-    [updateProfile, showToast]
+    [updateProfile, showToast, setMyWorkPlaceByInn, avatarFile]
   );
 
   const handleReset = useCallback(() => {
     reset(defaultValues);
     setFilePreview(null);
+    setAvatarFile(null);
     showToast("info", "Изменения сброшены");
   }, [defaultValues, reset, showToast]);
 
@@ -286,12 +353,10 @@ const ProfilePageContent = memo(function ProfilePageContent() {
       case "avatar":
         return (
           <ProfileAvatarSection
-            control={typedControl}
             avatarPreview={avatarPreview}
             userEmail={user.email}
             onAvatarFileChange={handleAvatarChange}
             mode={mode}
-            values={values}
           />
         );
 
