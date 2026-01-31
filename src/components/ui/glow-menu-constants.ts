@@ -3,6 +3,7 @@ import {
   BookOpen,
   GraduationCap,
   Briefcase,
+  ShoppingCart,
   type LucideIcon,
 } from "lucide-react";
 import { CATEGORY_TYPE_LABELS } from "@/shared/constants/categories";
@@ -28,5 +29,10 @@ export const GLOW_MENU_NAV_ITEMS = [
     icon: Briefcase as LucideIcon,
     label: CATEGORY_TYPE_LABELS.PROFESSIONAL_EDUCATION,
     href: "/professional-education",
+  },
+  {
+    icon: ShoppingCart as LucideIcon,
+    label: "Корзина",
+    href: "/cart",
   },
 ];

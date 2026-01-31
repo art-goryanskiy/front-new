@@ -6,16 +6,30 @@ import { motion } from "framer-motion";
 import { ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCanSeePrice } from "@/shared/store/auth-store";
+import { useAddToCart } from "@/entities/cart/api/use-add-to-cart";
 import { formatPrice } from "@/shared/lib/helpers/format-helpers";
 import type { ProgramCardProps } from "./types/program-card.types";
 import { useProgramCardPricing } from "./hooks/use-program-card-pricing";
 import { Surface } from "@/shared/ui/surface/surface";
 import { useToastState } from "@/shared/store/toast-store";
+import { useRouter } from "next/navigation";
+import { saveReturnUrl } from "@/shared/lib/auth/utils/auth-redirect-utils";
+import { AUTH_GUARD_ROUTES } from "@/shared/lib/auth/constants/auth-guard-constants";
+
+function getFirstPricingIndex(program: { pricing?: Array<{ price?: number | null }> | null }): number | null {
+  if (!program.pricing?.length) return null;
+  const idx = program.pricing.findIndex(
+    (p) => typeof p?.price === "number" && p.price > 0
+  );
+  return idx >= 0 ? idx : null;
+}
 
 export const ProgramCard = memo(
   function ProgramCard({ program }: ProgramCardProps) {
+    const router = useRouter();
     const canSeePrice = useCanSeePrice();
     const { minPrice } = useProgramCardPricing(program);
+    const { addToCart, loading } = useAddToCart();
     const { showToast } = useToastState();
 
     const cardTitle = useMemo(() => {
@@ -29,16 +43,51 @@ export const ProgramCard = memo(
       return `от ${formatPrice(minPrice)} ₽`;
     }, [canSeePrice, minPrice]);
 
+    const firstPricingIndex = useMemo(
+      () => getFirstPricingIndex(program),
+      [program]
+    );
+
+    const canAddToCart = minPrice !== null && minPrice > 0 && firstPricingIndex !== null;
+
     const handleAddToCart = useCallback(
-      (e: React.MouseEvent) => {
+      async (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
-        showToast(
-          "info",
-          "Корзина в разработке. Пока откройте программу и нажмите «Записаться»."
-        );
+        if (!canAddToCart || firstPricingIndex === null) return;
+        try {
+          await addToCart({
+            programId: program.id,
+            pricingIndex: firstPricingIndex,
+            quantity: 1,
+          });
+          showToast("success", "Добавлено в корзину");
+        } catch (err) {
+          const e = err as {
+            networkError?: { statusCode?: number };
+            graphQLErrors?: Array<{ extensions?: { code?: string } }>;
+          };
+          const is401 =
+            e?.networkError?.statusCode === 401 ||
+            e?.graphQLErrors?.some(
+              (g) => g?.extensions?.code === "UNAUTHENTICATED"
+            );
+          if (is401) {
+            saveReturnUrl(window.location.pathname);
+            router.replace(AUTH_GUARD_ROUTES.login);
+            return;
+          }
+          showToast("error", "Не удалось добавить в корзину");
+        }
       },
-      [showToast]
+      [
+        addToCart,
+        canAddToCart,
+        firstPricingIndex,
+        program.id,
+        router,
+        showToast,
+      ]
     );
 
     return (
@@ -70,13 +119,14 @@ export const ProgramCard = memo(
                   {cardTitle}
                 </h3>
 
-                {canSeePrice && (
+                {canSeePrice && canAddToCart && (
                   <Button
                     type="button"
                     variant="ghost"
                     size="icon"
                     onClick={handleAddToCart}
-                    className="h-9 w-9 shrink-0 rounded-xl border border-border/60 bg-background/60 text-muted-foreground shadow-sm backdrop-blur hover:bg-muted/20 hover:text-foreground"
+                    disabled={loading}
+                    className="h-9 w-9 shrink-0 rounded-xl border border-border/60 bg-background/60 text-muted-foreground shadow-sm backdrop-blur hover:bg-muted/20 hover:text-foreground disabled:opacity-50"
                     aria-label="Добавить в корзину"
                   >
                     <ShoppingCart className="h-4 w-4" />

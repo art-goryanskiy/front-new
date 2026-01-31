@@ -133,7 +133,11 @@ export const ProgramDetail = memo(function ProgramDetail({
           <ProgramDetailFaq />
         </div>
 
-        <ProgramDetailSidebar pricingList={pricingList} />
+        <ProgramDetailSidebar
+          programId={program.id}
+          programPricing={program.pricing ?? []}
+          pricingList={pricingList}
+        />
       </div>
     </div>
   );

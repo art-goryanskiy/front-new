@@ -5,17 +5,22 @@ import { BookOpen } from "lucide-react";
 import type { ProgramPricing } from "@/shared/api/generated/graphql";
 import { PROGRAM_DETAIL_CLASSES } from "../constants/program-detail-constants";
 import { ProgramDetailPricing } from "./program-detail-pricing";
+import { ProgramDetailAddToCart } from "./program-detail-add-to-cart";
 import { Surface } from "@/shared/ui/surface/surface";
 import { useCanSeePrice } from "@/shared/store/auth-store";
 import { formatPrice } from "@/shared/lib/helpers/format-helpers";
 import { useToastState } from "@/shared/store/toast-store";
 
 interface ProgramDetailSidebarProps {
+  programId: string;
+  programPricing: ProgramPricing[];
   pricingList: ProgramPricing[];
 }
 
 export const ProgramDetailSidebar = memo(
   function ProgramDetailSidebar({
+    programId,
+    programPricing,
     pricingList,
   }: ProgramDetailSidebarProps) {
     const canSeePrice = useCanSeePrice();
@@ -73,10 +78,17 @@ export const ProgramDetailSidebar = memo(
                   </Button>
                 </div>
               )}
+              {canSeePrice && pricingList.length > 0 && (
+                <ProgramDetailAddToCart
+                  programId={programId}
+                  programPricing={programPricing}
+                />
+              )}
               {canSeePrice && (
                 <Button
                   size="lg"
-                  className={PROGRAM_DETAIL_CLASSES.cta}
+                  variant="outline"
+                  className="w-full"
                   onClick={handleEnroll}
                 >
                   <BookOpen className="mr-2 h-5 w-5" />

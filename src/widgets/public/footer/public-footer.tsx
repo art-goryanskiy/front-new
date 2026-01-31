@@ -9,6 +9,7 @@ const LINKS = [
   { label: "Повышение квалификации", href: "/qualification-upgrade" },
   { label: "Проф. переподготовка", href: "/professional-retraining" },
   { label: "Проф. обучение", href: "/professional-education" },
+  { label: "Корзина", href: "/cart" },
   { label: "Профиль", href: "/profile" },
 ] as const;
 
