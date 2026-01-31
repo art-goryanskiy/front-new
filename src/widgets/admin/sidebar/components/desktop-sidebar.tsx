@@ -25,6 +25,13 @@ const USERS_MENU_ITEM = {
   color: "default" as const,
 };
 
+const EDUCATION_DOCUMENTS_MENU_ITEM = {
+  label: "Документы об образовании",
+  icon: "file-text" as const,
+  path: "/admin/education-documents",
+  color: "default" as const,
+};
+
 function isNavItemActive(
   pathname: string,
   itemPath: string
@@ -77,6 +84,16 @@ export const DesktopSidebar = memo(function DesktopSidebar() {
           <SidebarNavItem
             item={USERS_MENU_ITEM}
             isActive={isNavItemActive(pathname, USERS_MENU_ITEM.path)}
+            isCollapsed={isCollapsed}
+            onNavigate={handleNavigate}
+          />
+
+          <SidebarNavItem
+            item={EDUCATION_DOCUMENTS_MENU_ITEM}
+            isActive={isNavItemActive(
+              pathname,
+              EDUCATION_DOCUMENTS_MENU_ITEM.path
+            )}
             isCollapsed={isCollapsed}
             onNavigate={handleNavigate}
           />

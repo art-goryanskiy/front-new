@@ -5,6 +5,7 @@ export interface ProgramFormData {
   shortTitle?: string;
   description?: string;
   studentCategory?: string;
+  educationDocumentId?: string | null;
   pricing: Array<{ hours: number; price: number }>;
   awardedQualification?: string;
   awardedRankFrom?: number;
@@ -19,6 +20,7 @@ export interface EditingProgram {
   description?: string | null;
   studentCategory?: string | null;
   category: string;
+  educationDocumentId?: string | null;
   pricing: Array<{ hours: number; price?: number | null }>;
   awardedQualification?: string | null;
   awardedRankFrom?: number | null;

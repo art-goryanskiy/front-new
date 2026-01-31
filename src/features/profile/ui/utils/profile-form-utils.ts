@@ -15,7 +15,7 @@ import { formatPhone, toApiPhone } from "./phone-utils";
 import { formatSnils, stripSnils } from "./snils-utils";
 
 /** Преобразует ISO дату (2014-04-04T00:00:00.000Z) в формат YYYY-MM-DD для input[type="date"]. */
-function toDateInputValue(isoDate: string | null | undefined): string {
+export function toDateInputValue(isoDate: string | null | undefined): string {
   if (!isoDate) return "";
   // Берём первые 10 символов: YYYY-MM-DD
   const dateOnly = isoDate.slice(0, 10);

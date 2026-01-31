@@ -1,400 +1,422 @@
 /* eslint-disable */
-import { TypedDocumentNode as DocumentNode } from "@graphql-typed-document-node/core";
+import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = T | null | undefined;
-export type Exact<T extends { [key: string]: unknown }> = {
-  [K in keyof T]: T[K];
-};
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
-  [SubKey in K]?: Maybe<T[SubKey]>;
-};
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
-  [SubKey in K]: Maybe<T[SubKey]>;
-};
-export type MakeEmpty<
-  T extends { [key: string]: unknown },
-  K extends keyof T,
-> = { [_ in K]?: never };
-export type Incremental<T> =
-  | T
-  | {
-      [P in keyof T]?: P extends " $fragmentName" | "__typename"
-        ? T[P]
-        : never;
-    };
+export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
+export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: { input: string; output: string };
-  String: { input: string; output: string };
-  Boolean: { input: boolean; output: boolean };
-  Int: { input: number; output: number };
-  Float: { input: number; output: number };
+  ID: { input: string; output: string; }
+  String: { input: string; output: string; }
+  Boolean: { input: boolean; output: boolean; }
+  Int: { input: number; output: number; }
+  Float: { input: number; output: number; }
   /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
-  DateTime: { input: any; output: any };
+  DateTime: { input: any; output: any; }
 };
 
 export type AddressSuggestionEntity = {
-  __typename?: "AddressSuggestionEntity";
-  city?: Maybe<Scalars["String"]["output"]>;
-  fiasId?: Maybe<Scalars["String"]["output"]>;
-  flat?: Maybe<Scalars["String"]["output"]>;
-  geoLat?: Maybe<Scalars["String"]["output"]>;
-  geoLon?: Maybe<Scalars["String"]["output"]>;
-  house?: Maybe<Scalars["String"]["output"]>;
-  kladrId?: Maybe<Scalars["String"]["output"]>;
-  postalCode?: Maybe<Scalars["String"]["output"]>;
-  region?: Maybe<Scalars["String"]["output"]>;
-  street?: Maybe<Scalars["String"]["output"]>;
-  unrestrictedValue?: Maybe<Scalars["String"]["output"]>;
-  value: Scalars["String"]["output"];
+  __typename?: 'AddressSuggestionEntity';
+  city?: Maybe<Scalars['String']['output']>;
+  fiasId?: Maybe<Scalars['String']['output']>;
+  flat?: Maybe<Scalars['String']['output']>;
+  geoLat?: Maybe<Scalars['String']['output']>;
+  geoLon?: Maybe<Scalars['String']['output']>;
+  house?: Maybe<Scalars['String']['output']>;
+  kladrId?: Maybe<Scalars['String']['output']>;
+  postalCode?: Maybe<Scalars['String']['output']>;
+  region?: Maybe<Scalars['String']['output']>;
+  street?: Maybe<Scalars['String']['output']>;
+  unrestrictedValue?: Maybe<Scalars['String']['output']>;
+  value: Scalars['String']['output'];
 };
 
 export type AdminCreateUserInput = {
-  email: Scalars["String"]["input"];
-  generateTempPassword?: InputMaybe<Scalars["Boolean"]["input"]>;
-  isBlocked?: InputMaybe<Scalars["Boolean"]["input"]>;
-  password?: InputMaybe<Scalars["String"]["input"]>;
+  email: Scalars['String']['input'];
+  generateTempPassword?: InputMaybe<Scalars['Boolean']['input']>;
+  isBlocked?: InputMaybe<Scalars['Boolean']['input']>;
+  password?: InputMaybe<Scalars['String']['input']>;
   profile?: InputMaybe<UpdateMyProfileInput>;
   role?: InputMaybe<UserRole>;
 };
 
 export type AdminUpdateUserInput = {
-  email?: InputMaybe<Scalars["String"]["input"]>;
-  isBlocked?: InputMaybe<Scalars["Boolean"]["input"]>;
-  password?: InputMaybe<Scalars["String"]["input"]>;
+  email?: InputMaybe<Scalars['String']['input']>;
+  isBlocked?: InputMaybe<Scalars['Boolean']['input']>;
+  password?: InputMaybe<Scalars['String']['input']>;
   profile?: InputMaybe<UpdateMyProfileInput>;
 };
 
 export type AdminUserFilterInput = {
-  isBlocked?: InputMaybe<Scalars["Boolean"]["input"]>;
-  limit?: InputMaybe<Scalars["Float"]["input"]>;
-  offset?: InputMaybe<Scalars["Float"]["input"]>;
-  search?: InputMaybe<Scalars["String"]["input"]>;
+  isBlocked?: InputMaybe<Scalars['Boolean']['input']>;
+  limit?: InputMaybe<Scalars['Float']['input']>;
+  offset?: InputMaybe<Scalars['Float']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type CategoryEntity = {
-  __typename?: "CategoryEntity";
-  createdAt: Scalars["DateTime"]["output"];
-  description?: Maybe<Scalars["String"]["output"]>;
-  id: Scalars["ID"]["output"];
-  image?: Maybe<Scalars["String"]["output"]>;
-  name: Scalars["String"]["output"];
-  parent?: Maybe<Scalars["ID"]["output"]>;
-  programsCount?: Maybe<Scalars["Float"]["output"]>;
-  slug: Scalars["String"]["output"];
+  __typename?: 'CategoryEntity';
+  createdAt: Scalars['DateTime']['output'];
+  description?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  image?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
+  parent?: Maybe<Scalars['ID']['output']>;
+  programsCount?: Maybe<Scalars['Float']['output']>;
+  slug: Scalars['String']['output'];
   type?: Maybe<CategoryType>;
-  updatedAt: Scalars["DateTime"]["output"];
+  updatedAt: Scalars['DateTime']['output'];
 };
 
 export type CategoryFilterInput = {
-  limit?: InputMaybe<Scalars["Float"]["input"]>;
-  offset?: InputMaybe<Scalars["Float"]["input"]>;
-  parent?: InputMaybe<Scalars["String"]["input"]>;
-  search?: InputMaybe<Scalars["String"]["input"]>;
+  limit?: InputMaybe<Scalars['Float']['input']>;
+  offset?: InputMaybe<Scalars['Float']['input']>;
+  parent?: InputMaybe<Scalars['String']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
 };
 
 export enum CategoryType {
-  ProfessionalEducation = "PROFESSIONAL_EDUCATION",
-  ProfessionalRetraining = "PROFESSIONAL_RETRAINING",
-  QualificationUpgrade = "QUALIFICATION_UPGRADE",
+  ProfessionalEducation = 'PROFESSIONAL_EDUCATION',
+  ProfessionalRetraining = 'PROFESSIONAL_RETRAINING',
+  QualificationUpgrade = 'QUALIFICATION_UPGRADE'
 }
 
 export type ChangeMyPasswordInput = {
-  confirmPassword: Scalars["String"]["input"];
-  currentPassword: Scalars["String"]["input"];
-  password: Scalars["String"]["input"];
+  confirmPassword: Scalars['String']['input'];
+  currentPassword: Scalars['String']['input'];
+  password: Scalars['String']['input'];
 };
 
 export type CreateCategoryInput = {
-  description?: InputMaybe<Scalars["String"]["input"]>;
-  image?: InputMaybe<Scalars["String"]["input"]>;
-  name: Scalars["String"]["input"];
-  parent?: InputMaybe<Scalars["String"]["input"]>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  image?: InputMaybe<Scalars['String']['input']>;
+  name: Scalars['String']['input'];
+  parent?: InputMaybe<Scalars['String']['input']>;
   type?: InputMaybe<CategoryType>;
 };
 
+export type CreateEducationDocumentInput = {
+  image?: InputMaybe<Scalars['String']['input']>;
+  name: Scalars['String']['input'];
+};
+
 export type CreateProgramInput = {
-  awardedQualification?: InputMaybe<Scalars["String"]["input"]>;
-  awardedRankFrom?: InputMaybe<Scalars["Float"]["input"]>;
-  awardedRankTo?: InputMaybe<Scalars["Float"]["input"]>;
-  baseHours?: InputMaybe<Scalars["Float"]["input"]>;
-  category: Scalars["ID"]["input"];
-  description?: InputMaybe<Scalars["String"]["input"]>;
-  image?: InputMaybe<Scalars["String"]["input"]>;
+  awardedQualification?: InputMaybe<Scalars['String']['input']>;
+  awardedRankFrom?: InputMaybe<Scalars['Float']['input']>;
+  awardedRankTo?: InputMaybe<Scalars['Float']['input']>;
+  baseHours?: InputMaybe<Scalars['Float']['input']>;
+  category: Scalars['ID']['input'];
+  description?: InputMaybe<Scalars['String']['input']>;
+  educationDocumentId?: InputMaybe<Scalars['ID']['input']>;
+  image?: InputMaybe<Scalars['String']['input']>;
   pricing?: InputMaybe<Array<ProgramPricingInput>>;
-  shortTitle?: InputMaybe<Scalars["String"]["input"]>;
-  studentCategory?: InputMaybe<Scalars["String"]["input"]>;
+  shortTitle?: InputMaybe<Scalars['String']['input']>;
+  studentCategory?: InputMaybe<Scalars['String']['input']>;
   subPrograms?: InputMaybe<Array<ProgramSubProgramInput>>;
-  title: Scalars["String"]["input"];
+  title: Scalars['String']['input'];
+};
+
+export type EducationDocumentEntity = {
+  __typename?: 'EducationDocumentEntity';
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  image?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
 };
 
 export type EducationInfoEntity = {
-  __typename?: "EducationInfoEntity";
-  documentIssuedAt?: Maybe<Scalars["DateTime"]["output"]>;
-  qualification?: Maybe<Scalars["String"]["output"]>;
+  __typename?: 'EducationInfoEntity';
+  documentIssuedAt?: Maybe<Scalars['DateTime']['output']>;
+  qualification?: Maybe<Scalars['String']['output']>;
 };
 
 export type EducationInfoInput = {
-  documentIssuedAt?: InputMaybe<Scalars["DateTime"]["input"]>;
-  qualification?: InputMaybe<Scalars["String"]["input"]>;
-};
-
-export type EmploymentEntity = {
-  __typename?: "EmploymentEntity";
-  endDate?: Maybe<Scalars["DateTime"]["output"]>;
-  id: Scalars["ID"]["output"];
-  isPrimary?: Maybe<Scalars["Boolean"]["output"]>;
-  organization?: Maybe<OrganizationEntity>;
-  organizationId: Scalars["ID"]["output"];
-  position?: Maybe<Scalars["String"]["output"]>;
-  startDate?: Maybe<Scalars["DateTime"]["output"]>;
+  documentIssuedAt?: InputMaybe<Scalars['DateTime']['input']>;
+  qualification?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type LoginInput = {
-  email: Scalars["String"]["input"];
-  password: Scalars["String"]["input"];
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
 };
 
 export type Mutation = {
-  __typename?: "Mutation";
+  __typename?: 'Mutation';
   adminCreateUser: UserEntity;
-  adminDeleteUser: Scalars["Boolean"]["output"];
+  adminDeleteUser: Scalars['Boolean']['output'];
   adminSetUserBlocked: UserEntity;
   adminUpdateUser: UserEntity;
-  changeMyPassword: Scalars["Boolean"]["output"];
+  changeMyPassword: Scalars['Boolean']['output'];
   createCategory: CategoryEntity;
+  createEducationDocument: EducationDocumentEntity;
   createProgram: ProgramEntity;
   deleteCategory: CategoryEntity;
+  deleteEducationDocument: EducationDocumentEntity;
   deleteProgram: ProgramEntity;
   login: UserEntity;
-  logout: Scalars["Boolean"]["output"];
+  logout: Scalars['Boolean']['output'];
   refreshToken: UserEntity;
-  register: Scalars["Boolean"]["output"];
-  removeMyEmployment: UserProfileEntity;
-  requestEmailVerification: Scalars["Boolean"]["output"];
-  requestPasswordReset: Scalars["Boolean"]["output"];
-  resetPassword: Scalars["Boolean"]["output"];
+  register: Scalars['Boolean']['output'];
+  requestEmailVerification: Scalars['Boolean']['output'];
+  requestPasswordReset: Scalars['Boolean']['output'];
+  resetPassword: Scalars['Boolean']['output'];
   setMyWorkPlaceByInn: UserProfileEntity;
   setMyWorkPlaceManual: UserProfileEntity;
-  setPrimaryEmployment: UserProfileEntity;
   updateCategory: CategoryEntity;
+  updateEducationDocument: EducationDocumentEntity;
   updateMyProfile: UserProfileEntity;
   updateProgram: ProgramEntity;
-  verifyEmail: Scalars["Boolean"]["output"];
+  verifyEmail: Scalars['Boolean']['output'];
 };
+
 
 export type MutationAdminCreateUserArgs = {
   input: AdminCreateUserInput;
 };
 
+
 export type MutationAdminDeleteUserArgs = {
-  id: Scalars["ID"]["input"];
+  id: Scalars['ID']['input'];
 };
+
 
 export type MutationAdminSetUserBlockedArgs = {
-  blocked: Scalars["Boolean"]["input"];
-  id: Scalars["ID"]["input"];
+  blocked: Scalars['Boolean']['input'];
+  id: Scalars['ID']['input'];
 };
 
+
 export type MutationAdminUpdateUserArgs = {
-  id: Scalars["ID"]["input"];
+  id: Scalars['ID']['input'];
   input: AdminUpdateUserInput;
 };
+
 
 export type MutationChangeMyPasswordArgs = {
   input: ChangeMyPasswordInput;
 };
 
+
 export type MutationCreateCategoryArgs = {
   input: CreateCategoryInput;
 };
+
+
+export type MutationCreateEducationDocumentArgs = {
+  input: CreateEducationDocumentInput;
+};
+
 
 export type MutationCreateProgramArgs = {
   input: CreateProgramInput;
 };
 
+
 export type MutationDeleteCategoryArgs = {
-  id: Scalars["ID"]["input"];
+  id: Scalars['ID']['input'];
 };
 
-export type MutationDeleteProgramArgs = {
-  id: Scalars["ID"]["input"];
+
+export type MutationDeleteEducationDocumentArgs = {
+  id: Scalars['ID']['input'];
 };
+
+
+export type MutationDeleteProgramArgs = {
+  id: Scalars['ID']['input'];
+};
+
 
 export type MutationLoginArgs = {
   input: LoginInput;
 };
 
+
 export type MutationRegisterArgs = {
   input: RegisterInput;
 };
 
-export type MutationRemoveMyEmploymentArgs = {
-  input: RemoveEmploymentInput;
-};
 
 export type MutationRequestEmailVerificationArgs = {
   input: RequestEmailVerificationInput;
 };
 
+
 export type MutationRequestPasswordResetArgs = {
   input: RequestPasswordResetInput;
 };
+
 
 export type MutationResetPasswordArgs = {
   input: ResetPasswordInput;
 };
 
+
 export type MutationSetMyWorkPlaceByInnArgs = {
   input: SetMyWorkPlaceByInnInput;
 };
+
 
 export type MutationSetMyWorkPlaceManualArgs = {
   input: SetMyWorkPlaceManualInput;
 };
 
-export type MutationSetPrimaryEmploymentArgs = {
-  input: SetPrimaryEmploymentInput;
-};
 
 export type MutationUpdateCategoryArgs = {
-  id: Scalars["ID"]["input"];
+  id: Scalars['ID']['input'];
   input: UpdateCategoryInput;
 };
+
+
+export type MutationUpdateEducationDocumentArgs = {
+  id: Scalars['ID']['input'];
+  input: UpdateEducationDocumentInput;
+};
+
 
 export type MutationUpdateMyProfileArgs = {
   input: UpdateMyProfileInput;
 };
 
+
 export type MutationUpdateProgramArgs = {
-  id: Scalars["ID"]["input"];
+  id: Scalars['ID']['input'];
   input: UpdateProgramInput;
 };
+
 
 export type MutationVerifyEmailArgs = {
   input: VerifyEmailInput;
 };
 
 export type OrganizationEntity = {
-  __typename?: "OrganizationEntity";
-  actualAddress?: Maybe<Scalars["String"]["output"]>;
-  displayName: Scalars["String"]["output"];
-  email?: Maybe<Scalars["String"]["output"]>;
-  fioFirst?: Maybe<Scalars["String"]["output"]>;
-  fioFull?: Maybe<Scalars["String"]["output"]>;
-  fioLast?: Maybe<Scalars["String"]["output"]>;
-  fioMiddle?: Maybe<Scalars["String"]["output"]>;
-  fullName?: Maybe<Scalars["String"]["output"]>;
-  id: Scalars["ID"]["output"];
-  inn: Scalars["String"]["output"];
-  kpp?: Maybe<Scalars["String"]["output"]>;
-  legalAddress?: Maybe<Scalars["String"]["output"]>;
-  ogrn: Scalars["String"]["output"];
-  opfFull?: Maybe<Scalars["String"]["output"]>;
-  opfShort?: Maybe<Scalars["String"]["output"]>;
-  phone?: Maybe<Scalars["String"]["output"]>;
-  shortName?: Maybe<Scalars["String"]["output"]>;
+  __typename?: 'OrganizationEntity';
+  actualAddress?: Maybe<Scalars['String']['output']>;
+  displayName: Scalars['String']['output'];
+  email?: Maybe<Scalars['String']['output']>;
+  fioFirst?: Maybe<Scalars['String']['output']>;
+  fioFull?: Maybe<Scalars['String']['output']>;
+  fioLast?: Maybe<Scalars['String']['output']>;
+  fioMiddle?: Maybe<Scalars['String']['output']>;
+  fullName?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  inn: Scalars['String']['output'];
+  kpp?: Maybe<Scalars['String']['output']>;
+  legalAddress?: Maybe<Scalars['String']['output']>;
+  ogrn: Scalars['String']['output'];
+  opfFull?: Maybe<Scalars['String']['output']>;
+  opfShort?: Maybe<Scalars['String']['output']>;
+  phone?: Maybe<Scalars['String']['output']>;
+  shortName?: Maybe<Scalars['String']['output']>;
   type: OrganizationType;
 };
 
 export type OrganizationSuggestionEntity = {
-  __typename?: "OrganizationSuggestionEntity";
-  displayName: Scalars["String"]["output"];
-  inn: Scalars["String"]["output"];
-  kpp?: Maybe<Scalars["String"]["output"]>;
-  legalAddress?: Maybe<Scalars["String"]["output"]>;
-  ogrn: Scalars["String"]["output"];
+  __typename?: 'OrganizationSuggestionEntity';
+  displayName: Scalars['String']['output'];
+  inn: Scalars['String']['output'];
+  kpp?: Maybe<Scalars['String']['output']>;
+  legalAddress?: Maybe<Scalars['String']['output']>;
+  ogrn: Scalars['String']['output'];
   type: OrganizationType;
 };
 
 export enum OrganizationType {
-  Individual = "INDIVIDUAL",
-  Legal = "LEGAL",
+  Individual = 'INDIVIDUAL',
+  Legal = 'LEGAL'
 }
 
 export type PassportInfoEntity = {
-  __typename?: "PassportInfoEntity";
-  departmentCode?: Maybe<Scalars["String"]["output"]>;
-  issuedAt?: Maybe<Scalars["DateTime"]["output"]>;
-  issuedBy?: Maybe<Scalars["String"]["output"]>;
-  number?: Maybe<Scalars["String"]["output"]>;
-  series?: Maybe<Scalars["String"]["output"]>;
+  __typename?: 'PassportInfoEntity';
+  departmentCode?: Maybe<Scalars['String']['output']>;
+  issuedAt?: Maybe<Scalars['DateTime']['output']>;
+  issuedBy?: Maybe<Scalars['String']['output']>;
+  number?: Maybe<Scalars['String']['output']>;
+  series?: Maybe<Scalars['String']['output']>;
 };
 
 export type PassportInfoInput = {
-  departmentCode?: InputMaybe<Scalars["String"]["input"]>;
-  issuedAt?: InputMaybe<Scalars["DateTime"]["input"]>;
-  issuedBy?: InputMaybe<Scalars["String"]["input"]>;
-  number?: InputMaybe<Scalars["String"]["input"]>;
-  series?: InputMaybe<Scalars["String"]["input"]>;
+  departmentCode?: InputMaybe<Scalars['String']['input']>;
+  issuedAt?: InputMaybe<Scalars['DateTime']['input']>;
+  issuedBy?: InputMaybe<Scalars['String']['input']>;
+  number?: InputMaybe<Scalars['String']['input']>;
+  series?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type ProgramEntity = {
-  __typename?: "ProgramEntity";
-  awardedQualification?: Maybe<Scalars["String"]["output"]>;
-  awardedRankFrom?: Maybe<Scalars["Float"]["output"]>;
-  awardedRankTo?: Maybe<Scalars["Float"]["output"]>;
-  baseHours?: Maybe<Scalars["Float"]["output"]>;
-  category: Scalars["ID"]["output"];
-  createdAt: Scalars["DateTime"]["output"];
-  description?: Maybe<Scalars["String"]["output"]>;
-  id: Scalars["ID"]["output"];
-  image?: Maybe<Scalars["String"]["output"]>;
+  __typename?: 'ProgramEntity';
+  awardedQualification?: Maybe<Scalars['String']['output']>;
+  awardedRankFrom?: Maybe<Scalars['Float']['output']>;
+  awardedRankTo?: Maybe<Scalars['Float']['output']>;
+  baseHours?: Maybe<Scalars['Float']['output']>;
+  category: Scalars['ID']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  description?: Maybe<Scalars['String']['output']>;
+  educationDocument?: Maybe<EducationDocumentEntity>;
+  educationDocumentId?: Maybe<Scalars['ID']['output']>;
+  id: Scalars['ID']['output'];
+  image?: Maybe<Scalars['String']['output']>;
   pricing: Array<ProgramPricing>;
-  shortTitle?: Maybe<Scalars["String"]["output"]>;
-  slug: Scalars["String"]["output"];
-  studentCategory?: Maybe<Scalars["String"]["output"]>;
+  shortTitle?: Maybe<Scalars['String']['output']>;
+  slug: Scalars['String']['output'];
+  studentCategory?: Maybe<Scalars['String']['output']>;
   subPrograms?: Maybe<Array<ProgramSubProgramEntity>>;
-  title: Scalars["String"]["output"];
-  updatedAt: Scalars["DateTime"]["output"];
-  views: Scalars["Float"]["output"];
+  title: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+  views: Scalars['Float']['output'];
 };
 
 export type ProgramFilterInput = {
-  category?: InputMaybe<Scalars["String"]["input"]>;
-  categoryIds?: InputMaybe<Array<Scalars["ID"]["input"]>>;
-  limit?: InputMaybe<Scalars["Float"]["input"]>;
-  offset?: InputMaybe<Scalars["Float"]["input"]>;
-  search?: InputMaybe<Scalars["String"]["input"]>;
-  sortBy?: InputMaybe<Scalars["String"]["input"]>;
-  sortOrder?: InputMaybe<Scalars["String"]["input"]>;
+  category?: InputMaybe<Scalars['String']['input']>;
+  categoryIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+  limit?: InputMaybe<Scalars['Float']['input']>;
+  offset?: InputMaybe<Scalars['Float']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  sortBy?: InputMaybe<Scalars['String']['input']>;
+  sortOrder?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type ProgramPricing = {
-  __typename?: "ProgramPricing";
-  hours: Scalars["Float"]["output"];
-  price?: Maybe<Scalars["Float"]["output"]>;
+  __typename?: 'ProgramPricing';
+  hours: Scalars['Float']['output'];
+  price?: Maybe<Scalars['Float']['output']>;
 };
 
 export type ProgramPricingInput = {
-  hours: Scalars["Float"]["input"];
-  price: Scalars["Float"]["input"];
+  hours: Scalars['Float']['input'];
+  price: Scalars['Float']['input'];
 };
 
 export type ProgramSubProgramEntity = {
-  __typename?: "ProgramSubProgramEntity";
-  description?: Maybe<Scalars["String"]["output"]>;
-  title: Scalars["String"]["output"];
+  __typename?: 'ProgramSubProgramEntity';
+  description?: Maybe<Scalars['String']['output']>;
+  title: Scalars['String']['output'];
 };
 
 export type ProgramSubProgramInput = {
-  description?: InputMaybe<Scalars["String"]["input"]>;
-  title: Scalars["String"]["input"];
+  description?: InputMaybe<Scalars['String']['input']>;
+  title: Scalars['String']['input'];
 };
 
 export type ProgramsPageEntity = {
-  __typename?: "ProgramsPageEntity";
+  __typename?: 'ProgramsPageEntity';
   items: Array<ProgramEntity>;
-  total: Scalars["Int"]["output"];
+  total: Scalars['Int']['output'];
 };
 
 export type Query = {
-  __typename?: "Query";
+  __typename?: 'Query';
   addressSuggestions: Array<AddressSuggestionEntity>;
   adminUser?: Maybe<UserEntity>;
   adminUsers: Array<UserEntity>;
   categories: Array<CategoryEntity>;
   category?: Maybe<CategoryEntity>;
+  educationDocument?: Maybe<EducationDocumentEntity>;
+  educationDocuments: Array<EducationDocumentEntity>;
   me: UserEntity;
   organizationSuggestions: Array<OrganizationSuggestionEntity>;
   program: ProgramEntity;
@@ -403,5733 +425,562 @@ export type Query = {
   topPrograms: Array<ProgramEntity>;
 };
 
+
 export type QueryAddressSuggestionsArgs = {
-  count?: InputMaybe<Scalars["Int"]["input"]>;
-  query: Scalars["String"]["input"];
+  count?: InputMaybe<Scalars['Int']['input']>;
+  query: Scalars['String']['input'];
 };
 
+
 export type QueryAdminUserArgs = {
-  id: Scalars["ID"]["input"];
+  id: Scalars['ID']['input'];
 };
+
 
 export type QueryAdminUsersArgs = {
   filter?: InputMaybe<AdminUserFilterInput>;
 };
 
+
 export type QueryCategoriesArgs = {
   filter?: InputMaybe<CategoryFilterInput>;
 };
 
+
 export type QueryCategoryArgs = {
-  id: Scalars["ID"]["input"];
+  id: Scalars['ID']['input'];
 };
+
+
+export type QueryEducationDocumentArgs = {
+  id: Scalars['ID']['input'];
+};
+
 
 export type QueryOrganizationSuggestionsArgs = {
-  count?: InputMaybe<Scalars["Int"]["input"]>;
-  query: Scalars["String"]["input"];
+  count?: InputMaybe<Scalars['Int']['input']>;
+  query: Scalars['String']['input'];
 };
 
+
 export type QueryProgramArgs = {
-  id: Scalars["ID"]["input"];
+  id: Scalars['ID']['input'];
 };
+
 
 export type QueryProgramsArgs = {
   filter?: InputMaybe<ProgramFilterInput>;
 };
 
+
 export type QueryProgramsPageArgs = {
   filter?: InputMaybe<ProgramFilterInput>;
 };
 
+
 export type QueryTopProgramsArgs = {
-  limit?: InputMaybe<Scalars["Float"]["input"]>;
+  limit?: InputMaybe<Scalars['Float']['input']>;
 };
 
 export type RegisterInput = {
-  confirmPassword: Scalars["String"]["input"];
-  email: Scalars["String"]["input"];
-  firstName?: InputMaybe<Scalars["String"]["input"]>;
-  lastName?: InputMaybe<Scalars["String"]["input"]>;
-  password: Scalars["String"]["input"];
-  phone?: InputMaybe<Scalars["String"]["input"]>;
-};
-
-export type RemoveEmploymentInput = {
-  employmentId: Scalars["ID"]["input"];
+  confirmPassword: Scalars['String']['input'];
+  email: Scalars['String']['input'];
+  firstName?: InputMaybe<Scalars['String']['input']>;
+  lastName?: InputMaybe<Scalars['String']['input']>;
+  password: Scalars['String']['input'];
+  phone?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type RequestEmailVerificationInput = {
-  email: Scalars["String"]["input"];
+  email: Scalars['String']['input'];
 };
 
 export type RequestPasswordResetInput = {
-  email: Scalars["String"]["input"];
+  email: Scalars['String']['input'];
 };
 
 export type ResetPasswordInput = {
-  confirmPassword: Scalars["String"]["input"];
-  password: Scalars["String"]["input"];
-  token: Scalars["String"]["input"];
+  confirmPassword: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+  token: Scalars['String']['input'];
 };
 
 export type SetMyWorkPlaceByInnInput = {
-  inn: Scalars["String"]["input"];
-  kpp?: InputMaybe<Scalars["String"]["input"]>;
+  inn: Scalars['String']['input'];
+  isPrimary?: InputMaybe<Scalars['Boolean']['input']>;
+  kpp?: InputMaybe<Scalars['String']['input']>;
+  position?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type SetMyWorkPlaceManualInput = {
-  actualAddress?: InputMaybe<Scalars["String"]["input"]>;
-  actualSameAsLegal?: InputMaybe<Scalars["Boolean"]["input"]>;
-  displayName?: InputMaybe<Scalars["String"]["input"]>;
-  email?: InputMaybe<Scalars["String"]["input"]>;
-  fioFirst?: InputMaybe<Scalars["String"]["input"]>;
-  fioFull?: InputMaybe<Scalars["String"]["input"]>;
-  fioLast?: InputMaybe<Scalars["String"]["input"]>;
-  fioMiddle?: InputMaybe<Scalars["String"]["input"]>;
-  fullName?: InputMaybe<Scalars["String"]["input"]>;
-  inn: Scalars["String"]["input"];
-  kpp?: InputMaybe<Scalars["String"]["input"]>;
-  legalAddress?: InputMaybe<Scalars["String"]["input"]>;
-  ogrn: Scalars["String"]["input"];
-  opfFull?: InputMaybe<Scalars["String"]["input"]>;
-  opfShort?: InputMaybe<Scalars["String"]["input"]>;
-  phone?: InputMaybe<Scalars["String"]["input"]>;
-  shortName?: InputMaybe<Scalars["String"]["input"]>;
+  actualAddress?: InputMaybe<Scalars['String']['input']>;
+  actualSameAsLegal?: InputMaybe<Scalars['Boolean']['input']>;
+  displayName?: InputMaybe<Scalars['String']['input']>;
+  email?: InputMaybe<Scalars['String']['input']>;
+  fioFirst?: InputMaybe<Scalars['String']['input']>;
+  fioFull?: InputMaybe<Scalars['String']['input']>;
+  fioLast?: InputMaybe<Scalars['String']['input']>;
+  fioMiddle?: InputMaybe<Scalars['String']['input']>;
+  fullName?: InputMaybe<Scalars['String']['input']>;
+  inn: Scalars['String']['input'];
+  isPrimary?: InputMaybe<Scalars['Boolean']['input']>;
+  kpp?: InputMaybe<Scalars['String']['input']>;
+  legalAddress?: InputMaybe<Scalars['String']['input']>;
+  ogrn: Scalars['String']['input'];
+  opfFull?: InputMaybe<Scalars['String']['input']>;
+  opfShort?: InputMaybe<Scalars['String']['input']>;
+  phone?: InputMaybe<Scalars['String']['input']>;
+  position?: InputMaybe<Scalars['String']['input']>;
+  shortName?: InputMaybe<Scalars['String']['input']>;
   type: OrganizationType;
 };
 
-export type SetPrimaryEmploymentInput = {
-  employmentId: Scalars["ID"]["input"];
-};
-
 export type UpdateCategoryInput = {
-  description?: InputMaybe<Scalars["String"]["input"]>;
-  image?: InputMaybe<Scalars["String"]["input"]>;
-  name?: InputMaybe<Scalars["String"]["input"]>;
-  parent?: InputMaybe<Scalars["String"]["input"]>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  image?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  parent?: InputMaybe<Scalars['String']['input']>;
   type?: InputMaybe<CategoryType>;
 };
 
+export type UpdateEducationDocumentInput = {
+  image?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type UpdateMyProfileInput = {
-  avatar?: InputMaybe<Scalars["String"]["input"]>;
-  citizenship?: InputMaybe<Scalars["String"]["input"]>;
-  dateOfBirth?: InputMaybe<Scalars["DateTime"]["input"]>;
+  avatar?: InputMaybe<Scalars['String']['input']>;
+  citizenship?: InputMaybe<Scalars['String']['input']>;
+  dateOfBirth?: InputMaybe<Scalars['DateTime']['input']>;
   education?: InputMaybe<EducationInfoInput>;
-  firstName?: InputMaybe<Scalars["String"]["input"]>;
-  lastName?: InputMaybe<Scalars["String"]["input"]>;
-  middleName?: InputMaybe<Scalars["String"]["input"]>;
+  firstName?: InputMaybe<Scalars['String']['input']>;
+  lastName?: InputMaybe<Scalars['String']['input']>;
+  middleName?: InputMaybe<Scalars['String']['input']>;
   passport?: InputMaybe<PassportInfoInput>;
-  passportRegistrationAddress?: InputMaybe<
-    Scalars["String"]["input"]
-  >;
-  phone?: InputMaybe<Scalars["String"]["input"]>;
-  position?: InputMaybe<Scalars["String"]["input"]>;
-  residentialAddress?: InputMaybe<Scalars["String"]["input"]>;
-  snils?: InputMaybe<Scalars["String"]["input"]>;
-  workPlaceId?: InputMaybe<Scalars["ID"]["input"]>;
+  passportRegistrationAddress?: InputMaybe<Scalars['String']['input']>;
+  phone?: InputMaybe<Scalars['String']['input']>;
+  residentialAddress?: InputMaybe<Scalars['String']['input']>;
+  snils?: InputMaybe<Scalars['String']['input']>;
+  workPlaces?: InputMaybe<Array<WorkPlaceEntryInput>>;
 };
 
 export type UpdateProgramInput = {
-  awardedQualification?: InputMaybe<Scalars["String"]["input"]>;
-  awardedRankFrom?: InputMaybe<Scalars["Float"]["input"]>;
-  awardedRankTo?: InputMaybe<Scalars["Float"]["input"]>;
-  baseHours?: InputMaybe<Scalars["Float"]["input"]>;
-  category?: InputMaybe<Scalars["ID"]["input"]>;
-  description?: InputMaybe<Scalars["String"]["input"]>;
-  image?: InputMaybe<Scalars["String"]["input"]>;
+  awardedQualification?: InputMaybe<Scalars['String']['input']>;
+  awardedRankFrom?: InputMaybe<Scalars['Float']['input']>;
+  awardedRankTo?: InputMaybe<Scalars['Float']['input']>;
+  baseHours?: InputMaybe<Scalars['Float']['input']>;
+  category?: InputMaybe<Scalars['ID']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  educationDocumentId?: InputMaybe<Scalars['ID']['input']>;
+  image?: InputMaybe<Scalars['String']['input']>;
   pricing?: InputMaybe<Array<ProgramPricingInput>>;
-  shortTitle?: InputMaybe<Scalars["String"]["input"]>;
-  studentCategory?: InputMaybe<Scalars["String"]["input"]>;
+  shortTitle?: InputMaybe<Scalars['String']['input']>;
+  studentCategory?: InputMaybe<Scalars['String']['input']>;
   subPrograms?: InputMaybe<Array<ProgramSubProgramInput>>;
-  title?: InputMaybe<Scalars["String"]["input"]>;
+  title?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UserEntity = {
-  __typename?: "UserEntity";
-  createdAt: Scalars["DateTime"]["output"];
-  email: Scalars["String"]["output"];
-  firstName?: Maybe<Scalars["String"]["output"]>;
-  id: Scalars["ID"]["output"];
-  isBlocked: Scalars["Boolean"]["output"];
-  isEmailVerified: Scalars["Boolean"]["output"];
-  lastName?: Maybe<Scalars["String"]["output"]>;
-  mustChangePassword: Scalars["Boolean"]["output"];
-  phone?: Maybe<Scalars["String"]["output"]>;
+  __typename?: 'UserEntity';
+  createdAt: Scalars['DateTime']['output'];
+  email: Scalars['String']['output'];
+  firstName?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  isBlocked: Scalars['Boolean']['output'];
+  isEmailVerified: Scalars['Boolean']['output'];
+  lastName?: Maybe<Scalars['String']['output']>;
+  mustChangePassword: Scalars['Boolean']['output'];
+  phone?: Maybe<Scalars['String']['output']>;
   profile?: Maybe<UserProfileEntity>;
   role: UserRole;
-  updatedAt: Scalars["DateTime"]["output"];
+  updatedAt: Scalars['DateTime']['output'];
 };
 
 export type UserProfileEntity = {
-  __typename?: "UserProfileEntity";
-  avatar?: Maybe<Scalars["String"]["output"]>;
-  citizenship?: Maybe<Scalars["String"]["output"]>;
-  dateOfBirth?: Maybe<Scalars["DateTime"]["output"]>;
+  __typename?: 'UserProfileEntity';
+  avatar?: Maybe<Scalars['String']['output']>;
+  citizenship?: Maybe<Scalars['String']['output']>;
+  dateOfBirth?: Maybe<Scalars['DateTime']['output']>;
   education?: Maybe<EducationInfoEntity>;
-  employments: Array<EmploymentEntity>;
-  firstName?: Maybe<Scalars["String"]["output"]>;
-  lastName?: Maybe<Scalars["String"]["output"]>;
-  middleName?: Maybe<Scalars["String"]["output"]>;
+  firstName?: Maybe<Scalars['String']['output']>;
+  lastName?: Maybe<Scalars['String']['output']>;
+  middleName?: Maybe<Scalars['String']['output']>;
   passport?: Maybe<PassportInfoEntity>;
-  passportRegistrationAddress?: Maybe<Scalars["String"]["output"]>;
-  phone?: Maybe<Scalars["String"]["output"]>;
-  position?: Maybe<Scalars["String"]["output"]>;
-  residentialAddress?: Maybe<Scalars["String"]["output"]>;
-  snils?: Maybe<Scalars["String"]["output"]>;
-  workPlaceId?: Maybe<Scalars["ID"]["output"]>;
+  passportRegistrationAddress?: Maybe<Scalars['String']['output']>;
+  phone?: Maybe<Scalars['String']['output']>;
+  residentialAddress?: Maybe<Scalars['String']['output']>;
+  snils?: Maybe<Scalars['String']['output']>;
+  workPlaces?: Maybe<Array<UserWorkPlaceEntity>>;
 };
 
 export enum UserRole {
-  Admin = "ADMIN",
-  User = "USER",
+  Admin = 'ADMIN',
+  User = 'USER'
 }
 
-export type VerifyEmailInput = {
-  token: Scalars["String"]["input"];
+export type UserWorkPlaceEntity = {
+  __typename?: 'UserWorkPlaceEntity';
+  isPrimary: Scalars['Boolean']['output'];
+  organization: OrganizationEntity;
+  position?: Maybe<Scalars['String']['output']>;
 };
 
-export type MyUserProfileFieldsFragment = {
-  __typename?: "UserProfileEntity";
-  lastName?: string | null;
-  firstName?: string | null;
-  middleName?: string | null;
-  dateOfBirth?: any | null;
-  citizenship?: string | null;
-  phone?: string | null;
-  passportRegistrationAddress?: string | null;
-  residentialAddress?: string | null;
-  workPlaceId?: string | null;
-  position?: string | null;
-  snils?: string | null;
-  avatar?: string | null;
-  passport?: {
-    __typename?: "PassportInfoEntity";
-    series?: string | null;
-    number?: string | null;
-    issuedBy?: string | null;
-    issuedAt?: any | null;
-    departmentCode?: string | null;
-  } | null;
-  education?: {
-    __typename?: "EducationInfoEntity";
-    qualification?: string | null;
-    documentIssuedAt?: any | null;
-  } | null;
-} & { " $fragmentName"?: "MyUserProfileFieldsFragment" };
+export type VerifyEmailInput = {
+  token: Scalars['String']['input'];
+};
+
+export type WorkPlaceEntryInput = {
+  isPrimary?: Scalars['Boolean']['input'];
+  organizationId: Scalars['ID']['input'];
+  position?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type MyUserProfileFieldsFragment = { __typename?: 'UserProfileEntity', lastName?: string | null, firstName?: string | null, middleName?: string | null, dateOfBirth?: any | null, citizenship?: string | null, phone?: string | null, passportRegistrationAddress?: string | null, residentialAddress?: string | null, snils?: string | null, avatar?: string | null, passport?: { __typename?: 'PassportInfoEntity', series?: string | null, number?: string | null, issuedBy?: string | null, issuedAt?: any | null, departmentCode?: string | null } | null, education?: { __typename?: 'EducationInfoEntity', qualification?: string | null, documentIssuedAt?: any | null } | null, workPlaces?: Array<{ __typename?: 'UserWorkPlaceEntity', position?: string | null, isPrimary: boolean, organization: { __typename?: 'OrganizationEntity', id: string, type: OrganizationType, displayName: string, inn: string, kpp?: string | null, ogrn: string, legalAddress?: string | null } }> | null } & { ' $fragmentName'?: 'MyUserProfileFieldsFragment' };
 
 export type LoginMutationVariables = Exact<{
   input: LoginInput;
 }>;
 
-export type LoginMutation = {
-  __typename?: "Mutation";
-  login: {
-    __typename?: "UserEntity";
-    id: string;
-    email: string;
-    role: UserRole;
-    firstName?: string | null;
-    lastName?: string | null;
-    phone?: string | null;
-    isBlocked: boolean;
-    isEmailVerified: boolean;
-  };
-};
 
-export type LogoutMutationVariables = Exact<{ [key: string]: never }>;
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserEntity', id: string, email: string, role: UserRole, firstName?: string | null, lastName?: string | null, phone?: string | null, isBlocked: boolean, isEmailVerified: boolean } };
 
-export type LogoutMutation = {
-  __typename?: "Mutation";
-  logout: boolean;
-};
+export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LogoutMutation = { __typename?: 'Mutation', logout: boolean };
 
 export type RegisterMutationVariables = Exact<{
   input: RegisterInput;
 }>;
 
-export type RegisterMutation = {
-  __typename?: "Mutation";
-  register: boolean;
-};
+
+export type RegisterMutation = { __typename?: 'Mutation', register: boolean };
 
 export type VerifyEmailMutationVariables = Exact<{
   input: VerifyEmailInput;
 }>;
 
-export type VerifyEmailMutation = {
-  __typename?: "Mutation";
-  verifyEmail: boolean;
-};
+
+export type VerifyEmailMutation = { __typename?: 'Mutation', verifyEmail: boolean };
 
 export type RequestEmailVerificationMutationVariables = Exact<{
   input: RequestEmailVerificationInput;
 }>;
 
-export type RequestEmailVerificationMutation = {
-  __typename?: "Mutation";
-  requestEmailVerification: boolean;
-};
+
+export type RequestEmailVerificationMutation = { __typename?: 'Mutation', requestEmailVerification: boolean };
 
 export type RequestPasswordResetMutationVariables = Exact<{
   input: RequestPasswordResetInput;
 }>;
 
-export type RequestPasswordResetMutation = {
-  __typename?: "Mutation";
-  requestPasswordReset: boolean;
-};
+
+export type RequestPasswordResetMutation = { __typename?: 'Mutation', requestPasswordReset: boolean };
 
 export type ResetPasswordMutationVariables = Exact<{
   input: ResetPasswordInput;
 }>;
 
-export type ResetPasswordMutation = {
-  __typename?: "Mutation";
-  resetPassword: boolean;
-};
+
+export type ResetPasswordMutation = { __typename?: 'Mutation', resetPassword: boolean };
 
 export type UpdateMyProfileMutationVariables = Exact<{
   input: UpdateMyProfileInput;
 }>;
 
-export type UpdateMyProfileMutation = {
-  __typename?: "Mutation";
-  updateMyProfile: { __typename?: "UserProfileEntity" } & {
-    " $fragmentRefs"?: {
-      MyUserProfileFieldsFragment: MyUserProfileFieldsFragment;
-    };
-  };
-};
+
+export type UpdateMyProfileMutation = { __typename?: 'Mutation', updateMyProfile: (
+    { __typename?: 'UserProfileEntity' }
+    & { ' $fragmentRefs'?: { 'MyUserProfileFieldsFragment': MyUserProfileFieldsFragment } }
+  ) };
 
 export type CreateCategoryMutationVariables = Exact<{
   input: CreateCategoryInput;
 }>;
 
-export type CreateCategoryMutation = {
-  __typename?: "Mutation";
-  createCategory: {
-    __typename?: "CategoryEntity";
-    id: string;
-    name: string;
-    slug: string;
-    description?: string | null;
-    image?: string | null;
-    type?: CategoryType | null;
-    parent?: string | null;
-    createdAt: any;
-    updatedAt: any;
-    programsCount?: number | null;
-  };
-};
+
+export type CreateCategoryMutation = { __typename?: 'Mutation', createCategory: { __typename?: 'CategoryEntity', id: string, name: string, slug: string, description?: string | null, image?: string | null, type?: CategoryType | null, parent?: string | null, createdAt: any, updatedAt: any, programsCount?: number | null } };
 
 export type UpdateCategoryMutationVariables = Exact<{
-  id: Scalars["ID"]["input"];
+  id: Scalars['ID']['input'];
   input: UpdateCategoryInput;
 }>;
 
-export type UpdateCategoryMutation = {
-  __typename?: "Mutation";
-  updateCategory: {
-    __typename?: "CategoryEntity";
-    id: string;
-    name: string;
-    slug: string;
-    description?: string | null;
-    image?: string | null;
-    type?: CategoryType | null;
-    parent?: string | null;
-    createdAt: any;
-    updatedAt: any;
-    programsCount?: number | null;
-  };
-};
+
+export type UpdateCategoryMutation = { __typename?: 'Mutation', updateCategory: { __typename?: 'CategoryEntity', id: string, name: string, slug: string, description?: string | null, image?: string | null, type?: CategoryType | null, parent?: string | null, createdAt: any, updatedAt: any, programsCount?: number | null } };
 
 export type DeleteCategoryMutationVariables = Exact<{
-  id: Scalars["ID"]["input"];
+  id: Scalars['ID']['input'];
 }>;
 
-export type DeleteCategoryMutation = {
-  __typename?: "Mutation";
-  deleteCategory: { __typename?: "CategoryEntity"; id: string };
-};
+
+export type DeleteCategoryMutation = { __typename?: 'Mutation', deleteCategory: { __typename?: 'CategoryEntity', id: string } };
+
+export type CreateEducationDocumentMutationVariables = Exact<{
+  input: CreateEducationDocumentInput;
+}>;
+
+
+export type CreateEducationDocumentMutation = { __typename?: 'Mutation', createEducationDocument: { __typename?: 'EducationDocumentEntity', id: string, name: string, image?: string | null, createdAt: any, updatedAt: any } };
+
+export type UpdateEducationDocumentMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+  input: UpdateEducationDocumentInput;
+}>;
+
+
+export type UpdateEducationDocumentMutation = { __typename?: 'Mutation', updateEducationDocument: { __typename?: 'EducationDocumentEntity', id: string, name: string, image?: string | null, createdAt: any, updatedAt: any } };
+
+export type DeleteEducationDocumentMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type DeleteEducationDocumentMutation = { __typename?: 'Mutation', deleteEducationDocument: { __typename?: 'EducationDocumentEntity', id: string, name: string, image?: string | null } };
 
 export type CreateProgramMutationVariables = Exact<{
   input: CreateProgramInput;
 }>;
 
-export type CreateProgramMutation = {
-  __typename?: "Mutation";
-  createProgram: {
-    __typename?: "ProgramEntity";
-    id: string;
-    title: string;
-    slug: string;
-    description?: string | null;
-    image?: string | null;
-    category: string;
-    baseHours?: number | null;
-    studentCategory?: string | null;
-    awardedQualification?: string | null;
-    awardedRankFrom?: number | null;
-    awardedRankTo?: number | null;
-    views: number;
-    createdAt: any;
-    updatedAt: any;
-    pricing: Array<{
-      __typename?: "ProgramPricing";
-      hours: number;
-      price?: number | null;
-    }>;
-    subPrograms?: Array<{
-      __typename?: "ProgramSubProgramEntity";
-      title: string;
-      description?: string | null;
-    }> | null;
-  };
-};
+
+export type CreateProgramMutation = { __typename?: 'Mutation', createProgram: { __typename?: 'ProgramEntity', id: string, title: string, slug: string, educationDocumentId?: string | null, description?: string | null, image?: string | null, category: string, baseHours?: number | null, studentCategory?: string | null, awardedQualification?: string | null, awardedRankFrom?: number | null, awardedRankTo?: number | null, views: number, createdAt: any, updatedAt: any, pricing: Array<{ __typename?: 'ProgramPricing', hours: number, price?: number | null }>, subPrograms?: Array<{ __typename?: 'ProgramSubProgramEntity', title: string, description?: string | null }> | null } };
 
 export type UpdateProgramMutationVariables = Exact<{
-  id: Scalars["ID"]["input"];
+  id: Scalars['ID']['input'];
   input: UpdateProgramInput;
 }>;
 
-export type UpdateProgramMutation = {
-  __typename?: "Mutation";
-  updateProgram: {
-    __typename?: "ProgramEntity";
-    id: string;
-    title: string;
-    slug: string;
-    description?: string | null;
-    image?: string | null;
-    category: string;
-    baseHours?: number | null;
-    studentCategory?: string | null;
-    awardedQualification?: string | null;
-    awardedRankFrom?: number | null;
-    awardedRankTo?: number | null;
-    views: number;
-    createdAt: any;
-    updatedAt: any;
-    pricing: Array<{
-      __typename?: "ProgramPricing";
-      hours: number;
-      price?: number | null;
-    }>;
-    subPrograms?: Array<{
-      __typename?: "ProgramSubProgramEntity";
-      title: string;
-      description?: string | null;
-    }> | null;
-  };
-};
+
+export type UpdateProgramMutation = { __typename?: 'Mutation', updateProgram: { __typename?: 'ProgramEntity', id: string, title: string, slug: string, educationDocumentId?: string | null, description?: string | null, image?: string | null, category: string, baseHours?: number | null, studentCategory?: string | null, awardedQualification?: string | null, awardedRankFrom?: number | null, awardedRankTo?: number | null, views: number, createdAt: any, updatedAt: any, pricing: Array<{ __typename?: 'ProgramPricing', hours: number, price?: number | null }>, subPrograms?: Array<{ __typename?: 'ProgramSubProgramEntity', title: string, description?: string | null }> | null } };
 
 export type DeleteProgramMutationVariables = Exact<{
-  id: Scalars["ID"]["input"];
+  id: Scalars['ID']['input'];
 }>;
 
-export type DeleteProgramMutation = {
-  __typename?: "Mutation";
-  deleteProgram: { __typename?: "ProgramEntity"; id: string };
-};
 
-export type AdminUserProfileFieldsMutationsFragment = {
-  __typename?: "UserProfileEntity";
-  lastName?: string | null;
-  firstName?: string | null;
-  middleName?: string | null;
-  dateOfBirth?: any | null;
-  citizenship?: string | null;
-  phone?: string | null;
-  passportRegistrationAddress?: string | null;
-  residentialAddress?: string | null;
-  workPlaceId?: string | null;
-  position?: string | null;
-  snils?: string | null;
-  avatar?: string | null;
-  passport?: {
-    __typename?: "PassportInfoEntity";
-    series?: string | null;
-    number?: string | null;
-    issuedBy?: string | null;
-    issuedAt?: any | null;
-    departmentCode?: string | null;
-  } | null;
-  education?: {
-    __typename?: "EducationInfoEntity";
-    qualification?: string | null;
-    documentIssuedAt?: any | null;
-  } | null;
-} & { " $fragmentName"?: "AdminUserProfileFieldsMutationsFragment" };
+export type DeleteProgramMutation = { __typename?: 'Mutation', deleteProgram: { __typename?: 'ProgramEntity', id: string } };
 
-export type AdminUserFieldsMutationsFragment = {
-  __typename?: "UserEntity";
-  id: string;
-  email: string;
-  role: UserRole;
-  isBlocked: boolean;
-  isEmailVerified: boolean;
-  firstName?: string | null;
-  lastName?: string | null;
-  phone?: string | null;
-  createdAt: any;
-  updatedAt: any;
-  profile?:
-    | ({ __typename?: "UserProfileEntity" } & {
-        " $fragmentRefs"?: {
-          AdminUserProfileFieldsMutationsFragment: AdminUserProfileFieldsMutationsFragment;
-        };
-      })
-    | null;
-} & { " $fragmentName"?: "AdminUserFieldsMutationsFragment" };
+export type AdminUserProfileFieldsMutationsFragment = { __typename?: 'UserProfileEntity', lastName?: string | null, firstName?: string | null, middleName?: string | null, dateOfBirth?: any | null, citizenship?: string | null, phone?: string | null, passportRegistrationAddress?: string | null, residentialAddress?: string | null, snils?: string | null, avatar?: string | null, passport?: { __typename?: 'PassportInfoEntity', series?: string | null, number?: string | null, issuedBy?: string | null, issuedAt?: any | null, departmentCode?: string | null } | null, education?: { __typename?: 'EducationInfoEntity', qualification?: string | null, documentIssuedAt?: any | null } | null, workPlaces?: Array<{ __typename?: 'UserWorkPlaceEntity', position?: string | null, isPrimary: boolean, organization: { __typename?: 'OrganizationEntity', id: string, type: OrganizationType, displayName: string, inn: string, kpp?: string | null, ogrn: string, legalAddress?: string | null } }> | null } & { ' $fragmentName'?: 'AdminUserProfileFieldsMutationsFragment' };
+
+export type AdminUserFieldsMutationsFragment = { __typename?: 'UserEntity', id: string, email: string, role: UserRole, isBlocked: boolean, isEmailVerified: boolean, firstName?: string | null, lastName?: string | null, phone?: string | null, createdAt: any, updatedAt: any, profile?: (
+    { __typename?: 'UserProfileEntity' }
+    & { ' $fragmentRefs'?: { 'AdminUserProfileFieldsMutationsFragment': AdminUserProfileFieldsMutationsFragment } }
+  ) | null } & { ' $fragmentName'?: 'AdminUserFieldsMutationsFragment' };
 
 export type AdminCreateUserMutationVariables = Exact<{
   input: AdminCreateUserInput;
 }>;
 
-export type AdminCreateUserMutation = {
-  __typename?: "Mutation";
-  adminCreateUser: { __typename?: "UserEntity" } & {
-    " $fragmentRefs"?: {
-      AdminUserFieldsMutationsFragment: AdminUserFieldsMutationsFragment;
-    };
-  };
-};
+
+export type AdminCreateUserMutation = { __typename?: 'Mutation', adminCreateUser: (
+    { __typename?: 'UserEntity' }
+    & { ' $fragmentRefs'?: { 'AdminUserFieldsMutationsFragment': AdminUserFieldsMutationsFragment } }
+  ) };
 
 export type AdminUpdateUserMutationVariables = Exact<{
-  id: Scalars["ID"]["input"];
+  id: Scalars['ID']['input'];
   input: AdminUpdateUserInput;
 }>;
 
-export type AdminUpdateUserMutation = {
-  __typename?: "Mutation";
-  adminUpdateUser: { __typename?: "UserEntity" } & {
-    " $fragmentRefs"?: {
-      AdminUserFieldsMutationsFragment: AdminUserFieldsMutationsFragment;
-    };
-  };
-};
+
+export type AdminUpdateUserMutation = { __typename?: 'Mutation', adminUpdateUser: (
+    { __typename?: 'UserEntity' }
+    & { ' $fragmentRefs'?: { 'AdminUserFieldsMutationsFragment': AdminUserFieldsMutationsFragment } }
+  ) };
 
 export type AdminDeleteUserMutationVariables = Exact<{
-  id: Scalars["ID"]["input"];
+  id: Scalars['ID']['input'];
 }>;
 
-export type AdminDeleteUserMutation = {
-  __typename?: "Mutation";
-  adminDeleteUser: boolean;
-};
+
+export type AdminDeleteUserMutation = { __typename?: 'Mutation', adminDeleteUser: boolean };
 
 export type AdminSetUserBlockedMutationVariables = Exact<{
-  id: Scalars["ID"]["input"];
-  blocked: Scalars["Boolean"]["input"];
+  id: Scalars['ID']['input'];
+  blocked: Scalars['Boolean']['input'];
 }>;
 
-export type AdminSetUserBlockedMutation = {
-  __typename?: "Mutation";
-  adminSetUserBlocked: { __typename?: "UserEntity" } & {
-    " $fragmentRefs"?: {
-      AdminUserFieldsMutationsFragment: AdminUserFieldsMutationsFragment;
-    };
-  };
-};
+
+export type AdminSetUserBlockedMutation = { __typename?: 'Mutation', adminSetUserBlocked: (
+    { __typename?: 'UserEntity' }
+    & { ' $fragmentRefs'?: { 'AdminUserFieldsMutationsFragment': AdminUserFieldsMutationsFragment } }
+  ) };
+
+export type WorkPlacesFieldsFragment = { __typename?: 'UserProfileEntity', workPlaces?: Array<{ __typename?: 'UserWorkPlaceEntity', position?: string | null, isPrimary: boolean, organization: { __typename?: 'OrganizationEntity', id: string, type: OrganizationType, displayName: string, inn: string, kpp?: string | null, ogrn: string, legalAddress?: string | null } }> | null } & { ' $fragmentName'?: 'WorkPlacesFieldsFragment' };
 
 export type SetMyWorkPlaceByInnMutationVariables = Exact<{
   input: SetMyWorkPlaceByInnInput;
 }>;
 
-export type SetMyWorkPlaceByInnMutation = {
-  __typename?: "Mutation";
-  setMyWorkPlaceByInn: {
-    __typename?: "UserProfileEntity";
-    workPlaceId?: string | null;
-    position?: string | null;
-    employments: Array<{
-      __typename?: "EmploymentEntity";
-      id: string;
-      organizationId: string;
-      position?: string | null;
-      isPrimary?: boolean | null;
-    }>;
-  };
-};
+
+export type SetMyWorkPlaceByInnMutation = { __typename?: 'Mutation', setMyWorkPlaceByInn: (
+    { __typename?: 'UserProfileEntity' }
+    & { ' $fragmentRefs'?: { 'WorkPlacesFieldsFragment': WorkPlacesFieldsFragment } }
+  ) };
 
 export type SetMyWorkPlaceManualMutationVariables = Exact<{
   input: SetMyWorkPlaceManualInput;
 }>;
 
-export type SetMyWorkPlaceManualMutation = {
-  __typename?: "Mutation";
-  setMyWorkPlaceManual: {
-    __typename?: "UserProfileEntity";
-    workPlaceId?: string | null;
-  };
-};
+
+export type SetMyWorkPlaceManualMutation = { __typename?: 'Mutation', setMyWorkPlaceManual: (
+    { __typename?: 'UserProfileEntity' }
+    & { ' $fragmentRefs'?: { 'WorkPlacesFieldsFragment': WorkPlacesFieldsFragment } }
+  ) };
 
 export type AddressSuggestionsQueryVariables = Exact<{
-  query: Scalars["String"]["input"];
-  count?: InputMaybe<Scalars["Int"]["input"]>;
+  query: Scalars['String']['input'];
+  count?: InputMaybe<Scalars['Int']['input']>;
 }>;
 
-export type AddressSuggestionsQuery = {
-  __typename?: "Query";
-  addressSuggestions: Array<{
-    __typename?: "AddressSuggestionEntity";
-    value: string;
-    unrestrictedValue?: string | null;
-    region?: string | null;
-    city?: string | null;
-    street?: string | null;
-    house?: string | null;
-    flat?: string | null;
-    postalCode?: string | null;
-    fiasId?: string | null;
-    kladrId?: string | null;
-    geoLat?: string | null;
-    geoLon?: string | null;
-  }>;
-};
 
-export type MeUserProfileFieldsFragment = {
-  __typename?: "UserProfileEntity";
-  lastName?: string | null;
-  firstName?: string | null;
-  middleName?: string | null;
-  dateOfBirth?: any | null;
-  citizenship?: string | null;
-  phone?: string | null;
-  passportRegistrationAddress?: string | null;
-  residentialAddress?: string | null;
-  workPlaceId?: string | null;
-  position?: string | null;
-  snils?: string | null;
-  avatar?: string | null;
-  passport?: {
-    __typename?: "PassportInfoEntity";
-    series?: string | null;
-    number?: string | null;
-    issuedBy?: string | null;
-    issuedAt?: any | null;
-    departmentCode?: string | null;
-  } | null;
-  education?: {
-    __typename?: "EducationInfoEntity";
-    qualification?: string | null;
-    documentIssuedAt?: any | null;
-  } | null;
-  employments: Array<{
-    __typename?: "EmploymentEntity";
-    id: string;
-    organizationId: string;
-    position?: string | null;
-    isPrimary?: boolean | null;
-    organization?: {
-      __typename?: "OrganizationEntity";
-      type: OrganizationType;
-      displayName: string;
-      inn: string;
-      kpp?: string | null;
-      ogrn: string;
-      legalAddress?: string | null;
-    } | null;
-  }>;
-} & { " $fragmentName"?: "MeUserProfileFieldsFragment" };
+export type AddressSuggestionsQuery = { __typename?: 'Query', addressSuggestions: Array<{ __typename?: 'AddressSuggestionEntity', value: string, unrestrictedValue?: string | null, region?: string | null, city?: string | null, street?: string | null, house?: string | null, flat?: string | null, postalCode?: string | null, fiasId?: string | null, kladrId?: string | null, geoLat?: string | null, geoLon?: string | null }> };
 
-export type MeUserFieldsFragment = {
-  __typename?: "UserEntity";
-  id: string;
-  email: string;
-  role: UserRole;
-  isBlocked: boolean;
-  isEmailVerified: boolean;
-  firstName?: string | null;
-  lastName?: string | null;
-  phone?: string | null;
-  createdAt: any;
-  updatedAt: any;
-  profile?:
-    | ({ __typename?: "UserProfileEntity" } & {
-        " $fragmentRefs"?: {
-          MeUserProfileFieldsFragment: MeUserProfileFieldsFragment;
-        };
-      })
-    | null;
-} & { " $fragmentName"?: "MeUserFieldsFragment" };
+export type MeUserProfileFieldsFragment = { __typename?: 'UserProfileEntity', lastName?: string | null, firstName?: string | null, middleName?: string | null, dateOfBirth?: any | null, citizenship?: string | null, phone?: string | null, passportRegistrationAddress?: string | null, residentialAddress?: string | null, snils?: string | null, avatar?: string | null, passport?: { __typename?: 'PassportInfoEntity', series?: string | null, number?: string | null, issuedBy?: string | null, issuedAt?: any | null, departmentCode?: string | null } | null, education?: { __typename?: 'EducationInfoEntity', qualification?: string | null, documentIssuedAt?: any | null } | null, workPlaces?: Array<{ __typename?: 'UserWorkPlaceEntity', position?: string | null, isPrimary: boolean, organization: { __typename?: 'OrganizationEntity', id: string, type: OrganizationType, displayName: string, inn: string, kpp?: string | null, ogrn: string, legalAddress?: string | null } }> | null } & { ' $fragmentName'?: 'MeUserProfileFieldsFragment' };
 
-export type MeQueryVariables = Exact<{ [key: string]: never }>;
+export type MeUserFieldsFragment = { __typename?: 'UserEntity', id: string, email: string, role: UserRole, isBlocked: boolean, isEmailVerified: boolean, firstName?: string | null, lastName?: string | null, phone?: string | null, createdAt: any, updatedAt: any, profile?: (
+    { __typename?: 'UserProfileEntity' }
+    & { ' $fragmentRefs'?: { 'MeUserProfileFieldsFragment': MeUserProfileFieldsFragment } }
+  ) | null } & { ' $fragmentName'?: 'MeUserFieldsFragment' };
 
-export type MeQuery = {
-  __typename?: "Query";
-  me: { __typename?: "UserEntity" } & {
-    " $fragmentRefs"?: { MeUserFieldsFragment: MeUserFieldsFragment };
-  };
-};
+export type MeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MeQuery = { __typename?: 'Query', me: (
+    { __typename?: 'UserEntity' }
+    & { ' $fragmentRefs'?: { 'MeUserFieldsFragment': MeUserFieldsFragment } }
+  ) };
 
 export type GetCategoriesQueryVariables = Exact<{
   filter?: InputMaybe<CategoryFilterInput>;
 }>;
 
-export type GetCategoriesQuery = {
-  __typename?: "Query";
-  categories: Array<{
-    __typename?: "CategoryEntity";
-    id: string;
-    name: string;
-    slug: string;
-    description?: string | null;
-    image?: string | null;
-    type?: CategoryType | null;
-    parent?: string | null;
-    createdAt: any;
-    updatedAt: any;
-    programsCount?: number | null;
-  }>;
-};
+
+export type GetCategoriesQuery = { __typename?: 'Query', categories: Array<{ __typename?: 'CategoryEntity', id: string, name: string, slug: string, description?: string | null, image?: string | null, type?: CategoryType | null, parent?: string | null, createdAt: any, updatedAt: any, programsCount?: number | null }> };
 
 export type GetCategoryQueryVariables = Exact<{
-  id: Scalars["ID"]["input"];
+  id: Scalars['ID']['input'];
 }>;
 
-export type GetCategoryQuery = {
-  __typename?: "Query";
-  category?: {
-    __typename?: "CategoryEntity";
-    id: string;
-    name: string;
-    slug: string;
-    description?: string | null;
-    image?: string | null;
-    type?: CategoryType | null;
-    parent?: string | null;
-    createdAt: any;
-    updatedAt: any;
-    programsCount?: number | null;
-  } | null;
-};
+
+export type GetCategoryQuery = { __typename?: 'Query', category?: { __typename?: 'CategoryEntity', id: string, name: string, slug: string, description?: string | null, image?: string | null, type?: CategoryType | null, parent?: string | null, createdAt: any, updatedAt: any, programsCount?: number | null } | null };
+
+export type EducationDocumentsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type EducationDocumentsQuery = { __typename?: 'Query', educationDocuments: Array<{ __typename?: 'EducationDocumentEntity', id: string, name: string, image?: string | null, createdAt: any, updatedAt: any }> };
+
+export type EducationDocumentQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type EducationDocumentQuery = { __typename?: 'Query', educationDocument?: { __typename?: 'EducationDocumentEntity', id: string, name: string, image?: string | null, createdAt: any, updatedAt: any } | null };
 
 export type OrganizationSuggestionsQueryVariables = Exact<{
-  query: Scalars["String"]["input"];
-  count?: InputMaybe<Scalars["Int"]["input"]>;
+  query: Scalars['String']['input'];
+  count?: InputMaybe<Scalars['Int']['input']>;
 }>;
 
-export type OrganizationSuggestionsQuery = {
-  __typename?: "Query";
-  organizationSuggestions: Array<{
-    __typename?: "OrganizationSuggestionEntity";
-    type: OrganizationType;
-    inn: string;
-    kpp?: string | null;
-    ogrn: string;
-    displayName: string;
-    legalAddress?: string | null;
-  }>;
-};
+
+export type OrganizationSuggestionsQuery = { __typename?: 'Query', organizationSuggestions: Array<{ __typename?: 'OrganizationSuggestionEntity', type: OrganizationType, inn: string, kpp?: string | null, ogrn: string, displayName: string, legalAddress?: string | null }> };
 
 export type GetProgramsQueryVariables = Exact<{
   filter?: InputMaybe<ProgramFilterInput>;
 }>;
 
-export type GetProgramsQuery = {
-  __typename?: "Query";
-  programs: Array<{
-    __typename?: "ProgramEntity";
-    id: string;
-    title: string;
-    shortTitle?: string | null;
-    slug: string;
-    description?: string | null;
-    image?: string | null;
-    category: string;
-    baseHours?: number | null;
-    studentCategory?: string | null;
-    awardedQualification?: string | null;
-    awardedRankFrom?: number | null;
-    awardedRankTo?: number | null;
-    views: number;
-    createdAt: any;
-    updatedAt: any;
-    pricing: Array<{
-      __typename?: "ProgramPricing";
-      hours: number;
-      price?: number | null;
-    }>;
-    subPrograms?: Array<{
-      __typename?: "ProgramSubProgramEntity";
-      title: string;
-      description?: string | null;
-    }> | null;
-  }>;
-};
+
+export type GetProgramsQuery = { __typename?: 'Query', programs: Array<{ __typename?: 'ProgramEntity', id: string, title: string, shortTitle?: string | null, slug: string, description?: string | null, image?: string | null, category: string, baseHours?: number | null, studentCategory?: string | null, awardedQualification?: string | null, awardedRankFrom?: number | null, awardedRankTo?: number | null, educationDocumentId?: string | null, views: number, createdAt: any, updatedAt: any, educationDocument?: { __typename?: 'EducationDocumentEntity', id: string, name: string, image?: string | null } | null, pricing: Array<{ __typename?: 'ProgramPricing', hours: number, price?: number | null }>, subPrograms?: Array<{ __typename?: 'ProgramSubProgramEntity', title: string, description?: string | null }> | null }> };
 
 export type ProgramsPageQueryVariables = Exact<{
   filter?: InputMaybe<ProgramFilterInput>;
 }>;
 
-export type ProgramsPageQuery = {
-  __typename?: "Query";
-  programsPage: {
-    __typename?: "ProgramsPageEntity";
-    total: number;
-    items: Array<{
-      __typename?: "ProgramEntity";
-      id: string;
-      title: string;
-      shortTitle?: string | null;
-      slug: string;
-      description?: string | null;
-      image?: string | null;
-      category: string;
-      baseHours?: number | null;
-      studentCategory?: string | null;
-      awardedQualification?: string | null;
-      awardedRankFrom?: number | null;
-      awardedRankTo?: number | null;
-      views: number;
-      createdAt: any;
-      updatedAt: any;
-      pricing: Array<{
-        __typename?: "ProgramPricing";
-        hours: number;
-        price?: number | null;
-      }>;
-      subPrograms?: Array<{
-        __typename?: "ProgramSubProgramEntity";
-        title: string;
-        description?: string | null;
-      }> | null;
-    }>;
-  };
-};
+
+export type ProgramsPageQuery = { __typename?: 'Query', programsPage: { __typename?: 'ProgramsPageEntity', total: number, items: Array<{ __typename?: 'ProgramEntity', id: string, title: string, shortTitle?: string | null, slug: string, description?: string | null, image?: string | null, category: string, baseHours?: number | null, studentCategory?: string | null, awardedQualification?: string | null, awardedRankFrom?: number | null, awardedRankTo?: number | null, educationDocumentId?: string | null, views: number, createdAt: any, updatedAt: any, educationDocument?: { __typename?: 'EducationDocumentEntity', id: string, name: string, image?: string | null } | null, pricing: Array<{ __typename?: 'ProgramPricing', hours: number, price?: number | null }>, subPrograms?: Array<{ __typename?: 'ProgramSubProgramEntity', title: string, description?: string | null }> | null }> } };
 
 export type GetTopProgramsQueryVariables = Exact<{
-  limit?: InputMaybe<Scalars["Float"]["input"]>;
+  limit?: InputMaybe<Scalars['Float']['input']>;
 }>;
 
-export type GetTopProgramsQuery = {
-  __typename?: "Query";
-  topPrograms: Array<{
-    __typename?: "ProgramEntity";
-    id: string;
-    title: string;
-    shortTitle?: string | null;
-    slug: string;
-    description?: string | null;
-    image?: string | null;
-    category: string;
-    baseHours?: number | null;
-    studentCategory?: string | null;
-    awardedQualification?: string | null;
-    awardedRankFrom?: number | null;
-    awardedRankTo?: number | null;
-    views: number;
-    createdAt: any;
-    updatedAt: any;
-    pricing: Array<{
-      __typename?: "ProgramPricing";
-      hours: number;
-      price?: number | null;
-    }>;
-    subPrograms?: Array<{
-      __typename?: "ProgramSubProgramEntity";
-      title: string;
-      description?: string | null;
-    }> | null;
-  }>;
-};
+
+export type GetTopProgramsQuery = { __typename?: 'Query', topPrograms: Array<{ __typename?: 'ProgramEntity', id: string, title: string, shortTitle?: string | null, slug: string, description?: string | null, image?: string | null, category: string, baseHours?: number | null, studentCategory?: string | null, awardedQualification?: string | null, awardedRankFrom?: number | null, awardedRankTo?: number | null, educationDocumentId?: string | null, views: number, createdAt: any, updatedAt: any, educationDocument?: { __typename?: 'EducationDocumentEntity', id: string, name: string, image?: string | null } | null, pricing: Array<{ __typename?: 'ProgramPricing', hours: number, price?: number | null }>, subPrograms?: Array<{ __typename?: 'ProgramSubProgramEntity', title: string, description?: string | null }> | null }> };
 
 export type GetProgramQueryVariables = Exact<{
-  id: Scalars["ID"]["input"];
+  id: Scalars['ID']['input'];
 }>;
 
-export type GetProgramQuery = {
-  __typename?: "Query";
-  program: {
-    __typename?: "ProgramEntity";
-    id: string;
-    title: string;
-    shortTitle?: string | null;
-    slug: string;
-    description?: string | null;
-    image?: string | null;
-    category: string;
-    baseHours?: number | null;
-    studentCategory?: string | null;
-    awardedQualification?: string | null;
-    awardedRankFrom?: number | null;
-    awardedRankTo?: number | null;
-    views: number;
-    createdAt: any;
-    updatedAt: any;
-    pricing: Array<{
-      __typename?: "ProgramPricing";
-      hours: number;
-      price?: number | null;
-    }>;
-    subPrograms?: Array<{
-      __typename?: "ProgramSubProgramEntity";
-      title: string;
-      description?: string | null;
-    }> | null;
-  };
-};
 
-export type AdminUserProfileFieldsQueriesFragment = {
-  __typename?: "UserProfileEntity";
-  lastName?: string | null;
-  firstName?: string | null;
-  middleName?: string | null;
-  dateOfBirth?: any | null;
-  citizenship?: string | null;
-  phone?: string | null;
-  passportRegistrationAddress?: string | null;
-  residentialAddress?: string | null;
-  workPlaceId?: string | null;
-  position?: string | null;
-  snils?: string | null;
-  avatar?: string | null;
-  passport?: {
-    __typename?: "PassportInfoEntity";
-    series?: string | null;
-    number?: string | null;
-    issuedBy?: string | null;
-    issuedAt?: any | null;
-    departmentCode?: string | null;
-  } | null;
-  education?: {
-    __typename?: "EducationInfoEntity";
-    qualification?: string | null;
-    documentIssuedAt?: any | null;
-  } | null;
-} & { " $fragmentName"?: "AdminUserProfileFieldsQueriesFragment" };
+export type GetProgramQuery = { __typename?: 'Query', program: { __typename?: 'ProgramEntity', id: string, title: string, shortTitle?: string | null, slug: string, description?: string | null, image?: string | null, category: string, baseHours?: number | null, studentCategory?: string | null, awardedQualification?: string | null, awardedRankFrom?: number | null, awardedRankTo?: number | null, educationDocumentId?: string | null, views: number, createdAt: any, updatedAt: any, educationDocument?: { __typename?: 'EducationDocumentEntity', id: string, name: string, image?: string | null } | null, pricing: Array<{ __typename?: 'ProgramPricing', hours: number, price?: number | null }>, subPrograms?: Array<{ __typename?: 'ProgramSubProgramEntity', title: string, description?: string | null }> | null } };
 
-export type AdminUserFieldsQueriesFragment = {
-  __typename?: "UserEntity";
-  id: string;
-  email: string;
-  role: UserRole;
-  isBlocked: boolean;
-  isEmailVerified: boolean;
-  firstName?: string | null;
-  lastName?: string | null;
-  phone?: string | null;
-  createdAt: any;
-  updatedAt: any;
-  profile?:
-    | ({ __typename?: "UserProfileEntity" } & {
-        " $fragmentRefs"?: {
-          AdminUserProfileFieldsQueriesFragment: AdminUserProfileFieldsQueriesFragment;
-        };
-      })
-    | null;
-} & { " $fragmentName"?: "AdminUserFieldsQueriesFragment" };
+export type AdminUserProfileFieldsQueriesFragment = { __typename?: 'UserProfileEntity', lastName?: string | null, firstName?: string | null, middleName?: string | null, dateOfBirth?: any | null, citizenship?: string | null, phone?: string | null, passportRegistrationAddress?: string | null, residentialAddress?: string | null, snils?: string | null, avatar?: string | null, passport?: { __typename?: 'PassportInfoEntity', series?: string | null, number?: string | null, issuedBy?: string | null, issuedAt?: any | null, departmentCode?: string | null } | null, education?: { __typename?: 'EducationInfoEntity', qualification?: string | null, documentIssuedAt?: any | null } | null, workPlaces?: Array<{ __typename?: 'UserWorkPlaceEntity', position?: string | null, isPrimary: boolean, organization: { __typename?: 'OrganizationEntity', id: string, type: OrganizationType, displayName: string, inn: string, kpp?: string | null, ogrn: string, legalAddress?: string | null } }> | null } & { ' $fragmentName'?: 'AdminUserProfileFieldsQueriesFragment' };
+
+export type AdminUserFieldsQueriesFragment = { __typename?: 'UserEntity', id: string, email: string, role: UserRole, isBlocked: boolean, isEmailVerified: boolean, firstName?: string | null, lastName?: string | null, phone?: string | null, createdAt: any, updatedAt: any, profile?: (
+    { __typename?: 'UserProfileEntity' }
+    & { ' $fragmentRefs'?: { 'AdminUserProfileFieldsQueriesFragment': AdminUserProfileFieldsQueriesFragment } }
+  ) | null } & { ' $fragmentName'?: 'AdminUserFieldsQueriesFragment' };
 
 export type AdminUsersQueryVariables = Exact<{
   filter?: InputMaybe<AdminUserFilterInput>;
 }>;
 
-export type AdminUsersQuery = {
-  __typename?: "Query";
-  adminUsers: Array<
-    { __typename?: "UserEntity" } & {
-      " $fragmentRefs"?: {
-        AdminUserFieldsQueriesFragment: AdminUserFieldsQueriesFragment;
-      };
-    }
-  >;
-};
+
+export type AdminUsersQuery = { __typename?: 'Query', adminUsers: Array<(
+    { __typename?: 'UserEntity' }
+    & { ' $fragmentRefs'?: { 'AdminUserFieldsQueriesFragment': AdminUserFieldsQueriesFragment } }
+  )> };
 
 export type AdminUserQueryVariables = Exact<{
-  id: Scalars["ID"]["input"];
+  id: Scalars['ID']['input'];
 }>;
 
-export type AdminUserQuery = {
-  __typename?: "Query";
-  adminUser?:
-    | ({ __typename?: "UserEntity" } & {
-        " $fragmentRefs"?: {
-          AdminUserFieldsQueriesFragment: AdminUserFieldsQueriesFragment;
-        };
-      })
-    | null;
-};
 
-export const MyUserProfileFieldsFragmentDoc = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "FragmentDefinition",
-      name: { kind: "Name", value: "MyUserProfileFields" },
-      typeCondition: {
-        kind: "NamedType",
-        name: { kind: "Name", value: "UserProfileEntity" },
-      },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "lastName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "firstName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "middleName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "dateOfBirth" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "citizenship" },
-          },
-          { kind: "Field", name: { kind: "Name", value: "phone" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "passport" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "series" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "number" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "issuedBy" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "issuedAt" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "departmentCode" },
-                },
-              ],
-            },
-          },
-          {
-            kind: "Field",
-            name: {
-              kind: "Name",
-              value: "passportRegistrationAddress",
-            },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "residentialAddress" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "education" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "qualification" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "documentIssuedAt" },
-                },
-              ],
-            },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "workPlaceId" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "position" },
-          },
-          { kind: "Field", name: { kind: "Name", value: "snils" } },
-          { kind: "Field", name: { kind: "Name", value: "avatar" } },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<MyUserProfileFieldsFragment, unknown>;
-export const AdminUserProfileFieldsMutationsFragmentDoc = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "FragmentDefinition",
-      name: {
-        kind: "Name",
-        value: "AdminUserProfileFieldsMutations",
-      },
-      typeCondition: {
-        kind: "NamedType",
-        name: { kind: "Name", value: "UserProfileEntity" },
-      },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "lastName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "firstName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "middleName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "dateOfBirth" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "citizenship" },
-          },
-          { kind: "Field", name: { kind: "Name", value: "phone" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "passport" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "series" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "number" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "issuedBy" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "issuedAt" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "departmentCode" },
-                },
-              ],
-            },
-          },
-          {
-            kind: "Field",
-            name: {
-              kind: "Name",
-              value: "passportRegistrationAddress",
-            },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "residentialAddress" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "education" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "qualification" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "documentIssuedAt" },
-                },
-              ],
-            },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "workPlaceId" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "position" },
-          },
-          { kind: "Field", name: { kind: "Name", value: "snils" } },
-          { kind: "Field", name: { kind: "Name", value: "avatar" } },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  AdminUserProfileFieldsMutationsFragment,
-  unknown
->;
-export const AdminUserFieldsMutationsFragmentDoc = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "FragmentDefinition",
-      name: { kind: "Name", value: "AdminUserFieldsMutations" },
-      typeCondition: {
-        kind: "NamedType",
-        name: { kind: "Name", value: "UserEntity" },
-      },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          { kind: "Field", name: { kind: "Name", value: "id" } },
-          { kind: "Field", name: { kind: "Name", value: "email" } },
-          { kind: "Field", name: { kind: "Name", value: "role" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "isBlocked" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "isEmailVerified" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "firstName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "lastName" },
-          },
-          { kind: "Field", name: { kind: "Name", value: "phone" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "createdAt" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "updatedAt" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "profile" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "FragmentSpread",
-                  name: {
-                    kind: "Name",
-                    value: "AdminUserProfileFieldsMutations",
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      kind: "FragmentDefinition",
-      name: {
-        kind: "Name",
-        value: "AdminUserProfileFieldsMutations",
-      },
-      typeCondition: {
-        kind: "NamedType",
-        name: { kind: "Name", value: "UserProfileEntity" },
-      },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "lastName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "firstName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "middleName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "dateOfBirth" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "citizenship" },
-          },
-          { kind: "Field", name: { kind: "Name", value: "phone" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "passport" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "series" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "number" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "issuedBy" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "issuedAt" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "departmentCode" },
-                },
-              ],
-            },
-          },
-          {
-            kind: "Field",
-            name: {
-              kind: "Name",
-              value: "passportRegistrationAddress",
-            },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "residentialAddress" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "education" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "qualification" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "documentIssuedAt" },
-                },
-              ],
-            },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "workPlaceId" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "position" },
-          },
-          { kind: "Field", name: { kind: "Name", value: "snils" } },
-          { kind: "Field", name: { kind: "Name", value: "avatar" } },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  AdminUserFieldsMutationsFragment,
-  unknown
->;
-export const MeUserProfileFieldsFragmentDoc = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "FragmentDefinition",
-      name: { kind: "Name", value: "MeUserProfileFields" },
-      typeCondition: {
-        kind: "NamedType",
-        name: { kind: "Name", value: "UserProfileEntity" },
-      },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "lastName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "firstName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "middleName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "dateOfBirth" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "citizenship" },
-          },
-          { kind: "Field", name: { kind: "Name", value: "phone" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "passport" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "series" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "number" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "issuedBy" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "issuedAt" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "departmentCode" },
-                },
-              ],
-            },
-          },
-          {
-            kind: "Field",
-            name: {
-              kind: "Name",
-              value: "passportRegistrationAddress",
-            },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "residentialAddress" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "education" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "qualification" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "documentIssuedAt" },
-                },
-              ],
-            },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "workPlaceId" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "position" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "employments" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "id" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "organizationId" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "position" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "isPrimary" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "organization" },
-                  selectionSet: {
-                    kind: "SelectionSet",
-                    selections: [
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "type" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "displayName" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "inn" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "kpp" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "ogrn" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "legalAddress" },
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-          { kind: "Field", name: { kind: "Name", value: "snils" } },
-          { kind: "Field", name: { kind: "Name", value: "avatar" } },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<MeUserProfileFieldsFragment, unknown>;
-export const MeUserFieldsFragmentDoc = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "FragmentDefinition",
-      name: { kind: "Name", value: "MeUserFields" },
-      typeCondition: {
-        kind: "NamedType",
-        name: { kind: "Name", value: "UserEntity" },
-      },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          { kind: "Field", name: { kind: "Name", value: "id" } },
-          { kind: "Field", name: { kind: "Name", value: "email" } },
-          { kind: "Field", name: { kind: "Name", value: "role" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "isBlocked" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "isEmailVerified" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "firstName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "lastName" },
-          },
-          { kind: "Field", name: { kind: "Name", value: "phone" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "createdAt" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "updatedAt" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "profile" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "FragmentSpread",
-                  name: {
-                    kind: "Name",
-                    value: "MeUserProfileFields",
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      kind: "FragmentDefinition",
-      name: { kind: "Name", value: "MeUserProfileFields" },
-      typeCondition: {
-        kind: "NamedType",
-        name: { kind: "Name", value: "UserProfileEntity" },
-      },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "lastName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "firstName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "middleName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "dateOfBirth" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "citizenship" },
-          },
-          { kind: "Field", name: { kind: "Name", value: "phone" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "passport" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "series" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "number" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "issuedBy" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "issuedAt" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "departmentCode" },
-                },
-              ],
-            },
-          },
-          {
-            kind: "Field",
-            name: {
-              kind: "Name",
-              value: "passportRegistrationAddress",
-            },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "residentialAddress" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "education" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "qualification" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "documentIssuedAt" },
-                },
-              ],
-            },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "workPlaceId" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "position" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "employments" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "id" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "organizationId" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "position" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "isPrimary" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "organization" },
-                  selectionSet: {
-                    kind: "SelectionSet",
-                    selections: [
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "type" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "displayName" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "inn" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "kpp" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "ogrn" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "legalAddress" },
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-          { kind: "Field", name: { kind: "Name", value: "snils" } },
-          { kind: "Field", name: { kind: "Name", value: "avatar" } },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<MeUserFieldsFragment, unknown>;
-export const AdminUserProfileFieldsQueriesFragmentDoc = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "FragmentDefinition",
-      name: { kind: "Name", value: "AdminUserProfileFieldsQueries" },
-      typeCondition: {
-        kind: "NamedType",
-        name: { kind: "Name", value: "UserProfileEntity" },
-      },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "lastName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "firstName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "middleName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "dateOfBirth" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "citizenship" },
-          },
-          { kind: "Field", name: { kind: "Name", value: "phone" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "passport" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "series" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "number" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "issuedBy" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "issuedAt" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "departmentCode" },
-                },
-              ],
-            },
-          },
-          {
-            kind: "Field",
-            name: {
-              kind: "Name",
-              value: "passportRegistrationAddress",
-            },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "residentialAddress" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "education" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "qualification" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "documentIssuedAt" },
-                },
-              ],
-            },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "workPlaceId" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "position" },
-          },
-          { kind: "Field", name: { kind: "Name", value: "snils" } },
-          { kind: "Field", name: { kind: "Name", value: "avatar" } },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  AdminUserProfileFieldsQueriesFragment,
-  unknown
->;
-export const AdminUserFieldsQueriesFragmentDoc = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "FragmentDefinition",
-      name: { kind: "Name", value: "AdminUserFieldsQueries" },
-      typeCondition: {
-        kind: "NamedType",
-        name: { kind: "Name", value: "UserEntity" },
-      },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          { kind: "Field", name: { kind: "Name", value: "id" } },
-          { kind: "Field", name: { kind: "Name", value: "email" } },
-          { kind: "Field", name: { kind: "Name", value: "role" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "isBlocked" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "isEmailVerified" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "firstName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "lastName" },
-          },
-          { kind: "Field", name: { kind: "Name", value: "phone" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "createdAt" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "updatedAt" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "profile" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "FragmentSpread",
-                  name: {
-                    kind: "Name",
-                    value: "AdminUserProfileFieldsQueries",
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      kind: "FragmentDefinition",
-      name: { kind: "Name", value: "AdminUserProfileFieldsQueries" },
-      typeCondition: {
-        kind: "NamedType",
-        name: { kind: "Name", value: "UserProfileEntity" },
-      },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "lastName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "firstName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "middleName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "dateOfBirth" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "citizenship" },
-          },
-          { kind: "Field", name: { kind: "Name", value: "phone" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "passport" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "series" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "number" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "issuedBy" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "issuedAt" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "departmentCode" },
-                },
-              ],
-            },
-          },
-          {
-            kind: "Field",
-            name: {
-              kind: "Name",
-              value: "passportRegistrationAddress",
-            },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "residentialAddress" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "education" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "qualification" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "documentIssuedAt" },
-                },
-              ],
-            },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "workPlaceId" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "position" },
-          },
-          { kind: "Field", name: { kind: "Name", value: "snils" } },
-          { kind: "Field", name: { kind: "Name", value: "avatar" } },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<AdminUserFieldsQueriesFragment, unknown>;
-export const LoginDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "mutation",
-      name: { kind: "Name", value: "Login" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "input" },
-          },
-          type: {
-            kind: "NonNullType",
-            type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "LoginInput" },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "login" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "input" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "input" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "id" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "email" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "role" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "firstName" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "lastName" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "phone" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "isBlocked" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "isEmailVerified" },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<LoginMutation, LoginMutationVariables>;
-export const LogoutDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "mutation",
-      name: { kind: "Name", value: "Logout" },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          { kind: "Field", name: { kind: "Name", value: "logout" } },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<LogoutMutation, LogoutMutationVariables>;
-export const RegisterDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "mutation",
-      name: { kind: "Name", value: "Register" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "input" },
-          },
-          type: {
-            kind: "NonNullType",
-            type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "RegisterInput" },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "register" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "input" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "input" },
-                },
-              },
-            ],
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  RegisterMutation,
-  RegisterMutationVariables
->;
-export const VerifyEmailDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "mutation",
-      name: { kind: "Name", value: "VerifyEmail" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "input" },
-          },
-          type: {
-            kind: "NonNullType",
-            type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "VerifyEmailInput" },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "verifyEmail" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "input" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "input" },
-                },
-              },
-            ],
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  VerifyEmailMutation,
-  VerifyEmailMutationVariables
->;
-export const RequestEmailVerificationDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "mutation",
-      name: { kind: "Name", value: "RequestEmailVerification" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "input" },
-          },
-          type: {
-            kind: "NonNullType",
-            type: {
-              kind: "NamedType",
-              name: {
-                kind: "Name",
-                value: "RequestEmailVerificationInput",
-              },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "requestEmailVerification" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "input" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "input" },
-                },
-              },
-            ],
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  RequestEmailVerificationMutation,
-  RequestEmailVerificationMutationVariables
->;
-export const RequestPasswordResetDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "mutation",
-      name: { kind: "Name", value: "RequestPasswordReset" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "input" },
-          },
-          type: {
-            kind: "NonNullType",
-            type: {
-              kind: "NamedType",
-              name: {
-                kind: "Name",
-                value: "RequestPasswordResetInput",
-              },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "requestPasswordReset" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "input" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "input" },
-                },
-              },
-            ],
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  RequestPasswordResetMutation,
-  RequestPasswordResetMutationVariables
->;
-export const ResetPasswordDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "mutation",
-      name: { kind: "Name", value: "ResetPassword" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "input" },
-          },
-          type: {
-            kind: "NonNullType",
-            type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "ResetPasswordInput" },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "resetPassword" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "input" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "input" },
-                },
-              },
-            ],
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  ResetPasswordMutation,
-  ResetPasswordMutationVariables
->;
-export const UpdateMyProfileDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "mutation",
-      name: { kind: "Name", value: "UpdateMyProfile" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "input" },
-          },
-          type: {
-            kind: "NonNullType",
-            type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "UpdateMyProfileInput" },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "updateMyProfile" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "input" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "input" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "FragmentSpread",
-                  name: {
-                    kind: "Name",
-                    value: "MyUserProfileFields",
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      kind: "FragmentDefinition",
-      name: { kind: "Name", value: "MyUserProfileFields" },
-      typeCondition: {
-        kind: "NamedType",
-        name: { kind: "Name", value: "UserProfileEntity" },
-      },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "lastName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "firstName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "middleName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "dateOfBirth" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "citizenship" },
-          },
-          { kind: "Field", name: { kind: "Name", value: "phone" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "passport" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "series" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "number" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "issuedBy" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "issuedAt" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "departmentCode" },
-                },
-              ],
-            },
-          },
-          {
-            kind: "Field",
-            name: {
-              kind: "Name",
-              value: "passportRegistrationAddress",
-            },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "residentialAddress" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "education" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "qualification" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "documentIssuedAt" },
-                },
-              ],
-            },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "workPlaceId" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "position" },
-          },
-          { kind: "Field", name: { kind: "Name", value: "snils" } },
-          { kind: "Field", name: { kind: "Name", value: "avatar" } },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  UpdateMyProfileMutation,
-  UpdateMyProfileMutationVariables
->;
-export const CreateCategoryDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "mutation",
-      name: { kind: "Name", value: "CreateCategory" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "input" },
-          },
-          type: {
-            kind: "NonNullType",
-            type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "CreateCategoryInput" },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "createCategory" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "input" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "input" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "id" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "name" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "slug" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "description" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "image" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "type" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "parent" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "createdAt" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "updatedAt" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "programsCount" },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  CreateCategoryMutation,
-  CreateCategoryMutationVariables
->;
-export const UpdateCategoryDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "mutation",
-      name: { kind: "Name", value: "UpdateCategory" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "id" },
-          },
-          type: {
-            kind: "NonNullType",
-            type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "ID" },
-            },
-          },
-        },
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "input" },
-          },
-          type: {
-            kind: "NonNullType",
-            type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "UpdateCategoryInput" },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "updateCategory" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "id" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "id" },
-                },
-              },
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "input" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "input" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "id" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "name" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "slug" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "description" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "image" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "type" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "parent" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "createdAt" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "updatedAt" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "programsCount" },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  UpdateCategoryMutation,
-  UpdateCategoryMutationVariables
->;
-export const DeleteCategoryDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "mutation",
-      name: { kind: "Name", value: "DeleteCategory" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "id" },
-          },
-          type: {
-            kind: "NonNullType",
-            type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "ID" },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "deleteCategory" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "id" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "id" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "id" },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  DeleteCategoryMutation,
-  DeleteCategoryMutationVariables
->;
-export const CreateProgramDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "mutation",
-      name: { kind: "Name", value: "CreateProgram" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "input" },
-          },
-          type: {
-            kind: "NonNullType",
-            type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "CreateProgramInput" },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "createProgram" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "input" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "input" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "id" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "title" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "slug" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "description" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "image" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "category" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "baseHours" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "studentCategory" },
-                },
-                {
-                  kind: "Field",
-                  name: {
-                    kind: "Name",
-                    value: "awardedQualification",
-                  },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "awardedRankFrom" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "awardedRankTo" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "pricing" },
-                  selectionSet: {
-                    kind: "SelectionSet",
-                    selections: [
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "hours" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "price" },
-                      },
-                    ],
-                  },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "subPrograms" },
-                  selectionSet: {
-                    kind: "SelectionSet",
-                    selections: [
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "title" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "description" },
-                      },
-                    ],
-                  },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "views" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "createdAt" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "updatedAt" },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  CreateProgramMutation,
-  CreateProgramMutationVariables
->;
-export const UpdateProgramDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "mutation",
-      name: { kind: "Name", value: "UpdateProgram" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "id" },
-          },
-          type: {
-            kind: "NonNullType",
-            type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "ID" },
-            },
-          },
-        },
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "input" },
-          },
-          type: {
-            kind: "NonNullType",
-            type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "UpdateProgramInput" },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "updateProgram" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "id" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "id" },
-                },
-              },
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "input" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "input" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "id" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "title" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "slug" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "description" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "image" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "category" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "baseHours" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "studentCategory" },
-                },
-                {
-                  kind: "Field",
-                  name: {
-                    kind: "Name",
-                    value: "awardedQualification",
-                  },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "awardedRankFrom" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "awardedRankTo" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "pricing" },
-                  selectionSet: {
-                    kind: "SelectionSet",
-                    selections: [
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "hours" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "price" },
-                      },
-                    ],
-                  },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "subPrograms" },
-                  selectionSet: {
-                    kind: "SelectionSet",
-                    selections: [
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "title" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "description" },
-                      },
-                    ],
-                  },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "views" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "createdAt" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "updatedAt" },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  UpdateProgramMutation,
-  UpdateProgramMutationVariables
->;
-export const DeleteProgramDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "mutation",
-      name: { kind: "Name", value: "DeleteProgram" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "id" },
-          },
-          type: {
-            kind: "NonNullType",
-            type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "ID" },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "deleteProgram" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "id" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "id" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "id" },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  DeleteProgramMutation,
-  DeleteProgramMutationVariables
->;
-export const AdminCreateUserDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "mutation",
-      name: { kind: "Name", value: "AdminCreateUser" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "input" },
-          },
-          type: {
-            kind: "NonNullType",
-            type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "AdminCreateUserInput" },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "adminCreateUser" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "input" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "input" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "FragmentSpread",
-                  name: {
-                    kind: "Name",
-                    value: "AdminUserFieldsMutations",
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      kind: "FragmentDefinition",
-      name: {
-        kind: "Name",
-        value: "AdminUserProfileFieldsMutations",
-      },
-      typeCondition: {
-        kind: "NamedType",
-        name: { kind: "Name", value: "UserProfileEntity" },
-      },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "lastName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "firstName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "middleName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "dateOfBirth" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "citizenship" },
-          },
-          { kind: "Field", name: { kind: "Name", value: "phone" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "passport" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "series" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "number" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "issuedBy" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "issuedAt" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "departmentCode" },
-                },
-              ],
-            },
-          },
-          {
-            kind: "Field",
-            name: {
-              kind: "Name",
-              value: "passportRegistrationAddress",
-            },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "residentialAddress" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "education" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "qualification" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "documentIssuedAt" },
-                },
-              ],
-            },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "workPlaceId" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "position" },
-          },
-          { kind: "Field", name: { kind: "Name", value: "snils" } },
-          { kind: "Field", name: { kind: "Name", value: "avatar" } },
-        ],
-      },
-    },
-    {
-      kind: "FragmentDefinition",
-      name: { kind: "Name", value: "AdminUserFieldsMutations" },
-      typeCondition: {
-        kind: "NamedType",
-        name: { kind: "Name", value: "UserEntity" },
-      },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          { kind: "Field", name: { kind: "Name", value: "id" } },
-          { kind: "Field", name: { kind: "Name", value: "email" } },
-          { kind: "Field", name: { kind: "Name", value: "role" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "isBlocked" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "isEmailVerified" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "firstName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "lastName" },
-          },
-          { kind: "Field", name: { kind: "Name", value: "phone" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "createdAt" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "updatedAt" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "profile" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "FragmentSpread",
-                  name: {
-                    kind: "Name",
-                    value: "AdminUserProfileFieldsMutations",
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  AdminCreateUserMutation,
-  AdminCreateUserMutationVariables
->;
-export const AdminUpdateUserDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "mutation",
-      name: { kind: "Name", value: "AdminUpdateUser" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "id" },
-          },
-          type: {
-            kind: "NonNullType",
-            type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "ID" },
-            },
-          },
-        },
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "input" },
-          },
-          type: {
-            kind: "NonNullType",
-            type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "AdminUpdateUserInput" },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "adminUpdateUser" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "id" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "id" },
-                },
-              },
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "input" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "input" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "FragmentSpread",
-                  name: {
-                    kind: "Name",
-                    value: "AdminUserFieldsMutations",
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      kind: "FragmentDefinition",
-      name: {
-        kind: "Name",
-        value: "AdminUserProfileFieldsMutations",
-      },
-      typeCondition: {
-        kind: "NamedType",
-        name: { kind: "Name", value: "UserProfileEntity" },
-      },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "lastName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "firstName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "middleName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "dateOfBirth" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "citizenship" },
-          },
-          { kind: "Field", name: { kind: "Name", value: "phone" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "passport" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "series" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "number" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "issuedBy" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "issuedAt" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "departmentCode" },
-                },
-              ],
-            },
-          },
-          {
-            kind: "Field",
-            name: {
-              kind: "Name",
-              value: "passportRegistrationAddress",
-            },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "residentialAddress" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "education" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "qualification" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "documentIssuedAt" },
-                },
-              ],
-            },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "workPlaceId" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "position" },
-          },
-          { kind: "Field", name: { kind: "Name", value: "snils" } },
-          { kind: "Field", name: { kind: "Name", value: "avatar" } },
-        ],
-      },
-    },
-    {
-      kind: "FragmentDefinition",
-      name: { kind: "Name", value: "AdminUserFieldsMutations" },
-      typeCondition: {
-        kind: "NamedType",
-        name: { kind: "Name", value: "UserEntity" },
-      },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          { kind: "Field", name: { kind: "Name", value: "id" } },
-          { kind: "Field", name: { kind: "Name", value: "email" } },
-          { kind: "Field", name: { kind: "Name", value: "role" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "isBlocked" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "isEmailVerified" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "firstName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "lastName" },
-          },
-          { kind: "Field", name: { kind: "Name", value: "phone" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "createdAt" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "updatedAt" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "profile" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "FragmentSpread",
-                  name: {
-                    kind: "Name",
-                    value: "AdminUserProfileFieldsMutations",
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  AdminUpdateUserMutation,
-  AdminUpdateUserMutationVariables
->;
-export const AdminDeleteUserDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "mutation",
-      name: { kind: "Name", value: "AdminDeleteUser" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "id" },
-          },
-          type: {
-            kind: "NonNullType",
-            type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "ID" },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "adminDeleteUser" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "id" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "id" },
-                },
-              },
-            ],
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  AdminDeleteUserMutation,
-  AdminDeleteUserMutationVariables
->;
-export const AdminSetUserBlockedDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "mutation",
-      name: { kind: "Name", value: "AdminSetUserBlocked" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "id" },
-          },
-          type: {
-            kind: "NonNullType",
-            type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "ID" },
-            },
-          },
-        },
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "blocked" },
-          },
-          type: {
-            kind: "NonNullType",
-            type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "Boolean" },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "adminSetUserBlocked" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "id" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "id" },
-                },
-              },
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "blocked" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "blocked" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "FragmentSpread",
-                  name: {
-                    kind: "Name",
-                    value: "AdminUserFieldsMutations",
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      kind: "FragmentDefinition",
-      name: {
-        kind: "Name",
-        value: "AdminUserProfileFieldsMutations",
-      },
-      typeCondition: {
-        kind: "NamedType",
-        name: { kind: "Name", value: "UserProfileEntity" },
-      },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "lastName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "firstName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "middleName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "dateOfBirth" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "citizenship" },
-          },
-          { kind: "Field", name: { kind: "Name", value: "phone" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "passport" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "series" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "number" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "issuedBy" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "issuedAt" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "departmentCode" },
-                },
-              ],
-            },
-          },
-          {
-            kind: "Field",
-            name: {
-              kind: "Name",
-              value: "passportRegistrationAddress",
-            },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "residentialAddress" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "education" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "qualification" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "documentIssuedAt" },
-                },
-              ],
-            },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "workPlaceId" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "position" },
-          },
-          { kind: "Field", name: { kind: "Name", value: "snils" } },
-          { kind: "Field", name: { kind: "Name", value: "avatar" } },
-        ],
-      },
-    },
-    {
-      kind: "FragmentDefinition",
-      name: { kind: "Name", value: "AdminUserFieldsMutations" },
-      typeCondition: {
-        kind: "NamedType",
-        name: { kind: "Name", value: "UserEntity" },
-      },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          { kind: "Field", name: { kind: "Name", value: "id" } },
-          { kind: "Field", name: { kind: "Name", value: "email" } },
-          { kind: "Field", name: { kind: "Name", value: "role" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "isBlocked" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "isEmailVerified" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "firstName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "lastName" },
-          },
-          { kind: "Field", name: { kind: "Name", value: "phone" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "createdAt" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "updatedAt" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "profile" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "FragmentSpread",
-                  name: {
-                    kind: "Name",
-                    value: "AdminUserProfileFieldsMutations",
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  AdminSetUserBlockedMutation,
-  AdminSetUserBlockedMutationVariables
->;
-export const SetMyWorkPlaceByInnDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "mutation",
-      name: { kind: "Name", value: "SetMyWorkPlaceByInn" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "input" },
-          },
-          type: {
-            kind: "NonNullType",
-            type: {
-              kind: "NamedType",
-              name: {
-                kind: "Name",
-                value: "SetMyWorkPlaceByInnInput",
-              },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "setMyWorkPlaceByInn" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "input" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "input" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "workPlaceId" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "position" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "employments" },
-                  selectionSet: {
-                    kind: "SelectionSet",
-                    selections: [
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "id" },
-                      },
-                      {
-                        kind: "Field",
-                        name: {
-                          kind: "Name",
-                          value: "organizationId",
-                        },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "position" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "isPrimary" },
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  SetMyWorkPlaceByInnMutation,
-  SetMyWorkPlaceByInnMutationVariables
->;
-export const SetMyWorkPlaceManualDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "mutation",
-      name: { kind: "Name", value: "SetMyWorkPlaceManual" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "input" },
-          },
-          type: {
-            kind: "NonNullType",
-            type: {
-              kind: "NamedType",
-              name: {
-                kind: "Name",
-                value: "SetMyWorkPlaceManualInput",
-              },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "setMyWorkPlaceManual" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "input" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "input" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "workPlaceId" },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  SetMyWorkPlaceManualMutation,
-  SetMyWorkPlaceManualMutationVariables
->;
-export const AddressSuggestionsDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "query",
-      name: { kind: "Name", value: "AddressSuggestions" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "query" },
-          },
-          type: {
-            kind: "NonNullType",
-            type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "String" },
-            },
-          },
-        },
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "count" },
-          },
-          type: {
-            kind: "NamedType",
-            name: { kind: "Name", value: "Int" },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "addressSuggestions" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "query" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "query" },
-                },
-              },
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "count" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "count" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "value" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "unrestrictedValue" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "region" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "city" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "street" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "house" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "flat" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "postalCode" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "fiasId" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "kladrId" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "geoLat" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "geoLon" },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  AddressSuggestionsQuery,
-  AddressSuggestionsQueryVariables
->;
-export const MeDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "query",
-      name: { kind: "Name", value: "Me" },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "me" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "FragmentSpread",
-                  name: { kind: "Name", value: "MeUserFields" },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      kind: "FragmentDefinition",
-      name: { kind: "Name", value: "MeUserProfileFields" },
-      typeCondition: {
-        kind: "NamedType",
-        name: { kind: "Name", value: "UserProfileEntity" },
-      },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "lastName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "firstName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "middleName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "dateOfBirth" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "citizenship" },
-          },
-          { kind: "Field", name: { kind: "Name", value: "phone" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "passport" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "series" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "number" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "issuedBy" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "issuedAt" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "departmentCode" },
-                },
-              ],
-            },
-          },
-          {
-            kind: "Field",
-            name: {
-              kind: "Name",
-              value: "passportRegistrationAddress",
-            },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "residentialAddress" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "education" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "qualification" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "documentIssuedAt" },
-                },
-              ],
-            },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "workPlaceId" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "position" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "employments" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "id" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "organizationId" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "position" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "isPrimary" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "organization" },
-                  selectionSet: {
-                    kind: "SelectionSet",
-                    selections: [
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "type" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "displayName" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "inn" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "kpp" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "ogrn" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "legalAddress" },
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-          { kind: "Field", name: { kind: "Name", value: "snils" } },
-          { kind: "Field", name: { kind: "Name", value: "avatar" } },
-        ],
-      },
-    },
-    {
-      kind: "FragmentDefinition",
-      name: { kind: "Name", value: "MeUserFields" },
-      typeCondition: {
-        kind: "NamedType",
-        name: { kind: "Name", value: "UserEntity" },
-      },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          { kind: "Field", name: { kind: "Name", value: "id" } },
-          { kind: "Field", name: { kind: "Name", value: "email" } },
-          { kind: "Field", name: { kind: "Name", value: "role" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "isBlocked" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "isEmailVerified" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "firstName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "lastName" },
-          },
-          { kind: "Field", name: { kind: "Name", value: "phone" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "createdAt" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "updatedAt" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "profile" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "FragmentSpread",
-                  name: {
-                    kind: "Name",
-                    value: "MeUserProfileFields",
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<MeQuery, MeQueryVariables>;
-export const GetCategoriesDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "query",
-      name: { kind: "Name", value: "GetCategories" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "filter" },
-          },
-          type: {
-            kind: "NamedType",
-            name: { kind: "Name", value: "CategoryFilterInput" },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "categories" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "filter" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "filter" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "id" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "name" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "slug" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "description" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "image" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "type" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "parent" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "createdAt" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "updatedAt" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "programsCount" },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  GetCategoriesQuery,
-  GetCategoriesQueryVariables
->;
-export const GetCategoryDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "query",
-      name: { kind: "Name", value: "GetCategory" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "id" },
-          },
-          type: {
-            kind: "NonNullType",
-            type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "ID" },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "category" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "id" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "id" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "id" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "name" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "slug" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "description" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "image" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "type" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "parent" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "createdAt" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "updatedAt" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "programsCount" },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  GetCategoryQuery,
-  GetCategoryQueryVariables
->;
-export const OrganizationSuggestionsDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "query",
-      name: { kind: "Name", value: "OrganizationSuggestions" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "query" },
-          },
-          type: {
-            kind: "NonNullType",
-            type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "String" },
-            },
-          },
-        },
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "count" },
-          },
-          type: {
-            kind: "NamedType",
-            name: { kind: "Name", value: "Int" },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "organizationSuggestions" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "query" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "query" },
-                },
-              },
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "count" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "count" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "type" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "inn" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "kpp" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "ogrn" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "displayName" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "legalAddress" },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  OrganizationSuggestionsQuery,
-  OrganizationSuggestionsQueryVariables
->;
-export const GetProgramsDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "query",
-      name: { kind: "Name", value: "GetPrograms" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "filter" },
-          },
-          type: {
-            kind: "NamedType",
-            name: { kind: "Name", value: "ProgramFilterInput" },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "programs" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "filter" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "filter" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "id" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "title" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "shortTitle" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "slug" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "description" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "image" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "category" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "baseHours" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "studentCategory" },
-                },
-                {
-                  kind: "Field",
-                  name: {
-                    kind: "Name",
-                    value: "awardedQualification",
-                  },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "awardedRankFrom" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "awardedRankTo" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "pricing" },
-                  selectionSet: {
-                    kind: "SelectionSet",
-                    selections: [
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "hours" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "price" },
-                      },
-                    ],
-                  },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "subPrograms" },
-                  selectionSet: {
-                    kind: "SelectionSet",
-                    selections: [
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "title" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "description" },
-                      },
-                    ],
-                  },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "views" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "createdAt" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "updatedAt" },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  GetProgramsQuery,
-  GetProgramsQueryVariables
->;
-export const ProgramsPageDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "query",
-      name: { kind: "Name", value: "ProgramsPage" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "filter" },
-          },
-          type: {
-            kind: "NamedType",
-            name: { kind: "Name", value: "ProgramFilterInput" },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "programsPage" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "filter" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "filter" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "total" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "items" },
-                  selectionSet: {
-                    kind: "SelectionSet",
-                    selections: [
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "id" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "title" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "shortTitle" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "slug" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "description" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "image" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "category" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "baseHours" },
-                      },
-                      {
-                        kind: "Field",
-                        name: {
-                          kind: "Name",
-                          value: "studentCategory",
-                        },
-                      },
-                      {
-                        kind: "Field",
-                        name: {
-                          kind: "Name",
-                          value: "awardedQualification",
-                        },
-                      },
-                      {
-                        kind: "Field",
-                        name: {
-                          kind: "Name",
-                          value: "awardedRankFrom",
-                        },
-                      },
-                      {
-                        kind: "Field",
-                        name: {
-                          kind: "Name",
-                          value: "awardedRankTo",
-                        },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "pricing" },
-                        selectionSet: {
-                          kind: "SelectionSet",
-                          selections: [
-                            {
-                              kind: "Field",
-                              name: { kind: "Name", value: "hours" },
-                            },
-                            {
-                              kind: "Field",
-                              name: { kind: "Name", value: "price" },
-                            },
-                          ],
-                        },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "subPrograms" },
-                        selectionSet: {
-                          kind: "SelectionSet",
-                          selections: [
-                            {
-                              kind: "Field",
-                              name: { kind: "Name", value: "title" },
-                            },
-                            {
-                              kind: "Field",
-                              name: {
-                                kind: "Name",
-                                value: "description",
-                              },
-                            },
-                          ],
-                        },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "views" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "createdAt" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "updatedAt" },
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  ProgramsPageQuery,
-  ProgramsPageQueryVariables
->;
-export const GetTopProgramsDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "query",
-      name: { kind: "Name", value: "GetTopPrograms" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "limit" },
-          },
-          type: {
-            kind: "NamedType",
-            name: { kind: "Name", value: "Float" },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "topPrograms" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "limit" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "limit" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "id" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "title" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "shortTitle" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "slug" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "description" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "image" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "category" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "baseHours" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "studentCategory" },
-                },
-                {
-                  kind: "Field",
-                  name: {
-                    kind: "Name",
-                    value: "awardedQualification",
-                  },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "awardedRankFrom" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "awardedRankTo" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "pricing" },
-                  selectionSet: {
-                    kind: "SelectionSet",
-                    selections: [
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "hours" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "price" },
-                      },
-                    ],
-                  },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "subPrograms" },
-                  selectionSet: {
-                    kind: "SelectionSet",
-                    selections: [
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "title" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "description" },
-                      },
-                    ],
-                  },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "views" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "createdAt" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "updatedAt" },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  GetTopProgramsQuery,
-  GetTopProgramsQueryVariables
->;
-export const GetProgramDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "query",
-      name: { kind: "Name", value: "GetProgram" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "id" },
-          },
-          type: {
-            kind: "NonNullType",
-            type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "ID" },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "program" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "id" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "id" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "id" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "title" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "shortTitle" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "slug" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "description" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "image" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "category" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "baseHours" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "studentCategory" },
-                },
-                {
-                  kind: "Field",
-                  name: {
-                    kind: "Name",
-                    value: "awardedQualification",
-                  },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "awardedRankFrom" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "awardedRankTo" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "pricing" },
-                  selectionSet: {
-                    kind: "SelectionSet",
-                    selections: [
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "hours" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "price" },
-                      },
-                    ],
-                  },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "subPrograms" },
-                  selectionSet: {
-                    kind: "SelectionSet",
-                    selections: [
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "title" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "description" },
-                      },
-                    ],
-                  },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "views" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "createdAt" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "updatedAt" },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  GetProgramQuery,
-  GetProgramQueryVariables
->;
-export const AdminUsersDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "query",
-      name: { kind: "Name", value: "AdminUsers" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "filter" },
-          },
-          type: {
-            kind: "NamedType",
-            name: { kind: "Name", value: "AdminUserFilterInput" },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "adminUsers" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "filter" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "filter" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "FragmentSpread",
-                  name: {
-                    kind: "Name",
-                    value: "AdminUserFieldsQueries",
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      kind: "FragmentDefinition",
-      name: { kind: "Name", value: "AdminUserProfileFieldsQueries" },
-      typeCondition: {
-        kind: "NamedType",
-        name: { kind: "Name", value: "UserProfileEntity" },
-      },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "lastName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "firstName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "middleName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "dateOfBirth" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "citizenship" },
-          },
-          { kind: "Field", name: { kind: "Name", value: "phone" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "passport" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "series" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "number" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "issuedBy" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "issuedAt" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "departmentCode" },
-                },
-              ],
-            },
-          },
-          {
-            kind: "Field",
-            name: {
-              kind: "Name",
-              value: "passportRegistrationAddress",
-            },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "residentialAddress" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "education" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "qualification" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "documentIssuedAt" },
-                },
-              ],
-            },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "workPlaceId" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "position" },
-          },
-          { kind: "Field", name: { kind: "Name", value: "snils" } },
-          { kind: "Field", name: { kind: "Name", value: "avatar" } },
-        ],
-      },
-    },
-    {
-      kind: "FragmentDefinition",
-      name: { kind: "Name", value: "AdminUserFieldsQueries" },
-      typeCondition: {
-        kind: "NamedType",
-        name: { kind: "Name", value: "UserEntity" },
-      },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          { kind: "Field", name: { kind: "Name", value: "id" } },
-          { kind: "Field", name: { kind: "Name", value: "email" } },
-          { kind: "Field", name: { kind: "Name", value: "role" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "isBlocked" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "isEmailVerified" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "firstName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "lastName" },
-          },
-          { kind: "Field", name: { kind: "Name", value: "phone" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "createdAt" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "updatedAt" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "profile" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "FragmentSpread",
-                  name: {
-                    kind: "Name",
-                    value: "AdminUserProfileFieldsQueries",
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  AdminUsersQuery,
-  AdminUsersQueryVariables
->;
-export const AdminUserDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "query",
-      name: { kind: "Name", value: "AdminUser" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "id" },
-          },
-          type: {
-            kind: "NonNullType",
-            type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "ID" },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "adminUser" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "id" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "id" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "FragmentSpread",
-                  name: {
-                    kind: "Name",
-                    value: "AdminUserFieldsQueries",
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      kind: "FragmentDefinition",
-      name: { kind: "Name", value: "AdminUserProfileFieldsQueries" },
-      typeCondition: {
-        kind: "NamedType",
-        name: { kind: "Name", value: "UserProfileEntity" },
-      },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "lastName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "firstName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "middleName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "dateOfBirth" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "citizenship" },
-          },
-          { kind: "Field", name: { kind: "Name", value: "phone" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "passport" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "series" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "number" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "issuedBy" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "issuedAt" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "departmentCode" },
-                },
-              ],
-            },
-          },
-          {
-            kind: "Field",
-            name: {
-              kind: "Name",
-              value: "passportRegistrationAddress",
-            },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "residentialAddress" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "education" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "qualification" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "documentIssuedAt" },
-                },
-              ],
-            },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "workPlaceId" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "position" },
-          },
-          { kind: "Field", name: { kind: "Name", value: "snils" } },
-          { kind: "Field", name: { kind: "Name", value: "avatar" } },
-        ],
-      },
-    },
-    {
-      kind: "FragmentDefinition",
-      name: { kind: "Name", value: "AdminUserFieldsQueries" },
-      typeCondition: {
-        kind: "NamedType",
-        name: { kind: "Name", value: "UserEntity" },
-      },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          { kind: "Field", name: { kind: "Name", value: "id" } },
-          { kind: "Field", name: { kind: "Name", value: "email" } },
-          { kind: "Field", name: { kind: "Name", value: "role" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "isBlocked" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "isEmailVerified" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "firstName" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "lastName" },
-          },
-          { kind: "Field", name: { kind: "Name", value: "phone" } },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "createdAt" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "updatedAt" },
-          },
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "profile" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                {
-                  kind: "FragmentSpread",
-                  name: {
-                    kind: "Name",
-                    value: "AdminUserProfileFieldsQueries",
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<AdminUserQuery, AdminUserQueryVariables>;
+export type AdminUserQuery = { __typename?: 'Query', adminUser?: (
+    { __typename?: 'UserEntity' }
+    & { ' $fragmentRefs'?: { 'AdminUserFieldsQueriesFragment': AdminUserFieldsQueriesFragment } }
+  ) | null };
+
+export const MyUserProfileFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MyUserProfileFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserProfileEntity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"middleName"}},{"kind":"Field","name":{"kind":"Name","value":"dateOfBirth"}},{"kind":"Field","name":{"kind":"Name","value":"citizenship"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"passport"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"series"}},{"kind":"Field","name":{"kind":"Name","value":"number"}},{"kind":"Field","name":{"kind":"Name","value":"issuedBy"}},{"kind":"Field","name":{"kind":"Name","value":"issuedAt"}},{"kind":"Field","name":{"kind":"Name","value":"departmentCode"}}]}},{"kind":"Field","name":{"kind":"Name","value":"passportRegistrationAddress"}},{"kind":"Field","name":{"kind":"Name","value":"residentialAddress"}},{"kind":"Field","name":{"kind":"Name","value":"education"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"qualification"}},{"kind":"Field","name":{"kind":"Name","value":"documentIssuedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"workPlaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"organization"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"inn"}},{"kind":"Field","name":{"kind":"Name","value":"kpp"}},{"kind":"Field","name":{"kind":"Name","value":"ogrn"}},{"kind":"Field","name":{"kind":"Name","value":"legalAddress"}}]}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"isPrimary"}}]}},{"kind":"Field","name":{"kind":"Name","value":"snils"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}}]} as unknown as DocumentNode<MyUserProfileFieldsFragment, unknown>;
+export const AdminUserProfileFieldsMutationsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AdminUserProfileFieldsMutations"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserProfileEntity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"middleName"}},{"kind":"Field","name":{"kind":"Name","value":"dateOfBirth"}},{"kind":"Field","name":{"kind":"Name","value":"citizenship"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"passport"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"series"}},{"kind":"Field","name":{"kind":"Name","value":"number"}},{"kind":"Field","name":{"kind":"Name","value":"issuedBy"}},{"kind":"Field","name":{"kind":"Name","value":"issuedAt"}},{"kind":"Field","name":{"kind":"Name","value":"departmentCode"}}]}},{"kind":"Field","name":{"kind":"Name","value":"passportRegistrationAddress"}},{"kind":"Field","name":{"kind":"Name","value":"residentialAddress"}},{"kind":"Field","name":{"kind":"Name","value":"education"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"qualification"}},{"kind":"Field","name":{"kind":"Name","value":"documentIssuedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"workPlaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"organization"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"inn"}},{"kind":"Field","name":{"kind":"Name","value":"kpp"}},{"kind":"Field","name":{"kind":"Name","value":"ogrn"}},{"kind":"Field","name":{"kind":"Name","value":"legalAddress"}}]}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"isPrimary"}}]}},{"kind":"Field","name":{"kind":"Name","value":"snils"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}}]} as unknown as DocumentNode<AdminUserProfileFieldsMutationsFragment, unknown>;
+export const AdminUserFieldsMutationsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AdminUserFieldsMutations"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserEntity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"isBlocked"}},{"kind":"Field","name":{"kind":"Name","value":"isEmailVerified"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AdminUserProfileFieldsMutations"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AdminUserProfileFieldsMutations"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserProfileEntity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"middleName"}},{"kind":"Field","name":{"kind":"Name","value":"dateOfBirth"}},{"kind":"Field","name":{"kind":"Name","value":"citizenship"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"passport"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"series"}},{"kind":"Field","name":{"kind":"Name","value":"number"}},{"kind":"Field","name":{"kind":"Name","value":"issuedBy"}},{"kind":"Field","name":{"kind":"Name","value":"issuedAt"}},{"kind":"Field","name":{"kind":"Name","value":"departmentCode"}}]}},{"kind":"Field","name":{"kind":"Name","value":"passportRegistrationAddress"}},{"kind":"Field","name":{"kind":"Name","value":"residentialAddress"}},{"kind":"Field","name":{"kind":"Name","value":"education"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"qualification"}},{"kind":"Field","name":{"kind":"Name","value":"documentIssuedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"workPlaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"organization"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"inn"}},{"kind":"Field","name":{"kind":"Name","value":"kpp"}},{"kind":"Field","name":{"kind":"Name","value":"ogrn"}},{"kind":"Field","name":{"kind":"Name","value":"legalAddress"}}]}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"isPrimary"}}]}},{"kind":"Field","name":{"kind":"Name","value":"snils"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}}]} as unknown as DocumentNode<AdminUserFieldsMutationsFragment, unknown>;
+export const WorkPlacesFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"WorkPlacesFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserProfileEntity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"workPlaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"organization"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"inn"}},{"kind":"Field","name":{"kind":"Name","value":"kpp"}},{"kind":"Field","name":{"kind":"Name","value":"ogrn"}},{"kind":"Field","name":{"kind":"Name","value":"legalAddress"}}]}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"isPrimary"}}]}}]}}]} as unknown as DocumentNode<WorkPlacesFieldsFragment, unknown>;
+export const MeUserProfileFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MeUserProfileFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserProfileEntity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"middleName"}},{"kind":"Field","name":{"kind":"Name","value":"dateOfBirth"}},{"kind":"Field","name":{"kind":"Name","value":"citizenship"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"passport"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"series"}},{"kind":"Field","name":{"kind":"Name","value":"number"}},{"kind":"Field","name":{"kind":"Name","value":"issuedBy"}},{"kind":"Field","name":{"kind":"Name","value":"issuedAt"}},{"kind":"Field","name":{"kind":"Name","value":"departmentCode"}}]}},{"kind":"Field","name":{"kind":"Name","value":"passportRegistrationAddress"}},{"kind":"Field","name":{"kind":"Name","value":"residentialAddress"}},{"kind":"Field","name":{"kind":"Name","value":"education"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"qualification"}},{"kind":"Field","name":{"kind":"Name","value":"documentIssuedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"workPlaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"organization"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"inn"}},{"kind":"Field","name":{"kind":"Name","value":"kpp"}},{"kind":"Field","name":{"kind":"Name","value":"ogrn"}},{"kind":"Field","name":{"kind":"Name","value":"legalAddress"}}]}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"isPrimary"}}]}},{"kind":"Field","name":{"kind":"Name","value":"snils"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}}]} as unknown as DocumentNode<MeUserProfileFieldsFragment, unknown>;
+export const MeUserFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MeUserFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserEntity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"isBlocked"}},{"kind":"Field","name":{"kind":"Name","value":"isEmailVerified"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MeUserProfileFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MeUserProfileFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserProfileEntity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"middleName"}},{"kind":"Field","name":{"kind":"Name","value":"dateOfBirth"}},{"kind":"Field","name":{"kind":"Name","value":"citizenship"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"passport"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"series"}},{"kind":"Field","name":{"kind":"Name","value":"number"}},{"kind":"Field","name":{"kind":"Name","value":"issuedBy"}},{"kind":"Field","name":{"kind":"Name","value":"issuedAt"}},{"kind":"Field","name":{"kind":"Name","value":"departmentCode"}}]}},{"kind":"Field","name":{"kind":"Name","value":"passportRegistrationAddress"}},{"kind":"Field","name":{"kind":"Name","value":"residentialAddress"}},{"kind":"Field","name":{"kind":"Name","value":"education"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"qualification"}},{"kind":"Field","name":{"kind":"Name","value":"documentIssuedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"workPlaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"organization"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"inn"}},{"kind":"Field","name":{"kind":"Name","value":"kpp"}},{"kind":"Field","name":{"kind":"Name","value":"ogrn"}},{"kind":"Field","name":{"kind":"Name","value":"legalAddress"}}]}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"isPrimary"}}]}},{"kind":"Field","name":{"kind":"Name","value":"snils"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}}]} as unknown as DocumentNode<MeUserFieldsFragment, unknown>;
+export const AdminUserProfileFieldsQueriesFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AdminUserProfileFieldsQueries"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserProfileEntity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"middleName"}},{"kind":"Field","name":{"kind":"Name","value":"dateOfBirth"}},{"kind":"Field","name":{"kind":"Name","value":"citizenship"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"passport"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"series"}},{"kind":"Field","name":{"kind":"Name","value":"number"}},{"kind":"Field","name":{"kind":"Name","value":"issuedBy"}},{"kind":"Field","name":{"kind":"Name","value":"issuedAt"}},{"kind":"Field","name":{"kind":"Name","value":"departmentCode"}}]}},{"kind":"Field","name":{"kind":"Name","value":"passportRegistrationAddress"}},{"kind":"Field","name":{"kind":"Name","value":"residentialAddress"}},{"kind":"Field","name":{"kind":"Name","value":"education"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"qualification"}},{"kind":"Field","name":{"kind":"Name","value":"documentIssuedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"workPlaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"organization"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"inn"}},{"kind":"Field","name":{"kind":"Name","value":"kpp"}},{"kind":"Field","name":{"kind":"Name","value":"ogrn"}},{"kind":"Field","name":{"kind":"Name","value":"legalAddress"}}]}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"isPrimary"}}]}},{"kind":"Field","name":{"kind":"Name","value":"snils"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}}]} as unknown as DocumentNode<AdminUserProfileFieldsQueriesFragment, unknown>;
+export const AdminUserFieldsQueriesFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AdminUserFieldsQueries"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserEntity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"isBlocked"}},{"kind":"Field","name":{"kind":"Name","value":"isEmailVerified"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AdminUserProfileFieldsQueries"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AdminUserProfileFieldsQueries"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserProfileEntity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"middleName"}},{"kind":"Field","name":{"kind":"Name","value":"dateOfBirth"}},{"kind":"Field","name":{"kind":"Name","value":"citizenship"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"passport"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"series"}},{"kind":"Field","name":{"kind":"Name","value":"number"}},{"kind":"Field","name":{"kind":"Name","value":"issuedBy"}},{"kind":"Field","name":{"kind":"Name","value":"issuedAt"}},{"kind":"Field","name":{"kind":"Name","value":"departmentCode"}}]}},{"kind":"Field","name":{"kind":"Name","value":"passportRegistrationAddress"}},{"kind":"Field","name":{"kind":"Name","value":"residentialAddress"}},{"kind":"Field","name":{"kind":"Name","value":"education"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"qualification"}},{"kind":"Field","name":{"kind":"Name","value":"documentIssuedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"workPlaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"organization"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"inn"}},{"kind":"Field","name":{"kind":"Name","value":"kpp"}},{"kind":"Field","name":{"kind":"Name","value":"ogrn"}},{"kind":"Field","name":{"kind":"Name","value":"legalAddress"}}]}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"isPrimary"}}]}},{"kind":"Field","name":{"kind":"Name","value":"snils"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}}]} as unknown as DocumentNode<AdminUserFieldsQueriesFragment, unknown>;
+export const LoginDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"Login"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LoginInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"isBlocked"}},{"kind":"Field","name":{"kind":"Name","value":"isEmailVerified"}}]}}]}}]} as unknown as DocumentNode<LoginMutation, LoginMutationVariables>;
+export const LogoutDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"Logout"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"logout"}}]}}]} as unknown as DocumentNode<LogoutMutation, LogoutMutationVariables>;
+export const RegisterDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"Register"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RegisterInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"register"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}]}]}}]} as unknown as DocumentNode<RegisterMutation, RegisterMutationVariables>;
+export const VerifyEmailDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"VerifyEmail"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"VerifyEmailInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"verifyEmail"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}]}]}}]} as unknown as DocumentNode<VerifyEmailMutation, VerifyEmailMutationVariables>;
+export const RequestEmailVerificationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RequestEmailVerification"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RequestEmailVerificationInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"requestEmailVerification"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}]}]}}]} as unknown as DocumentNode<RequestEmailVerificationMutation, RequestEmailVerificationMutationVariables>;
+export const RequestPasswordResetDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RequestPasswordReset"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RequestPasswordResetInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"requestPasswordReset"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}]}]}}]} as unknown as DocumentNode<RequestPasswordResetMutation, RequestPasswordResetMutationVariables>;
+export const ResetPasswordDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ResetPassword"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ResetPasswordInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"resetPassword"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}]}]}}]} as unknown as DocumentNode<ResetPasswordMutation, ResetPasswordMutationVariables>;
+export const UpdateMyProfileDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateMyProfile"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateMyProfileInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateMyProfile"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MyUserProfileFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MyUserProfileFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserProfileEntity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"middleName"}},{"kind":"Field","name":{"kind":"Name","value":"dateOfBirth"}},{"kind":"Field","name":{"kind":"Name","value":"citizenship"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"passport"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"series"}},{"kind":"Field","name":{"kind":"Name","value":"number"}},{"kind":"Field","name":{"kind":"Name","value":"issuedBy"}},{"kind":"Field","name":{"kind":"Name","value":"issuedAt"}},{"kind":"Field","name":{"kind":"Name","value":"departmentCode"}}]}},{"kind":"Field","name":{"kind":"Name","value":"passportRegistrationAddress"}},{"kind":"Field","name":{"kind":"Name","value":"residentialAddress"}},{"kind":"Field","name":{"kind":"Name","value":"education"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"qualification"}},{"kind":"Field","name":{"kind":"Name","value":"documentIssuedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"workPlaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"organization"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"inn"}},{"kind":"Field","name":{"kind":"Name","value":"kpp"}},{"kind":"Field","name":{"kind":"Name","value":"ogrn"}},{"kind":"Field","name":{"kind":"Name","value":"legalAddress"}}]}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"isPrimary"}}]}},{"kind":"Field","name":{"kind":"Name","value":"snils"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}}]} as unknown as DocumentNode<UpdateMyProfileMutation, UpdateMyProfileMutationVariables>;
+export const CreateCategoryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateCategory"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateCategoryInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createCategory"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"parent"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"programsCount"}}]}}]}}]} as unknown as DocumentNode<CreateCategoryMutation, CreateCategoryMutationVariables>;
+export const UpdateCategoryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateCategory"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateCategoryInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateCategory"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"parent"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"programsCount"}}]}}]}}]} as unknown as DocumentNode<UpdateCategoryMutation, UpdateCategoryMutationVariables>;
+export const DeleteCategoryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteCategory"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteCategory"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<DeleteCategoryMutation, DeleteCategoryMutationVariables>;
+export const CreateEducationDocumentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateEducationDocument"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateEducationDocumentInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createEducationDocument"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<CreateEducationDocumentMutation, CreateEducationDocumentMutationVariables>;
+export const UpdateEducationDocumentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateEducationDocument"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateEducationDocumentInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateEducationDocument"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<UpdateEducationDocumentMutation, UpdateEducationDocumentMutationVariables>;
+export const DeleteEducationDocumentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteEducationDocument"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteEducationDocument"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"image"}}]}}]}}]} as unknown as DocumentNode<DeleteEducationDocumentMutation, DeleteEducationDocumentMutationVariables>;
+export const CreateProgramDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateProgram"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateProgramInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createProgram"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"educationDocumentId"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"category"}},{"kind":"Field","name":{"kind":"Name","value":"baseHours"}},{"kind":"Field","name":{"kind":"Name","value":"studentCategory"}},{"kind":"Field","name":{"kind":"Name","value":"awardedQualification"}},{"kind":"Field","name":{"kind":"Name","value":"awardedRankFrom"}},{"kind":"Field","name":{"kind":"Name","value":"awardedRankTo"}},{"kind":"Field","name":{"kind":"Name","value":"pricing"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hours"}},{"kind":"Field","name":{"kind":"Name","value":"price"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subPrograms"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}},{"kind":"Field","name":{"kind":"Name","value":"views"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<CreateProgramMutation, CreateProgramMutationVariables>;
+export const UpdateProgramDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateProgram"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateProgramInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateProgram"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"educationDocumentId"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"category"}},{"kind":"Field","name":{"kind":"Name","value":"baseHours"}},{"kind":"Field","name":{"kind":"Name","value":"studentCategory"}},{"kind":"Field","name":{"kind":"Name","value":"awardedQualification"}},{"kind":"Field","name":{"kind":"Name","value":"awardedRankFrom"}},{"kind":"Field","name":{"kind":"Name","value":"awardedRankTo"}},{"kind":"Field","name":{"kind":"Name","value":"pricing"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hours"}},{"kind":"Field","name":{"kind":"Name","value":"price"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subPrograms"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}},{"kind":"Field","name":{"kind":"Name","value":"views"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<UpdateProgramMutation, UpdateProgramMutationVariables>;
+export const DeleteProgramDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteProgram"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteProgram"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<DeleteProgramMutation, DeleteProgramMutationVariables>;
+export const AdminCreateUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AdminCreateUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AdminCreateUserInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"adminCreateUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AdminUserFieldsMutations"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AdminUserProfileFieldsMutations"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserProfileEntity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"middleName"}},{"kind":"Field","name":{"kind":"Name","value":"dateOfBirth"}},{"kind":"Field","name":{"kind":"Name","value":"citizenship"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"passport"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"series"}},{"kind":"Field","name":{"kind":"Name","value":"number"}},{"kind":"Field","name":{"kind":"Name","value":"issuedBy"}},{"kind":"Field","name":{"kind":"Name","value":"issuedAt"}},{"kind":"Field","name":{"kind":"Name","value":"departmentCode"}}]}},{"kind":"Field","name":{"kind":"Name","value":"passportRegistrationAddress"}},{"kind":"Field","name":{"kind":"Name","value":"residentialAddress"}},{"kind":"Field","name":{"kind":"Name","value":"education"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"qualification"}},{"kind":"Field","name":{"kind":"Name","value":"documentIssuedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"workPlaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"organization"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"inn"}},{"kind":"Field","name":{"kind":"Name","value":"kpp"}},{"kind":"Field","name":{"kind":"Name","value":"ogrn"}},{"kind":"Field","name":{"kind":"Name","value":"legalAddress"}}]}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"isPrimary"}}]}},{"kind":"Field","name":{"kind":"Name","value":"snils"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AdminUserFieldsMutations"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserEntity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"isBlocked"}},{"kind":"Field","name":{"kind":"Name","value":"isEmailVerified"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AdminUserProfileFieldsMutations"}}]}}]}}]} as unknown as DocumentNode<AdminCreateUserMutation, AdminCreateUserMutationVariables>;
+export const AdminUpdateUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AdminUpdateUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AdminUpdateUserInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"adminUpdateUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AdminUserFieldsMutations"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AdminUserProfileFieldsMutations"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserProfileEntity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"middleName"}},{"kind":"Field","name":{"kind":"Name","value":"dateOfBirth"}},{"kind":"Field","name":{"kind":"Name","value":"citizenship"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"passport"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"series"}},{"kind":"Field","name":{"kind":"Name","value":"number"}},{"kind":"Field","name":{"kind":"Name","value":"issuedBy"}},{"kind":"Field","name":{"kind":"Name","value":"issuedAt"}},{"kind":"Field","name":{"kind":"Name","value":"departmentCode"}}]}},{"kind":"Field","name":{"kind":"Name","value":"passportRegistrationAddress"}},{"kind":"Field","name":{"kind":"Name","value":"residentialAddress"}},{"kind":"Field","name":{"kind":"Name","value":"education"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"qualification"}},{"kind":"Field","name":{"kind":"Name","value":"documentIssuedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"workPlaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"organization"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"inn"}},{"kind":"Field","name":{"kind":"Name","value":"kpp"}},{"kind":"Field","name":{"kind":"Name","value":"ogrn"}},{"kind":"Field","name":{"kind":"Name","value":"legalAddress"}}]}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"isPrimary"}}]}},{"kind":"Field","name":{"kind":"Name","value":"snils"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AdminUserFieldsMutations"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserEntity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"isBlocked"}},{"kind":"Field","name":{"kind":"Name","value":"isEmailVerified"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AdminUserProfileFieldsMutations"}}]}}]}}]} as unknown as DocumentNode<AdminUpdateUserMutation, AdminUpdateUserMutationVariables>;
+export const AdminDeleteUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AdminDeleteUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"adminDeleteUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}]}}]} as unknown as DocumentNode<AdminDeleteUserMutation, AdminDeleteUserMutationVariables>;
+export const AdminSetUserBlockedDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AdminSetUserBlocked"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"blocked"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"adminSetUserBlocked"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"blocked"},"value":{"kind":"Variable","name":{"kind":"Name","value":"blocked"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AdminUserFieldsMutations"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AdminUserProfileFieldsMutations"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserProfileEntity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"middleName"}},{"kind":"Field","name":{"kind":"Name","value":"dateOfBirth"}},{"kind":"Field","name":{"kind":"Name","value":"citizenship"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"passport"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"series"}},{"kind":"Field","name":{"kind":"Name","value":"number"}},{"kind":"Field","name":{"kind":"Name","value":"issuedBy"}},{"kind":"Field","name":{"kind":"Name","value":"issuedAt"}},{"kind":"Field","name":{"kind":"Name","value":"departmentCode"}}]}},{"kind":"Field","name":{"kind":"Name","value":"passportRegistrationAddress"}},{"kind":"Field","name":{"kind":"Name","value":"residentialAddress"}},{"kind":"Field","name":{"kind":"Name","value":"education"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"qualification"}},{"kind":"Field","name":{"kind":"Name","value":"documentIssuedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"workPlaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"organization"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"inn"}},{"kind":"Field","name":{"kind":"Name","value":"kpp"}},{"kind":"Field","name":{"kind":"Name","value":"ogrn"}},{"kind":"Field","name":{"kind":"Name","value":"legalAddress"}}]}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"isPrimary"}}]}},{"kind":"Field","name":{"kind":"Name","value":"snils"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AdminUserFieldsMutations"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserEntity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"isBlocked"}},{"kind":"Field","name":{"kind":"Name","value":"isEmailVerified"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AdminUserProfileFieldsMutations"}}]}}]}}]} as unknown as DocumentNode<AdminSetUserBlockedMutation, AdminSetUserBlockedMutationVariables>;
+export const SetMyWorkPlaceByInnDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SetMyWorkPlaceByInn"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SetMyWorkPlaceByInnInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"setMyWorkPlaceByInn"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WorkPlacesFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"WorkPlacesFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserProfileEntity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"workPlaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"organization"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"inn"}},{"kind":"Field","name":{"kind":"Name","value":"kpp"}},{"kind":"Field","name":{"kind":"Name","value":"ogrn"}},{"kind":"Field","name":{"kind":"Name","value":"legalAddress"}}]}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"isPrimary"}}]}}]}}]} as unknown as DocumentNode<SetMyWorkPlaceByInnMutation, SetMyWorkPlaceByInnMutationVariables>;
+export const SetMyWorkPlaceManualDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SetMyWorkPlaceManual"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SetMyWorkPlaceManualInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"setMyWorkPlaceManual"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WorkPlacesFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"WorkPlacesFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserProfileEntity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"workPlaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"organization"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"inn"}},{"kind":"Field","name":{"kind":"Name","value":"kpp"}},{"kind":"Field","name":{"kind":"Name","value":"ogrn"}},{"kind":"Field","name":{"kind":"Name","value":"legalAddress"}}]}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"isPrimary"}}]}}]}}]} as unknown as DocumentNode<SetMyWorkPlaceManualMutation, SetMyWorkPlaceManualMutationVariables>;
+export const AddressSuggestionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AddressSuggestions"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"query"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"count"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"addressSuggestions"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"query"},"value":{"kind":"Variable","name":{"kind":"Name","value":"query"}}},{"kind":"Argument","name":{"kind":"Name","value":"count"},"value":{"kind":"Variable","name":{"kind":"Name","value":"count"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"unrestrictedValue"}},{"kind":"Field","name":{"kind":"Name","value":"region"}},{"kind":"Field","name":{"kind":"Name","value":"city"}},{"kind":"Field","name":{"kind":"Name","value":"street"}},{"kind":"Field","name":{"kind":"Name","value":"house"}},{"kind":"Field","name":{"kind":"Name","value":"flat"}},{"kind":"Field","name":{"kind":"Name","value":"postalCode"}},{"kind":"Field","name":{"kind":"Name","value":"fiasId"}},{"kind":"Field","name":{"kind":"Name","value":"kladrId"}},{"kind":"Field","name":{"kind":"Name","value":"geoLat"}},{"kind":"Field","name":{"kind":"Name","value":"geoLon"}}]}}]}}]} as unknown as DocumentNode<AddressSuggestionsQuery, AddressSuggestionsQueryVariables>;
+export const MeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Me"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MeUserFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MeUserProfileFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserProfileEntity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"middleName"}},{"kind":"Field","name":{"kind":"Name","value":"dateOfBirth"}},{"kind":"Field","name":{"kind":"Name","value":"citizenship"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"passport"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"series"}},{"kind":"Field","name":{"kind":"Name","value":"number"}},{"kind":"Field","name":{"kind":"Name","value":"issuedBy"}},{"kind":"Field","name":{"kind":"Name","value":"issuedAt"}},{"kind":"Field","name":{"kind":"Name","value":"departmentCode"}}]}},{"kind":"Field","name":{"kind":"Name","value":"passportRegistrationAddress"}},{"kind":"Field","name":{"kind":"Name","value":"residentialAddress"}},{"kind":"Field","name":{"kind":"Name","value":"education"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"qualification"}},{"kind":"Field","name":{"kind":"Name","value":"documentIssuedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"workPlaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"organization"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"inn"}},{"kind":"Field","name":{"kind":"Name","value":"kpp"}},{"kind":"Field","name":{"kind":"Name","value":"ogrn"}},{"kind":"Field","name":{"kind":"Name","value":"legalAddress"}}]}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"isPrimary"}}]}},{"kind":"Field","name":{"kind":"Name","value":"snils"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MeUserFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserEntity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"isBlocked"}},{"kind":"Field","name":{"kind":"Name","value":"isEmailVerified"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MeUserProfileFields"}}]}}]}}]} as unknown as DocumentNode<MeQuery, MeQueryVariables>;
+export const GetCategoriesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetCategories"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"CategoryFilterInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"categories"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"parent"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"programsCount"}}]}}]}}]} as unknown as DocumentNode<GetCategoriesQuery, GetCategoriesQueryVariables>;
+export const GetCategoryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetCategory"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"category"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"parent"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"programsCount"}}]}}]}}]} as unknown as DocumentNode<GetCategoryQuery, GetCategoryQueryVariables>;
+export const EducationDocumentsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"EducationDocuments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"educationDocuments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<EducationDocumentsQuery, EducationDocumentsQueryVariables>;
+export const EducationDocumentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"EducationDocument"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"educationDocument"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<EducationDocumentQuery, EducationDocumentQueryVariables>;
+export const OrganizationSuggestionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"OrganizationSuggestions"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"query"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"count"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"organizationSuggestions"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"query"},"value":{"kind":"Variable","name":{"kind":"Name","value":"query"}}},{"kind":"Argument","name":{"kind":"Name","value":"count"},"value":{"kind":"Variable","name":{"kind":"Name","value":"count"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"inn"}},{"kind":"Field","name":{"kind":"Name","value":"kpp"}},{"kind":"Field","name":{"kind":"Name","value":"ogrn"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"legalAddress"}}]}}]}}]} as unknown as DocumentNode<OrganizationSuggestionsQuery, OrganizationSuggestionsQueryVariables>;
+export const GetProgramsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetPrograms"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"ProgramFilterInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"programs"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"shortTitle"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"category"}},{"kind":"Field","name":{"kind":"Name","value":"baseHours"}},{"kind":"Field","name":{"kind":"Name","value":"studentCategory"}},{"kind":"Field","name":{"kind":"Name","value":"awardedQualification"}},{"kind":"Field","name":{"kind":"Name","value":"awardedRankFrom"}},{"kind":"Field","name":{"kind":"Name","value":"awardedRankTo"}},{"kind":"Field","name":{"kind":"Name","value":"educationDocumentId"}},{"kind":"Field","name":{"kind":"Name","value":"educationDocument"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"image"}}]}},{"kind":"Field","name":{"kind":"Name","value":"pricing"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hours"}},{"kind":"Field","name":{"kind":"Name","value":"price"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subPrograms"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}},{"kind":"Field","name":{"kind":"Name","value":"views"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<GetProgramsQuery, GetProgramsQueryVariables>;
+export const ProgramsPageDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ProgramsPage"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"ProgramFilterInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"programsPage"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"total"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"shortTitle"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"category"}},{"kind":"Field","name":{"kind":"Name","value":"baseHours"}},{"kind":"Field","name":{"kind":"Name","value":"studentCategory"}},{"kind":"Field","name":{"kind":"Name","value":"awardedQualification"}},{"kind":"Field","name":{"kind":"Name","value":"awardedRankFrom"}},{"kind":"Field","name":{"kind":"Name","value":"awardedRankTo"}},{"kind":"Field","name":{"kind":"Name","value":"educationDocumentId"}},{"kind":"Field","name":{"kind":"Name","value":"educationDocument"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"image"}}]}},{"kind":"Field","name":{"kind":"Name","value":"pricing"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hours"}},{"kind":"Field","name":{"kind":"Name","value":"price"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subPrograms"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}},{"kind":"Field","name":{"kind":"Name","value":"views"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]}}]} as unknown as DocumentNode<ProgramsPageQuery, ProgramsPageQueryVariables>;
+export const GetTopProgramsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetTopPrograms"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Float"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"topPrograms"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"shortTitle"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"category"}},{"kind":"Field","name":{"kind":"Name","value":"baseHours"}},{"kind":"Field","name":{"kind":"Name","value":"studentCategory"}},{"kind":"Field","name":{"kind":"Name","value":"awardedQualification"}},{"kind":"Field","name":{"kind":"Name","value":"awardedRankFrom"}},{"kind":"Field","name":{"kind":"Name","value":"awardedRankTo"}},{"kind":"Field","name":{"kind":"Name","value":"educationDocumentId"}},{"kind":"Field","name":{"kind":"Name","value":"educationDocument"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"image"}}]}},{"kind":"Field","name":{"kind":"Name","value":"pricing"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hours"}},{"kind":"Field","name":{"kind":"Name","value":"price"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subPrograms"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}},{"kind":"Field","name":{"kind":"Name","value":"views"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<GetTopProgramsQuery, GetTopProgramsQueryVariables>;
+export const GetProgramDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetProgram"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"program"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"shortTitle"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"category"}},{"kind":"Field","name":{"kind":"Name","value":"baseHours"}},{"kind":"Field","name":{"kind":"Name","value":"studentCategory"}},{"kind":"Field","name":{"kind":"Name","value":"awardedQualification"}},{"kind":"Field","name":{"kind":"Name","value":"awardedRankFrom"}},{"kind":"Field","name":{"kind":"Name","value":"awardedRankTo"}},{"kind":"Field","name":{"kind":"Name","value":"educationDocumentId"}},{"kind":"Field","name":{"kind":"Name","value":"educationDocument"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"image"}}]}},{"kind":"Field","name":{"kind":"Name","value":"pricing"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hours"}},{"kind":"Field","name":{"kind":"Name","value":"price"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subPrograms"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}},{"kind":"Field","name":{"kind":"Name","value":"views"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<GetProgramQuery, GetProgramQueryVariables>;
+export const AdminUsersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AdminUsers"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"AdminUserFilterInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"adminUsers"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AdminUserFieldsQueries"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AdminUserProfileFieldsQueries"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserProfileEntity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"middleName"}},{"kind":"Field","name":{"kind":"Name","value":"dateOfBirth"}},{"kind":"Field","name":{"kind":"Name","value":"citizenship"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"passport"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"series"}},{"kind":"Field","name":{"kind":"Name","value":"number"}},{"kind":"Field","name":{"kind":"Name","value":"issuedBy"}},{"kind":"Field","name":{"kind":"Name","value":"issuedAt"}},{"kind":"Field","name":{"kind":"Name","value":"departmentCode"}}]}},{"kind":"Field","name":{"kind":"Name","value":"passportRegistrationAddress"}},{"kind":"Field","name":{"kind":"Name","value":"residentialAddress"}},{"kind":"Field","name":{"kind":"Name","value":"education"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"qualification"}},{"kind":"Field","name":{"kind":"Name","value":"documentIssuedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"workPlaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"organization"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"inn"}},{"kind":"Field","name":{"kind":"Name","value":"kpp"}},{"kind":"Field","name":{"kind":"Name","value":"ogrn"}},{"kind":"Field","name":{"kind":"Name","value":"legalAddress"}}]}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"isPrimary"}}]}},{"kind":"Field","name":{"kind":"Name","value":"snils"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AdminUserFieldsQueries"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserEntity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"isBlocked"}},{"kind":"Field","name":{"kind":"Name","value":"isEmailVerified"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AdminUserProfileFieldsQueries"}}]}}]}}]} as unknown as DocumentNode<AdminUsersQuery, AdminUsersQueryVariables>;
+export const AdminUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AdminUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"adminUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AdminUserFieldsQueries"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AdminUserProfileFieldsQueries"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserProfileEntity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"middleName"}},{"kind":"Field","name":{"kind":"Name","value":"dateOfBirth"}},{"kind":"Field","name":{"kind":"Name","value":"citizenship"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"passport"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"series"}},{"kind":"Field","name":{"kind":"Name","value":"number"}},{"kind":"Field","name":{"kind":"Name","value":"issuedBy"}},{"kind":"Field","name":{"kind":"Name","value":"issuedAt"}},{"kind":"Field","name":{"kind":"Name","value":"departmentCode"}}]}},{"kind":"Field","name":{"kind":"Name","value":"passportRegistrationAddress"}},{"kind":"Field","name":{"kind":"Name","value":"residentialAddress"}},{"kind":"Field","name":{"kind":"Name","value":"education"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"qualification"}},{"kind":"Field","name":{"kind":"Name","value":"documentIssuedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"workPlaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"organization"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"inn"}},{"kind":"Field","name":{"kind":"Name","value":"kpp"}},{"kind":"Field","name":{"kind":"Name","value":"ogrn"}},{"kind":"Field","name":{"kind":"Name","value":"legalAddress"}}]}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"isPrimary"}}]}},{"kind":"Field","name":{"kind":"Name","value":"snils"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AdminUserFieldsQueries"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserEntity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"isBlocked"}},{"kind":"Field","name":{"kind":"Name","value":"isEmailVerified"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AdminUserProfileFieldsQueries"}}]}}]}}]} as unknown as DocumentNode<AdminUserQuery, AdminUserQueryVariables>;

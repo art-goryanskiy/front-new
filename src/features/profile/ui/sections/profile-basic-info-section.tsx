@@ -1,7 +1,7 @@
 "use client";
 
 import { memo } from "react";
-import { InputMask } from "@react-input/mask";
+import { InputMask, format } from "@react-input/mask";
 import { Controller } from "react-hook-form";
 import { FormField } from "@/shared/ui/form-field/form-field";
 import { Input } from "@/components/ui/input";
@@ -18,7 +18,13 @@ import {
   formatProfileDate,
   formatProfileValue,
 } from "../utils/profile-preview-utils";
+import { stripPhone } from "../utils/phone-utils";
 import { cn } from "@/lib/utils";
+
+const PHONE_MASK_OPTIONS = {
+  mask: "+7 (___) ___-__-__",
+  replacement: { _: /\d/ } as const,
+};
 
 interface ProfileBasicInfoSectionProps<T extends ProfileFormData> {
   control: Control<T>;
@@ -124,8 +130,8 @@ export const ProfileBasicInfoSection = memo(
                   </Label>
                   <InputMask
                     component={Input}
-                    mask="+7 (___) ___-__-__"
-                    replacement={{ _: /\d/ }}
+                    mask={PHONE_MASK_OPTIONS.mask}
+                    replacement={PHONE_MASK_OPTIONS.replacement}
                     showMask
                     ref={field.ref}
                     id="phone"
@@ -137,7 +143,11 @@ export const ProfileBasicInfoSection = memo(
                     aria-label={PROFILE_FORM_LABELS.phone}
                     className="peer bg-background/60"
                     value={
-                      typeof field.value === "string" ? field.value : ""
+                      typeof field.value === "string" && field.value
+                        ? field.value.includes("(")
+                          ? field.value
+                          : format(stripPhone(field.value), PHONE_MASK_OPTIONS)
+                        : ""
                     }
                     onChange={field.onChange}
                     onBlur={field.onBlur}

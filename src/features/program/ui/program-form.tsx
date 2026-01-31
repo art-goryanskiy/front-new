@@ -15,6 +15,7 @@ import {
   FORM_MESSAGES,
 } from "./constants/program-form-constants";
 import { ProgramFormAwardedQualificationField } from "./fields/program-form-awarded-qualification-field";
+import { ProgramFormEducationDocumentField } from "./fields/program-form-education-document-field";
 import { ProgramFormAwardedRankFields } from "./fields/program-form-awarded-rank-fields";
 import { ProgramFormDescriptionField } from "./fields/program-form-description-field";
 import { ProgramFormPricingFields } from "./fields/program-form-pricing-fields";
@@ -195,6 +196,7 @@ export const ProgramForm = memo(function ProgramForm({
         <ProgramFormShortTitleField control={control} />
         <ProgramFormDescriptionField control={control} />
         <ProgramFormStudentCategoryField control={control} />
+        <ProgramFormEducationDocumentField control={control} />
       </div>
 
       {/* Квалификация и разряд */}

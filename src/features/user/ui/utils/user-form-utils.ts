@@ -4,7 +4,10 @@ import type {
   UserRole,
 } from "@/shared/api/generated/graphql";
 import type { UserFormData } from "../types/user-form.types";
-import { createProfileInput } from "@/features/profile/ui/utils/profile-form-utils";
+import {
+  createProfileInput,
+  toDateInputValue,
+} from "@/features/profile/ui/utils/profile-form-utils";
 
 export function createUserInput(
   data: UserFormData
@@ -101,7 +104,7 @@ export function getDefaultValues(
     phone: editingUser?.phone || editingUser?.profile?.phone || "",
     role: editingUser?.role,
     isBlocked: editingUser?.isBlocked || false,
-    dateOfBirth: editingUser?.profile?.dateOfBirth || "",
+    dateOfBirth: toDateInputValue(editingUser?.profile?.dateOfBirth),
     citizenship: editingUser?.profile?.citizenship || "",
     snils: editingUser?.profile?.snils || "",
     passportRegistrationAddress:
@@ -124,12 +127,15 @@ export function getDefaultValues(
     passportSeries: editingUser?.profile?.passport?.series || "",
     passportNumber: editingUser?.profile?.passport?.number || "",
     passportIssuedBy: editingUser?.profile?.passport?.issuedBy || "",
-    passportIssuedAt: editingUser?.profile?.passport?.issuedAt || "",
+    passportIssuedAt: toDateInputValue(
+      editingUser?.profile?.passport?.issuedAt
+    ),
     passportDepartmentCode:
       editingUser?.profile?.passport?.departmentCode || "",
     educationQualification:
       editingUser?.profile?.education?.qualification || "",
-    educationDocumentIssuedAt:
-      editingUser?.profile?.education?.documentIssuedAt || "",
+    educationDocumentIssuedAt: toDateInputValue(
+      editingUser?.profile?.education?.documentIssuedAt
+    ),
   };
 }

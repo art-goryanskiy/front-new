@@ -21,6 +21,13 @@ const USERS_MENU_ITEM: MenuItem = {
   color: "default" as const,
 };
 
+const EDUCATION_DOCUMENTS_MENU_ITEM: MenuItem = {
+  label: "Документы",
+  icon: "file-text" as const,
+  path: "/admin/education-documents",
+  color: "default" as const,
+};
+
 function isNavItemActive(
   pathname: string,
   itemPath: string
@@ -42,7 +49,12 @@ export const MobileSidebar = memo(function MobileSidebar() {
   );
 
   const items = useMemo<MenuItem[]>(
-    () => [HOME_MENU_ITEM, USERS_MENU_ITEM, ...MENU_ITEMS],
+    () => [
+      HOME_MENU_ITEM,
+      USERS_MENU_ITEM,
+      EDUCATION_DOCUMENTS_MENU_ITEM,
+      ...MENU_ITEMS,
+    ],
     []
   );
 

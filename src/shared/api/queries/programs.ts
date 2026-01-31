@@ -15,6 +15,12 @@ export const GET_PROGRAMS = gql`
       awardedQualification
       awardedRankFrom
       awardedRankTo
+      educationDocumentId
+      educationDocument {
+        id
+        name
+        image
+      }
       pricing {
         hours
         price
@@ -47,6 +53,12 @@ export const GET_PROGRAMS_PAGE = gql`
         awardedQualification
         awardedRankFrom
         awardedRankTo
+        educationDocumentId
+        educationDocument {
+          id
+          name
+          image
+        }
         pricing {
           hours
           price
@@ -78,6 +90,12 @@ export const GET_TOP_PROGRAMS = gql`
       awardedQualification
       awardedRankFrom
       awardedRankTo
+      educationDocumentId
+      educationDocument {
+        id
+        name
+        image
+      }
       pricing {
         hours
         price
@@ -108,6 +126,12 @@ export const GET_PROGRAM = gql`
       awardedQualification
       awardedRankFrom
       awardedRankTo
+      educationDocumentId
+      educationDocument {
+        id
+        name
+        image
+      }
       pricing {
         hours
         price

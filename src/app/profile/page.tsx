@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { useMe } from "@/features/auth/api/use-me";
 import { useUpdateProfile } from "@/features/profile/api/use-update-profile";
 import { uploadImage } from "@/shared/lib/upload";
 import { ProfileAdditionalInfoSection } from "@/features/profile/ui/sections/profile-additional-info-section";
@@ -77,7 +78,24 @@ const SIDEBAR_ITEMS: Array<{
 ];
 
 const ProfilePageContent = memo(function ProfilePageContent() {
-  const user = useAuthUser();
+  const { user: meUser, loading: meLoading } = useMe({ skip: false });
+  const storeUser = useAuthUser();
+  const user = meUser ?? storeUser;
+
+  if (!user && meLoading) {
+    return (
+      <Surface
+        variant="floating"
+        className="flex min-h-[560px] w-full items-center justify-center"
+      >
+        <div className="text-sm text-muted-foreground">
+          Загрузка данных…
+        </div>
+      </Surface>
+    );
+  }
+
+  if (!user) return null;
   const {
     updateProfile,
     loading: updating,

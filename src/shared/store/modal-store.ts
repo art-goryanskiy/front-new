@@ -1,6 +1,7 @@
 import type {
   CategoryEntity,
   CategoryType,
+  EducationDocumentEntity,
   ProgramEntity,
   UserEntity,
 } from "@/shared/api/generated/graphql";
@@ -40,6 +41,18 @@ interface ModalStore {
   openDeleteProgramModal: (program: ProgramEntity) => void;
   closeProgramModal: () => void;
   closeDeleteProgramModal: () => void;
+
+  // Education document modals
+  isEducationDocumentModalOpen: boolean;
+  isDeleteEducationDocumentModalOpen: boolean;
+  editingEducationDocument: EducationDocumentEntity | null;
+  deletingEducationDocument: EducationDocumentEntity | null;
+
+  openCreateEducationDocumentModal: () => void;
+  openEditEducationDocumentModal: (doc: EducationDocumentEntity) => void;
+  openDeleteEducationDocumentModal: (doc: EducationDocumentEntity) => void;
+  closeEducationDocumentModal: () => void;
+  closeDeleteEducationDocumentModal: () => void;
 
   // User modals
   isUserModalOpen: boolean;
@@ -131,6 +144,38 @@ const useModalStore = create<ModalStore>((set) => ({
       deletingProgram: null,
     }),
 
+  // Education document modals
+  isEducationDocumentModalOpen: false,
+  isDeleteEducationDocumentModalOpen: false,
+  editingEducationDocument: null,
+  deletingEducationDocument: null,
+
+  openCreateEducationDocumentModal: () =>
+    set({
+      isEducationDocumentModalOpen: true,
+      editingEducationDocument: null,
+    }),
+  openEditEducationDocumentModal: (doc) =>
+    set({
+      isEducationDocumentModalOpen: true,
+      editingEducationDocument: doc,
+    }),
+  openDeleteEducationDocumentModal: (doc) =>
+    set({
+      isDeleteEducationDocumentModalOpen: true,
+      deletingEducationDocument: doc,
+    }),
+  closeEducationDocumentModal: () =>
+    set({
+      isEducationDocumentModalOpen: false,
+      editingEducationDocument: null,
+    }),
+  closeDeleteEducationDocumentModal: () =>
+    set({
+      isDeleteEducationDocumentModalOpen: false,
+      deletingEducationDocument: null,
+    }),
+
   // User modals
   isUserModalOpen: false,
   isDeleteUserModalOpen: false,
@@ -194,6 +239,25 @@ export const useProgramModalState = () =>
       openDeleteProgramModal: state.openDeleteProgramModal,
       closeProgramModal: state.closeProgramModal,
       closeDeleteProgramModal: state.closeDeleteProgramModal,
+    }))
+  );
+
+export const useEducationDocumentModalState = () =>
+  useModalStore(
+    useShallow((state) => ({
+      isEducationDocumentModalOpen: state.isEducationDocumentModalOpen,
+      isDeleteEducationDocumentModalOpen:
+        state.isDeleteEducationDocumentModalOpen,
+      editingEducationDocument: state.editingEducationDocument,
+      deletingEducationDocument: state.deletingEducationDocument,
+      openCreateEducationDocumentModal:
+        state.openCreateEducationDocumentModal,
+      openEditEducationDocumentModal: state.openEditEducationDocumentModal,
+      openDeleteEducationDocumentModal:
+        state.openDeleteEducationDocumentModal,
+      closeEducationDocumentModal: state.closeEducationDocumentModal,
+      closeDeleteEducationDocumentModal:
+        state.closeDeleteEducationDocumentModal,
     }))
   );
 

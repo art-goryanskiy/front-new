@@ -65,6 +65,9 @@ export function createProgramInput(
   const input: CreateProgramInput = {
     title: data.title.trim(),
     category: categoryId,
+    ...(data.educationDocumentId?.trim() && {
+      educationDocumentId: data.educationDocumentId.trim(),
+    }),
     ...(data.shortTitle?.trim() && {
       shortTitle: data.shortTitle.trim(),
     }),
@@ -135,6 +138,9 @@ export function updateProgramInput(
     ...(config.showSubPrograms && {
       subPrograms: prepareSubPrograms(data.subPrograms),
     }),
+    ...(data.educationDocumentId !== undefined && {
+      educationDocumentId: data.educationDocumentId || null,
+    }),
   };
 
   return input;
@@ -149,6 +155,7 @@ export function getDefaultValues(
     shortTitle?: string | null;
     description?: string | null;
     studentCategory?: string | null;
+    educationDocumentId?: string | null;
     pricing?: Array<{ hours: number; price?: number | null }>;
     awardedQualification?: string | null;
     awardedRankFrom?: number | null;
@@ -164,6 +171,7 @@ export function getDefaultValues(
     shortTitle: editingProgram?.shortTitle || "",
     description: editingProgram?.description || "",
     studentCategory: editingProgram?.studentCategory || "",
+    educationDocumentId: editingProgram?.educationDocumentId ?? "",
     pricing: editingProgram?.pricing?.map((p) => ({
       hours: p.hours || 0,
       price: p.price ?? 0,

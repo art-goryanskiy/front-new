@@ -21,6 +21,7 @@ import {
   ArrowLeft,
   ArrowRight,
   Home,
+  FileText,
   type LucideIcon,
 } from "lucide-react";
 import { memo } from "react";
@@ -47,7 +48,8 @@ export type IconName =
   | "briefcase"
   | "arrow-left"
   | "arrow-right"
-  | "home";
+  | "home"
+  | "file-text";
 
 const iconMap: Record<IconName, LucideIcon> = {
   search: Search,
@@ -72,6 +74,7 @@ const iconMap: Record<IconName, LucideIcon> = {
   "arrow-left": ArrowLeft,
   "arrow-right": ArrowRight,
   home: Home,
+  "file-text": FileText,
 };
 
 interface IconProps {

@@ -6,6 +6,7 @@ export const CREATE_PROGRAM = gql`
       id
       title
       slug
+      educationDocumentId
       description
       image
       category
@@ -35,6 +36,7 @@ export const UPDATE_PROGRAM = gql`
       id
       title
       slug
+      educationDocumentId
       description
       image
       category

@@ -6,5 +6,5 @@ export interface DeleteConfirmModalProps {
   onDelete: () => Promise<void>;
   loading?: boolean;
   error?: Error | null;
-  entityType: "категорию" | "программу" | "пользователя";
+  entityType: "категорию" | "программу" | "пользователя" | "документ";
 }
