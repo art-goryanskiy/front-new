@@ -14,6 +14,7 @@ import { Surface } from "@/shared/ui/surface/surface";
 import { ProgramDetailRelatedPrograms } from "./components/program-detail-related-programs";
 import { ProgramDetailFaq } from "./components/program-detail-faq";
 import { ProgramDetailAudience } from "./components/program-detail-audience";
+import { ProgramDetailEducationDocument } from "./components/program-detail-education-document";
 
 export const ProgramDetail = memo(function ProgramDetail({
   program,
@@ -38,6 +39,12 @@ export const ProgramDetail = memo(function ProgramDetail({
     if (program.studentCategory || program.awardedQualification) {
       items.push({ href: "#audience", label: "Для кого" });
     }
+    if (program.educationDocument) {
+      items.push({
+        href: "#education-document",
+        label: "Документ",
+      });
+    }
     if (program.subPrograms && program.subPrograms.length > 0) {
       items.push({ href: "#subprograms", label: "Подпрограммы" });
     }
@@ -52,6 +59,7 @@ export const ProgramDetail = memo(function ProgramDetail({
     program.subPrograms,
     program.studentCategory,
     program.awardedQualification,
+    program.educationDocument,
     relatedPrograms,
   ]);
 
@@ -101,6 +109,12 @@ export const ProgramDetail = memo(function ProgramDetail({
           {(program.studentCategory ||
             program.awardedQualification) && (
             <ProgramDetailAudience program={program} />
+          )}
+
+          {program.educationDocument && (
+            <ProgramDetailEducationDocument
+              document={program.educationDocument}
+            />
           )}
 
           {program.subPrograms && program.subPrograms.length > 0 && (
