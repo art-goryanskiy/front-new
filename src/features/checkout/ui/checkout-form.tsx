@@ -110,13 +110,13 @@ export const CheckoutForm = memo(function CheckoutForm() {
     });
   }, [items]);
 
-  const { register, handleSubmit, watch, setValue, formState } =
+  const { register, handleSubmit, watch, setValue, reset, getValues, formState } =
     useForm<CheckoutFormData>({
       defaultValues: {
         customerType: OrderCustomerType.Self,
         organizationId: "",
-        contactEmail: user?.email ?? "",
-        contactPhone: user?.profile?.phone ?? "",
+        contactEmail: "",
+        contactPhone: "",
       },
       mode: "onChange",
     });
@@ -132,15 +132,23 @@ export const CheckoutForm = memo(function CheckoutForm() {
     [items]
   );
 
-  // При выборе «Физ. лицо (я)» подставляем данные заказчика и первого слушателя из профиля
+  // Синхронизация формы и префилл из профиля при появлении user/profile (в т.ч. при первом открытии)
   useEffect(() => {
     if (customerType !== OrderCustomerType.Self || !user?.profile) return;
     const contactEmail = user?.email ?? "";
+    const contactPhone = user.profile?.phone ?? "";
+
     setIndividualData(
       individualApplicantFromProfile(user.profile, contactEmail)
     );
+    reset({
+      ...getValues(),
+      contactEmail,
+      contactPhone,
+    });
     setValue("contactEmail", contactEmail);
-    setValue("contactPhone", user.profile?.phone ?? "");
+    setValue("contactPhone", contactPhone);
+
     if (totalLearners >= 1 && items.length > 0) {
       const firstKey = lineKey(items[0]);
       const firstLearner = learnerFromProfile(user.profile, contactEmail);
@@ -151,7 +159,7 @@ export const CheckoutForm = memo(function CheckoutForm() {
         return { ...prev, [firstKey]: nextList };
       });
     }
-  }, [customerType, user?.profile, user?.email, setValue, totalLearners, items]);
+  }, [customerType, user?.profile, user?.email, setValue, reset, totalLearners, items]);
 
   const setLearnerData = useCallback(
     (key: string, learnerIndex: number, data: LearnerFormData) => {
@@ -203,7 +211,7 @@ export const CheckoutForm = memo(function CheckoutForm() {
         });
         if (order) {
           showToast("success", "Заказ оформлен");
-          router.replace(`/orders/${order.id}`);
+          router.replace(`/orders/${order.id}/pay`);
         } else {
           showToast("error", "Не удалось оформить заказ");
         }

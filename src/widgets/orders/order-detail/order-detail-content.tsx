@@ -67,7 +67,7 @@ export const OrderDetailContent = memo(function OrderDetailContent({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="space-y-1">
           <p className="text-xs font-semibold text-muted-foreground">
             Заказ №{order.id}
@@ -79,14 +79,21 @@ export const OrderDetailContent = memo(function OrderDetailContent({
             {statusLabel}
           </span>
         </div>
-        <Button
-          variant="ghost"
-          onClick={() => router.back()}
-          className="self-start sm:self-auto"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Назад
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          {order.status === "PAYMENT_PENDING" && (
+            <Button asChild>
+              <Link href={`/orders/${order.id}/pay`}>Оплатить</Link>
+            </Button>
+          )}
+          <Button
+            variant="ghost"
+            onClick={() => router.back()}
+            className="self-start sm:self-auto"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Назад
+          </Button>
+        </div>
       </div>
 
       <Surface variant="floating" className="space-y-6 p-6">
