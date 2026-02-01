@@ -9,21 +9,22 @@ import {
 import type { GlowMenuItem } from "@/components/ui/glow-menu";
 import { CATEGORY_TYPE_LABELS } from "@/shared/constants/categories";
 
+/* Градиенты и цвета из палитры primary (#e50914) */
 export const GLOW_MENU_HEADER_ITEMS: GlowMenuItem[] = [
   {
     icon: Home,
     label: "Главная",
     href: "/",
     gradient:
-      "radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(37,99,235,0.06) 50%, rgba(29,78,216,0) 100%)",
-    iconColor: "text-blue-500",
+      "radial-gradient(circle, rgba(229,9,20,0.15) 0%, rgba(229,9,20,0.06) 50%, transparent 100%)",
+    iconColor: "text-primary",
   },
   {
     icon: GraduationCap,
     label: "Обучение",
     gradient:
-      "radial-gradient(circle, rgba(168,85,247,0.15) 0%, rgba(126,34,206,0.06) 50%, rgba(107,33,168,0) 100%)",
-    iconColor: "text-purple-500",
+      "radial-gradient(circle, rgba(229,9,20,0.12) 0%, rgba(196,8,18,0.05) 50%, transparent 100%)",
+    iconColor: "text-primary-600 dark:text-primary-400",
     children: [
       {
         label: CATEGORY_TYPE_LABELS.QUALIFICATION_UPGRADE,

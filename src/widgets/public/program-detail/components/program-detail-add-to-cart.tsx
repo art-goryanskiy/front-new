@@ -12,10 +12,19 @@ import { useRouter } from "next/navigation";
 import { saveReturnUrl } from "@/shared/lib/auth/utils/auth-redirect-utils";
 import { AUTH_GUARD_ROUTES } from "@/shared/lib/auth/constants/auth-guard-constants";
 import { cn } from "@/lib/utils";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface ProgramDetailAddToCartProps {
   programId: string;
   programPricing: ProgramPricing[];
+  /** Не показывать заголовок и не дублировать список тарифов — блок идёт сразу под «Стоимость» */
+  compact?: boolean;
 }
 
 function isPricingWithPrice(
@@ -28,6 +37,7 @@ export const ProgramDetailAddToCart = memo(
   function ProgramDetailAddToCart({
     programId,
     programPricing,
+    compact = false,
   }: ProgramDetailAddToCartProps) {
     const router = useRouter();
     const { addToCart, loading } = useAddToCart();
@@ -47,10 +57,6 @@ export const ProgramDetailAddToCart = memo(
         setSelectedIndex(pricingsWithPrice[0].index);
       }
     }, [pricingsWithPrice, selectedIndex]);
-
-    const selectedPricing = pricingsWithPrice.find(
-      (p) => p.index === selectedIndex
-    );
 
     const handleAddToCart = useCallback(async () => {
       const item = pricingsWithPrice.find((p) => p.index === selectedIndex);
@@ -93,55 +99,37 @@ export const ProgramDetailAddToCart = memo(
     if (pricingsWithPrice.length === 0) return null;
 
     return (
-      <div className="space-y-4">
-        <h3 className={PROGRAM_DETAIL_CLASSES.sectionTitle}>
-          Добавить в корзину
-        </h3>
+      <div className={compact ? "space-y-3 pt-2 border-t border-border/60" : "space-y-4"}>
+        {!compact && (
+          <h3 className={PROGRAM_DETAIL_CLASSES.sectionTitle}>
+            Добавить в корзину
+          </h3>
+        )}
 
         {pricingsWithPrice.length > 1 && (
-          <div className="space-y-2">
-            <div className="text-xs font-semibold text-muted-foreground">
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold text-muted-foreground">
               Тариф
-            </div>
-            <div className="flex flex-col gap-2">
-              {pricingsWithPrice.map(({ pricing, index }) => (
-                <button
-                  key={index}
-                  type="button"
-                  onClick={() => setSelectedIndex(index)}
-                  className={cn(
-                    "flex items-center justify-between rounded-xl border p-3 text-left transition-colors",
-                    selectedIndex === index
-                      ? "border-primary bg-primary/10"
-                      : "border-border/60 hover:border-border/80"
-                  )}
-                >
-                  <span className="text-sm font-medium">
-                    {pricing.hours} часов
-                  </span>
-                  <span className="text-sm font-semibold text-primary">
-                    {formatPrice(pricing.price)} ₽
-                  </span>
-                </button>
-              ))}
-            </div>
+            </label>
+            <Select
+              value={String(selectedIndex)}
+              onValueChange={(v) => setSelectedIndex(Number(v))}
+            >
+              <SelectTrigger className="h-10 w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {pricingsWithPrice.map(({ pricing, index }) => (
+                  <SelectItem key={index} value={String(index)}>
+                    {pricing.hours} ч — {formatPrice(pricing.price)} ₽
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         )}
 
-        {pricingsWithPrice.length === 1 && selectedPricing && (
-          <div className="rounded-xl border border-border/60 bg-muted/10 p-3">
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">
-                {selectedPricing.pricing.hours} часов
-              </span>
-              <span className="font-semibold text-primary">
-                {formatPrice(selectedPricing.pricing.price)} ₽
-              </span>
-            </div>
-          </div>
-        )}
-
-        <div className="flex flex-col gap-2">
+        <div className="space-y-1.5">
           <label
             htmlFor="cart-quantity"
             className="text-xs font-semibold text-muted-foreground"
@@ -158,7 +146,7 @@ export const ProgramDetailAddToCart = memo(
               const v = parseInt(e.target.value, 10);
               if (!isNaN(v)) setQuantity(Math.max(1, Math.min(100, v)));
             }}
-            className="h-10 rounded-lg border border-border/60 bg-background px-3 text-sm"
+            className="h-10 w-full rounded-lg border border-border/60 bg-background px-3 text-sm"
           />
         </div>
 

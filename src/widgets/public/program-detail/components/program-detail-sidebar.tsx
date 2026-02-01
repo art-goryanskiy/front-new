@@ -64,7 +64,16 @@ export const ProgramDetailSidebar = memo(
 
             <div className="relative z-10 space-y-6">
               {canSeePrice ? (
-                <ProgramDetailPricing pricingList={pricingList} />
+                <div className="space-y-0">
+                  <ProgramDetailPricing pricingList={pricingList} />
+                  {pricingList.length > 0 && (
+                    <ProgramDetailAddToCart
+                      programId={programId}
+                      programPricing={programPricing}
+                      compact
+                    />
+                  )}
+                </div>
               ) : (
                 <div className="space-y-3">
                   <div className="text-xs font-semibold text-muted-foreground">
@@ -77,12 +86,6 @@ export const ProgramDetailSidebar = memo(
                     <Link href="/login">Войти</Link>
                   </Button>
                 </div>
-              )}
-              {canSeePrice && pricingList.length > 0 && (
-                <ProgramDetailAddToCart
-                  programId={programId}
-                  programPricing={programPricing}
-                />
               )}
               {canSeePrice && (
                 <Button

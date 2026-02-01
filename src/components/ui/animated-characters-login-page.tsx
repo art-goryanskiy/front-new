@@ -458,7 +458,8 @@ export function LoginFormPage() {
                   isTyping || (password.length > 0 && !showPassword)
                     ? "440px"
                     : "400px",
-                backgroundColor: "#6C3FF5",
+                /* Тёплый крем — комплиментарен оранжевому и жёлтому, виден на красном фоне в любой теме */
+                backgroundColor: "#fffbeb",
                 borderRadius: "10px 10px 0 0",
                 zIndex: 1,
                 transform:
@@ -494,7 +495,7 @@ export function LoginFormPage() {
                   pupilSize={7}
                   maxDistance={5}
                   eyeColor="white"
-                  pupilColor="#2D2D2D"
+                  pupilColor="var(--foreground)"
                   isBlinking={isPurpleBlinking}
                   forceLookX={
                     password.length > 0 && showPassword
@@ -520,7 +521,7 @@ export function LoginFormPage() {
                   pupilSize={7}
                   maxDistance={5}
                   eyeColor="white"
-                  pupilColor="#2D2D2D"
+                  pupilColor="var(--foreground)"
                   isBlinking={isPurpleBlinking}
                   forceLookX={
                     password.length > 0 && showPassword
@@ -552,7 +553,7 @@ export function LoginFormPage() {
                 left: "240px",
                 width: "120px",
                 height: "310px",
-                backgroundColor: "#2D2D2D",
+                backgroundColor: "var(--foreground)",
                 borderRadius: "8px 8px 0 0",
                 zIndex: 2,
                 transform:
@@ -590,7 +591,7 @@ export function LoginFormPage() {
                   pupilSize={6}
                   maxDistance={4}
                   eyeColor="white"
-                  pupilColor="#2D2D2D"
+                  pupilColor="var(--foreground)"
                   isBlinking={isBlackBlinking}
                   forceLookX={
                     password.length > 0 && showPassword
@@ -612,7 +613,7 @@ export function LoginFormPage() {
                   pupilSize={6}
                   maxDistance={4}
                   eyeColor="white"
-                  pupilColor="#2D2D2D"
+                  pupilColor="var(--foreground)"
                   isBlinking={isBlackBlinking}
                   forceLookX={
                     password.length > 0 && showPassword
@@ -667,7 +668,7 @@ export function LoginFormPage() {
                 <Pupil
                   size={12}
                   maxDistance={5}
-                  pupilColor="#2D2D2D"
+                  pupilColor="var(--foreground)"
                   forceLookX={
                     password.length > 0 && showPassword
                       ? -5
@@ -682,7 +683,7 @@ export function LoginFormPage() {
                 <Pupil
                   size={12}
                   maxDistance={5}
-                  pupilColor="#2D2D2D"
+                  pupilColor="var(--foreground)"
                   forceLookX={
                     password.length > 0 && showPassword
                       ? -5
@@ -732,7 +733,7 @@ export function LoginFormPage() {
                 <Pupil
                   size={12}
                   maxDistance={5}
-                  pupilColor="#2D2D2D"
+                  pupilColor="var(--foreground)"
                   forceLookX={
                     password.length > 0 && showPassword
                       ? -5
@@ -747,7 +748,7 @@ export function LoginFormPage() {
                 <Pupil
                   size={12}
                   maxDistance={5}
-                  pupilColor="#2D2D2D"
+                  pupilColor="var(--foreground)"
                   forceLookX={
                     password.length > 0 && showPassword
                       ? -5
@@ -762,7 +763,7 @@ export function LoginFormPage() {
               </div>
               {/* Horizontal line for mouth */}
               <div
-                className="absolute h-[4px] w-20 rounded-full bg-[#2D2D2D] transition-all duration-200 ease-out"
+                className="absolute h-[4px] w-20 rounded-full bg-foreground transition-all duration-200 ease-out"
                 style={{
                   left:
                     password.length > 0 && showPassword

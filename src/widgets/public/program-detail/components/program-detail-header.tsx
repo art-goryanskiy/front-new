@@ -63,7 +63,7 @@ export const ProgramDetailHeader = memo(function ProgramDetailHeader({
       >
         <div className="pointer-events-none absolute inset-0 opacity-70">
           <div className="absolute -top-28 -right-28 h-[360px] w-[520px] rounded-full bg-primary/10 blur-3xl" />
-          <div className="absolute -bottom-40 -left-32 h-[360px] w-[520px] rounded-full bg-blue-500/10 blur-3xl" />
+          <div className="absolute -bottom-40 -left-32 h-[360px] w-[520px] rounded-full bg-primary/5 blur-3xl" />
           <div className="absolute inset-0 bg-linear-to-b from-transparent via-background/10 to-background/60" />
         </div>
 

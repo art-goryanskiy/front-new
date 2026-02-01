@@ -25,9 +25,9 @@ export const HighlightCard: FC<HighlightCardProps> = ({
     <Card
       className={cn(
         "relative flex h-full w-full max-w-[350px] min-w-0 flex-col overflow-hidden rounded-2xl shadow-xl backdrop-blur-xl",
-        "border border-border bg-linear-to-br from-white via-neutral-50/80 to-white",
-        "hover:border-neutral-300 hover:shadow-2xl hover:shadow-neutral-200/50",
-        "dark:border-white/10 dark:bg-linear-to-br dark:from-[#010101] dark:via-[#090909] dark:to-[#010101] dark:text-white",
+        "border border-border bg-linear-to-br from-background via-muted/80 to-background",
+        "hover:border-border hover:shadow-2xl hover:shadow-border/20",
+        "dark:border-white/10 dark:bg-linear-to-br dark:from-background dark:via-muted dark:to-background dark:text-foreground",
         "dark:hover:border-white/25 dark:hover:shadow-2xl dark:hover:shadow-white/5",
         className
       )}
@@ -38,8 +38,8 @@ export const HighlightCard: FC<HighlightCardProps> = ({
         aria-hidden
       >
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(0,0,0,0.03),transparent_50%)] dark:hidden" />
-        <div className="absolute -bottom-20 -left-20 h-48 w-48 rounded-full bg-neutral-200/50 opacity-70 blur-3xl transition-all duration-700 group-hover:scale-110 group-hover:opacity-90 dark:hidden" />
-        <div className="absolute top-0 right-0 h-32 w-32 rounded-full bg-neutral-100/80 blur-2xl dark:hidden" />
+        <div className="absolute -bottom-20 -left-20 h-48 w-48 rounded-full bg-muted/70 opacity-70 blur-3xl transition-all duration-700 group-hover:scale-110 group-hover:opacity-90 dark:hidden" />
+        <div className="absolute top-0 right-0 h-32 w-32 rounded-full bg-muted/80 blur-2xl dark:hidden" />
         {/* Dark: прежние декорации */}
         <div className="absolute inset-0 hidden bg-linear-to-tr from-white/5 to-white/10 opacity-40 transition-opacity duration-500 group-hover:opacity-60 dark:block" />
         <div className="absolute -bottom-20 -left-20 hidden h-48 w-48 transform animate-bounce rounded-full bg-linear-to-tr from-white/10 to-transparent opacity-30 blur-3xl transition-all duration-700 group-hover:scale-110 group-hover:opacity-50 dark:block" />
@@ -50,13 +50,13 @@ export const HighlightCard: FC<HighlightCardProps> = ({
 
       <div className="relative z-10 flex min-h-0 flex-1 flex-col items-center p-8 text-center">
         <div className="relative mb-6 shrink-0">
-          <div className="absolute inset-0 animate-ping rounded-full border-2 border-neutral-300 dark:border-white/20" />
-          <div className="absolute inset-0 animate-pulse rounded-full border border-neutral-200 dark:border-white/10" />
+          <div className="absolute inset-0 animate-ping rounded-full border-2 border-border dark:border-white/20" />
+          <div className="absolute inset-0 animate-pulse rounded-full border border-border dark:border-white/10" />
           <div
             className={cn(
-              "transform rounded-full border border-neutral-200 bg-neutral-100/80 p-6 shadow-xl backdrop-blur-lg transition-all duration-500 group-hover:scale-110 group-hover:rotate-12",
+              "transform rounded-full border border-border bg-muted/80 p-6 shadow-xl backdrop-blur-lg transition-all duration-500 group-hover:scale-110 group-hover:rotate-12",
               "[&_svg]:text-primary",
-              "dark:border-white/20 dark:bg-neutral-900 dark:hover:shadow-white/20 dark:[&_svg]:text-white"
+              "dark:border-white/20 dark:bg-muted dark:hover:shadow-white/20 dark:[&_svg]:text-primary-foreground"
             )}
           >
             <div className="transform transition-transform duration-700 group-hover:rotate-180">
@@ -69,7 +69,7 @@ export const HighlightCard: FC<HighlightCardProps> = ({
           className={cn(
             "mb-4 line-clamp-3 min-h-18 shrink-0 text-xl leading-tight font-bold transition-transform duration-300 group-hover:scale-105",
             "text-foreground",
-            "dark:animate-pulse dark:bg-linear-to-r dark:from-white dark:via-gray-100 dark:to-white dark:bg-clip-text dark:text-transparent"
+            "dark:animate-pulse dark:bg-linear-to-r dark:from-foreground dark:via-foreground/90 dark:to-foreground dark:bg-clip-text dark:text-transparent"
           )}
         >
           {title}
@@ -82,7 +82,7 @@ export const HighlightCard: FC<HighlightCardProps> = ({
               className={cn(
                 "transform text-sm leading-relaxed transition-colors duration-300",
                 "text-muted-foreground group-hover:text-foreground/90",
-                "dark:text-gray-400 dark:group-hover:text-gray-300"
+                "dark:text-muted-foreground dark:group-hover:text-foreground/80"
               )}
             >
               {line}
@@ -93,26 +93,26 @@ export const HighlightCard: FC<HighlightCardProps> = ({
         <div
           className={cn(
             "mt-6 h-0.5 w-1/3 shrink-0 transform animate-pulse rounded-full bg-linear-to-r from-transparent to-transparent transition-all duration-500 group-hover:h-1 group-hover:w-1/2",
-            "via-neutral-300",
-            "dark:via-white"
+            "via-border",
+            "dark:via-foreground"
           )}
         />
 
         <div className="mt-4 flex shrink-0 space-x-2 opacity-60 transition-opacity duration-300 group-hover:opacity-100">
-          <div className="h-2 w-2 animate-bounce rounded-full bg-neutral-400 dark:bg-white" />
+          <div className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground dark:bg-foreground" />
           <div
-            className="h-2 w-2 animate-bounce rounded-full bg-neutral-400 dark:bg-white"
+            className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground dark:bg-foreground"
             style={{ animationDelay: "0.1s" }}
           />
           <div
-            className="h-2 w-2 animate-bounce rounded-full bg-neutral-400 dark:bg-white"
+            className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground dark:bg-foreground"
             style={{ animationDelay: "0.2s" }}
           />
         </div>
       </div>
 
-      <div className="absolute top-0 left-0 h-20 w-20 rounded-br-3xl bg-linear-to-br from-neutral-200/60 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100 dark:from-white/10" />
-      <div className="absolute right-0 bottom-0 h-20 w-20 rounded-tl-3xl bg-linear-to-tl from-neutral-200/60 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100 dark:from-white/10" />
+      <div className="absolute top-0 left-0 h-20 w-20 rounded-br-3xl bg-linear-to-br from-border/60 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100 dark:from-white/10" />
+      <div className="absolute right-0 bottom-0 h-20 w-20 rounded-tl-3xl bg-linear-to-tl from-border/60 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100 dark:from-white/10" />
     </Card>
   );
 

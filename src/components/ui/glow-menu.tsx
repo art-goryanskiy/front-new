@@ -74,10 +74,11 @@ const sharedTransition = {
   duration: 0.5,
 };
 
+/* Primary palette (#e50914) */
 const NAV_GLOW_LIGHT =
-  "bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(96,165,250,0.2)_30%,rgba(192,132,252,0.2)_60%,rgba(248,113,113,0.2)_90%,transparent_100%)]";
+  "bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(229,9,20,0.12)_30%,rgba(229,9,20,0.18)_60%,rgba(229,9,20,0.1)_90%,transparent_100%)]";
 const NAV_GLOW_DARK =
-  "bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(96,165,250,0.3)_30%,rgba(192,132,252,0.3)_60%,rgba(248,113,113,0.3)_90%,transparent_100%)]";
+  "bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(229,9,20,0.15)_30%,rgba(229,9,20,0.22)_60%,rgba(229,9,20,0.12)_90%,transparent_100%)]";
 
 export const MenuBar = React.forwardRef<
   HTMLDivElement,
