@@ -10,6 +10,7 @@ const LINKS = [
   { label: "Проф. переподготовка", href: "/professional-retraining" },
   { label: "Проф. обучение", href: "/professional-education" },
   { label: "Корзина", href: "/cart" },
+  { label: "Мои заказы", href: "/orders" },
   { label: "Профиль", href: "/profile" },
 ] as const;
 

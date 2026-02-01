@@ -246,14 +246,8 @@ export const CartPageContent = memo(function CartPageContent() {
         <div className="text-lg font-semibold text-foreground">
           Итого: {formatPrice(totalAmount)} ₽
         </div>
-        <Button
-          size="lg"
-          className="w-full sm:w-auto"
-          onClick={() =>
-            showToast("info", "Оформление заявки в разработке")
-          }
-        >
-          Оформить заявку
+        <Button size="lg" className="w-full sm:w-auto" asChild>
+          <Link href="/checkout">Оформить заказ</Link>
         </Button>
       </Surface>
     </div>

@@ -1,0 +1,49 @@
+import { gql } from "@apollo/client";
+
+export const ORDER_FIELDS = gql`
+  fragment OrderFields on Order {
+    id
+    userId
+    customerType
+    organizationId
+    contactEmail
+    contactPhone
+    status
+    totalAmount
+    createdAt
+    updatedAt
+    lines {
+      programId
+      programTitle
+      hours
+      price
+      quantity
+      lineAmount
+      learners {
+        lastName
+        firstName
+        middleName
+        email
+        phone
+      }
+    }
+  }
+`;
+
+export const MY_ORDERS = gql`
+  ${ORDER_FIELDS}
+  query MyOrders($filter: MyOrdersFilterInput) {
+    myOrders(filter: $filter) {
+      ...OrderFields
+    }
+  }
+`;
+
+export const ORDER = gql`
+  ${ORDER_FIELDS}
+  query Order($id: ID!) {
+    order(id: $id) {
+      ...OrderFields
+    }
+  }
+`;
