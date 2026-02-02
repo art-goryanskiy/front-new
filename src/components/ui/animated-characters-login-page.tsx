@@ -458,8 +458,8 @@ export function LoginFormPage() {
                   isTyping || (password.length > 0 && !showPassword)
                     ? "440px"
                     : "400px",
-                /* Светлый персонаж: primary-50 из темы — гармонично в light/dark и с primary-градиентом панели */
-                backgroundColor: "var(--primary-50)",
+                /* Задний персонаж: синий из темы (--login-character-back), глаза читаемы на фоне */
+                backgroundColor: "var(--login-character-back)",
                 borderRadius: "10px 10px 0 0",
                 zIndex: 1,
                 transform:

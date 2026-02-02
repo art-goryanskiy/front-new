@@ -71,6 +71,8 @@
   --sidebar-accent-foreground: #92400e;
   --sidebar-border: #e5e7eb;
   --sidebar-ring: #e50914;
+  /* Персонаж логина (задний слой): синий, по насыщенности рядом с оранжевым/жёлтым */
+  --login-character-back: #5b9bd5;
 }
 
 .dark {
@@ -142,6 +144,7 @@
   --sidebar-accent-foreground: #ffffff;
   --sidebar-border: #262626;
   --sidebar-ring: #e50914;
+  --login-character-back: #6babe8;
 }
 
 body {
