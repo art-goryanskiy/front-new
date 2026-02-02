@@ -1,25 +1,7 @@
-# Деплой фронта + nginx + certbot на VPS.
-# Бэкенд подключается как готовый образ (BACKEND_IMAGE).
-# Переменные задаются в .env в этой папке (скопируйте из .env.example).
+# Деплой только фронта. Подключается к сети бэкенда (education-network).
+# Nginx и SSL — на стороне бэкенда. Переменные — в .env и .env.front.
 
 services:
-  app:
-    image: ${BACKEND_IMAGE:-education-center-app}
-    container_name: education-center-app
-    restart: unless-stopped
-    env_file: .env.backend
-    environment:
-      NODE_ENV: production
-      PORT: 3000
-      MONGODB_URI: mongodb://mongo:27017/education-center?replicaSet=rs0
-      REDIS_HOST: redis
-      REDIS_PORT: "6379"
-    depends_on:
-      - mongo
-      - redis
-    networks:
-      - education-network
-
   front:
     image: ${FRONT_IMAGE:-ghcr.io/your-org/front-new}:${FRONT_IMAGE_TAG:-latest}
     container_name: education-center-front
@@ -30,65 +12,6 @@ services:
     networks:
       - education-network
 
-  nginx:
-    image: nginx:alpine
-    container_name: education-center-nginx
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d:ro
-      - letsencrypt:/etc/letsencrypt:ro
-      - certbot-webroot:/var/www/certbot:ro
-    depends_on:
-      - app
-      - front
-    networks:
-      - education-network
-
-  certbot:
-    image: certbot/certbot
-    container_name: education-center-certbot
-    volumes:
-      - letsencrypt:/etc/letsencrypt
-      - certbot-webroot:/var/www/certbot
-    entrypoint: "/bin/sh -c"
-    command:
-      - >
-        trap exit 0 TERM;
-        while :; do
-          certbot renew --webroot -w /var/www/certbot --quiet;
-          sleep 12h;
-        done
-    networks:
-      - education-network
-
-  mongo:
-    image: mongo:7
-    container_name: education-center-mongo
-    restart: unless-stopped
-    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
-    volumes:
-      - mongo-data:/data/db
-    networks:
-      - education-network
-
-  redis:
-    image: redis:7-alpine
-    container_name: education-center-redis
-    restart: unless-stopped
-    volumes:
-      - redis-data:/data
-    networks:
-      - education-network
-
-volumes:
-  letsencrypt:
-  certbot-webroot:
-  mongo-data:
-  redis-data:
-
 networks:
   education-network:
-    driver: bridge
+    external: true

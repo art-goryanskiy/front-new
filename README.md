@@ -25,25 +25,24 @@
 5. **Добавить ключ на VPS:** скопировать вывод `cat ~/.ssh/github_deploy_front.pub`, зайти на сервер (`ssh ПОЛЬЗОВАТЕЛЬ@IP_СЕРВЕРА`), вставить строку в `~/.ssh/authorized_keys` (файл создать при необходимости, права `chmod 600 ~/.ssh/authorized_keys`).
 6. **Секреты в GitHub:** репозиторий front-new → Settings → Secrets and variables → Actions → New repository secret. Добавить: `DEPLOY_HOST` (IP VPS), `DEPLOY_USER` (пользователь SSH), `DEPLOY_SSH_KEY` (содержимое `cat ~/.ssh/github_deploy_front` — весь вывод), `DEPLOY_PATH` (путь к папке deploy на VPS, например `/opt/front-new/deploy`).
 
-**Часть 2 — на VPS:**
+**Часть 2 — на VPS (бэкенд уже запущен, nginx и SSL — у бэка):**
 
 7. **Подключиться:** `ssh ПОЛЬЗОВАТЕЛЬ@83.222.17.192` (подставить свой IP и пользователя).
-8. **Установить Docker:** `sudo apt update && sudo apt install -y docker.io docker-compose-v2 && sudo systemctl enable docker && sudo systemctl start docker && sudo usermod -aG docker $USER`. Выйти из SSH и зайти снова.
+8. **Установить Docker** (если ещё нет): `sudo apt update && sudo apt install -y docker.io docker-compose-v2 && sudo systemctl enable docker && sudo systemctl start docker && sudo usermod -aG docker $USER`. Выйти из SSH и зайти снова.
 9. **Создать каталог и клонировать репо:** `sudo mkdir -p /opt/front-new && sudo chown $USER:$USER /opt/front-new && cd /opt/front-new && git clone https://github.com/YOUR_ORG/front-new.git .` (подставить свой URL репо).
 10. **Перейти в deploy:** `cd /opt/front-new/deploy`.
-11. **Создать .env:** `cp .env.example .env`, отредактировать `.env` — указать `BACKEND_IMAGE`, `FRONT_IMAGE` (образы бэка и фронта), `FRONT_IMAGE_TAG=latest`.
-12. **Создать .env.front:** создать файл с содержимым:
+11. **Создать .env:** `cp .env.example .env`, указать `FRONT_IMAGE` (например `ghcr.io/YOUR_ORG/front-new`) и `FRONT_IMAGE_TAG=latest`.
+12. **Создать .env.front** с содержимым:
     ```
     NEXT_PUBLIC_GRAPHQL_URL=https://www.new.standart82.ru/graphql
     NEXT_PUBLIC_UPLOAD_URL=https://www.new.standart82.ru/upload/image
     NEXT_PUBLIC_SITE_URL=https://www.new.standart82.ru
     ```
-13. **Создать .env.backend:** создать файл с переменными бэкенда (MONGODB_URI, REDIS_HOST, REDIS_PORT и т.д. — как на уже работающем бэке).
-14. **Запустить стек:** `docker compose up -d`. Проверить: `docker compose ps` — все сервисы в Up. Открыть в браузере http://IP_СЕРВЕРА или http://www.new.standart82.ru (если DNS уже указывает на сервер).
-15. **Проверить DNS:** на своей машине `dig +short www.new.standart82.ru` — должен быть IP VPS.
-16. **Получить SSL:** в папке deploy выполнить `chmod +x scripts/init-ssl.sh`, затем `export DOMAIN=www.new.standart82.ru` и `export CERTBOT_EMAIL=your@email.com`, затем `./scripts/init-ssl.sh`. После успеха открыть https://www.new.standart82.ru.
+13. **Проверить сеть бэкенда:** `docker network ls | grep education-network` — сеть должна быть (создаётся при запуске compose бэкенда).
+14. **Запустить фронт:** `docker compose up -d`. Проверить: `docker compose ps` — контейнер `education-center-front` в Up.
+15. **В конфиге nginx бэкенда** на сервере заменить upstream frontend на `server education-center-front:3000;` и выполнить `docker compose exec nginx nginx -s reload` (в папке деплоя бэкенда).
 
-**Дальше:** при пуше в ветку `main` GitHub Actions соберёт образ, запушит в registry и на сервере выполнит `docker compose pull front && docker compose up -d front` — продакшен обновится автоматически.
+**Дальше:** при пуше в ветку `main` GitHub Actions соберёт образ, запушит в registry и на сервере выполнит `docker compose pull front && docker compose up -d front` в папке `DEPLOY_PATH` — продакшен обновится автоматически.
 
 Полная инструкция с проверками и решением проблем — **[docs/DEPLOY.md](docs/DEPLOY.md)**. Конфигурация деплоя — папка **deploy/**.
 
