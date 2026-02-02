@@ -3,7 +3,7 @@
 
 services:
   front:
-    image: ${FRONT_IMAGE:-ghcr.io/your-org/front-new}:${FRONT_IMAGE_TAG:-latest}
+    image: ${FRONT_IMAGE:-ghcr.io/art-goryanskiy/front-new}:${FRONT_IMAGE_TAG:-latest}
     container_name: education-center-front
     restart: unless-stopped
     env_file: .env.front
