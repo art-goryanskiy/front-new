@@ -37,8 +37,11 @@ export function useMe(options?: { skip?: boolean }) {
         setUser(null);
         previousUserRef.current = null;
       }
-      // Сбрасываем isLoading если запрос пропущен
-      setLoading(false);
+      // Сбрасываем isLoading только когда скипаем из-за уже имеющегося user.
+      // Иначе другой useMe (например AuthInitializer) ещё грузит — не гасим флаг.
+      if (user) {
+        setLoading(false);
+      }
       return;
     }
 
