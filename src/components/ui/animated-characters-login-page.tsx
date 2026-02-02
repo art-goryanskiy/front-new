@@ -458,8 +458,8 @@ export function LoginFormPage() {
                   isTyping || (password.length > 0 && !showPassword)
                     ? "440px"
                     : "400px",
-                /* Тёплый крем — комплиментарен оранжевому и жёлтому, виден на красном фоне в любой теме */
-                backgroundColor: "#fffbeb",
+                /* Светлый персонаж: primary-50 из темы — гармонично в light/dark и с primary-градиентом панели */
+                backgroundColor: "var(--primary-50)",
                 borderRadius: "10px 10px 0 0",
                 zIndex: 1,
                 transform:
