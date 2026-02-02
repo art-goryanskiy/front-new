@@ -1,8 +1,10 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
+import { Spinner } from "@/components/ui/spinner";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { Suspense } from "react";
 import { ResetPasswordForm } from "@/features/auth/ui/reset-password-form";
 
 export default function ResetPasswordPage() {
@@ -47,7 +49,21 @@ export default function ResetPasswordPage() {
                 </p>
               </div>
 
-              <ResetPasswordForm />
+              <Suspense
+                fallback={
+                  <div className="flex min-h-[200px] flex-col items-center justify-center gap-4 py-8">
+                    <Spinner
+                      className="text-primary"
+                      size={32}
+                    />
+                    <span className="text-sm text-muted-foreground">
+                      Загрузка формы…
+                    </span>
+                  </div>
+                }
+              >
+                <ResetPasswordForm />
+              </Suspense>
             </CardContent>
           </Card>
         </div>
