@@ -1,15 +1,17 @@
-import type { Metadata } from "next";
-import { PublicHeader } from "@/widgets/public/header/public-header";
-import { TopProgramsSection } from "@/widgets/public/top-programs/top-programs-section";
-import { getTopProgramsServer } from "@/shared/api/server/programs";
-import { getProgramsServer } from "@/shared/api/server/programs";
+import { Component } from "@/components/ui/the-infinite-grid";
 import { getCategoriesServer } from "@/shared/api/server/categories";
-import { cookies } from "next/headers";
+import {
+  getProgramsServer,
+  getTopProgramsServer,
+} from "@/shared/api/server/programs";
 import { generateMetadata as generateSeoMetadata } from "@/shared/lib/seo/metadata";
 import { generateOrganizationSchema } from "@/shared/lib/seo/structured-data";
-import { Component } from "@/components/ui/the-infinite-grid";
 import { PublicFooter } from "@/widgets/public/footer/public-footer";
+import { PublicHeader } from "@/widgets/public/header/public-header";
 import { CategoryTypeTiles } from "@/widgets/public/home/category-type-tiles";
+import { TopProgramsSection } from "@/widgets/public/top-programs/top-programs-section";
+import type { Metadata } from "next";
+import { cookies } from "next/headers";
 
 export const metadata: Metadata = generateSeoMetadata({
   title: "Главная",
@@ -59,3 +61,5 @@ export default async function Home() {
     </>
   );
 }
+
+//test comment
