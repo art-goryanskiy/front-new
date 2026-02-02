@@ -154,6 +154,8 @@
   - если авторизован, но не admin → редирект на главную
 - **User guard** для страниц вроде `/profile`.
 
+Если при переходе в админку вас каждый раз редиректит на страницу входа — см. **`docs/AUTH-COOKIES-CORS.md`** (куки и CORS при разных доменах фронта и бэкенда).
+
 ---
 
 ## SEO: метаданные, JSON‑LD, robots, sitemap
@@ -204,23 +206,24 @@
 
 ### Переменные окружения
 
-Создайте `.env.local` (не коммитится) и укажите:
+Скопируйте `.env.example` в `.env.local` (не коммитится) и при необходимости измените значения. По умолчанию проект уже настроен на задеплоенный бэкенд:
 
 ```bash
-# GraphQL API
-NEXT_PUBLIC_GRAPHQL_URL=http://localhost:4200/graphql
+# GraphQL API (по умолчанию — продакшен)
+NEXT_PUBLIC_GRAPHQL_URL=https://www.new.standart82.ru/graphql
 
-# Upload endpoint (картинки)
-NEXT_PUBLIC_UPLOAD_URL=http://localhost:3000/upload/image
+# Загрузка изображений (REST POST multipart)
+NEXT_PUBLIC_UPLOAD_URL=https://www.new.standart82.ru/upload/image
 
-# URL сайта для SEO/robots/sitemap
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
+# URL фронта для SEO (canonical, OpenGraph, sitemap, robots)
+NEXT_PUBLIC_SITE_URL=https://www.new.standart82.ru
 ```
 
 Примечания:
 
-- По умолчанию, если переменных нет, проект использует `localhost`/`standart82.ru` значения из кода.
-- Авторизация предполагает cookies (`credentials: "include"`), поэтому backend должен отдавать корректные `Set-Cookie` и CORS‑настройки.
+- Если переменные не заданы, используются указанные выше URL (бэкенд на www.new.standart82.ru).
+- Для локальной разработки с локальным бэкендом задайте в `.env.local`: `NEXT_PUBLIC_GRAPHQL_URL=http://localhost:4200/graphql` и при необходимости остальные.
+- Авторизация через cookies (`credentials: "include"`); бэкенд должен отдавать корректные `Set-Cookie` и CORS (`Access-Control-Allow-Credentials: true`, разрешённый origin).
 
 ---
 

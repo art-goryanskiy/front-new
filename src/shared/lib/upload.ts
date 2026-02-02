@@ -13,7 +13,7 @@ export async function uploadImage(
 
   const uploadUrl =
     process.env.NEXT_PUBLIC_UPLOAD_URL ||
-    "http://localhost:3000/upload/image";
+    "https://www.new.standart82.ru/upload/image";
   const url = `${uploadUrl}?folder=${folder}`;
 
   const response = await fetch(url, {

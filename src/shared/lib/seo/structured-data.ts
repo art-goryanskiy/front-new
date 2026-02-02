@@ -4,7 +4,7 @@ import type {
 } from "@/shared/api/generated/graphql";
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://www.standart82.ru";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://www.new.standart82.ru";
 const COMPANY_NAME = "ООО ЦОК СТАНДАРТ ПЛЮС";
 const COMPANY_PHONE = "+7 (978) 742-90-42";
 const COMPANY_EMAIL = "info@standart82.ru";

@@ -1,8 +1,5 @@
 "use client";
 
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,24 +10,35 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Surface } from "@/shared/ui/surface/surface";
 import { useMyCart } from "@/entities/cart/api/use-my-cart";
-import { useCreateOrderFromCart } from "@/entities/order/api/use-create-order-from-cart";
 import { buildOrderLinesFromCart } from "@/entities/order/api/build-order-lines-from-cart";
-import type { CartItemEntity } from "@/shared/api/generated/graphql";
-import type { OrderLineLearnerInput } from "@/shared/api/generated/graphql";
+import { useCreateOrderFromCart } from "@/entities/order/api/use-create-order-from-cart";
+import { useMe } from "@/features/auth/api/use-me";
+import { cn } from "@/lib/utils";
+import type {
+  CartItemEntity,
+  OrderLineLearnerInput,
+} from "@/shared/api/generated/graphql";
 import { OrderCustomerType } from "@/shared/api/generated/graphql";
+import { formatPriceWithCurrency } from "@/shared/lib/helpers/format-helpers";
 import { useAuthUser } from "@/shared/store/auth-store";
 import { useToastState } from "@/shared/store/toast-store";
-import { formatPriceWithCurrency } from "@/shared/lib/helpers/format-helpers";
+import { Surface } from "@/shared/ui/surface/surface";
 import { ShoppingBag } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useState,
+} from "react";
+import { useForm } from "react-hook-form";
 import { IndividualApplicantSection } from "./components/individual-applicant-section";
 import { LearnerFieldsCard } from "./components/learner-fields-card";
 import type { IndividualApplicantData } from "./types/individual-applicant.types";
-import {
-  defaultIndividualApplicantData,
-} from "./types/individual-applicant.types";
+import { defaultIndividualApplicantData } from "./types/individual-applicant.types";
 import type { LearnerFormData } from "./types/learner-form-data.types";
 import { defaultLearnerFormData } from "./types/learner-form-data.types";
 import { individualApplicantFromProfile } from "./utils/individual-applicant-from-profile";
@@ -43,7 +51,9 @@ type CheckoutFormData = {
   contactPhone: string;
 };
 
-function learnerToOrderInput(l: LearnerFormData): OrderLineLearnerInput {
+function learnerToOrderInput(
+  l: LearnerFormData
+): OrderLineLearnerInput {
   return {
     lastName: l.lastName,
     firstName: l.firstName,
@@ -60,8 +70,11 @@ function lineKey(item: CartItemEntity): string {
 export const CheckoutForm = memo(function CheckoutForm() {
   const router = useRouter();
   const user = useAuthUser();
+  // Подгружаем профиль при первом открытии, если в сторе user без profile (чтобы префилл сработал)
+  useMe({ skip: !!user?.profile });
   const { items, totalAmount, loading: cartLoading } = useMyCart();
-  const { createOrderFromCart, loading: submitting } = useCreateOrderFromCart();
+  const { createOrderFromCart, loading: submitting } =
+    useCreateOrderFromCart();
   const { showToast } = useToastState();
 
   const workPlaces = useMemo(
@@ -74,14 +87,16 @@ export const CheckoutForm = memo(function CheckoutForm() {
         .filter((wp) => wp.organization?.id)
         .map((wp) => ({
           id: wp.organization!.id,
-          displayName: wp.organization!.displayName ?? wp.organization!.id,
+          displayName:
+            wp.organization!.displayName ?? wp.organization!.id,
         })),
     [workPlaces]
   );
 
-  const [individualData, setIndividualData] = useState<IndividualApplicantData>(
-    () => defaultIndividualApplicantData()
-  );
+  const [individualData, setIndividualData] =
+    useState<IndividualApplicantData>(() =>
+      defaultIndividualApplicantData()
+    );
 
   const [linesLearners, setLinesLearners] = useState<
     Record<string, LearnerFormData[]>
@@ -104,25 +119,35 @@ export const CheckoutForm = memo(function CheckoutForm() {
         next[key] =
           prev[key]?.length === item.quantity
             ? prev[key]
-            : Array.from({ length: item.quantity }, () => defaultLearnerFormData());
+            : Array.from({ length: item.quantity }, () =>
+                defaultLearnerFormData()
+              );
       });
       return next;
     });
   }, [items]);
 
-  const { register, handleSubmit, watch, setValue, reset, getValues, formState } =
-    useForm<CheckoutFormData>({
-      defaultValues: {
-        customerType: OrderCustomerType.Self,
-        organizationId: "",
-        contactEmail: "",
-        contactPhone: "",
-      },
-      mode: "onChange",
-    });
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    reset,
+    getValues,
+    formState,
+  } = useForm<CheckoutFormData>({
+    defaultValues: {
+      customerType: OrderCustomerType.Self,
+      organizationId: "",
+      contactEmail: "",
+      contactPhone: "",
+    },
+    mode: "onChange",
+  });
 
   const customerType = watch("customerType");
-  const isOrganization = customerType === OrderCustomerType.Organization;
+  const isOrganization =
+    customerType === OrderCustomerType.Organization;
   const isIndividualOrSelf =
     customerType === OrderCustomerType.Self ||
     customerType === OrderCustomerType.Individual;
@@ -132,9 +157,10 @@ export const CheckoutForm = memo(function CheckoutForm() {
     [items]
   );
 
-  // Синхронизация формы и префилл из профиля при появлении user/profile (в т.ч. при первом открытии)
-  useEffect(() => {
-    if (customerType !== OrderCustomerType.Self || !user?.profile) return;
+  // Синхронизация формы и префилл из профиля при появлении user/profile (до отрисовки, чтобы не мигали пустые поля)
+  useLayoutEffect(() => {
+    if (customerType !== OrderCustomerType.Self || !user?.profile)
+      return;
     const contactEmail = user?.email ?? "";
     const contactPhone = user.profile?.phone ?? "";
 
@@ -151,7 +177,10 @@ export const CheckoutForm = memo(function CheckoutForm() {
 
     if (totalLearners >= 1 && items.length > 0) {
       const firstKey = lineKey(items[0]);
-      const firstLearner = learnerFromProfile(user.profile, contactEmail);
+      const firstLearner = learnerFromProfile(
+        user.profile,
+        contactEmail
+      );
       setLinesLearners((prev) => {
         const list = prev[firstKey] ?? [];
         const nextList = [...list];
@@ -159,7 +188,15 @@ export const CheckoutForm = memo(function CheckoutForm() {
         return { ...prev, [firstKey]: nextList };
       });
     }
-  }, [customerType, user?.profile, user?.email, setValue, reset, totalLearners, items]);
+  }, [
+    customerType,
+    user?.profile,
+    user?.email,
+    setValue,
+    reset,
+    totalLearners,
+    items,
+  ]);
 
   const setLearnerData = useCallback(
     (key: string, learnerIndex: number, data: LearnerFormData) => {
@@ -199,12 +236,17 @@ export const CheckoutForm = memo(function CheckoutForm() {
         ? individualData.phone?.trim() || undefined
         : data.contactPhone?.trim() || undefined;
 
-      const lines = buildOrderLinesFromCart(items, getLearnersForLine);
+      const lines = buildOrderLinesFromCart(
+        items,
+        getLearnersForLine
+      );
 
       try {
         const order = await createOrderFromCart({
           customerType: data.customerType,
-          organizationId: isOrganization ? data.organizationId : undefined,
+          organizationId: isOrganization
+            ? data.organizationId
+            : undefined,
           contactEmail: contactEmailSubmit,
           contactPhone: contactPhoneSubmit,
           lines,
@@ -244,7 +286,11 @@ export const CheckoutForm = memo(function CheckoutForm() {
     return (
       <Surface variant="floating" className="p-8 text-center">
         <p className="text-muted-foreground">Корзина пуста.</p>
-        <Button variant="link" className="mt-2" onClick={() => router.push("/cart")}>
+        <Button
+          variant="link"
+          className="mt-2"
+          onClick={() => router.push("/cart")}
+        >
           В корзину
         </Button>
       </Surface>
@@ -256,21 +302,34 @@ export const CheckoutForm = memo(function CheckoutForm() {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <Surface variant="floating" className="space-y-6 p-6">
-        <h2 className="text-lg font-semibold text-foreground">Тип заказчика</h2>
+        <h2 className="text-lg font-semibold text-foreground">
+          Тип заказчика
+        </h2>
         <div className="flex flex-wrap gap-4">
           {[
             { value: OrderCustomerType.Self, label: "Физ. лицо (я)" },
-            { value: OrderCustomerType.Individual, label: "Физ. лицо" },
-            { value: OrderCustomerType.Organization, label: "Организация" },
+            {
+              value: OrderCustomerType.Individual,
+              label: "Физ. лицо",
+            },
+            {
+              value: OrderCustomerType.Organization,
+              label: "Организация",
+            },
           ].map((opt) => (
-            <label key={opt.value} className="flex items-center gap-2">
+            <label
+              key={opt.value}
+              className="flex items-center gap-2"
+            >
               <input
                 type="radio"
                 value={opt.value}
                 {...register("customerType")}
                 className="h-4 w-4"
               />
-              <span className="text-sm font-medium text-foreground">{opt.label}</span>
+              <span className="text-sm font-medium text-foreground">
+                {opt.label}
+              </span>
             </label>
           ))}
         </div>
@@ -296,7 +355,8 @@ export const CheckoutForm = memo(function CheckoutForm() {
             </Select>
             {organizations.length === 0 && (
               <p className="text-xs text-muted-foreground">
-                Добавьте организацию в профиле (раздел «Место работы»).
+                Добавьте организацию в профиле (раздел «Место
+                работы»).
               </p>
             )}
           </div>
@@ -337,11 +397,13 @@ export const CheckoutForm = memo(function CheckoutForm() {
       )}
 
       <Surface variant="floating" className="space-y-4 p-6">
-        <h2 className="text-lg font-semibold text-foreground">Слушатели</h2>
+        <h2 className="text-lg font-semibold text-foreground">
+          Слушатели
+        </h2>
         <p className="text-sm text-muted-foreground">
-          Укажите данные слушателей по каждой позиции: ФИО, дата рождения,
-          гражданство, паспорт, СНИЛС, образование, адреса, место работы,
-          должность, контакты.
+          Укажите данные слушателей по каждой позиции: ФИО, дата
+          рождения, гражданство, паспорт, СНИЛС, образование, адреса,
+          место работы, должность, контакты.
         </p>
         {items.map((item, itemIndex) => {
           const key = lineKey(item);
@@ -366,9 +428,14 @@ export const CheckoutForm = memo(function CheckoutForm() {
                     key={idx}
                     idPrefix={`${key}-${idx}`}
                     data={learner}
-                    onChange={(data) => setLearnerData(key, idx, data)}
+                    onChange={(data) =>
+                      setLearnerData(key, idx, data)
+                    }
                     fromProfile={
-                      isSelf && itemIndex === 0 && idx === 0 && !!user?.profile
+                      isSelf &&
+                      itemIndex === 0 &&
+                      idx === 0 &&
+                      !!user?.profile
                     }
                   />
                 ))}
@@ -378,7 +445,10 @@ export const CheckoutForm = memo(function CheckoutForm() {
         })}
       </Surface>
 
-      <Surface variant="floating" className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
+      <Surface
+        variant="floating"
+        className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between"
+      >
         <div className="flex items-center gap-2 text-lg font-bold text-foreground">
           <ShoppingBag className="h-6 w-6 text-primary" />
           Итого: {formatPriceWithCurrency(totalAmount)}

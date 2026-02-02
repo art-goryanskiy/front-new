@@ -4,7 +4,7 @@ import { getCategoriesServer } from "@/shared/api/server/categories";
 import { safeAsyncArray } from "@/shared/lib/helpers/error-helpers";
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://www.standart82.ru";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://www.new.standart82.ru";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [programs, categories] = await Promise.all([
