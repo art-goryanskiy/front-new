@@ -553,7 +553,7 @@ export function LoginFormPage() {
                 left: "240px",
                 width: "120px",
                 height: "310px",
-                backgroundColor: "var(--foreground)",
+                backgroundColor: "var(--login-character-middle)",
                 borderRadius: "8px 8px 0 0",
                 zIndex: 2,
                 transform:
