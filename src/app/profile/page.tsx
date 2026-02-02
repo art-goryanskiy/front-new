@@ -254,8 +254,7 @@ const ProfilePageContent = memo(function ProfilePageContent() {
         setFilePreview(avatarUrl ?? null);
         showToast("success", "Профиль успешно обновлен");
         setIsEditing(false);
-      } catch (err) {
-        console.error("Ошибка при обновлении профиля:", err);
+      } catch {
         showToast("error", "Ошибка при обновлении профиля");
       }
     },

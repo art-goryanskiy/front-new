@@ -16,8 +16,7 @@ export function useLogout() {
       await logoutMutation();
       logoutStore();
       router.push("/login");
-    } catch (err) {
-      console.error("Ошибка при выходе:", err);
+    } catch {
       // Выходим даже при ошибке
       logoutStore();
       router.push("/login");

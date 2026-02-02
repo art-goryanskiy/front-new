@@ -91,11 +91,7 @@ export const UserForm = memo(function UserForm({
 
         reset();
         onDirtyChange?.(false);
-      } catch (err) {
-        console.error(
-          `Ошибка при ${isEditMode ? "обновлении" : "создании"} пользователя:`,
-          err
-        );
+      } catch {
         showToast(
           "error",
           `Ошибка при ${isEditMode ? "обновлении" : "создании"} пользователя`

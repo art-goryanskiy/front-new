@@ -30,8 +30,8 @@ export function useLoginForm() {
       // Получаем сохраненный URL или используем дефолтный
       const returnUrl = getReturnUrl(AUTH_GUARD_ROUTES.admin);
       router.push(returnUrl);
-    } catch (err) {
-      console.error("Ошибка при входе:", err);
+    } catch {
+      // Ошибка отображается через error из useLogin
     }
   };
 
