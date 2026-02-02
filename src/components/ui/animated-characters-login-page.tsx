@@ -1101,7 +1101,7 @@ export function LoginFormPage() {
                 <button
                   type="button"
                   onClick={() => router.push("/forgot-password")}
-                  className="text-sm font-medium text-primary hover:underline"
+                  className="text-sm font-medium text-primary-400 hover:text-primary-300 hover:underline"
                 >
                   Забыли пароль?
                 </button>
