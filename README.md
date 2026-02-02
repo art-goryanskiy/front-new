@@ -12,6 +12,10 @@
 - **Состояние**: Zustand (auth, модалки, сайдбар, тосты, поиск)
 - **Качество**: ESLint + Prettier (+ Tailwind plugin)
 
+### Деплой
+
+Пошаговая инструкция по деплою (Docker, GitHub Actions, Nginx, SSL) — **[docs/DEPLOY.md](docs/DEPLOY.md)**. Конфигурация деплоя лежит в папке **deploy/**.
+
 ### Демо / скриншоты
 
 - **Demo URL**: (добавьте ссылку после деплоя)
