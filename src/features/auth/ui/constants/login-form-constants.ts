@@ -20,6 +20,20 @@ export const LOGIN_FORM_TEXTS = {
   },
 } as const;
 
+/** Сообщения API при ошибке входа — маппинг на пользовательский текст (ключ в lower case) */
+const LOGIN_ERROR_MESSAGE_MAP: Record<string, string> = {
+  "invalid credentials": LOGIN_FORM_TEXTS.error.default,
+};
+
+/**
+ * Возвращает пользовательское сообщение об ошибке входа по тексту от API.
+ */
+export function getLoginErrorMessage(apiMessage?: string | null): string {
+  if (!apiMessage) return LOGIN_FORM_TEXTS.error.default;
+  const key = apiMessage.trim().toLowerCase();
+  return LOGIN_ERROR_MESSAGE_MAP[key] ?? apiMessage;
+}
+
 export const LOGIN_FORM_CLASSES = {
   container: "w-full",
   form: "space-y-4",

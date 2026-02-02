@@ -2,8 +2,8 @@
 
 import { memo, useMemo } from "react";
 import {
-  LOGIN_FORM_TEXTS,
   LOGIN_FORM_CLASSES,
+  getLoginErrorMessage,
 } from "../constants/login-form-constants";
 
 interface LoginFormErrorProps {
@@ -14,7 +14,7 @@ export const LoginFormError = memo(function LoginFormError({
   error,
 }: LoginFormErrorProps) {
   const errorMessage = useMemo(
-    () => error?.message || LOGIN_FORM_TEXTS.error.default,
+    () => getLoginErrorMessage(error?.message),
     [error?.message]
   );
 

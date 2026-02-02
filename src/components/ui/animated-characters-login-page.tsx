@@ -19,6 +19,7 @@ import {
 import {
   EMAIL_REGEX,
   LOGIN_FORM_TEXTS,
+  getLoginErrorMessage,
 } from "../../features/auth/ui/constants/login-form-constants";
 import { REGISTER_FORM_TEXTS } from "../../features/auth/ui/constants/register-form-constants";
 import { useLoginForm } from "../../features/auth/ui/hooks/use-login-form";
@@ -849,7 +850,7 @@ export function LoginFormPage() {
                 role="alert"
               >
                 <p className="text-sm font-medium text-destructive">
-                  {error?.message || texts.error.default}
+                  {getLoginErrorMessage(error?.message)}
                 </p>
               </Surface>
             )}
