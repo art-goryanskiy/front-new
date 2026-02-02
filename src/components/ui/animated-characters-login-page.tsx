@@ -458,8 +458,8 @@ export function LoginFormPage() {
                   isTyping || (password.length > 0 && !showPassword)
                     ? "440px"
                     : "400px",
-                /* Тёплый крем — комплиментарен оранжевому и жёлтому, виден на красном фоне в любой теме */
-                backgroundColor: "#fffbeb",
+                /* Задний персонаж: бирюзовый из темы (--login-character-back), глаза читаемы на фоне */
+                backgroundColor: "var(--login-character-back)",
                 borderRadius: "10px 10px 0 0",
                 zIndex: 1,
                 transform:
@@ -553,7 +553,7 @@ export function LoginFormPage() {
                 left: "240px",
                 width: "120px",
                 height: "310px",
-                backgroundColor: "var(--foreground)",
+                backgroundColor: "var(--login-character-middle)",
                 borderRadius: "8px 8px 0 0",
                 zIndex: 2,
                 transform:
