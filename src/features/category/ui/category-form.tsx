@@ -122,11 +122,7 @@ export const CategoryForm = memo(function CategoryForm({
         reset();
         resetImageState();
         onDirtyChange?.(false);
-      } catch (err) {
-        console.error(
-          `Ошибка при ${isEditMode ? "обновлении" : "создании"} категории:`,
-          err
-        );
+      } catch {
         showToast(
           "error",
           `Ошибка при ${isEditMode ? "обновлении" : "создании"} категории`

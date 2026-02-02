@@ -28,8 +28,8 @@ export function useRegisterForm() {
       router.push(
         "/verify-email?email=" + encodeURIComponent(data.email)
       );
-    } catch (err) {
-      console.error("Ошибка при регистрации:", err);
+    } catch {
+      // Ошибка отображается через error из useRegister
     }
   };
 

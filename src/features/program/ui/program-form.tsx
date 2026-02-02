@@ -130,11 +130,7 @@ export const ProgramForm = memo(function ProgramForm({
 
         reset();
         onDirtyChange?.(false);
-      } catch (err) {
-        console.error(
-          `Ошибка при ${isEditMode ? "обновлении" : "создании"} программы:`,
-          err
-        );
+      } catch {
         showToast(
           "error",
           `Ошибка при ${isEditMode ? "обновлении" : "создании"} программы`

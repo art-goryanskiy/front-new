@@ -95,7 +95,6 @@ export const Icon = memo(function Icon({
   const IconComponent = iconMap[name];
 
   if (!IconComponent) {
-    console.warn(`Icon "${name}" not found`);
     return null;
   }
 

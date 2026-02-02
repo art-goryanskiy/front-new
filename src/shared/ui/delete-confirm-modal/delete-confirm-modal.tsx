@@ -30,8 +30,8 @@ export const DeleteConfirmModal = memo(function DeleteConfirmModal({
     try {
       await onDelete();
       onClose();
-    } catch (err) {
-      console.error(`Ошибка при удалении ${entityType}:`, err);
+    } catch {
+      // Ошибка отображается через error в модалке
     }
   }, [onDelete, onClose, entityType]);
 

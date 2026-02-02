@@ -103,11 +103,7 @@ export const EducationDocumentForm = memo(function EducationDocumentForm({
         reset();
         resetImageState();
         onDirtyChange?.(false);
-      } catch (err) {
-        console.error(
-          `Ошибка при ${isEditMode ? "обновлении" : "создании"} документа:`,
-          err
-        );
+      } catch {
         showToast(
           "error",
           `Ошибка при ${isEditMode ? "обновлении" : "создании"} документа`
