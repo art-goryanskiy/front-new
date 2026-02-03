@@ -60,6 +60,21 @@ export const LOGOUT = gql`
   }
 `;
 
+export const REFRESH_TOKEN = gql`
+  mutation RefreshToken {
+    refreshToken {
+      id
+      email
+      role
+      firstName
+      lastName
+      phone
+      isBlocked
+      isEmailVerified
+    }
+  }
+`;
+
 export const REGISTER = gql`
   mutation Register($input: RegisterInput!) {
     register(input: $input)
