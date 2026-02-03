@@ -3,6 +3,8 @@ import {
   HttpLink,
   InMemoryCache,
 } from "@apollo/client";
+import { ApolloLink } from "@apollo/client/link";
+import { createAuthErrorLink } from "./auth-error-link";
 
 const httpLink = new HttpLink({
   uri:
@@ -11,8 +13,10 @@ const httpLink = new HttpLink({
   credentials: "include",
 });
 
+const link = ApolloLink.from([createAuthErrorLink(), httpLink]);
+
 export const apolloClient = new ApolloClient({
-  link: httpLink,
+  link,
   cache: new InMemoryCache({
     typePolicies: {
       Query: {
