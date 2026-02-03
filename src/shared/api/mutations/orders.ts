@@ -10,13 +10,12 @@ export const CREATE_ORDER_FROM_CART = gql`
   }
 `;
 
-export const CREATE_ORDER_SBP_LINK = gql`
-  mutation CreateOrderSbpLink($orderId: ID!) {
-    createOrderSbpLink(orderId: $orderId) {
-      url
-      qrId
-      dueDate
-      qrImageBase64
+export const CREATE_ORDER_CARD_PAYMENT = gql`
+  mutation CreateOrderCardPayment($orderId: ID!) {
+    createOrderCardPayment(orderId: $orderId) {
+      paymentId
+      paymentUrl
+      status
     }
   }
 `;

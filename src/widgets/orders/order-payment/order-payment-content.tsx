@@ -1,12 +1,11 @@
 "use client";
 
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useOrder } from "@/entities/order/api/use-order";
-import { useCreateOrderSbpLink } from "@/entities/order/api/use-create-order-sbp-link";
+import { useCreateOrderCardPayment } from "@/entities/order/api/use-create-order-card-payment";
 import { useCreateOrderInvoice } from "@/entities/order/api/use-create-order-invoice";
-import { useOrderSbpLinkStatus } from "@/entities/order/api/use-order-sbp-link-status";
 import { Surface } from "@/shared/ui/surface/surface";
 import { LoadingState } from "@/shared/ui/loading-state/loading-state";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
@@ -21,28 +20,13 @@ import {
   ArrowLeft,
   CreditCard,
   FileText,
-  QrCode,
   ExternalLink,
   Download,
   Loader2,
   Sparkles,
 } from "lucide-react";
 import { OrderCustomerType } from "@/shared/api/generated/graphql";
-
-function formatDueDate(date: string | unknown): string {
-  if (!date) return "—";
-  try {
-    return new Date(String(date)).toLocaleString("ru-RU", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  } catch {
-    return String(date);
-  }
-}
+import { cn } from "@/lib/utils";
 
 export const OrderPaymentContent = memo(function OrderPaymentContent({
   orderId,
@@ -52,26 +36,8 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
   const router = useRouter();
   const { order, loading: orderLoading, error: orderError, refetch: refetchOrder } =
     useOrder(orderId);
-  const { createOrderSbpLink, loading: sbpCreating } = useCreateOrderSbpLink();
+  const { createOrderCardPayment, loading: cardCreating } = useCreateOrderCardPayment();
   const { createOrderInvoice, loading: invoiceCreating } = useCreateOrderInvoice();
-  const [sbpLink, setSbpLink] = useState<{
-    url: string;
-    qrId: string;
-    dueDate: string;
-    qrImageBase64?: string | null;
-  } | null>(null);
-  // orderSbpLinkStatus только после успешного createOrderSbpLink; интервал 10 с; опрос останавливается при статусе «оплачено»
-  const { sbpLinkStatus, refetch: refetchSbpStatus } = useOrderSbpLinkStatus(
-    orderId,
-    { skip: !orderId || !sbpLink, pollInterval: 10_000 }
-  );
-
-  // При статусе СБП «оплачено» обновляем заказ (order.status → PAID)
-  useEffect(() => {
-    if (sbpLinkStatus?.status === "Ready") {
-      refetchOrder();
-    }
-  }, [sbpLinkStatus?.status, refetchOrder]);
 
   const [invoiceResult, setInvoiceResult] = useState<{
     pdfUrl: string;
@@ -87,17 +53,12 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
     order?.customerType === OrderCustomerType.Self ||
     order?.customerType === OrderCustomerType.Individual;
 
-  const handleCreateSbpLink = useCallback(async () => {
-    const result = await createOrderSbpLink(orderId);
-    if (result) {
-      setSbpLink({
-        url: result.url,
-        qrId: result.qrId,
-        dueDate: result.dueDate,
-        qrImageBase64: result.qrImageBase64,
-      });
+  const handlePayByCard = useCallback(async () => {
+    const result = await createOrderCardPayment(orderId);
+    if (result?.paymentUrl) {
+      window.location.href = result.paymentUrl;
     }
-  }, [orderId, createOrderSbpLink]);
+  }, [orderId, createOrderCardPayment]);
 
   const handleCreateInvoice = useCallback(async () => {
     const variables: {
@@ -147,7 +108,10 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
   }
 
   const isPaymentPending = order.status === "PAYMENT_PENDING";
-  const isPaid = order.status === "PAID" || order.status === "COMPLETED" || order.status === "DOCUMENTS_GENERATED";
+  const isPaid =
+    order.status === "PAID" ||
+    order.status === "COMPLETED" ||
+    order.status === "DOCUMENTS_GENERATED";
 
   if (!isPaymentPending && !isPaid) {
     return (
@@ -169,9 +133,7 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
           <Sparkles className="h-7 w-7" />
         </div>
         <h1 className="mt-4 text-xl font-semibold text-foreground">Оплата получена</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Заказ №{order.id} оплачен.
-        </p>
+        <p className="mt-2 text-sm text-muted-foreground">Заказ №{order.id} оплачен.</p>
         <Button asChild variant="outline" className="mt-6">
           <Link href={`/orders/${orderId}`}>К заказу</Link>
         </Button>
@@ -190,7 +152,12 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
             Заказ №{order.id}
           </h1>
         </div>
-        <Button variant="ghost" size="sm" onClick={() => router.back()} className="self-start sm:self-auto">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => router.back()}
+          className="self-start sm:self-auto"
+        >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Назад
         </Button>
@@ -199,7 +166,7 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
       <Surface variant="floating" className="overflow-hidden p-0">
         <div className="border-b border-border/60 bg-muted/20 px-6 py-4">
           <p className="text-sm font-medium text-muted-foreground">Сумма к оплате</p>
-          <p className="text-3xl font-bold text-primary">
+          <p className="text-3xl font-bold tracking-tight text-primary">
             {formatPriceWithCurrency(order.totalAmount)}
           </p>
         </div>
@@ -217,83 +184,53 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
 
       <div className="space-y-4">
         <h2 className="text-lg font-semibold text-foreground">Способ оплаты</h2>
-        <Tabs defaultValue="sbp" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 rounded-2xl p-1">
-            <TabsTrigger value="sbp" className="gap-2">
+        <Tabs defaultValue="card" className="w-full">
+          <TabsList
+            className={cn(
+              "grid w-full grid-cols-2 rounded-2xl p-1",
+              "bg-muted/50 border border-border/40"
+            )}
+          >
+            <TabsTrigger value="card" className="gap-2 rounded-xl transition-colors">
               <CreditCard className="h-4 w-4" />
-              СБП
+              Картой
             </TabsTrigger>
-            <TabsTrigger value="invoice" className="gap-2">
+            <TabsTrigger value="invoice" className="gap-2 rounded-xl transition-colors">
               <FileText className="h-4 w-4" />
               По счёту
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="sbp" className="mt-6">
-            <Surface variant="floating" className="space-y-6 p-6">
-              {!sbpLink ? (
-                <>
-                  <p className="text-sm text-muted-foreground">
-                    Получите ссылку для оплаты через СБП. Действует ограниченное время.
-                  </p>
-                  <Button
-                    size="lg"
-                    className="w-full gap-2 sm:w-auto"
-                    onClick={handleCreateSbpLink}
-                    disabled={sbpCreating}
-                  >
-                    {sbpCreating ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <QrCode className="h-4 w-4" />
-                    )}
-                    Получить ссылку СБП
-                  </Button>
-                </>
-              ) : (
-                <div className="space-y-6">
-                  {sbpLink.qrImageBase64 && (
-                    <div className="flex justify-center rounded-2xl border border-border/60 bg-white p-4">
-                      <img
-                        src={`data:image/png;base64,${sbpLink.qrImageBase64}`}
-                        alt="QR-код для оплаты СБП"
-                        className="h-48 w-48 object-contain"
-                      />
-                    </div>
-                  )}
-                  <p className="text-center text-xs text-muted-foreground">
-                    Ссылка действует до {formatDueDate(sbpLink.dueDate)}
-                  </p>
-                  <div className="flex flex-col gap-3 sm:flex-row">
-                    <Button
-                      size="lg"
-                      className="flex-1 gap-2"
-                      onClick={() => window.location.assign(sbpLink.url)}
-                    >
-                      <ExternalLink className="h-4 w-4" />
-                      Оплатить по СБП
-                    </Button>
-                    <Button
-                      size="lg"
-                      variant="outline"
-                      onClick={() => refetchSbpStatus()}
-                      className="flex-1"
-                    >
-                      Проверить статус оплаты
-                    </Button>
-                  </div>
-                  {sbpLinkStatus?.status === "Ready" && (
-                    <p className="rounded-xl bg-primary/10 px-4 py-2 text-center text-sm font-medium text-primary">
-                      Оплата получена
-                    </p>
-                  )}
-                </div>
-              )}
+          <TabsContent value="card" className="mt-6">
+            <Surface
+              variant="floating"
+              className="space-y-6 p-6 ring-1 ring-border/20 transition-shadow hover:ring-primary/10"
+            >
+              <p className="text-sm text-muted-foreground">
+                Оплата банковской картой через защищённую форму Т-Банка. После нажатия кнопки вы
+                будете перенаправлены на страницу оплаты.
+              </p>
+              <Button
+                size="lg"
+                className="w-full gap-2 sm:w-auto min-w-[200px] font-medium"
+                onClick={handlePayByCard}
+                disabled={cardCreating}
+              >
+                {cardCreating ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <CreditCard className="h-4 w-4" />
+                )}
+                Оплатить картой
+              </Button>
             </Surface>
           </TabsContent>
 
           <TabsContent value="invoice" className="mt-6">
-            <Surface variant="floating" className="space-y-6 p-6">
+            <Surface
+              variant="floating"
+              className="space-y-6 p-6 ring-1 ring-border/20 transition-shadow hover:ring-primary/10"
+            >
               {!invoiceResult ? (
                 <>
                   {needsPayerInn && (
@@ -325,7 +262,9 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
                             />
                           </div>
                           <div className="space-y-2">
-                            <Label htmlFor="payerName">Наименование плательщика (необязательно)</Label>
+                            <Label htmlFor="payerName">
+                              Наименование плательщика (необязательно)
+                            </Label>
                             <Input
                               id="payerName"
                               placeholder="ФИО или название"
@@ -359,7 +298,7 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
                   )}
                   <Button
                     size="lg"
-                    className="w-full gap-2 sm:w-auto"
+                    className="w-full gap-2 sm:w-auto min-w-[200px] font-medium"
                     onClick={handleCreateInvoice}
                     disabled={invoiceCreating || (needsPayerInn && !payerInn.trim())}
                   >
@@ -379,7 +318,7 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
                   <div className="flex flex-col gap-3 sm:flex-row">
                     <Button
                       size="lg"
-                      className="flex-1 gap-2"
+                      className="flex-1 gap-2 font-medium"
                       onClick={() => window.open(invoiceResult.pdfUrl, "_blank")}
                     >
                       <Download className="h-4 w-4" />
@@ -390,7 +329,9 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
                         size="lg"
                         variant="outline"
                         className="flex-1 gap-2"
-                        onClick={() => window.open(invoiceResult.incomingInvoiceUrl!, "_blank")}
+                        onClick={() =>
+                          window.open(invoiceResult.incomingInvoiceUrl!, "_blank")
+                        }
                       >
                         <ExternalLink className="h-4 w-4" />
                         Открыть в Т-Бизнес
