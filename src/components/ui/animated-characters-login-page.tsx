@@ -477,18 +477,21 @@ export function LoginFormPage() {
               <div
                 className="absolute flex gap-8 transition-all duration-700 ease-in-out"
                 style={{
-                  left:
+                  left: "45px",
+                  top: "40px",
+                  transform: `translate3d(${
                     password.length > 0 && showPassword
-                      ? `${20}px`
+                      ? -25
                       : isLookingAtEachOther
-                        ? `${55}px`
-                        : `${45 + purplePos.faceX}px`,
-                  top:
+                        ? 10
+                        : purplePos.faceX || 0
+                  }px, ${
                     password.length > 0 && showPassword
-                      ? `${35}px`
+                      ? -5
                       : isLookingAtEachOther
-                        ? `${65}px`
-                        : `${40 + purplePos.faceY}px`,
+                        ? 25
+                        : purplePos.faceY || 0
+                  }px, 0)`,
                 }}
               >
                 <EyeBall
@@ -573,18 +576,21 @@ export function LoginFormPage() {
               <div
                 className="absolute flex gap-6 transition-all duration-700 ease-in-out"
                 style={{
-                  left:
+                  left: "26px",
+                  top: "32px",
+                  transform: `translate3d(${
                     password.length > 0 && showPassword
-                      ? `${10}px`
+                      ? -16
                       : isLookingAtEachOther
-                        ? `${32}px`
-                        : `${26 + blackPos.faceX}px`,
-                  top:
+                        ? 6
+                        : blackPos.faceX || 0
+                  }px, ${
                     password.length > 0 && showPassword
-                      ? `${28}px`
+                      ? -4
                       : isLookingAtEachOther
-                        ? `${12}px`
-                        : `${32 + blackPos.faceY}px`,
+                        ? -20
+                        : blackPos.faceY || 0
+                  }px, 0)`,
                 }}
               >
                 <EyeBall
@@ -656,14 +662,17 @@ export function LoginFormPage() {
               <div
                 className="absolute flex gap-8 transition-all duration-200 ease-out"
                 style={{
-                  left:
+                  left: "82px",
+                  top: "90px",
+                  transform: `translate3d(${
                     password.length > 0 && showPassword
-                      ? `${50}px`
-                      : `${82 + (orangePos.faceX || 0)}px`,
-                  top:
+                      ? -32
+                      : orangePos.faceX || 0
+                  }px, ${
                     password.length > 0 && showPassword
-                      ? `${85}px`
-                      : `${90 + (orangePos.faceY || 0)}px`,
+                      ? -5
+                      : orangePos.faceY || 0
+                  }px, 0)`,
                 }}
               >
                 <Pupil
@@ -721,14 +730,17 @@ export function LoginFormPage() {
               <div
                 className="absolute flex gap-6 transition-all duration-200 ease-out"
                 style={{
-                  left:
+                  left: "52px",
+                  top: "40px",
+                  transform: `translate3d(${
                     password.length > 0 && showPassword
-                      ? `${20}px`
-                      : `${52 + (yellowPos.faceX || 0)}px`,
-                  top:
+                      ? -32
+                      : yellowPos.faceX || 0
+                  }px, ${
                     password.length > 0 && showPassword
-                      ? `${35}px`
-                      : `${40 + (yellowPos.faceY || 0)}px`,
+                      ? -5
+                      : yellowPos.faceY || 0
+                  }px, 0)`,
                 }}
               >
                 <Pupil
@@ -766,14 +778,17 @@ export function LoginFormPage() {
               <div
                 className="absolute h-[4px] w-20 rounded-full bg-foreground transition-all duration-200 ease-out"
                 style={{
-                  left:
+                  left: "40px",
+                  top: "88px",
+                  transform: `translate3d(${
                     password.length > 0 && showPassword
-                      ? `${10}px`
-                      : `${40 + (yellowPos.faceX || 0)}px`,
-                  top:
+                      ? -30
+                      : yellowPos.faceX || 0
+                  }px, ${
                     password.length > 0 && showPassword
-                      ? `${88}px`
-                      : `${88 + (yellowPos.faceY || 0)}px`,
+                      ? 0
+                      : yellowPos.faceY || 0
+                  }px, 0)`,
                 }}
               />
             </div>
@@ -1175,6 +1190,20 @@ export function LoginFormPage() {
                 </a>
               </>
             )}
+          </div>
+
+          {/* Back to home */}
+          <div className="mt-6 text-center">
+            <a
+              href="/"
+              onClick={(e) => {
+                e.preventDefault();
+                router.push("/");
+              }}
+              className="text-sm font-medium text-muted-foreground hover:text-foreground hover:underline transition-colors"
+            >
+              На главную
+            </a>
           </div>
         </div>
       </div>
