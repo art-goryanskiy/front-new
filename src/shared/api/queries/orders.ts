@@ -55,3 +55,16 @@ export const ORDER_INVOICE_STATUS = gql`
     }
   }
 `;
+
+export const ORDER_PAYMENT_SYNC = gql`
+  query OrderPaymentSync($orderId: ID!) {
+    orderPaymentSync(orderId: $orderId) {
+      status
+      updated
+      payments {
+        paymentId
+        status
+      }
+    }
+  }
+`;

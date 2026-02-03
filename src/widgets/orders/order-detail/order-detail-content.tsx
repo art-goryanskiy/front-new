@@ -1,17 +1,26 @@
 "use client";
 
-import { memo } from "react";
+import { memo, useCallback, useState } from "react";
 import Link from "next/link";
 import { useOrder } from "@/entities/order/api/use-order";
+import { useUpdateOrderStatus, UPDATEABLE_ORDER_STATUSES } from "@/entities/order/api/use-update-order-status";
 import { Surface } from "@/shared/ui/surface/surface";
 import { LoadingState } from "@/shared/ui/loading-state/loading-state";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
 import { formatPriceWithCurrency } from "@/shared/lib/helpers/format-helpers";
 import { ORDER_STATUS_LABELS, ORDER_CUSTOMER_TYPE_LABELS } from "@/shared/constants/orders";
 import type { OrderFieldsFragment } from "@/shared/api/generated/graphql";
-import { ArrowLeft, FileText, User } from "lucide-react";
+import { ArrowLeft, FileText, User, Loader2, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
+import type { OrderStatus } from "@/shared/api/generated/graphql";
 
 function formatOrderDate(date: string | unknown): string {
   if (!date) return "—";
@@ -28,13 +37,31 @@ function formatOrderDate(date: string | unknown): string {
   }
 }
 
+const PAID_LIKE_STATUSES = ["PAID", "DOCUMENTS_GENERATED", "COMPLETED"];
+
 export const OrderDetailContent = memo(function OrderDetailContent({
   orderId,
 }: {
   orderId: string;
 }) {
   const router = useRouter();
-  const { order, loading, error } = useOrder(orderId);
+  const [updatingStatus, setUpdatingStatus] = useState<OrderStatus | null>(null);
+  const { order, loading, error, refetch } = useOrder(orderId);
+  const { updateOrderStatus, loading: updateLoading } = useUpdateOrderStatus();
+
+  const handleStatusChange = useCallback(
+    async (newStatus: OrderStatus) => {
+      if (!orderId) return;
+      setUpdatingStatus(newStatus);
+      try {
+        await updateOrderStatus(orderId, newStatus);
+        await refetch();
+      } finally {
+        setUpdatingStatus(null);
+      }
+    },
+    [orderId, updateOrderStatus, refetch]
+  );
 
   if (loading && !order) {
     return <LoadingState message="Загрузка заказа…" />;
@@ -95,6 +122,44 @@ export const OrderDetailContent = memo(function OrderDetailContent({
           </Button>
         </div>
       </div>
+
+      {PAID_LIKE_STATUSES.includes(order.status) && order.status !== "COMPLETED" && order.status !== "CANCELLED" && (
+        <Surface variant="inset" className="flex flex-wrap items-center justify-between gap-4 p-4">
+          <span className="text-sm font-medium text-muted-foreground">Сменить статус заказа</span>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={updateLoading}
+                className="gap-2 rounded-xl border-border/60"
+              >
+                {updateLoading && updatingStatus ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <ChevronDown className="h-4 w-4" />
+                )}
+                Выбрать статус
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="min-w-[180px] rounded-xl">
+              {UPDATEABLE_ORDER_STATUSES.map(({ value, label }) => (
+                <DropdownMenuItem
+                  key={value}
+                  onClick={() => handleStatusChange(value)}
+                  disabled={value === order.status || (updateLoading && updatingStatus === value)}
+                  className="gap-2"
+                >
+                  {updatingStatus === value ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : null}
+                  {label}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </Surface>
+      )}
 
       <Surface variant="floating" className="space-y-6 p-6">
         <div className="grid gap-4 sm:grid-cols-2">

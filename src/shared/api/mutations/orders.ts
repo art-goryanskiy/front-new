@@ -20,6 +20,15 @@ export const CREATE_ORDER_CARD_PAYMENT = gql`
   }
 `;
 
+export const UPDATE_ORDER_STATUS = gql`
+  mutation UpdateOrderStatus($orderId: ID!, $status: OrderStatus!) {
+    updateOrderStatus(orderId: $orderId, status: $status) {
+      id
+      status
+    }
+  }
+`;
+
 export const CREATE_ORDER_INVOICE = gql`
   mutation CreateOrderInvoice(
     $orderId: ID!
