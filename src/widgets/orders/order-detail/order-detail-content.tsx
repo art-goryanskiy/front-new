@@ -107,7 +107,7 @@ export const OrderDetailContent = memo(function OrderDetailContent({
           </span>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          {order.status === "PAYMENT_PENDING" && (
+          {(order.status === "PAYMENT_PENDING" || order.status === "AWAITING_PAYMENT") && (
             <Button asChild>
               <Link href={`/orders/${order.id}/pay`}>Оплатить</Link>
             </Button>

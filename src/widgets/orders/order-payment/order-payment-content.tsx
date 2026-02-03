@@ -107,7 +107,8 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
     );
   }
 
-  const isPaymentPending = order.status === "PAYMENT_PENDING";
+  const isPaymentPending =
+    order.status === "PAYMENT_PENDING" || order.status === "AWAITING_PAYMENT";
   const isPaid =
     order.status === "PAID" ||
     order.status === "COMPLETED" ||
