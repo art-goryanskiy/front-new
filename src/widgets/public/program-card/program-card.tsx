@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { usePriceVisibility } from "@/shared/store/auth-store";
 import { useAddToCart } from "@/entities/cart/api/use-add-to-cart";
 import { useMyCart } from "@/entities/cart/api/use-my-cart";
+import { useRemoveFromCart } from "@/entities/cart/api/use-remove-from-cart";
 import { cn } from "@/lib/utils";
 import { formatPrice } from "@/shared/lib/helpers/format-helpers";
 import { RatingStars } from "@/shared/ui/rating-stars/rating-stars";
@@ -33,13 +34,15 @@ export const ProgramCard = memo(
     const router = useRouter();
     const { canSeePrice, isAuthLoading } = usePriceVisibility();
     const { minPrice } = useProgramCardPricing(program);
-    const { addToCart, loading } = useAddToCart();
+    const { addToCart, loading: addLoading } = useAddToCart();
+    const { removeFromCart, loading: removeLoading } = useRemoveFromCart();
     const { items: cartItems } = useMyCart({ skip: !canSeePrice });
 
-    const isInCart = useMemo(
-      () => cartItems.some((item) => item.programId === program.id),
+    const cartItem = useMemo(
+      () => cartItems.find((item) => item.programId === program.id),
       [cartItems, program.id]
     );
+    const isInCart = !!cartItem;
     const { showToast } = useToastState();
 
     const cardTitle = useMemo(() => {
@@ -70,11 +73,23 @@ export const ProgramCard = memo(
       [router]
     );
 
-    const handleAddToCart = useCallback(
+    const handleToggleCart = useCallback(
       async (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
-        if (!canAddToCart || firstPricingIndex === null || isInCart) return;
+        if (isInCart && cartItem) {
+          try {
+            await removeFromCart({
+              programId: program.id,
+              pricingIndex: cartItem.pricingIndex,
+            });
+            showToast("success", "Удалено из корзины");
+          } catch {
+            showToast("error", "Не удалось удалить из корзины");
+          }
+          return;
+        }
+        if (!canAddToCart || firstPricingIndex === null) return;
         try {
           await addToCart({
             programId: program.id,
@@ -103,13 +118,17 @@ export const ProgramCard = memo(
       [
         addToCart,
         canAddToCart,
+        cartItem,
         firstPricingIndex,
         isInCart,
         program.id,
+        removeFromCart,
         router,
         showToast,
       ]
     );
+
+    const isLoading = addLoading || removeLoading;
 
     return (
       <motion.div
@@ -145,15 +164,17 @@ export const ProgramCard = memo(
                     type="button"
                     variant="ghost"
                     size="icon"
-                    onClick={handleAddToCart}
-                    disabled={loading || isInCart}
+                    onClick={handleToggleCart}
+                    disabled={isLoading}
                     className={cn(
                       "h-9 w-9 shrink-0 rounded-xl border backdrop-blur transition-colors",
                       isInCart
-                        ? "cursor-default border-primary/40 bg-primary/10 text-primary"
+                        ? "border-primary/40 bg-primary/10 text-primary hover:bg-primary/20"
                         : "border-border/60 bg-background/60 text-muted-foreground hover:bg-muted/20 hover:text-foreground disabled:opacity-50"
                     )}
-                    aria-label={isInCart ? "В корзине" : "Добавить в корзину"}
+                    aria-label={
+                      isInCart ? "Удалить из корзины" : "Добавить в корзину"
+                    }
                   >
                     {isInCart ? (
                       <Check className="h-4 w-4" />

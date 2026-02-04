@@ -58,7 +58,7 @@ export const Component = () => {
         <GridPattern offsetX={gridOffsetX} offsetY={gridOffsetY} />
       </motion.div>
 
-      <div className="pointer-events-none absolute inset-0 z-0">
+      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
         <div className="absolute -top-24 -left-24 h-[320px] w-[420px] rounded-full bg-primary/15 blur-3xl" />
         <div className="absolute -top-32 -right-28 h-[360px] w-[520px] rounded-full bg-orange-500/15 blur-3xl dark:bg-orange-500/10" />
         <div className="absolute -bottom-32 -left-28 h-[420px] w-[520px] rounded-full bg-blue-500/15 blur-3xl dark:bg-blue-500/10" />

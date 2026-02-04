@@ -150,6 +150,10 @@
   --login-character-middle: #262626;
 }
 
+html {
+  overflow-x: hidden;
+}
+
 body {
   @apply bg-background text-foreground antialiased;
   font-family: var(--font-sans);
