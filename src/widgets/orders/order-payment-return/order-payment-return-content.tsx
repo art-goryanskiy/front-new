@@ -18,18 +18,14 @@ export const OrderPaymentReturnContent = memo(function OrderPaymentReturnContent
   orderId: string;
   variant: "success" | "fail";
 }) {
-  const { sync, loading: syncLoading } = useOrderPaymentSync(orderId);
+  const { sync } = useOrderPaymentSync(orderId);
   const { order, loading: orderLoading, refetch: refetchOrder } = useOrder(orderId);
 
   useEffect(() => {
-    if (sync && sync.updated && orderId) {
+    if (sync?.updated && orderId) {
       refetchOrder();
     }
   }, [sync?.updated, orderId, refetchOrder]);
-
-  if (syncLoading && !sync) {
-    return <LoadingState message="Синхронизация статуса оплаты…" />;
-  }
 
   if (orderLoading && !order) {
     return <LoadingState message="Загрузка заказа…" />;

@@ -48,16 +48,22 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
   const [payerKpp, setPayerKpp] = useState("");
   const [payerName, setPayerName] = useState("");
   const [payerOrgApiUnavailable, setPayerOrgApiUnavailable] = useState(false);
+  const [cardPaymentError, setCardPaymentError] = useState<string | null>(null);
 
   const needsPayerInn =
     order?.customerType === OrderCustomerType.Self ||
     order?.customerType === OrderCustomerType.Individual;
 
   const handlePayByCard = useCallback(async () => {
-    const result = await createOrderCardPayment(orderId);
-    if (result?.paymentUrl) {
-      window.location.href = result.paymentUrl;
+    setCardPaymentError(null);
+    const { data, error } = await createOrderCardPayment(orderId);
+    if (data?.paymentUrl) {
+      window.location.href = data.paymentUrl;
+      return;
     }
+    setCardPaymentError(
+      error ?? "Не удалось создать платёж. Попробуйте позже или выберите другой способ оплаты."
+    );
   }, [orderId, createOrderCardPayment]);
 
   const handleCreateInvoice = useCallback(async () => {
@@ -211,6 +217,11 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
                 Оплата банковской картой через защищённую форму Т-Банка. После нажатия кнопки вы
                 будете перенаправлены на страницу оплаты.
               </p>
+              {cardPaymentError && (
+                <p className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive" role="alert">
+                  {cardPaymentError}
+                </p>
+              )}
               <Button
                 size="lg"
                 className="w-full gap-2 sm:w-auto min-w-[200px] font-medium"

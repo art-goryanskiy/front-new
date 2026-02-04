@@ -24,9 +24,17 @@ export function useCreateOrderCardPayment() {
 
   const createOrderCardPayment = async (
     orderId: string
-  ): Promise<CreateOrderCardPaymentResult | null> => {
-    const result = await createCardPaymentMutation({ variables: { orderId } });
-    return result.data?.createOrderCardPayment ?? null;
+  ): Promise<{ data: CreateOrderCardPaymentResult | null; error?: string }> => {
+    try {
+      const result = await createCardPaymentMutation({ variables: { orderId } });
+      const data = result.data?.createOrderCardPayment ?? null;
+      const err = result.error?.message ?? null;
+      if (data) return { data };
+      return { data: null, error: err ?? "Не удалось создать платёж" };
+    } catch (e) {
+      const message = e instanceof Error ? e.message : "Не удалось создать платёж";
+      return { data: null, error: message };
+    }
   };
 
   return {
