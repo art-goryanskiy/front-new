@@ -4,8 +4,8 @@ import { useAuthStore } from "@/shared/store/auth-store";
 import { useQuery } from "@apollo/client/react";
 import { useEffect, useMemo, useRef } from "react";
 
-const ME_RETRY_DELAY_MS = 2500;
-const ME_RETRY_DELAY_2_MS = 5000;
+const ME_RETRY_DELAYS_MS = [2500, 5000, 8000, 12000];
+const ME_MAX_RETRIES = ME_RETRY_DELAYS_MS.length;
 
 export function useMe(options?: { skip?: boolean }) {
   const setUser = useAuthStore((state) => state.setUser);
@@ -18,8 +18,6 @@ export function useMe(options?: { skip?: boolean }) {
     me: UserEntity | null;
   }>(ME, {
     errorPolicy: "ignore",
-    // Важно для корректной авторизации: "cache-first" может держать устаревший `me`.
-    // Один сетевой запрос при старте, затем можно жить из кеша.
     fetchPolicy: "network-only",
     nextFetchPolicy: "cache-first",
     skip,
@@ -28,31 +26,49 @@ export function useMe(options?: { skip?: boolean }) {
 
   const meUser = useMemo(() => data?.me || null, [data?.me]);
 
-  // Используем ref для отслеживания предыдущего значения user
-  const previousUserRef = useRef<UserEntity | null | undefined>(
-    undefined
-  );
+  const previousUserRef = useRef<UserEntity | null | undefined>(undefined);
   const retryCountRef = useRef(0);
-  const refetchCalledRef = useRef(false);
+  const nextRetryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Повторные запросы при отсутствии user (холодный старт, me: null при неготовой сессии)
+  // Повторные запросы при отсутствии user (холодный старт, me: null при неготовой сессии).
+  // Запускаем цепочку retry из callback refetch — иначе второй retry никогда не планируется
+  // (при me: null deps эффекта не меняются, эффект не перезапускается).
   useEffect(() => {
-    if (skip) return;
-    if (loading || meUser) return;
-    if (retryCountRef.current >= 2) return;
+    if (skip || loading || meUser) return;
+    if (retryCountRef.current >= ME_MAX_RETRIES) return;
 
-    refetchCalledRef.current = false;
-    const delay =
-      retryCountRef.current === 0
-        ? ME_RETRY_DELAY_MS
-        : ME_RETRY_DELAY_2_MS;
-    retryCountRef.current += 1;
-    setLoading(true);
-    const timer = setTimeout(() => {
-      refetchCalledRef.current = true;
-      refetch();
-    }, delay);
-    return () => clearTimeout(timer);
+    const scheduleNextRetry = () => {
+      const idx = retryCountRef.current;
+      if (idx >= ME_MAX_RETRIES) {
+        setLoading(false);
+        return;
+      }
+      const delay = ME_RETRY_DELAYS_MS[idx];
+      retryCountRef.current += 1;
+      setLoading(true);
+      nextRetryTimerRef.current = setTimeout(async () => {
+        nextRetryTimerRef.current = null;
+        try {
+          const result = await refetch({ fetchPolicy: "network-only" });
+          const nextUser = result?.data?.me ?? null;
+          if (nextUser) {
+            setLoading(false);
+            return;
+          }
+          scheduleNextRetry();
+        } catch {
+          scheduleNextRetry();
+        }
+      }, delay);
+    };
+
+    scheduleNextRetry();
+    return () => {
+      if (nextRetryTimerRef.current) {
+        clearTimeout(nextRetryTimerRef.current);
+        nextRetryTimerRef.current = null;
+      }
+    };
   }, [skip, loading, meUser, refetch, setLoading]);
 
   useEffect(() => {
@@ -71,8 +87,7 @@ export function useMe(options?: { skip?: boolean }) {
     }
 
     // Сбрасываем isLoading когда запрос завершается (но не при ожидании retry)
-    const awaitingRetry =
-      retryCountRef.current > 0 && !refetchCalledRef.current && !meUser;
+    const awaitingRetry = retryCountRef.current > 0 && !meUser;
     if (!loading && !awaitingRetry) {
       setLoading(false);
     }
