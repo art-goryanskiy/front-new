@@ -38,6 +38,7 @@ export const PublicHeader = memo(function PublicHeader() {
     handleSearchFocus,
     handleSearchSelect,
     handleSearchClose,
+    handleSearchPanelClose,
     toggleMobileMenu,
     closeMobileMenu,
     handleLoginClick,
@@ -83,9 +84,11 @@ export const PublicHeader = memo(function PublicHeader() {
         isExpanded={state.isSearchExpanded}
         searchValue={state.searchValue}
         isSearchOpen={state.isSearchOpen}
+        user={user}
         onSearchChange={handleSearchChange}
         onSearchFocus={handleSearchFocus}
         onSearchClose={handleSearchClose}
+        onSearchPanelClose={handleSearchPanelClose}
         onSearchSelect={handleSearchSelect}
       />
     </>

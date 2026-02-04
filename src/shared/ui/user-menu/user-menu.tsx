@@ -9,6 +9,8 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Icon, type IconName } from "@/shared/ui/icons/icon";
@@ -34,9 +36,9 @@ const DEFAULT_MENU_ITEMS: ReadonlyArray<{
     icon: "user",
   },
   {
-    key: "settings",
-    label: USER_MENU_TEXTS.settings,
-    icon: "settings",
+    key: "orders",
+    label: USER_MENU_TEXTS.myOrders,
+    icon: "file-text",
   },
 ] as const;
 
@@ -53,6 +55,13 @@ export const UserMenu = memo(function UserMenu({
     [userEmail]
   );
 
+  const displayName = useMemo(() => {
+    const first = user?.firstName ?? user?.profile?.firstName ?? "";
+    const last = user?.lastName ?? user?.profile?.lastName ?? "";
+    const name = [first, last].filter(Boolean).join(" ").trim();
+    return name || userEmail;
+  }, [user?.firstName, user?.lastName, user?.profile?.firstName, user?.profile?.lastName, userEmail]);
+
   const avatarUrl = user?.profile?.avatar ?? null;
   useEffect(() => {
     setAvatarLoaded(false);
@@ -60,6 +69,10 @@ export const UserMenu = memo(function UserMenu({
 
   const handleProfile = useCallback(() => {
     router.push("/profile");
+  }, [router]);
+
+  const handleOrders = useCallback(() => {
+    router.push("/orders");
   }, [router]);
 
   return (
@@ -102,12 +115,20 @@ export const UserMenu = memo(function UserMenu({
         align="end"
         className={USER_MENU_CLASSES.menu}
       >
+        <DropdownMenuLabel className="font-normal">
+          <span className="truncate block">{displayName}</span>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
         {menuItems.map((item) => (
           <DropdownMenuItem
             key={item.key}
             onClick={
               item.onPress ??
-              (item.key === "profile" ? handleProfile : undefined)
+              (item.key === "profile"
+                ? handleProfile
+                : item.key === "orders"
+                  ? handleOrders
+                  : undefined)
             }
           >
             <Icon
