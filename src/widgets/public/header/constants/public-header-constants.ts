@@ -12,7 +12,7 @@ export const PUBLIC_HEADER_CLASSES = {
     "text-sm font-medium text-foreground hover:text-primary transition-colors",
   navLinkActive:
     "text-primary-600 dark:text-primary-400 font-semibold",
-  actions: "flex gap-2 items-center shrink-0",
+  actions: "flex min-h-14 gap-2 items-center shrink-0",
   mobileMenuButton: "md:hidden",
 } as const;
 

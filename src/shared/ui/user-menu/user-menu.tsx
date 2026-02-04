@@ -1,9 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import {
   Avatar,
   AvatarFallback,
-  AvatarImage,
 } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -65,10 +65,15 @@ export const UserMenu = memo(function UserMenu({
           aria-label="Меню пользователя"
         >
           <Avatar className={USER_MENU_CLASSES.avatar}>
-            <AvatarImage
-              src={user?.profile?.avatar ?? undefined}
-              alt={userEmail}
-            />
+            {user?.profile?.avatar ? (
+              <Image
+                src={user.profile.avatar}
+                alt={userEmail}
+                fill
+                sizes="40px"
+                className="object-cover"
+              />
+            ) : null}
             <AvatarFallback className="bg-primary text-xs font-semibold text-primary-foreground sm:text-sm">
               {userInitial}
             </AvatarFallback>
