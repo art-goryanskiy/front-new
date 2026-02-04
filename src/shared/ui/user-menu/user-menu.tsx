@@ -15,7 +15,8 @@ import { Icon, type IconName } from "@/shared/ui/icons/icon";
 import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { memo, useCallback, useMemo } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { cn } from "@/lib/utils";
 import {
   USER_MENU_CLASSES,
   USER_MENU_TEXTS,
@@ -45,11 +46,17 @@ export const UserMenu = memo(function UserMenu({
   menuItems = DEFAULT_MENU_ITEMS,
 }: UserMenuProps) {
   const router = useRouter();
+  const [avatarLoaded, setAvatarLoaded] = useState(false);
   const userEmail = user?.email || "User";
   const userInitial = useMemo(
     () => userEmail.charAt(0).toUpperCase(),
     [userEmail]
   );
+
+  const avatarUrl = user?.profile?.avatar ?? null;
+  useEffect(() => {
+    setAvatarLoaded(false);
+  }, [avatarUrl]);
 
   const handleProfile = useCallback(() => {
     router.push("/profile");
@@ -72,9 +79,15 @@ export const UserMenu = memo(function UserMenu({
                 fill
                 sizes="40px"
                 className="object-cover"
+                onLoad={() => setAvatarLoaded(true)}
               />
             ) : null}
-            <AvatarFallback className="bg-primary text-xs font-semibold text-primary-foreground sm:text-sm">
+            <AvatarFallback
+              className={cn(
+                "bg-primary text-xs font-semibold text-primary-foreground sm:text-sm",
+                avatarLoaded && "hidden"
+              )}
+            >
               {userInitial}
             </AvatarFallback>
           </Avatar>

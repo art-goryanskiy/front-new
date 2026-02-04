@@ -86,9 +86,12 @@ export function useMe(options?: { skip?: boolean }) {
       return;
     }
 
-    // Сбрасываем isLoading когда запрос завершается (но не при ожидании retry)
+    // Сбрасываем isLoading когда запрос завершается (но не при ожидании retry).
+    // При me: null на холодной загрузке retry запустится — не гасим loading,
+    // чтобы не показывать «Узнать стоимость» до успешного retry.
+    const willRetry = !meUser && retryCountRef.current < ME_MAX_RETRIES;
     const awaitingRetry = retryCountRef.current > 0 && !meUser;
-    if (!loading && !awaitingRetry) {
+    if (!loading && !awaitingRetry && !willRetry) {
       setLoading(false);
     }
 
