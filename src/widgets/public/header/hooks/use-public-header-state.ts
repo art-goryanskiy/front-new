@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuthUser } from "@/shared/store/auth-store";
 import { useLogout } from "@/features/auth/api/use-logout";
+import { HEADER_MENU_BUTTON_ID } from "../constants/public-header-constants";
 import type { PublicSearchResult } from "../hooks/use-public-search-results";
 import { startTransition } from "react";
 
@@ -64,6 +65,19 @@ export function usePublicHeaderState() {
     return () => {
       document.body.style.overflow = "";
     };
+  }, [state.isMobileMenuOpen]);
+
+  // Возврат фокуса на кнопку меню при закрытии
+  const prevMenuOpenRef = useRef(state.isMobileMenuOpen);
+  useEffect(() => {
+    if (prevMenuOpenRef.current && !state.isMobileMenuOpen) {
+      const t = setTimeout(
+        () => document.getElementById(HEADER_MENU_BUTTON_ID)?.focus(),
+        0
+      );
+      return () => clearTimeout(t);
+    }
+    prevMenuOpenRef.current = state.isMobileMenuOpen;
   }, [state.isMobileMenuOpen]);
 
   // Обработчики

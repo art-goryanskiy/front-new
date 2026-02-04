@@ -7,7 +7,11 @@ import { Search, Menu, X, ShoppingCart } from "lucide-react";
 import { UserMenu } from "@/shared/ui/user-menu/user-menu";
 import { ThemeToggle } from "@/shared/ui/theme-toggle/theme-toggle";
 import { useMyCart } from "@/entities/cart/api/use-my-cart";
-import { PUBLIC_HEADER_CLASSES } from "../constants/public-header-constants";
+import {
+  PUBLIC_HEADER_CLASSES,
+  HEADER_MENU_BUTTON_ID,
+} from "../constants/public-header-constants";
+import { MOBILE_MENU_PANEL_ID } from "./mobile-menu";
 import type { UserEntity } from "@/shared/api/generated/graphql";
 import { cn } from "@/lib/utils";
 
@@ -77,9 +81,12 @@ export const HeaderActions = memo(function HeaderActions({
         </Button>
       )}
       <Button
+        id={HEADER_MENU_BUTTON_ID}
         variant="ghost"
         size="icon"
-        aria-label="Меню"
+        aria-label={isMobileMenuOpen ? "Закрыть меню" : "Открыть меню"}
+        aria-expanded={isMobileMenuOpen}
+        aria-controls={MOBILE_MENU_PANEL_ID}
         onClick={onMobileMenuToggle}
         className="text-muted-foreground hover:text-foreground md:hidden"
       >
