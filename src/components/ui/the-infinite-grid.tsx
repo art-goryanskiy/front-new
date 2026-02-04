@@ -1,17 +1,17 @@
 "use client";
-import React, { useRef } from "react";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
-  type MotionValue,
   motion,
-  useMotionValue,
-  useMotionTemplate,
   useAnimationFrame,
+  useMotionTemplate,
+  useMotionValue,
+  type MotionValue,
 } from "framer-motion";
-import { HandWrittenTitle } from "./hand-writing-text";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
+import Link from "next/link";
+import React, { useRef } from "react";
+import { HandWrittenTitle } from "./hand-writing-text";
 
 export const Component = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -73,7 +73,10 @@ export const Component = () => {
           </div>
 
           <h1 className="text-4xl font-extrabold tracking-tight text-balance text-foreground md:text-6xl">
-            <HandWrittenTitle title="Стандарт +" />
+            <HandWrittenTitle
+              title="Стандарт +"
+              subtitle="учебный центр"
+            />
           </h1>
 
           <p className="mt-6 text-base leading-relaxed text-pretty text-muted-foreground sm:text-lg">
