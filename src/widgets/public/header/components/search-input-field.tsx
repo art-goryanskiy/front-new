@@ -38,7 +38,7 @@ export const SearchInputField = memo(function SearchInputField({
     >
       <Search className="h-5 w-5 shrink-0 text-muted-foreground" aria-hidden />
       <Input
-        type="search"
+        type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onFocus={onFocus}
