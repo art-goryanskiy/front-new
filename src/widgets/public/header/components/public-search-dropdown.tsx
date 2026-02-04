@@ -4,9 +4,13 @@ import { highlightMatch } from "@/shared/ui/highlight/highlight-match";
 import { AnimatePresence, motion } from "framer-motion";
 import { BookOpen, Folder, Loader2, Receipt } from "lucide-react";
 import { memo, useCallback, useEffect, useMemo, useRef } from "react";
+import { CATEGORY_TYPE_LABELS } from "@/shared/constants/categories";
 import type { PublicSearchResult } from "../hooks/use-public-search-results";
 import { usePublicSearchResults } from "../hooks/use-public-search-results";
 import type { UserEntity } from "@/shared/api/generated/graphql";
+
+const CATEGORY_ORDER = Object.values(CATEGORY_TYPE_LABELS) as string[];
+const OTHER_CATEGORY_LABEL = "Прочее";
 
 interface PublicSearchDropdownProps {
   query: string;
@@ -59,12 +63,29 @@ export const PublicSearchDropdown = memo(
     const hasResults = results.length > 0;
     const showDropdown = isOpen && query.length > 0;
 
-    // Группируем результаты
+    // Группируем результаты: категории и заявки — как есть; программы — по родительской категории
     const groupedResults = useMemo(() => {
       const categories = results.filter((r) => r.type === "category");
       const programs = results.filter((r) => r.type === "program");
       const orders = results.filter((r) => r.type === "order");
-      return { categories, programs, orders };
+
+      const programsByCategory = new Map<string, PublicSearchResult[]>();
+      for (const p of programs) {
+        const key = p.parentCategoryName?.trim() || OTHER_CATEGORY_LABEL;
+        if (!programsByCategory.has(key)) programsByCategory.set(key, []);
+        programsByCategory.get(key)!.push(p);
+      }
+      const programEntries: [string, PublicSearchResult[]][] = [];
+      for (const name of CATEGORY_ORDER) {
+        const list = programsByCategory.get(name);
+        if (list?.length) programEntries.push([name, list]);
+      }
+      programsByCategory.forEach((list, name) => {
+        if (!CATEGORY_ORDER.includes(name))
+          programEntries.push([name, list]);
+      });
+
+      return { categories, orders, programEntries };
     }, [results]);
 
     if (!showDropdown) return null;
@@ -108,20 +129,32 @@ export const PublicSearchDropdown = memo(
                     </div>
                   </div>
                 )}
-                {groupedResults.programs.length > 0 && (
+                {groupedResults.programEntries.length > 0 && (
                   <div className="px-4 py-2">
                     <div className="mb-2 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
                       Программы
                     </div>
-                    <div className="space-y-1">
-                      {groupedResults.programs.map((result) => (
-                        <SearchResultItem
-                          key={result.id}
-                          result={result}
-                          query={query}
-                          onClick={handleResultClick}
-                        />
-                      ))}
+                    <div className="space-y-4">
+                      {groupedResults.programEntries.map(
+                        ([categoryName, programList]) => (
+                          <div key={categoryName}>
+                            <div className="mb-1.5 px-1 text-xs font-medium text-muted-foreground">
+                              {categoryName}
+                            </div>
+                            <div className="space-y-1">
+                              {programList.map((result) => (
+                                <SearchResultItem
+                                  key={result.id}
+                                  result={result}
+                                  query={query}
+                                  onClick={handleResultClick}
+                                  showCategoryLabel={false}
+                                />
+                              ))}
+                            </div>
+                          </div>
+                        )
+                      )}
                     </div>
                   </div>
                 )}
@@ -155,12 +188,15 @@ interface SearchResultItemProps {
   result: PublicSearchResult;
   query: string;
   onClick: (result: PublicSearchResult) => void;
+  /** Скрыть подпись «Категория: …» (когда категория уже показана заголовком группы) */
+  showCategoryLabel?: boolean;
 }
 
 const SearchResultItem = memo(function SearchResultItem({
   result,
   query,
   onClick,
+  showCategoryLabel = true,
 }: SearchResultItemProps) {
   const IconComponent = useMemo(() => {
     if (result.icon === "folder") return Folder;
@@ -186,6 +222,7 @@ const SearchResultItem = memo(function SearchResultItem({
   }, [onClick, result]);
 
   const categoryText = useMemo(() => {
+    if (!showCategoryLabel) return null;
     if (result.type === "category" && result.parentCategoryName) {
       return `Категория: ${result.parentCategoryName}`;
     }
@@ -197,7 +234,7 @@ const SearchResultItem = memo(function SearchResultItem({
     }
     if (result.type === "order") return "Моя заявка";
     return result.type === "category" ? "Категория" : "Программа";
-  }, [result.type, result.parentCategoryName]);
+  }, [result.type, result.parentCategoryName, showCategoryLabel]);
 
   return (
     <motion.button
@@ -211,9 +248,11 @@ const SearchResultItem = memo(function SearchResultItem({
         </div>
         <div className="min-w-0 flex-1">
           <div className="font-medium">{highlightedLabel}</div>
-          <div className="mt-0.5 text-xs text-muted-foreground">
-            {categoryText}
-          </div>
+          {categoryText && (
+            <div className="mt-0.5 text-xs text-muted-foreground">
+              {categoryText}
+            </div>
+          )}
           {highlightedDescription && (
             <div className="mt-0.5 truncate text-xs text-muted-foreground">
               {highlightedDescription}
