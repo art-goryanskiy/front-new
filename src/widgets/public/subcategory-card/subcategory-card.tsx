@@ -4,7 +4,7 @@ import { memo, useMemo } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { useCanSeePrice } from "@/shared/store/auth-store";
+import { usePriceVisibility } from "@/shared/store/auth-store";
 import type { SubcategoryCardProps } from "./types/subcategory-card.types";
 import { SUBCATEGORY_CARD_CLASSES } from "./constants/subcategory-card-constants";
 import { SubcategoryCardImage } from "./components/subcategory-card-image";
@@ -16,7 +16,7 @@ export const SubcategoryCard = memo(function SubcategoryCard({
   category,
   priority = false,
 }: SubcategoryCardProps) {
-  const canSeePrice = useCanSeePrice();
+  const { canSeePrice, isAuthLoading } = usePriceVisibility();
   const priceRange = useSubcategoryPricing(category);
 
   const programsLabel = useMemo(() => {
@@ -84,6 +84,7 @@ export const SubcategoryCard = memo(function SubcategoryCard({
               <SubcategoryCardPrice
                 priceRange={priceRange}
                 canSeePrice={canSeePrice}
+                isAuthLoading={isAuthLoading}
               />
             </div>
           </div>

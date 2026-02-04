@@ -3,13 +3,18 @@
 import Link from "next/link";
 import { memo, useCallback, useMemo } from "react";
 import { motion } from "framer-motion";
-import { ShoppingCart } from "lucide-react";
+import { ArrowRight, Check, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useCanSeePrice } from "@/shared/store/auth-store";
+import { usePriceVisibility } from "@/shared/store/auth-store";
 import { useAddToCart } from "@/entities/cart/api/use-add-to-cart";
+import { useMyCart } from "@/entities/cart/api/use-my-cart";
+import { useRemoveFromCart } from "@/entities/cart/api/use-remove-from-cart";
+import { cn } from "@/lib/utils";
 import { formatPrice } from "@/shared/lib/helpers/format-helpers";
+import { RatingStars } from "@/shared/ui/rating-stars/rating-stars";
 import type { ProgramCardProps } from "./types/program-card.types";
 import { useProgramCardPricing } from "./hooks/use-program-card-pricing";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Surface } from "@/shared/ui/surface/surface";
 import { useToastState } from "@/shared/store/toast-store";
 import { useRouter } from "next/navigation";
@@ -27,9 +32,17 @@ function getFirstPricingIndex(program: { pricing?: Array<{ price?: number | null
 export const ProgramCard = memo(
   function ProgramCard({ program }: ProgramCardProps) {
     const router = useRouter();
-    const canSeePrice = useCanSeePrice();
+    const { canSeePrice, isAuthLoading } = usePriceVisibility();
     const { minPrice } = useProgramCardPricing(program);
-    const { addToCart, loading } = useAddToCart();
+    const { addToCart, loading: addLoading } = useAddToCart();
+    const { removeFromCart, loading: removeLoading } = useRemoveFromCart();
+    const { items: cartItems } = useMyCart({ skip: !canSeePrice });
+
+    const cartItem = useMemo(
+      () => cartItems.find((item) => item.programId === program.id),
+      [cartItems, program.id]
+    );
+    const isInCart = !!cartItem;
     const { showToast } = useToastState();
 
     const cardTitle = useMemo(() => {
@@ -50,10 +63,32 @@ export const ProgramCard = memo(
 
     const canAddToCart = minPrice !== null && minPrice > 0 && firstPricingIndex !== null;
 
-    const handleAddToCart = useCallback(
+    const handleLearnPrice = useCallback(
+      (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        saveReturnUrl(window.location.pathname);
+        router.replace(AUTH_GUARD_ROUTES.login);
+      },
+      [router]
+    );
+
+    const handleToggleCart = useCallback(
       async (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
+        if (isInCart && cartItem) {
+          try {
+            await removeFromCart({
+              programId: program.id,
+              pricingIndex: cartItem.pricingIndex,
+            });
+            showToast("success", "Удалено из корзины");
+          } catch {
+            showToast("error", "Не удалось удалить из корзины");
+          }
+          return;
+        }
         if (!canAddToCart || firstPricingIndex === null) return;
         try {
           await addToCart({
@@ -83,12 +118,17 @@ export const ProgramCard = memo(
       [
         addToCart,
         canAddToCart,
+        cartItem,
         firstPricingIndex,
+        isInCart,
         program.id,
+        removeFromCart,
         router,
         showToast,
       ]
     );
+
+    const isLoading = addLoading || removeLoading;
 
     return (
       <motion.div
@@ -119,28 +159,58 @@ export const ProgramCard = memo(
                   {cardTitle}
                 </h3>
 
-                {canSeePrice && canAddToCart && (
+                {canSeePrice && (canAddToCart || isInCart) && (
                   <Button
                     type="button"
                     variant="ghost"
                     size="icon"
-                    onClick={handleAddToCart}
-                    disabled={loading}
-                    className="h-9 w-9 shrink-0 rounded-xl border border-border/60 bg-background/60 text-muted-foreground shadow-sm backdrop-blur hover:bg-muted/20 hover:text-foreground disabled:opacity-50"
-                    aria-label="Добавить в корзину"
+                    onClick={handleToggleCart}
+                    disabled={isLoading}
+                    className={cn(
+                      "h-9 w-9 shrink-0 rounded-xl border backdrop-blur transition-colors",
+                      isInCart
+                        ? "border-primary/40 bg-primary/10 text-primary hover:bg-primary/20"
+                        : "border-border/60 bg-background/60 text-muted-foreground hover:bg-muted/20 hover:text-foreground disabled:opacity-50"
+                    )}
+                    aria-label={
+                      isInCart ? "Удалить из корзины" : "Добавить в корзину"
+                    }
                   >
-                    <ShoppingCart className="h-4 w-4" />
+                    {isInCart ? (
+                      <Check className="h-4 w-4" />
+                    ) : (
+                      <ShoppingCart className="h-4 w-4" />
+                    )}
                   </Button>
                 )}
               </div>
 
-              {canSeePrice ? (
-                <div className="text-sm font-semibold text-foreground">
-                  {priceText}
-                </div>
-              ) : (
-                <div className="h-5" />
-              )}
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                {isAuthLoading ? (
+                  <Skeleton className="h-5 w-24" />
+                ) : canSeePrice ? (
+                  <div className="text-sm font-semibold text-foreground">
+                    {priceText}
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleLearnPrice}
+                    className="group/cta relative inline-flex min-h-5 items-center gap-1.5 rounded-full border border-border/50 bg-muted/10 px-2.5 py-1 text-xs font-medium text-muted-foreground backdrop-blur-sm transition-all duration-300 hover:border-primary/40 hover:bg-primary/5 hover:text-primary hover:shadow-[0_0_12px_color-mix(in_srgb,var(--primary)_12%,transparent)] focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2 focus:ring-offset-background"
+                    aria-label="Войти, чтобы увидеть стоимость"
+                  >
+                    <span>Узнать стоимость</span>
+                    <ArrowRight className="h-3 w-3 shrink-0 transition-transform duration-300 group-hover/cta:translate-x-0.5" />
+                  </button>
+                )}
+                {program.viewsRating != null && (
+                  <RatingStars
+                    rating={program.viewsRating}
+                    size="sm"
+                    showValue
+                  />
+                )}
+              </div>
             </div>
           </Surface>
         </Link>
@@ -153,5 +223,6 @@ export const ProgramCard = memo(
     prevProps.program.shortTitle === nextProps.program.shortTitle &&
     prevProps.program.pricing === nextProps.program.pricing &&
     prevProps.program.views === nextProps.program.views &&
+    prevProps.program.viewsRating === nextProps.program.viewsRating &&
     prevProps.categoryType === nextProps.categoryType
 );

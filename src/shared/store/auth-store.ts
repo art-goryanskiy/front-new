@@ -48,3 +48,12 @@ export const useCanSeePrice = () =>
   useAuthStore(
     useShallow((state) => state.isAuthenticated || !!state.user)
   );
+
+/** Для UI с ценой: canSeePrice + isAuthLoading — пока грузим auth, не показываем «Узнать стоимость» */
+export const usePriceVisibility = () =>
+  useAuthStore(
+    useShallow((state) => ({
+      canSeePrice: state.isAuthenticated || !!state.user,
+      isAuthLoading: state.isLoading,
+    }))
+  );

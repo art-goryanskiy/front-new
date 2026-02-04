@@ -6,8 +6,9 @@ import type { ProgramPricing } from "@/shared/api/generated/graphql";
 import { PROGRAM_DETAIL_CLASSES } from "../constants/program-detail-constants";
 import { ProgramDetailPricing } from "./program-detail-pricing";
 import { ProgramDetailAddToCart } from "./program-detail-add-to-cart";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Surface } from "@/shared/ui/surface/surface";
-import { useCanSeePrice } from "@/shared/store/auth-store";
+import { usePriceVisibility } from "@/shared/store/auth-store";
 import { formatPrice } from "@/shared/lib/helpers/format-helpers";
 import { useToastState } from "@/shared/store/toast-store";
 
@@ -23,7 +24,7 @@ export const ProgramDetailSidebar = memo(
     programPricing,
     pricingList,
   }: ProgramDetailSidebarProps) {
-    const canSeePrice = useCanSeePrice();
+    const { canSeePrice, isAuthLoading } = usePriceVisibility();
     const { showToast } = useToastState();
 
     const minPrice = useMemo(() => {
@@ -63,7 +64,14 @@ export const ProgramDetailSidebar = memo(
             </div>
 
             <div className="relative z-10 space-y-6">
-              {canSeePrice ? (
+              {isAuthLoading ? (
+                <div className="space-y-3">
+                  <div className="text-xs font-semibold text-muted-foreground">
+                    Стоимость
+                  </div>
+                  <Skeleton className="h-6 w-28" />
+                </div>
+              ) : canSeePrice ? (
                 <div className="space-y-0">
                   <ProgramDetailPricing pricingList={pricingList} />
                   {pricingList.length > 0 && (
@@ -109,12 +117,18 @@ export const ProgramDetailSidebar = memo(
               <div className="text-[11px] font-semibold text-muted-foreground">
                 Стоимость
               </div>
-              <div className="truncate text-sm font-semibold text-foreground">
-                {priceText}
-              </div>
+              {isAuthLoading ? (
+                <Skeleton className="mt-1 h-4 w-24" />
+              ) : (
+                <div className="truncate text-sm font-semibold text-foreground">
+                  {priceText}
+                </div>
+              )}
             </div>
 
-            {canSeePrice ? (
+            {isAuthLoading ? (
+              <Skeleton className="h-10 w-28" />
+            ) : canSeePrice ? (
               <Button size="lg" onClick={handleEnroll}>
                 <BookOpen className="mr-2 h-5 w-5" />
                 Записаться

@@ -10,8 +10,9 @@ import {
   Sparkles,
   Target,
 } from "lucide-react";
-import { useCanSeePrice } from "@/shared/store/auth-store";
+import { usePriceVisibility } from "@/shared/store/auth-store";
 import { formatPrice } from "@/shared/lib/helpers/format-helpers";
+import { Skeleton } from "@/components/ui/skeleton";
 import { MarkdownContent } from "@/shared/ui/markdown/markdown-content";
 import { PROGRAM_DETAIL_CLASSES } from "../constants/program-detail-constants";
 
@@ -69,7 +70,7 @@ export const ProgramDetailDescription = memo(
     minPrice,
     awardedQualification,
   }: ProgramDetailDescriptionProps) {
-    const canSeePrice = useCanSeePrice();
+    const { canSeePrice, isAuthLoading } = usePriceVisibility();
 
     const parsed = useMemo(
       () => parseDescription(description),
@@ -185,7 +186,7 @@ export const ProgramDetailDescription = memo(
 
             <div className="rounded-xl border border-border/60 bg-muted/15 p-4">
               <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
-                {canSeePrice ? (
+                {isAuthLoading ? null : canSeePrice ? (
                   <Coins className="h-4 w-4" />
                 ) : (
                   <Lock className="h-4 w-4" />
@@ -193,7 +194,9 @@ export const ProgramDetailDescription = memo(
                 Стоимость
               </div>
               <div className="mt-2 text-sm font-semibold text-foreground">
-                {canSeePrice ? (
+                {isAuthLoading ? (
+                  <Skeleton className="h-5 w-24" />
+                ) : canSeePrice ? (
                   priceText
                 ) : (
                   <span className="text-muted-foreground">
@@ -201,7 +204,7 @@ export const ProgramDetailDescription = memo(
                   </span>
                 )}
               </div>
-              {!canSeePrice && (
+              {!isAuthLoading && !canSeePrice && (
                 <Link
                   href="/login"
                   className="mt-2 inline-flex text-sm font-semibold text-primary underline-offset-4 hover:underline"

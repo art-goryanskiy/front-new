@@ -4,6 +4,8 @@ import { useAuthStore } from "@/shared/store/auth-store";
 import { useQuery } from "@apollo/client/react";
 import { useEffect, useMemo, useRef } from "react";
 
+const ME_RETRY_DELAY_MS = 1500;
+
 export function useMe(options?: { skip?: boolean }) {
   const setUser = useAuthStore((state) => state.setUser);
   const setLoading = useAuthStore((state) => state.setLoading);
@@ -11,7 +13,7 @@ export function useMe(options?: { skip?: boolean }) {
 
   const skip = useMemo(() => options?.skip || false, [options?.skip]);
 
-  const { data, loading, error } = useQuery<{
+  const { data, loading, error, refetch } = useQuery<{
     me: UserEntity | null;
   }>(ME, {
     errorPolicy: "ignore",
@@ -29,6 +31,24 @@ export function useMe(options?: { skip?: boolean }) {
   const previousUserRef = useRef<UserEntity | null | undefined>(
     undefined
   );
+  const hasRetriedRef = useRef(false);
+  const refetchCalledRef = useRef(false);
+
+  // Повторный запрос при первой неудаче (таймаут cookie, холодный старт сервера)
+  useEffect(() => {
+    if (skip) return;
+    if (loading || meUser) return;
+    if (!error && data !== undefined) return; // Успешный ответ (me: null) — не ретраим
+    if (hasRetriedRef.current) return;
+
+    hasRetriedRef.current = true;
+    setLoading(true); // Держим skeleton до завершения retry
+    const timer = setTimeout(() => {
+      refetchCalledRef.current = true;
+      refetch();
+    }, ME_RETRY_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, [skip, loading, meUser, error, data, refetch, setLoading]);
 
   useEffect(() => {
     if (skip) {
@@ -45,8 +65,13 @@ export function useMe(options?: { skip?: boolean }) {
       return;
     }
 
-    // Сбрасываем isLoading когда запрос завершается
-    if (!loading) {
+    // Сбрасываем isLoading когда запрос завершается (но не при ожидании retry)
+    const awaitingRetry =
+      hasRetriedRef.current &&
+      !refetchCalledRef.current &&
+      !meUser &&
+      (error || !data);
+    if (!loading && !awaitingRetry) {
       setLoading(false);
     }
 

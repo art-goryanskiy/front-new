@@ -3,8 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { useCategories } from "@/entities/category/api/use-categories";
 import { usePrograms } from "@/entities/program/api/use-programs";
-import { useTopPrograms } from "@/entities/program/api/use-top-programs";
-import type { CategoryType } from "@/shared/api/generated/graphql";
+import { CategoryType } from "@/shared/api/generated/graphql";
 import { CATEGORY_TYPE_LABELS } from "@/shared/constants/categories";
 import { EmptyState } from "@/shared/ui/empty-state/empty-state";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
@@ -25,21 +24,12 @@ export const TopProgramsSection = memo(function TopProgramsSection({
   initialAllPrograms,
   initialCategories,
 }: TopProgramsSectionProps = {}) {
-  const [activeTab, setActiveTab] = useState<CategoryType | "all">(
-    "all"
+  const [activeTab, setActiveTab] = useState<CategoryType>(
+    CategoryType.QualificationUpgrade
   );
 
   // Вызываем хуки только если нет initial данных
-  const hasInitialData =
-    !!initialTopPrograms &&
-    !!initialAllPrograms &&
-    !!initialCategories;
-
-  const {
-    programs: topProgramsClient,
-    loading: topProgramsLoading,
-    error: topProgramsError,
-  } = useTopPrograms(6, { skip: hasInitialData });
+  const hasInitialData = !!initialAllPrograms && !!initialCategories;
 
   const {
     programs: allProgramsClient,
@@ -51,11 +41,6 @@ export const TopProgramsSection = memo(function TopProgramsSection({
     useCategories(undefined, { skip: hasInitialData });
 
   // Мемоизируем данные - используем initial если есть, иначе клиентские
-  const topPrograms = useMemo(
-    () => initialTopPrograms || topProgramsClient,
-    [initialTopPrograms, topProgramsClient]
-  );
-
   const allPrograms = useMemo(
     () => initialAllPrograms || allProgramsClient,
     [initialAllPrograms, allProgramsClient]
@@ -67,60 +52,49 @@ export const TopProgramsSection = memo(function TopProgramsSection({
   );
 
   // Фильтруем категории по типу
-  const categoryIds = useMemo(() => {
-    if (activeTab === "all") return undefined;
-    return categories
-      .filter((cat) => cat.type === activeTab)
-      .map((cat) => cat.id);
-  }, [activeTab, categories]);
+  const categoryIds = useMemo(
+    () =>
+      categories
+        .filter((cat) => cat.type === activeTab)
+        .map((cat) => cat.id),
+    [activeTab, categories]
+  );
 
   // Фильтруем программы на клиенте для конкретных категорий
   const filteredPrograms = useMemo(() => {
-    if (activeTab === "all") return topPrograms;
     if (!categoryIds || categoryIds.length === 0) return [];
     return allPrograms.filter((program) =>
       categoryIds.includes(program.category)
     );
-  }, [allPrograms, activeTab, categoryIds, topPrograms]);
+  }, [allPrograms, categoryIds]);
 
-  // Сортируем по просмотрам для категорий (если не "all")
-  const sortedPrograms = useMemo(() => {
-    if (activeTab === "all") return filteredPrograms;
-    return [...filteredPrograms].sort(
-      (a, b) => (b.views || 0) - (a.views || 0)
-    );
-  }, [filteredPrograms, activeTab]);
+  // Сортируем по просмотрам
+  const sortedPrograms = useMemo(
+    () =>
+      [...filteredPrograms].sort((a, b) => (b.views || 0) - (a.views || 0)),
+    [filteredPrograms]
+  );
 
   const displayedPrograms = useMemo(() => {
-    return sortedPrograms.slice(0, 6);
+    return sortedPrograms.slice(0, 9);
   }, [sortedPrograms]);
 
-  const categoryLabel = useMemo(() => {
-    if (activeTab === "all") return undefined;
-    return CATEGORY_TYPE_LABELS[activeTab];
-  }, [activeTab]);
+  const categoryLabel = CATEGORY_TYPE_LABELS[activeTab];
 
   // Мемоизируем обработчик переключения табов
-  const handleTabChange = useCallback((tab: CategoryType | "all") => {
+  const handleTabChange = useCallback((tab: CategoryType) => {
     setActiveTab(tab);
   }, []);
 
   // Мемоизируем обработчик кнопки "Показать больше"
   const handleShowMore = useCallback(() => {
-    const categoryPath =
-      activeTab === "all"
-        ? ""
-        : `/${activeTab.toLowerCase().replace(/_/g, "-")}`;
-    window.location.href = categoryPath || "/";
+    const categoryPath = `/${activeTab.toLowerCase().replace(/_/g, "-")}`;
+    window.location.href = categoryPath;
   }, [activeTab]);
 
-  const loading = !hasInitialData
-    ? activeTab === "all"
-      ? topProgramsLoading || categoriesLoading
-      : programsLoading || categoriesLoading
-    : false;
-  const error =
-    activeTab === "all" ? topProgramsError : programsError;
+  const loading =
+    !hasInitialData && (programsLoading || categoriesLoading);
+  const error = programsError;
 
   if (error) {
     return (
@@ -202,7 +176,7 @@ export const TopProgramsSection = memo(function TopProgramsSection({
             </AnimatePresence>
 
             {/* Show More Button */}
-            {sortedPrograms.length > 6 && (
+            {sortedPrograms.length > 9 && (
               <div className={TOP_PROGRAMS_CLASSES.showMore}>
                 <Button
                   variant="outline"
