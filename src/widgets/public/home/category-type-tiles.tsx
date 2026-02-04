@@ -74,7 +74,7 @@ export function CategoryTypeTiles({
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12">
         <div className="mb-8 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
           <div className="space-y-2">
-            <div className="inline-flex items-center rounded-full border border-border/60 bg-muted/20 px-3 py-1 text-xs font-semibold text-muted-foreground backdrop-blur">
+            <div className="inline-flex items-center rounded-full border border-border/60 bg-muted/20 px-3 py-1 text-xs font-semibold text-foreground/90 backdrop-blur">
               {totalPrograms} программ в каталоге
             </div>
             <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
@@ -125,10 +125,10 @@ export function CategoryTypeTiles({
                     </p>
 
                     <div className="flex flex-wrap items-center gap-2 pt-1">
-                      <span className="inline-flex items-center rounded-full border border-border/60 bg-muted/20 px-2 py-1 text-[11px] font-medium text-muted-foreground">
+                      <span className="inline-flex items-center rounded-full border border-border/60 bg-muted/20 px-2 py-1 text-[11px] font-medium text-foreground/90">
                         {stats.categories} катег.
                       </span>
-                      <span className="inline-flex items-center rounded-full border border-border/60 bg-muted/20 px-2 py-1 text-[11px] font-medium text-muted-foreground">
+                      <span className="inline-flex items-center rounded-full border border-border/60 bg-muted/20 px-2 py-1 text-[11px] font-medium text-foreground/90">
                         {stats.programs} программ
                       </span>
                     </div>
