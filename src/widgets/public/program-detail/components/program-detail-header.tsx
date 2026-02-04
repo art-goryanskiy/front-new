@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { memo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, Clock, Copy, Eye, Folder } from "lucide-react";
+import { ChevronRight, Clock, Copy, Folder } from "lucide-react";
 import type {
   CategoryEntity,
   ProgramEntity,
 } from "@/shared/api/generated/graphql";
 import { useToastState } from "@/shared/store/toast-store";
+import { RatingStars } from "@/shared/ui/rating-stars/rating-stars";
 import { Surface } from "@/shared/ui/surface/surface";
 import { PROGRAM_DETAIL_CLASSES } from "../constants/program-detail-constants";
 
@@ -114,10 +115,12 @@ export const ProgramDetailHeader = memo(function ProgramDetailHeader({
               </span>
             )}
 
-            {program.views > 0 && (
-              <span className="inline-flex items-center gap-1 rounded-full border border-border/60 bg-muted/20 px-3 py-1 text-xs font-semibold text-muted-foreground backdrop-blur">
-                <Eye className="h-3.5 w-3.5" />
-                {program.views}
+            {program.viewsRating != null && (
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-muted/20 px-3 py-1 text-xs font-semibold text-muted-foreground backdrop-blur">
+                <RatingStars rating={program.viewsRating} size="sm" />
+                <span>
+                  {program.viewsRating.toFixed(1)} / 5
+                </span>
               </span>
             )}
           </div>

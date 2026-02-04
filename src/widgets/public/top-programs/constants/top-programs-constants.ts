@@ -2,7 +2,7 @@ import { CATEGORY_TYPE_LABELS } from "@/shared/constants/categories";
 import { CategoryType } from "@/shared/api/generated/graphql";
 
 export const TOP_PROGRAMS_TEXTS = {
-  title: "Наши программы",
+  title: "Популярные программы",
   subtitle: "Выберите программу, которая подходит именно вам",
   showMore: "Показать больше",
   noPrograms: "Программы не найдены",
@@ -10,10 +10,9 @@ export const TOP_PROGRAMS_TEXTS = {
 } as const;
 
 export const TOP_PROGRAMS_TABS: ReadonlyArray<{
-  key: CategoryType | "all";
+  key: CategoryType;
   label: string;
 }> = [
-  { key: "all", label: "Все программы" },
   {
     key: CategoryType.QualificationUpgrade,
     label: CATEGORY_TYPE_LABELS.QUALIFICATION_UPGRADE,

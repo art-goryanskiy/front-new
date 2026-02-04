@@ -1,9 +1,6 @@
 import { Component } from "@/components/ui/the-infinite-grid";
 import { getCategoriesServer } from "@/shared/api/server/categories";
-import {
-  getProgramsServer,
-  getTopProgramsServer,
-} from "@/shared/api/server/programs";
+import { getProgramsServer } from "@/shared/api/server/programs";
 import { generateMetadata as generateSeoMetadata } from "@/shared/lib/seo/metadata";
 import { generateOrganizationSchema } from "@/shared/lib/seo/structured-data";
 import { PublicFooter } from "@/widgets/public/footer/public-footer";
@@ -29,8 +26,7 @@ export default async function Home() {
   const cookieStore = await cookies();
   const cookie = cookieStore.toString();
 
-  const [topPrograms, allPrograms, categories] = await Promise.all([
-    getTopProgramsServer(6, cookie),
+  const [allPrograms, categories] = await Promise.all([
     getProgramsServer(undefined, cookie),
     getCategoriesServer(),
   ]);
@@ -51,7 +47,6 @@ export default async function Home() {
           <Component />
           <CategoryTypeTiles categories={categories} />
           <TopProgramsSection
-            initialTopPrograms={topPrograms}
             initialAllPrograms={allPrograms}
             initialCategories={categories}
           />

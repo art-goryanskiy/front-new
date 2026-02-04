@@ -552,6 +552,7 @@ export type ProgramEntity = {
   title: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
   views: Scalars['Float']['output'];
+  viewsRating?: Maybe<Scalars['Float']['output']>;
 };
 
 export type ProgramFilterInput = {

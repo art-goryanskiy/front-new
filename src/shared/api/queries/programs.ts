@@ -30,6 +30,7 @@ export const GET_PROGRAMS = gql`
         description
       }
       views
+      viewsRating
       createdAt
       updatedAt
     }
@@ -68,6 +69,7 @@ export const GET_PROGRAMS_PAGE = gql`
           description
         }
         views
+        viewsRating
         createdAt
         updatedAt
       }
@@ -105,6 +107,7 @@ export const GET_TOP_PROGRAMS = gql`
         description
       }
       views
+      viewsRating
       createdAt
       updatedAt
     }
@@ -141,6 +144,7 @@ export const GET_PROGRAM = gql`
         description
       }
       views
+      viewsRating
       createdAt
       updatedAt
     }
