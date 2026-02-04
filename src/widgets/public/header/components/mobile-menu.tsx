@@ -1,12 +1,16 @@
 "use client";
 
-import { memo } from "react";
+import { memo, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { GLOW_MENU_NAV_ITEMS } from "@/components/ui/glow-menu-constants";
+import { ThemeToggle } from "@/shared/ui/theme-toggle/theme-toggle";
 import type { UserEntity } from "@/shared/api/generated/graphql";
+import { X } from "lucide-react";
+
+export const MOBILE_MENU_PANEL_ID = "mobile-menu-panel";
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -22,67 +26,119 @@ export const MobileMenu = memo(function MobileMenu({
   onLoginClick,
 }: MobileMenuProps) {
   const pathname = usePathname();
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
 
-  if (!isOpen) return null;
+  // Фокус на кнопку «Закрыть» при открытии
+  useEffect(() => {
+    if (isOpen) {
+      const t = requestAnimationFrame(() => {
+        closeButtonRef.current?.focus();
+      });
+      return () => cancelAnimationFrame(t);
+    }
+  }, [isOpen]);
+
+  // Закрытие по Escape
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
 
   return (
     <AnimatePresence>
-      <>
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-40 bg-black/50 md:hidden"
-          onClick={onClose}
-        />
-        <motion.div
-          initial={{ x: "100%" }}
-          animate={{ x: 0 }}
-          exit={{ x: "100%" }}
-          transition={{
-            type: "spring",
-            damping: 25,
-            stiffness: 200,
-          }}
-          className="fixed top-16 right-0 bottom-0 z-50 w-80 max-w-[85vw] overflow-y-auto border-l border-border/60 bg-background/70 shadow-2xl backdrop-blur-xl supports-[backdrop-filter]:bg-background/50 md:hidden"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <div className="flex flex-col gap-4 p-4">
-            {GLOW_MENU_NAV_ITEMS.map((item) => {
-              const Icon = item.icon;
-              const isActive = pathname === item.href;
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={onClose}
-                  className={`group flex items-center gap-3 rounded-lg px-4 py-3 transition-colors ${
-                    isActive
-                      ? "bg-primary/12 font-semibold text-foreground ring-1 ring-primary/25"
-                      : "text-muted-foreground hover:bg-muted/30 hover:text-foreground"
-                  }`}
-                >
-                  <Icon
-                    className={`h-5 w-5 shrink-0 ${
-                      isActive
-                        ? "text-primary"
-                        : "text-muted-foreground"
-                    }`}
-                  />
-                  <span>{item.label}</span>
-                  {isActive && (
-                    <div className="ml-auto h-2 w-2 shrink-0 rounded-full bg-primary" />
-                  )}
-                </Link>
-              );
-            })}
+      {isOpen && (
+        <>
+          <motion.div
+            key="mobile-menu-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-40 bg-black/60 md:hidden"
+            onClick={onClose}
+            aria-hidden
+          />
+          <motion.div
+            key="mobile-menu-panel"
+            id={MOBILE_MENU_PANEL_ID}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Меню"
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{
+              type: "spring",
+              damping: 28,
+              stiffness: 180,
+            }}
+            className="fixed top-16 right-0 bottom-0 z-50 flex w-80 max-w-[85vw] flex-col border-l border-border bg-background shadow-2xl md:hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Шапка: название + кнопка закрытия */}
+            <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border px-4 py-3">
+              <Link
+                href="/"
+                onClick={onClose}
+                className="text-sm font-semibold text-foreground transition-opacity hover:opacity-80"
+              >
+                Стандарт Плюс
+              </Link>
+              <Button
+                ref={closeButtonRef}
+                variant="ghost"
+                size="icon"
+                onClick={onClose}
+                aria-label="Закрыть меню"
+                className="shrink-0 text-muted-foreground hover:text-foreground"
+              >
+                <X className="h-5 w-5" />
+              </Button>
+            </div>
 
-            {!user && (
-              <div className="border-t border-border pt-4">
+            {/* Навигация */}
+            <nav className="flex flex-1 flex-col gap-0.5 overflow-y-auto p-3">
+              {GLOW_MENU_NAV_ITEMS.map((item) => {
+                const Icon = item.icon;
+                const isActive = pathname === item.href;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={onClose}
+                    className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors ${
+                      isActive
+                        ? "border-l-2 border-primary bg-muted/50 font-medium text-foreground"
+                        : "border-l-2 border-transparent text-foreground hover:bg-muted/50"
+                    }`}
+                  >
+                    <Icon
+                      className={`h-5 w-5 shrink-0 ${
+                        isActive ? "text-primary" : "text-muted-foreground"
+                      }`}
+                    />
+                    <span>{item.label}</span>
+                  </Link>
+                );
+              })}
+            </nav>
+
+            {/* Низ: тема + вход */}
+            <div className="shrink-0 border-t border-border p-4">
+              <div className="flex items-center justify-between gap-4">
+                <span className="text-sm text-muted-foreground">
+                  Тема
+                </span>
+                <ThemeToggle />
+              </div>
+              {!user && (
                 <Button
                   variant="default"
-                  className="w-full"
+                  className="mt-3 w-full"
                   onClick={() => {
                     onLoginClick();
                     onClose();
@@ -90,11 +146,11 @@ export const MobileMenu = memo(function MobileMenu({
                 >
                   Войти
                 </Button>
-              </div>
-            )}
-          </div>
-        </motion.div>
-      </>
+              )}
+            </div>
+          </motion.div>
+        </>
+      )}
     </AnimatePresence>
   );
 });

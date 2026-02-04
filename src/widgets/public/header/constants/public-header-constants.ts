@@ -1,5 +1,8 @@
 import { CATEGORY_TYPE_LABELS } from "@/shared/constants/categories";
 
+/** id кнопки бургер-меню в хедере (для возврата фокуса при закрытии) */
+export const HEADER_MENU_BUTTON_ID = "header-menu-button";
+
 export const PUBLIC_HEADER_CLASSES = {
   header:
     "sticky top-0 z-50 border-b border-border/60 bg-background/70 shadow-sm backdrop-blur-xl supports-[backdrop-filter]:bg-background/50",
