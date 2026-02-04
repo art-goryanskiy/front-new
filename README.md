@@ -413,8 +413,6 @@ npm run build
 
 ## Контакты / автор
 
-Добавьте свои контакты (GitHub, Telegram, email, CV):
-
-- **GitHub**: (link)
-- **Telegram**: (link)
-- **Email**: (email)
+- **GitHub**: [https://github.com/art-goryanskiy](https://github.com/art-goryanskiy)
+- **Telegram**: [@artemgoryanskiy](https://t.me/artemgoryanskiy)
+- **Email**: artem.goryanskiy@gmail.com
