@@ -64,7 +64,7 @@ export const UserMenu = memo(function UserMenu({
           className={USER_MENU_CLASSES.trigger}
           aria-label="Меню пользователя"
         >
-          <Avatar className={USER_MENU_CLASSES.avatar}>
+          <Avatar aria-hidden className={USER_MENU_CLASSES.avatar}>
             {user?.profile?.avatar ? (
               <Image
                 src={user.profile.avatar}
