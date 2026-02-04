@@ -44,7 +44,7 @@
 
 **Дальше:** при пуше в ветку `main` GitHub Actions соберёт образ, запушит в registry и на сервере выполнит `docker compose pull front && docker compose up -d front` в `DEPLOY_PATH` (корень репо) — продакшен обновится автоматически.
 
-Полная инструкция — **[docs/DEPLOY.md](docs/DEPLOY.md)**. Compose и переменные — в корне репо (**docker-compose.yml**, **.env.deploy.example**).
+Полная инструкция — **[docs/DEPLOY.md](docs/DEPLOY.md)**. Конфиги деплоя: в корне репо (**docker-compose.yml**, **.env.deploy.example**) и в папке **deploy/** (docker-compose, .env.example).
 
 ### Демо / скриншоты
 
@@ -96,6 +96,13 @@
   - guard для авторизованных пользователей
   - много-секционная форма на `react-hook-form`
   - обновление профиля, тост‑уведомления, превью аватара
+
+### Корзина, заказы и оплата
+
+- **Корзина (`/cart`)**: просмотр, изменение количества, удаление позиций
+- **Оформление заказа (`/checkout`)**: создание заказа из корзины (guard для авторизованных)
+- **Мои заказы (`/orders`)**: список заказов пользователя
+- **Оплата заказа (`/orders/[id]/pay`)**: оплата картой (редирект на платёжный шлюз) или по счёту (PDF, ссылка в Т-Бизнес); страницы success/fail после возврата с оплаты
 
 ### Админ-панель (`/admin`)
 
@@ -329,9 +336,11 @@ npm run codegen:watch
 src/
   app/                      # Next.js routes/layouts
     admin/                  # Admin area (guarded)
-    categories/[id]/        # Category details (SEO + SSR fetch)
+    cart/ checkout/         # Cart and checkout (guarded)
+    categories/[id]/       # Category details (SEO + SSR fetch)
     programs/[id]/          # Program details (SEO + SSR fetch)
-    login/ register/        # Auth pages
+    orders/ orders/[id]/pay/  # Orders list, order payment (guarded)
+    login/ register/       # Auth pages
     profile/                # User profile (guarded)
   widgets/                  # Page-level blocks (tables, modals, header, sidebar)
   features/                 # Business features (auth, profile, forms)
