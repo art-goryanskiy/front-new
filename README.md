@@ -7,7 +7,7 @@
 ### Быстрый обзор
 
 - **Framework**: Next.js App Router, React, TypeScript
-- **UI**: Tailwind CSS v4 (CSS‑переменные), Radix UI, Frеймер‑анимации
+- **UI**: Tailwind CSS v4 (CSS‑переменные), Radix UI, Framer-анимации
 - **Данные**: GraphQL + Apollo Client, server-side fetch с `revalidate`, GraphQL Codegen
 - **Состояние**: Zustand (auth, модалки, сайдбар, тосты, поиск)
 - **Качество**: ESLint + Prettier (+ Tailwind plugin)
