@@ -4,7 +4,8 @@ import { useAuthStore } from "@/shared/store/auth-store";
 import { useQuery } from "@apollo/client/react";
 import { useEffect, useMemo, useRef } from "react";
 
-const ME_RETRY_DELAY_MS = 1500;
+const ME_RETRY_DELAY_MS = 2500;
+const ME_RETRY_DELAY_2_MS = 5000;
 
 export function useMe(options?: { skip?: boolean }) {
   const setUser = useAuthStore((state) => state.setUser);
@@ -31,24 +32,28 @@ export function useMe(options?: { skip?: boolean }) {
   const previousUserRef = useRef<UserEntity | null | undefined>(
     undefined
   );
-  const hasRetriedRef = useRef(false);
+  const retryCountRef = useRef(0);
   const refetchCalledRef = useRef(false);
 
-  // Повторный запрос при первой неудаче (таймаут cookie, холодный старт сервера)
+  // Повторные запросы при отсутствии user (холодный старт, me: null при неготовой сессии)
   useEffect(() => {
     if (skip) return;
     if (loading || meUser) return;
-    if (!error && data !== undefined) return; // Успешный ответ (me: null) — не ретраим
-    if (hasRetriedRef.current) return;
+    if (retryCountRef.current >= 2) return;
 
-    hasRetriedRef.current = true;
-    setLoading(true); // Держим skeleton до завершения retry
+    refetchCalledRef.current = false;
+    const delay =
+      retryCountRef.current === 0
+        ? ME_RETRY_DELAY_MS
+        : ME_RETRY_DELAY_2_MS;
+    retryCountRef.current += 1;
+    setLoading(true);
     const timer = setTimeout(() => {
       refetchCalledRef.current = true;
       refetch();
-    }, ME_RETRY_DELAY_MS);
+    }, delay);
     return () => clearTimeout(timer);
-  }, [skip, loading, meUser, error, data, refetch, setLoading]);
+  }, [skip, loading, meUser, refetch, setLoading]);
 
   useEffect(() => {
     if (skip) {
@@ -67,10 +72,7 @@ export function useMe(options?: { skip?: boolean }) {
 
     // Сбрасываем isLoading когда запрос завершается (но не при ожидании retry)
     const awaitingRetry =
-      hasRetriedRef.current &&
-      !refetchCalledRef.current &&
-      !meUser &&
-      (error || !data);
+      retryCountRef.current > 0 && !refetchCalledRef.current && !meUser;
     if (!loading && !awaitingRetry) {
       setLoading(false);
     }
