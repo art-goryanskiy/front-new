@@ -1,9 +1,8 @@
 "use client";
 
-import { memo } from "react";
+import { memo, useState } from "react";
 import Link from "next/link";
 import { useMyOrders } from "@/entities/order/api/use-my-orders";
-import { Surface } from "@/shared/ui/surface/surface";
 import { LoadingState } from "@/shared/ui/loading-state/loading-state";
 import { EmptyState } from "@/shared/ui/empty-state/empty-state";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
@@ -11,6 +10,15 @@ import { formatPriceWithCurrency } from "@/shared/lib/helpers/format-helpers";
 import { ORDER_STATUS_LABELS } from "@/shared/constants/orders";
 import type { OrderFieldsFragment } from "@/shared/api/generated/graphql";
 import { Package, ChevronRight } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
+
+const STATUS_FILTER_OPTIONS: { value: string | undefined; label: string }[] = [
+  { value: undefined, label: "Все" },
+  { value: "PAYMENT_PENDING", label: ORDER_STATUS_LABELS["PAYMENT_PENDING"] ?? "Ожидает оплаты" },
+  { value: "PAID", label: ORDER_STATUS_LABELS["PAID"] ?? "Оплачен" },
+  { value: "COMPLETED", label: ORDER_STATUS_LABELS["COMPLETED"] ?? "Завершён" },
+];
 
 function formatOrderDate(date: string | unknown): string {
   if (!date) return "—";
@@ -32,9 +40,7 @@ const OrderCard = memo(function OrderCard({
 }: {
   order: OrderFieldsFragment;
 }) {
-  const statusLabel =
-    ORDER_STATUS_LABELS[order.status as keyof typeof ORDER_STATUS_LABELS] ??
-    order.status;
+  const statusLabel = ORDER_STATUS_LABELS[order.status] ?? order.status;
 
   return (
     <Link
@@ -64,7 +70,10 @@ const OrderCard = memo(function OrderCard({
 });
 
 export const OrdersList = memo(function OrdersList() {
-  const { orders, loading, error } = useMyOrders({ filter: { limit: 50 } });
+  const [statusFilter, setStatusFilter] = useState<string | undefined>(undefined);
+  const { orders, loading, error } = useMyOrders({
+    filter: { limit: 20, status: statusFilter },
+  });
 
   if (loading && orders.length === 0) {
     return <LoadingState message="Загрузка заказов…" />;
@@ -74,21 +83,47 @@ export const OrdersList = memo(function OrdersList() {
     return <ErrorState message={error.message} />;
   }
 
-  if (orders.length === 0) {
-    return (
-      <EmptyState
-        title="Заказов пока нет"
-        description="Оформленные заказы появятся здесь."
-        icon={<Package className="h-10 w-10 text-muted-foreground" />}
-      />
-    );
-  }
-
   return (
-    <div className="space-y-3">
-      {orders.map((order) => (
-        <OrderCard key={order.id} order={order} />
-      ))}
+    <div className="space-y-6">
+      <Tabs
+        value={statusFilter ?? "all"}
+        onValueChange={(v) => setStatusFilter(v === "all" ? undefined : v)}
+        className="w-full"
+      >
+        <TabsList
+          className={cn(
+            "inline-flex h-10 w-full flex-wrap justify-start gap-1 rounded-2xl p-1 sm:w-auto",
+            "bg-muted/50 border border-border/40"
+          )}
+        >
+          <TabsTrigger value="all" className="rounded-xl px-4">
+            Все
+          </TabsTrigger>
+          {STATUS_FILTER_OPTIONS.filter((o) => o.value).map((opt) => (
+            <TabsTrigger key={opt.value} value={opt.value!} className="rounded-xl px-4">
+              {opt.label}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+      </Tabs>
+
+      {orders.length === 0 ? (
+        <EmptyState
+          title="Заказов пока нет"
+          description={
+            statusFilter
+              ? "В этой категории заказов не найдено."
+              : "Оформленные заказы появятся здесь."
+          }
+          icon={<Package className="h-10 w-10 text-muted-foreground" />}
+        />
+      ) : (
+        <div className="space-y-3">
+          {orders.map((order) => (
+            <OrderCard key={order.id} order={order} />
+          ))}
+        </div>
+      )}
     </div>
   );
 });

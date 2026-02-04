@@ -48,22 +48,23 @@ export const ORDER = gql`
   }
 `;
 
-export const ORDER_SBP_LINK_STATUS = gql`
-  query OrderSbpLinkStatus($orderId: ID!) {
-    orderSbpLinkStatus(orderId: $orderId) {
-      qrId
-      paymentUrl
-      type
-      status
-      accountNumber
-    }
-  }
-`;
-
 export const ORDER_INVOICE_STATUS = gql`
   query OrderInvoiceStatus($orderId: ID!) {
     orderInvoiceStatus(orderId: $orderId) {
       status
+    }
+  }
+`;
+
+export const ORDER_PAYMENT_SYNC = gql`
+  query OrderPaymentSync($orderId: ID!) {
+    orderPaymentSync(orderId: $orderId) {
+      status
+      updated
+      payments {
+        paymentId
+        status
+      }
     }
   }
 `;
