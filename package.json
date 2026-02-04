@@ -65,9 +65,9 @@
     "node-domexception": "^1.0.0"
   },
   "browserslist": [
-    ">0.5%",
-    "last 2 versions",
-    "Firefox ESR",
-    "not dead"
+    "Chrome >= 93",
+    "Firefox >= 92",
+    "Safari >= 15.4",
+    "Edge >= 93"
   ]
 }
