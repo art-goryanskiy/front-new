@@ -140,7 +140,7 @@ export const MenuBar = React.forwardRef<
 
           const content = (
             <motion.div
-              className="group relative block overflow-visible rounded-xl"
+              className="group relative block min-h-10 overflow-visible rounded-xl"
               style={{ perspective: "600px" }}
               whileHover="hover"
               initial="initial"
