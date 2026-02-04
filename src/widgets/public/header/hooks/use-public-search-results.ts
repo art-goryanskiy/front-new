@@ -3,44 +3,63 @@
 import { useMemo } from "react";
 import { useCategories } from "@/entities/category/api/use-categories";
 import { usePrograms } from "@/entities/program/api/use-programs";
+import { useMyOrders } from "@/entities/order/api/use-my-orders";
 import { useDebounce } from "@/shared/lib/hooks/use-debounce";
 import { CATEGORY_TYPE_LABELS } from "@/shared/constants/categories";
 import type { CategoryType } from "@/shared/api/generated/graphql";
 
 export interface PublicSearchResult {
   id: string;
-  type: "category" | "program";
+  type: "category" | "program" | "order";
   label: string;
   path: string;
-  icon: "folder" | "book";
+  icon: "folder" | "book" | "receipt";
   description?: string;
   parentCategoryName?: string;
 }
 
-/**
- * Хук для получения результатов поиска по категориям и программам (публичные пути)
- */
-export function usePublicSearchResults(query: string) {
-  // Debounce поискового запроса для оптимизации запросов
-  const debouncedQuery = useDebounce(query, 300);
+const ORDER_STATUS_LABELS: Record<string, string> = {
+  DRAFT: "Черновик",
+  PAYMENT_PENDING: "Ожидает оплаты",
+  PAID: "Оплачен",
+  SUBMITTED: "Оформлена",
+  DOCUMENTS_GENERATED: "Документы сформированы",
+  COMPLETED: "Завершён",
+  CANCELLED: "Отменён",
+};
 
-  // Загружаем найденные категории
+/**
+ * Хук для получения результатов поиска:
+ * - незарегистрированный: категории и программы;
+ * - зарегистрированный: + заявки (поиск по id, email, названиям программ).
+ */
+export function usePublicSearchResults(
+  query: string,
+  options?: { isAuthenticated?: boolean }
+) {
+  const debouncedQuery = useDebounce(query, 300);
+  const hasQuery = debouncedQuery.length > 0;
+  const isAuthenticated = options?.isAuthenticated ?? false;
+
   const { categories, loading: categoriesLoading } = useCategories(
-    debouncedQuery.length > 0
-      ? { search: debouncedQuery, limit: 5 }
-      : undefined
+    hasQuery ? { search: debouncedQuery, limit: 5 } : undefined,
+    { skip: !hasQuery }
   );
 
-  // Загружаем все категории для поиска родительских (всегда загружаем, без фильтра)
-  const { categories: allCategories } = useCategories();
+  const { categories: allCategories } = useCategories(undefined, {
+    skip: !hasQuery,
+  });
 
   const { programs, loading: programsLoading } = usePrograms(
-    debouncedQuery.length > 0
-      ? { search: debouncedQuery, limit: 5 }
-      : undefined
+    hasQuery ? { search: debouncedQuery, limit: 5 } : undefined,
+    { skip: !hasQuery }
   );
 
-  // Создаем мапу категорий по ID для быстрого поиска родительских
+  const { orders, loading: ordersLoading } = useMyOrders({
+    filter: { limit: 50 },
+    skip: !isAuthenticated || !hasQuery,
+  });
+
   const categoriesMap = useMemo(() => {
     const map = new Map<string, string>();
     allCategories.forEach((cat) => {
@@ -51,23 +70,18 @@ export function usePublicSearchResults(query: string) {
 
   const searchResults: PublicSearchResult[] = useMemo(() => {
     const results: PublicSearchResult[] = [];
+    const q = debouncedQuery.trim().toLowerCase();
+    if (!q) return results;
 
     if (categories.length > 0) {
       categories.forEach((category) => {
-        // Определяем родительскую категорию:
-        // 1. Если у категории есть parent, находим родительскую категорию по ID
-        // 2. Если у категории есть type, используем название типа как родительскую категорию
         let parentCategoryName: string | undefined;
-
         if (category.parent) {
-          // Если есть parent, ищем родительскую категорию по ID
           parentCategoryName = categoriesMap.get(category.parent);
         } else if (category.type) {
-          // Если нет parent, но есть type, используем название типа
           parentCategoryName =
             CATEGORY_TYPE_LABELS[category.type as CategoryType];
         }
-
         results.push({
           id: `category-${category.id}`,
           type: "category",
@@ -82,27 +96,20 @@ export function usePublicSearchResults(query: string) {
 
     if (programs.length > 0) {
       programs.forEach((program) => {
-        // Находим категорию программы для отображения родительской категории
         const programCategory = allCategories.find(
           (cat) => cat.id === program.category
         );
-
         let parentCategoryName: string | undefined;
         if (programCategory) {
           if (programCategory.parent) {
-            // Если у категории программы есть parent, находим родительскую категорию по ID
-            parentCategoryName = categoriesMap.get(
-              programCategory.parent
-            );
+            parentCategoryName = categoriesMap.get(programCategory.parent);
           } else if (programCategory.type) {
-            // Если нет parent, но есть type, используем название типа
             parentCategoryName =
               CATEGORY_TYPE_LABELS[
                 programCategory.type as CategoryType
               ];
           }
         }
-
         results.push({
           id: `program-${program.id}`,
           type: "program",
@@ -115,11 +122,71 @@ export function usePublicSearchResults(query: string) {
       });
     }
 
+    if (isAuthenticated && orders.length > 0) {
+      const matchesOrder = (order: {
+        id: string;
+        contactEmail?: string | null;
+        contactPhone?: string | null;
+        status?: string;
+        lines?: Array<{ programTitle?: string | null }> | null;
+      }) => {
+        if (order.id.toLowerCase().includes(q)) return true;
+        if (order.contactEmail?.toLowerCase().includes(q)) return true;
+        if (
+          order.contactPhone?.replace(/\D/g, "").includes(q.replace(/\D/g, ""))
+        )
+          return true;
+        if (
+          order.status &&
+          ORDER_STATUS_LABELS[order.status]?.toLowerCase().includes(q)
+        )
+          return true;
+        const programTitles =
+          order.lines
+            ?.map((l) => l.programTitle?.toLowerCase())
+            .filter(Boolean) ?? [];
+        if (programTitles.some((t) => t?.includes(q))) return true;
+        return false;
+      };
+
+      const filteredOrders = orders.filter((order) => matchesOrder(order));
+
+      filteredOrders.slice(0, 5).forEach((order) => {
+        const statusLabel =
+          order.status && ORDER_STATUS_LABELS[order.status]
+            ? ORDER_STATUS_LABELS[order.status]
+            : order.status ?? "";
+        const programTitles =
+          order.lines
+            ?.map((l) => l.programTitle)
+            .filter(Boolean)
+            .join(", ") ?? "";
+        results.push({
+          id: `order-${order.id}`,
+          type: "order",
+          label: `Заявка ${order.id.slice(0, 8)}…`,
+          path: `/orders/${order.id}`,
+          icon: "receipt",
+          description: programTitles || statusLabel || undefined,
+          parentCategoryName: statusLabel || undefined,
+        });
+      });
+    }
+
     return results;
-  }, [categories, programs, categoriesMap, allCategories]);
+  }, [
+    debouncedQuery,
+    categories,
+    programs,
+    orders,
+    isAuthenticated,
+    categoriesMap,
+    allCategories,
+  ]);
 
   return {
     results: searchResults,
-    loading: categoriesLoading || programsLoading,
+    loading:
+      categoriesLoading || programsLoading || (isAuthenticated && ordersLoading),
   };
 }

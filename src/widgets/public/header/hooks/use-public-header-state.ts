@@ -130,6 +130,15 @@ export function usePublicHeaderState() {
     });
   }, []);
 
+  /** Закрыть панель поиска полностью (с кнопки «Закрыть») */
+  const handleSearchPanelClose = useCallback(() => {
+    setState((prev) => ({
+      ...prev,
+      isSearchExpanded: false,
+      isSearchOpen: false,
+    }));
+  }, []);
+
   const toggleMobileMenu = useCallback(() => {
     setState((prev) => ({
       ...prev,
@@ -174,6 +183,7 @@ export function usePublicHeaderState() {
     handleSearchFocus,
     handleSearchSelect,
     handleSearchClose,
+    handleSearchPanelClose,
     toggleMobileMenu,
     closeMobileMenu,
     handleLoginClick,

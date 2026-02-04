@@ -2,14 +2,16 @@
 
 import { highlightMatch } from "@/shared/ui/highlight/highlight-match";
 import { AnimatePresence, motion } from "framer-motion";
-import { BookOpen, Folder, Loader2 } from "lucide-react";
+import { BookOpen, Folder, Loader2, Receipt } from "lucide-react";
 import { memo, useCallback, useEffect, useMemo, useRef } from "react";
 import type { PublicSearchResult } from "../hooks/use-public-search-results";
 import { usePublicSearchResults } from "../hooks/use-public-search-results";
+import type { UserEntity } from "@/shared/api/generated/graphql";
 
 interface PublicSearchDropdownProps {
   query: string;
   isOpen: boolean;
+  user: UserEntity | null;
   onClose: () => void;
   onSelect: (result: PublicSearchResult) => void;
 }
@@ -18,10 +20,13 @@ export const PublicSearchDropdown = memo(
   function PublicSearchDropdown({
     query,
     isOpen,
+    user,
     onClose,
     onSelect,
   }: PublicSearchDropdownProps) {
-    const { results, loading } = usePublicSearchResults(query);
+    const { results, loading } = usePublicSearchResults(query, {
+      isAuthenticated: !!user,
+    });
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     // Закрываем при клике вне dropdown
@@ -58,7 +63,8 @@ export const PublicSearchDropdown = memo(
     const groupedResults = useMemo(() => {
       const categories = results.filter((r) => r.type === "category");
       const programs = results.filter((r) => r.type === "program");
-      return { categories, programs };
+      const orders = results.filter((r) => r.type === "order");
+      return { categories, programs, orders };
     }, [results]);
 
     if (!showDropdown) return null;
@@ -119,6 +125,23 @@ export const PublicSearchDropdown = memo(
                     </div>
                   </div>
                 )}
+                {groupedResults.orders.length > 0 && (
+                  <div className="px-4 py-2">
+                    <div className="mb-2 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+                      Заявки
+                    </div>
+                    <div className="space-y-1">
+                      {groupedResults.orders.map((result) => (
+                        <SearchResultItem
+                          key={result.id}
+                          result={result}
+                          query={query}
+                          onClick={handleResultClick}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </motion.div>
@@ -139,11 +162,11 @@ const SearchResultItem = memo(function SearchResultItem({
   query,
   onClick,
 }: SearchResultItemProps) {
-  // Мемоизируем компонент иконки
-  const IconComponent = useMemo(
-    () => (result.icon === "folder" ? Folder : BookOpen),
-    [result.icon]
-  );
+  const IconComponent = useMemo(() => {
+    if (result.icon === "folder") return Folder;
+    if (result.icon === "receipt") return Receipt;
+    return BookOpen;
+  }, [result.icon]);
 
   const highlightedLabel = useMemo(
     () =>
@@ -162,7 +185,6 @@ const SearchResultItem = memo(function SearchResultItem({
     onClick(result);
   }, [onClick, result]);
 
-  // Формируем текст категории
   const categoryText = useMemo(() => {
     if (result.type === "category" && result.parentCategoryName) {
       return `Категория: ${result.parentCategoryName}`;
@@ -170,6 +192,10 @@ const SearchResultItem = memo(function SearchResultItem({
     if (result.type === "program" && result.parentCategoryName) {
       return `Категория: ${result.parentCategoryName}`;
     }
+    if (result.type === "order" && result.parentCategoryName) {
+      return result.parentCategoryName;
+    }
+    if (result.type === "order") return "Моя заявка";
     return result.type === "category" ? "Категория" : "Программа";
   }, [result.type, result.parentCategoryName]);
 
