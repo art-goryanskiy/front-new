@@ -105,25 +105,6 @@ function VerifyEmailContent() {
     return (
       <div className="flex min-h-screen w-full items-center justify-center bg-background px-4">
         <div className="w-full max-w-md">
-          {/* Логотип */}
-          <div className="mb-8 flex justify-center">
-            <button
-              onClick={() => router.push("/")}
-              className="rounded-lg transition-opacity duration-200 hover:opacity-80 focus:ring-0 focus:outline-none"
-              aria-label="Перейти на главную страницу"
-            >
-              <Image
-                src="/logo-full.svg"
-                alt="ООО ЦОК СТАНДАРТ ПЛЮС"
-                width={300}
-                height={72}
-                className="h-16 w-auto object-contain"
-                style={{ width: "auto" }}
-                priority
-              />
-            </button>
-          </div>
-
           {/* Карточка с сообщением */}
           <Card className="bg-card shadow-lg">
             <CardContent className="p-8">
