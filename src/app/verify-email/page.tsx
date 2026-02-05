@@ -6,7 +6,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { useMe } from "@/features/auth/api/use-me";
 import { useVerifyEmail } from "@/features/auth/api/use-verify-email";
 import { useApolloClient } from "@apollo/client/react";
-import { CheckCircle2, Mail, XCircle } from "lucide-react";
+import { CheckCircle2, XCircle } from "lucide-react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
@@ -128,9 +128,16 @@ function VerifyEmailContent() {
           <Card className="bg-card shadow-lg">
             <CardContent className="p-8">
               <div className="flex flex-col items-center space-y-6 text-center">
-                {/* Иконка */}
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-                  <Mail className="h-8 w-8 text-primary" />
+                {/* Логотип */}
+                <div className="flex justify-center">
+                  <Image
+                    src="/logo-full.svg"
+                    alt="ООО ЦОК СТАНДАРТ ПЛЮС"
+                    width={200}
+                    height={48}
+                    className="h-12 w-auto object-contain"
+                    style={{ width: "auto" }}
+                  />
                 </div>
 
                 {/* Заголовок */}
