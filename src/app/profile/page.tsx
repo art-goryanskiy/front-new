@@ -24,8 +24,6 @@ import { PublicPageLayout } from "@/shared/ui/layouts/public-page-layout";
 import { Surface } from "@/shared/ui/surface/surface";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft } from "lucide-react";
-import { useRouter } from "next/navigation";
 import {
   memo,
   useCallback,
@@ -543,30 +541,17 @@ const ProfilePageContent = memo(function ProfilePageContent() {
 });
 
 export default function ProfilePage() {
-  const router = useRouter();
-
   return (
     <UserAuthGuard redirectTo="login">
       <PublicPageLayout>
         <div className="flex min-h-0 flex-1 flex-col gap-6">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-            <div className="space-y-2">
-              <h1 className="text-2xl font-bold tracking-tight text-balance text-foreground sm:text-3xl">
-                Личный кабинет
-              </h1>
-              <p className="text-sm text-muted-foreground sm:text-base">
-                Управляйте личной информацией и документами.
-              </p>
-            </div>
-
-            <Button
-              variant="ghost"
-              onClick={() => router.back()}
-              className="self-start sm:self-auto"
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Назад
-            </Button>
+          <div className="space-y-2">
+            <h1 className="text-2xl font-bold tracking-tight text-balance text-foreground sm:text-3xl">
+              Личный кабинет
+            </h1>
+            <p className="text-sm text-muted-foreground sm:text-base">
+              Управляйте личной информацией и документами.
+            </p>
           </div>
 
           <ProfilePageContent />

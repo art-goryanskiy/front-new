@@ -50,6 +50,8 @@ export interface OrganizationSuggestInputProps {
   minQueryLength?: number;
   debounceMs?: number;
   count?: number;
+  /** После выбора очистить инпут (для добавления нескольких подряд) */
+  clearAfterSelect?: boolean;
   onSelect: (suggestion: OrganizationSuggestion) => void;
   onApiUnavailableChange?: (isUnavailable: boolean) => void;
 }
@@ -105,11 +107,12 @@ export const OrganizationSuggestInput = memo(
     description,
     isDisabled,
     minQueryLength = 3,
-    debounceMs = 350,
-    count = 15,
-    onSelect,
-    onApiUnavailableChange,
-  }: OrganizationSuggestInputProps) {
+  debounceMs = 350,
+  count = 15,
+  clearAfterSelect = false,
+  onSelect,
+  onApiUnavailableChange,
+}: OrganizationSuggestInputProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const [isOpen, setIsOpen] = useState(false);
     const [value, setValue] = useState("");
@@ -179,11 +182,11 @@ export const OrganizationSuggestInput = memo(
     const handleSelect = useCallback(
       (s: OrganizationSuggestion) => {
         onSelect(s);
-        setValue(s.displayName);
+        setValue(clearAfterSelect ? "" : s.displayName);
         setIsOpen(false);
         setActiveIndex(-1);
       },
-      [onSelect]
+      [onSelect, clearAfterSelect]
     );
 
     const currentIndex = useMemo(() => {

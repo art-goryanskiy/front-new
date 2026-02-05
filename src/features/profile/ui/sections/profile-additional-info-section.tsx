@@ -355,6 +355,7 @@ export const ProfileAdditionalInfoSection = memo(
                       <OrganizationSuggestInput
                         label="Добавить организацию"
                         placeholder="Введите ИНН или название"
+                        clearAfterSelect
                         description={
                           workPlaces.length === 0
                             ? "Выберите организацию из подсказок"

@@ -9,7 +9,6 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import {
   PROFILE_FORM_LABELS,
-  PROFILE_FORM_PLACEHOLDERS,
   PROFILE_FORM_CLASSES,
 } from "../constants/profile-form-constants";
 import type { ProfileFormData } from "../types/profile-form.types";
@@ -98,21 +97,18 @@ export const ProfileBasicInfoSection = memo(
             control={control}
             name={fieldName("firstName")}
             label={PROFILE_FORM_LABELS.firstName}
-            placeholder={PROFILE_FORM_PLACEHOLDERS.firstName}
             type="text"
           />
           <FormField
             control={control}
             name={fieldName("lastName")}
             label={PROFILE_FORM_LABELS.lastName}
-            placeholder={PROFILE_FORM_PLACEHOLDERS.lastName}
             type="text"
           />
           <FormField
             control={control}
             name={fieldName("middleName")}
             label={PROFILE_FORM_LABELS.middleName}
-            placeholder={PROFILE_FORM_PLACEHOLDERS.middleName}
             type="text"
           />
           <Controller
@@ -183,14 +179,12 @@ export const ProfileBasicInfoSection = memo(
             control={control}
             name={fieldName("dateOfBirth")}
             label={PROFILE_FORM_LABELS.dateOfBirth}
-            placeholder={PROFILE_FORM_PLACEHOLDERS.dateOfBirth}
             type="date"
           />
           <FormField
             control={control}
             name={fieldName("citizenship")}
             label={PROFILE_FORM_LABELS.citizenship}
-            placeholder={PROFILE_FORM_PLACEHOLDERS.citizenship}
             type="text"
           />
         </div>

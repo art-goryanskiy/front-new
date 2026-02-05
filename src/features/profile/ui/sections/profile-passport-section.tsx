@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   PROFILE_FORM_LABELS,
-  PROFILE_FORM_PLACEHOLDERS,
   PROFILE_FORM_CLASSES,
 } from "../constants/profile-form-constants";
 import type { ProfileFormData } from "../types/profile-form.types";
@@ -140,7 +139,7 @@ export const ProfilePassportSection = memo(
                     type="text"
                     inputMode="numeric"
                     autoComplete="off"
-                    placeholder={PROFILE_FORM_PLACEHOLDERS.snils}
+                    placeholder=" "
                     lang="ru"
                     aria-invalid={fieldState.invalid}
                     aria-label={PROFILE_FORM_LABELS.snils}
@@ -179,7 +178,7 @@ export const ProfilePassportSection = memo(
                       type="text"
                       inputMode="numeric"
                       autoComplete="off"
-                      placeholder={PROFILE_FORM_PLACEHOLDERS.passportSeries}
+                      placeholder=" "
                       lang="ru"
                       aria-label={PROFILE_FORM_LABELS.passportSeries}
                       className="peer bg-background/60"
@@ -214,7 +213,7 @@ export const ProfilePassportSection = memo(
                       type="text"
                       inputMode="numeric"
                       autoComplete="off"
-                      placeholder={PROFILE_FORM_PLACEHOLDERS.passportNumber}
+                      placeholder=" "
                       lang="ru"
                       aria-label={PROFILE_FORM_LABELS.passportNumber}
                       className="peer bg-background/60"
@@ -236,7 +235,6 @@ export const ProfilePassportSection = memo(
             control={control}
             name={fieldName("passportIssuedBy")}
             label={PROFILE_FORM_LABELS.passportIssuedBy}
-            placeholder={PROFILE_FORM_PLACEHOLDERS.passportIssuedBy}
             type="text"
             className="md:col-span-2"
           />
@@ -244,7 +242,6 @@ export const ProfilePassportSection = memo(
             control={control}
             name={fieldName("passportIssuedAt")}
             label={PROFILE_FORM_LABELS.passportIssuedAt}
-            placeholder={PROFILE_FORM_PLACEHOLDERS.passportIssuedAt}
             type="date"
           />
           <Controller
@@ -265,9 +262,7 @@ export const ProfilePassportSection = memo(
                     type="text"
                     inputMode="numeric"
                     autoComplete="off"
-                    placeholder={
-                      PROFILE_FORM_PLACEHOLDERS.passportDepartmentCode
-                    }
+                    placeholder=" "
                     lang="ru"
                     aria-label={PROFILE_FORM_LABELS.passportDepartmentCode}
                     className="peer bg-background/60"
