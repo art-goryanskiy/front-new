@@ -45,13 +45,13 @@ export function useMe(options?: { skip?: boolean }) {
       }
       const delay = ME_RETRY_DELAYS_MS[idx];
       retryCountRef.current += 1;
-      setLoading(true);
       nextRetryTimerRef.current = setTimeout(async () => {
         nextRetryTimerRef.current = null;
         try {
           const result = await refetch({ fetchPolicy: "network-only" });
           const nextUser = result?.data?.me ?? null;
           if (nextUser) {
+            setUser(nextUser);
             setLoading(false);
             return;
           }
@@ -69,7 +69,7 @@ export function useMe(options?: { skip?: boolean }) {
         nextRetryTimerRef.current = null;
       }
     };
-  }, [skip, loading, meUser, refetch, setLoading]);
+  }, [skip, loading, meUser, refetch, setLoading, setUser]);
 
   useEffect(() => {
     if (skip) {
@@ -86,12 +86,10 @@ export function useMe(options?: { skip?: boolean }) {
       return;
     }
 
-    // Сбрасываем isLoading когда запрос завершается (но не при ожидании retry).
-    // При me: null на холодной загрузке retry запустится — не гасим loading,
-    // чтобы не показывать «Узнать стоимость» до успешного retry.
-    const willRetry = !meUser && retryCountRef.current < ME_MAX_RETRIES;
+    // Сбрасываем isLoading когда запрос завершается. Для гостей (me: null) сразу
+    // показываем «Узнать стоимость», retry идут в фоне без повторного скелетона.
     const awaitingRetry = retryCountRef.current > 0 && !meUser;
-    if (!loading && !awaitingRetry && !willRetry) {
+    if (!loading && !awaitingRetry) {
       setLoading(false);
     }
 
