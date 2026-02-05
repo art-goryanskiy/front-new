@@ -158,7 +158,15 @@ export function usePublicHeaderState() {
   useEffect(() => {
     if (!state.isSearchExpanded) return;
 
-    const handleClickOutside = () => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (
+        target &&
+        "closest" in target &&
+        (target as Element).closest?.("[data-user-menu]")
+      ) {
+        return;
+      }
       if (searchValueRef.current.length === 0) {
         setState((prev) => ({
           ...prev,

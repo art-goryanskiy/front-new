@@ -14,7 +14,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Icon, type IconName } from "@/shared/ui/icons/icon";
-import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
@@ -78,9 +77,9 @@ export const UserMenu = memo(function UserMenu({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+        <button
+          type="button"
+          data-user-menu
           className={USER_MENU_CLASSES.trigger}
           aria-label="Меню пользователя"
         >
@@ -109,11 +108,12 @@ export const UserMenu = memo(function UserMenu({
             size={16}
             aria-hidden="true"
           />
-        </motion.button>
+        </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
         className={USER_MENU_CLASSES.menu}
+        data-user-menu
       >
         <DropdownMenuLabel className="font-normal">
           <span className="truncate block">{displayName}</span>

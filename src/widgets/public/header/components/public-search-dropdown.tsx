@@ -38,9 +38,17 @@ export const PublicSearchDropdown = memo(
       if (!isOpen) return;
 
       const handleClickOutside = (event: MouseEvent) => {
+        const target = event.target as Node;
+        if (
+          target &&
+          "closest" in target &&
+          (target as Element).closest?.("[data-user-menu]")
+        ) {
+          return;
+        }
         if (
           dropdownRef.current &&
-          !dropdownRef.current.contains(event.target as Node)
+          !dropdownRef.current.contains(target)
         ) {
           onClose();
         }
