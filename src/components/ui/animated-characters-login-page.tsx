@@ -256,6 +256,7 @@ export function LoginFormPage() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [capsLockOn, setCapsLockOn] = useState(false);
+  const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [activePasswordField, setActivePasswordField] = useState<
     "password" | "confirmPassword" | null
   >(null);
@@ -884,9 +885,9 @@ export function LoginFormPage() {
                         htmlFor="email"
                         className={cn(
                           "absolute left-3 z-10 rounded-md bg-background/80 px-1 font-medium backdrop-blur-sm transition-all duration-200",
-                          "top-2 -translate-y-1/2 text-[11px]",
-                          "peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-sm",
-                          "group-focus-within:top-2 group-focus-within:-translate-y-1/2 group-focus-within:text-[11px]",
+                          (field.value?.trim() || isEmailFocused)
+                            ? "top-2 -translate-y-1/2 text-[11px]"
+                            : "top-1/2 -translate-y-1/2 text-sm",
                           fieldState.invalid
                             ? "text-destructive"
                             : "text-muted-foreground group-focus-within:text-foreground"
@@ -900,13 +901,17 @@ export function LoginFormPage() {
                         id="email"
                         placeholder=" "
                         disabled={isLoading}
-                        onFocus={() => setIsTyping(true)}
+                        onFocus={() => {
+                          setIsTyping(true);
+                          setIsEmailFocused(true);
+                        }}
                         onBlur={(e) => {
                           field.onBlur();
                           setIsTyping(false);
+                          setIsEmailFocused(false);
                         }}
                         aria-invalid={fieldState.invalid}
-                        className="peer h-12 border-border/60 bg-background/60 pr-10"
+                        className="h-12 border-border/60 bg-background/60 pr-10"
                         value={field.value}
                         onChange={(e) => field.onChange(e.target.value)}
                       />
@@ -935,9 +940,9 @@ export function LoginFormPage() {
                         htmlFor="password"
                         className={cn(
                           "absolute left-3 z-10 rounded-md bg-background/80 px-1 font-medium backdrop-blur-sm transition-all duration-200",
-                          "top-2 -translate-y-1/2 text-[11px]",
-                          "peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-sm",
-                          "group-focus-within:top-2 group-focus-within:-translate-y-1/2 group-focus-within:text-[11px]",
+                          (field.value?.trim() || activePasswordField === "password")
+                            ? "top-2 -translate-y-1/2 text-[11px]"
+                            : "top-1/2 -translate-y-1/2 text-sm",
                           fieldState.invalid
                             ? "text-destructive"
                             : "text-muted-foreground group-focus-within:text-foreground"
@@ -1030,9 +1035,9 @@ export function LoginFormPage() {
                           htmlFor="confirmPassword"
                           className={cn(
                             "absolute left-3 z-10 rounded-md bg-background/80 px-1 font-medium backdrop-blur-sm transition-all duration-200",
-                            "top-2 -translate-y-1/2 text-[11px]",
-                            "peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-sm",
-                            "group-focus-within:top-2 group-focus-within:-translate-y-1/2 group-focus-within:text-[11px]",
+                            (field.value?.trim() || activePasswordField === "confirmPassword")
+                              ? "top-2 -translate-y-1/2 text-[11px]"
+                              : "top-1/2 -translate-y-1/2 text-sm",
                             fieldState.invalid
                               ? "text-destructive"
                               : "text-muted-foreground group-focus-within:text-foreground"
