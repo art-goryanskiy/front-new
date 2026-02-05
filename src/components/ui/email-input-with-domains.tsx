@@ -58,7 +58,12 @@ export const EmailInputWithDomains = React.forwardRef<
     return EMAIL_DOMAINS.filter((d) => d.startsWith(domainPart));
   }, [atIndex, domainPart]);
 
-  const open = showSuggestions && atIndex >= 0 && suggestions.length > 0;
+  const isCompleteDomain = (EMAIL_DOMAINS as readonly string[]).includes(domainPart);
+  const open =
+    showSuggestions &&
+    atIndex >= 0 &&
+    suggestions.length > 0 &&
+    !isCompleteDomain;
   const displaySuggestions = open ? suggestions : [];
 
   const selectDomain = React.useCallback(
