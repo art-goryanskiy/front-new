@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { EmailInputWithDomains } from "@/components/ui/email-input-with-domains";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
@@ -891,21 +892,23 @@ export function LoginFormPage() {
                         {texts.email.label}
                       </Label>
 
-                      <Input
+                      <EmailInputWithDomains
                         {...field}
                         id="email"
-                        type="email"
-                        inputMode="email"
                         placeholder={texts.email.placeholder}
-                        autoComplete="email"
                         disabled={isLoading}
                         onFocus={() => setIsTyping(true)}
-                        onBlur={() => setIsTyping(false)}
+                        onBlur={(e) => {
+                          field.onBlur();
+                          setIsTyping(false);
+                        }}
                         aria-invalid={fieldState.invalid}
                         className={cn(
                           "peer h-12 border-border/60 bg-background/60 pr-10",
-                          "focus:border-primary"
+                          "focus-visible:border-primary focus-visible:ring-primary/20"
                         )}
+                        value={field.value}
+                        onChange={(e) => field.onChange(e.target.value)}
                       />
                     </div>
 
