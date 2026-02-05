@@ -6,7 +6,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { useMe } from "@/features/auth/api/use-me";
 import { useVerifyEmail } from "@/features/auth/api/use-verify-email";
 import { useApolloClient } from "@apollo/client/react";
-import { CheckCircle2, Mail, XCircle } from "lucide-react";
+import { CheckCircle2, XCircle } from "lucide-react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
@@ -105,32 +105,20 @@ function VerifyEmailContent() {
     return (
       <div className="flex min-h-screen w-full items-center justify-center bg-background px-4">
         <div className="w-full max-w-md">
-          {/* Логотип */}
-          <div className="mb-8 flex justify-center">
-            <button
-              onClick={() => router.push("/")}
-              className="rounded-lg transition-opacity duration-200 hover:opacity-80 focus:ring-0 focus:outline-none"
-              aria-label="Перейти на главную страницу"
-            >
-              <Image
-                src="/logo-full.svg"
-                alt="ООО ЦОК СТАНДАРТ ПЛЮС"
-                width={300}
-                height={72}
-                className="h-16 w-auto object-contain"
-                style={{ width: "auto" }}
-                priority
-              />
-            </button>
-          </div>
-
           {/* Карточка с сообщением */}
           <Card className="bg-card shadow-lg">
             <CardContent className="p-8">
               <div className="flex flex-col items-center space-y-6 text-center">
-                {/* Иконка */}
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-                  <Mail className="h-8 w-8 text-primary" />
+                {/* Логотип */}
+                <div className="flex justify-center">
+                  <Image
+                    src="/logo-full.svg"
+                    alt="ООО ЦОК СТАНДАРТ ПЛЮС"
+                    width={200}
+                    height={48}
+                    className="h-12 w-auto object-contain"
+                    style={{ width: "auto" }}
+                  />
                 </div>
 
                 {/* Заголовок */}
