@@ -46,8 +46,9 @@ export const PROFILE_FORM_PLACEHOLDERS = {
 
 export const PROFILE_FORM_CLASSES = {
   section:
-    "relative w-full space-y-6 rounded-2xl border border-border bg-card p-6 shadow-sm",
+    "relative w-full space-y-4 sm:space-y-6 rounded-2xl border border-border/80 bg-card/95 p-4 shadow-sm shadow-black/5 backdrop-blur-sm transition-shadow hover:shadow-md sm:p-6",
   sectionTitle:
-    "text-sm font-semibold text-foreground tracking-tight",
-  fieldGrid: "grid grid-cols-1 gap-5 md:grid-cols-2",
+    "text-sm font-semibold text-foreground tracking-tight pb-1 sm:text-base",
+  fieldGrid:
+    "grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2",
 } as const;

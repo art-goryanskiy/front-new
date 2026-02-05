@@ -4,7 +4,6 @@ import { Switch } from "@/components/ui/switch";
 import { AddressSuggestField } from "@/shared/ui/form-fields/address-suggest-field";
 import {
   PROFILE_FORM_LABELS,
-  PROFILE_FORM_PLACEHOLDERS,
   PROFILE_FORM_CLASSES,
 } from "../constants/profile-form-constants";
 import type { ProfileFormData } from "../types/profile-form.types";
@@ -112,9 +111,7 @@ export const ProfileAddressesSection = memo(
             control={control}
             name={fieldName("passportRegistrationAddress")}
             label={PROFILE_FORM_LABELS.passportRegistrationAddress}
-            placeholder={
-              PROFILE_FORM_PLACEHOLDERS.passportRegistrationAddress
-            }
+            placeholder=" "
             className="md:col-span-2"
             debounceMs={350}
             minQueryLength={3}
@@ -152,7 +149,7 @@ export const ProfileAddressesSection = memo(
             control={control}
             name={fieldName("residentialAddress")}
             label={PROFILE_FORM_LABELS.residentialAddress}
-            placeholder={PROFILE_FORM_PLACEHOLDERS.residentialAddress}
+            placeholder=" "
             className="md:col-span-2"
             debounceMs={350}
             minQueryLength={3}

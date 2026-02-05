@@ -19,7 +19,7 @@ export const ProfileFieldPreview = memo(function ProfileFieldPreview({
   return (
     <div
       className={cn(
-        "rounded-xl border border-border/60 bg-muted/10 px-4 py-3",
+        "rounded-xl border border-border/60 bg-muted/10 px-3 py-2.5 sm:px-4 sm:py-3",
         className
       )}
     >
@@ -28,8 +28,8 @@ export const ProfileFieldPreview = memo(function ProfileFieldPreview({
       </div>
       <div
         className={cn(
-          "mt-1 text-sm font-medium text-foreground",
-          !hasValue && "font-normal text-muted-foreground"
+          "mt-1 min-h-5 text-sm font-medium text-foreground",
+          !hasValue && "font-normal italic text-muted-foreground/80"
         )}
       >
         {hasValue ? value : "Не указано"}
