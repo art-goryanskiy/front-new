@@ -26,7 +26,6 @@ export const AuthLogo = memo(function AuthLogo() {
           height={72}
           className={AUTH_FORM_CONTAINER_CLASSES.logo}
           style={{ width: "auto" }}
-          priority
         />
       </button>
     </div>
