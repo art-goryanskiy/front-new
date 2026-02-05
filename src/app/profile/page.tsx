@@ -23,6 +23,7 @@ import { useToastState } from "@/shared/store/toast-store";
 import { PublicPageLayout } from "@/shared/ui/layouts/public-page-layout";
 import { Surface } from "@/shared/ui/surface/surface";
 import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
@@ -72,7 +73,7 @@ const SIDEBAR_ITEMS: Array<{
   {
     key: "work",
     label: "Место работы",
-    description: "Должность и СНИЛС",
+    description: "Организации",
   },
   { key: "avatar", label: "Аватар", description: "Фото" },
 ];
@@ -311,16 +312,14 @@ const ProfilePageContent = memo(function ProfilePageContent() {
       case "basic":
         return (
           <div className="space-y-6">
-            <Surface variant="inset" className="rounded-xl p-4">
-              <div className="flex flex-col gap-2">
-                <p className="text-xs font-semibold text-muted-foreground">
-                  Email
-                </p>
-                <p className="text-base font-semibold text-foreground">
-                  {user.email}
-                </p>
+            <div className="rounded-2xl border border-border/80 bg-muted/10 px-3 py-2.5 shadow-sm backdrop-blur-sm sm:px-4 sm:py-3">
+              <div className="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
+                Email
               </div>
-            </Surface>
+              <div className="mt-1 text-sm font-medium text-foreground">
+                {user.email}
+              </div>
+            </div>
             <ProfileBasicInfoSection
               control={typedControl}
               mode={mode}
@@ -389,13 +388,13 @@ const ProfilePageContent = memo(function ProfilePageContent() {
     >
       <div className="pointer-events-none absolute inset-0 opacity-60">
         <div className="absolute -top-28 -right-28 h-[360px] w-[520px] rounded-full bg-primary/10 blur-3xl" />
-        <div className="absolute -bottom-32 -left-28 h-[380px] w-[520px] rounded-full bg-blue-500/10 blur-3xl" />
+        <div className="absolute -bottom-32 -left-28 h-[380px] w-[520px] rounded-full bg-primary/5 blur-3xl" />
         <div className="absolute inset-0 bg-linear-to-b from-transparent via-background/10 to-background/60" />
       </div>
 
       <div className="relative z-10 flex min-h-0 flex-1 flex-col lg:flex-row">
         <div className="w-full border-b border-border/60 bg-background/60 backdrop-blur-xl lg:h-full lg:w-72 lg:border-r lg:border-b-0">
-          <div className="border-b border-border/60 p-4">
+          <div className="border-b border-border/60 bg-muted/5 p-4 pb-4">
             <div className="flex items-center justify-between gap-3">
               <div className="min-w-0">
                 <div className="truncate text-sm font-semibold text-foreground">
@@ -406,26 +405,31 @@ const ProfilePageContent = memo(function ProfilePageContent() {
                 </div>
               </div>
               {isDirty && (
-                <span className="rounded-full border border-border/60 bg-muted/20 px-3 py-1 text-[11px] font-semibold text-muted-foreground">
+                <motion.span
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.2 }}
+                  className="rounded-full border border-primary/40 bg-primary/15 px-3 py-1 text-[11px] font-semibold text-primary"
+                >
                   Есть изменения
-                </span>
+                </motion.span>
               )}
             </div>
           </div>
 
           <nav className="p-3">
-            <ul className="flex flex-row gap-2 overflow-x-auto pb-2 lg:flex-col lg:gap-1 lg:pb-0">
+            <ul className="flex flex-row gap-2 overflow-x-auto pb-2 pl-1 pr-1 scroll-px-4 lg:flex-col lg:gap-1 lg:pb-0 lg:pl-0 lg:pr-0">
               {SIDEBAR_ITEMS.map((item) => {
                 const active = activeSection === item.key;
                 return (
-                  <li key={item.key} className="shrink-0 lg:shrink">
+                  <li key={item.key} className="relative shrink-0 lg:shrink">
                     <button
                       type="button"
                       onClick={() => handleNavigate(item.key)}
                       className={cn(
-                        "w-full rounded-xl border px-4 py-2 text-left text-sm font-semibold transition-colors",
+                        "w-full rounded-xl border px-4 py-2 text-left text-sm font-semibold transition-colors lg:pl-4",
                         active
-                          ? "border-border/80 bg-primary/10 text-foreground"
+                          ? "border-border/80 bg-primary/10 text-foreground lg:border-l-4 lg:border-l-primary lg:pl-3"
                           : "border-transparent text-muted-foreground hover:border-border/60 hover:bg-muted/20 hover:text-foreground"
                       )}
                     >
@@ -443,13 +447,13 @@ const ProfilePageContent = memo(function ProfilePageContent() {
             onSubmit={handleSubmit(onSubmit)}
             className="flex min-h-0 w-full flex-1 flex-col"
           >
-            <div className="sticky top-0 z-10 border-b border-border/60 bg-background/70 px-6 py-5 backdrop-blur-xl">
+            <div className="sticky top-0 z-10 border-b border-border/60 bg-background/70 px-4 py-4 backdrop-blur-xl sm:px-6 sm:py-5">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                 <div className="space-y-1">
                   <div className="text-xs font-semibold text-muted-foreground">
                     Личный кабинет
                   </div>
-                  <div className="text-xl font-bold tracking-tight text-foreground">
+                  <div className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
                     {sectionMeta.label}
                   </div>
                   <div className="text-sm text-muted-foreground">
@@ -457,7 +461,7 @@ const ProfilePageContent = memo(function ProfilePageContent() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   {!isEditing ? (
                     <Button
                       type="button"
@@ -482,7 +486,7 @@ const ProfilePageContent = memo(function ProfilePageContent() {
                       <Button
                         type="submit"
                         disabled={isBusy || !isDirty}
-                        className="min-w-40 rounded-xl font-semibold"
+                        className="min-w-40 rounded-xl font-semibold shadow-sm shadow-primary/20"
                       >
                         {isBusy ? "Сохранение..." : "Сохранить"}
                       </Button>
@@ -511,15 +515,25 @@ const ProfilePageContent = memo(function ProfilePageContent() {
             </div>
 
             {error && (
-              <div className="mx-6 mt-6 shrink-0 rounded-xl border border-destructive/30 bg-destructive/10 p-4">
+              <div className="mx-4 mt-4 shrink-0 rounded-xl border border-destructive/30 bg-destructive/10 p-4 sm:mx-6 sm:mt-6">
                 <p className="text-sm font-medium text-destructive">
                   {error.message || "Ошибка при обновлении профиля"}
                 </p>
               </div>
             )}
 
-            <div className="min-h-0 w-full flex-1 overflow-y-auto p-6 lg:p-8">
-              {renderContent()}
+            <div className="min-h-0 w-full flex-1 overflow-y-auto px-4 py-5 sm:p-6 lg:p-8">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeSection}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                >
+                  {renderContent()}
+                </motion.div>
+              </AnimatePresence>
             </div>
           </form>
         </div>
