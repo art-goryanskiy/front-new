@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { EmailInputWithDomains } from "@/components/ui/email-input-with-domains";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
@@ -255,6 +256,7 @@ export function LoginFormPage() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [capsLockOn, setCapsLockOn] = useState(false);
+  const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [activePasswordField, setActivePasswordField] = useState<
     "password" | "confirmPassword" | null
   >(null);
@@ -882,7 +884,10 @@ export function LoginFormPage() {
                       <Label
                         htmlFor="email"
                         className={cn(
-                          "absolute top-2 left-3 z-10 -translate-y-1/2 rounded-md bg-background/80 px-1 text-[11px] font-medium backdrop-blur-sm transition-colors",
+                          "absolute left-3 z-10 rounded-md bg-background/80 px-1 font-medium backdrop-blur-sm transition-all duration-200",
+                          (field.value?.trim() || isEmailFocused)
+                            ? "top-2 -translate-y-1/2 text-[11px]"
+                            : "top-1/2 -translate-y-1/2 text-sm",
                           fieldState.invalid
                             ? "text-destructive"
                             : "text-muted-foreground group-focus-within:text-foreground"
@@ -891,21 +896,24 @@ export function LoginFormPage() {
                         {texts.email.label}
                       </Label>
 
-                      <Input
+                      <EmailInputWithDomains
                         {...field}
                         id="email"
-                        type="email"
-                        inputMode="email"
-                        placeholder={texts.email.placeholder}
-                        autoComplete="email"
+                        placeholder=" "
                         disabled={isLoading}
-                        onFocus={() => setIsTyping(true)}
-                        onBlur={() => setIsTyping(false)}
+                        onFocus={() => {
+                          setIsTyping(true);
+                          setIsEmailFocused(true);
+                        }}
+                        onBlur={(e) => {
+                          field.onBlur();
+                          setIsTyping(false);
+                          setIsEmailFocused(false);
+                        }}
                         aria-invalid={fieldState.invalid}
-                        className={cn(
-                          "peer h-12 border-border/60 bg-background/60 pr-10",
-                          "focus:border-primary"
-                        )}
+                        className="h-12 border-border/60 bg-background/60 pr-10"
+                        value={field.value}
+                        onChange={(e) => field.onChange(e.target.value)}
                       />
                     </div>
 
@@ -931,7 +939,10 @@ export function LoginFormPage() {
                       <Label
                         htmlFor="password"
                         className={cn(
-                          "absolute top-2 left-3 z-10 -translate-y-1/2 rounded-md bg-background/80 px-1 text-[11px] font-medium backdrop-blur-sm transition-colors",
+                          "absolute left-3 z-10 rounded-md bg-background/80 px-1 font-medium backdrop-blur-sm transition-all duration-200",
+                          (field.value?.trim() || activePasswordField === "password")
+                            ? "top-2 -translate-y-1/2 text-[11px]"
+                            : "top-1/2 -translate-y-1/2 text-sm",
                           fieldState.invalid
                             ? "text-destructive"
                             : "text-muted-foreground group-focus-within:text-foreground"
@@ -940,57 +951,51 @@ export function LoginFormPage() {
                         {texts.password.label}
                       </Label>
 
-                      <div className="relative">
-                        <Input
-                          {...field}
-                          id="password"
-                          type={showPassword ? "text" : "password"}
-                          placeholder={texts.password.placeholder}
-                          autoComplete={
-                            isRegister
-                              ? "new-password"
-                              : "current-password"
-                          }
-                          disabled={isLoading}
-                          onKeyDown={handlePasswordKey}
-                          onKeyUp={handlePasswordKey}
-                          onFocus={() => {
-                            setIsTyping(true);
-                            setActivePasswordField("password");
-                          }}
-                          onBlur={() => {
-                            setIsTyping(false);
-                            setActivePasswordField((v) =>
-                              v === "password" ? null : v
-                            );
-                          }}
-                          aria-invalid={fieldState.invalid}
-                          className={cn(
-                            "peer h-12 border-border/60 bg-background/60 pr-11",
-                            "focus:border-primary"
-                          )}
-                        />
-
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => setShowPassword((v) => !v)}
-                          disabled={isLoading}
-                          className="absolute top-1/2 right-2 h-9 w-9 -translate-y-1/2 rounded-xl border border-border/60 bg-background/60 text-muted-foreground shadow-sm backdrop-blur hover:bg-muted/20 hover:text-foreground"
-                          aria-label={
-                            showPassword
-                              ? "Скрыть пароль"
-                              : "Показать пароль"
-                          }
-                        >
-                          {showPassword ? (
-                            <EyeOff className="h-4 w-4" />
-                          ) : (
-                            <Eye className="h-4 w-4" />
-                          )}
-                        </Button>
-                      </div>
+                      <Input
+                        {...field}
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder=" "
+                        autoComplete={
+                          isRegister
+                            ? "new-password"
+                            : "current-password"
+                        }
+                        disabled={isLoading}
+                        onKeyDown={handlePasswordKey}
+                        onKeyUp={handlePasswordKey}
+                        onFocus={() => {
+                          setIsTyping(true);
+                          setActivePasswordField("password");
+                        }}
+                        onBlur={() => {
+                          setIsTyping(false);
+                          setActivePasswordField((v) =>
+                            v === "password" ? null : v
+                          );
+                        }}
+                        aria-invalid={fieldState.invalid}
+                        className="peer h-12 border-border/60 bg-background/60 pr-11"
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setShowPassword((v) => !v)}
+                        disabled={isLoading}
+                        className="absolute right-2 top-1/2 h-9 w-9 -translate-y-1/2 rounded-xl border border-border/60 bg-background/60 text-muted-foreground shadow-sm backdrop-blur hover:bg-muted/20 hover:text-foreground"
+                        aria-label={
+                          showPassword
+                            ? "Скрыть пароль"
+                            : "Показать пароль"
+                        }
+                      >
+                        {showPassword ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
+                      </Button>
                     </div>
 
                     {fieldState.error?.message && (
@@ -1029,7 +1034,10 @@ export function LoginFormPage() {
                         <Label
                           htmlFor="confirmPassword"
                           className={cn(
-                            "absolute top-2 left-3 z-10 -translate-y-1/2 rounded-md bg-background/80 px-1 text-[11px] font-medium backdrop-blur-sm transition-colors",
+                            "absolute left-3 z-10 rounded-md bg-background/80 px-1 font-medium backdrop-blur-sm transition-all duration-200",
+                            (field.value?.trim() || activePasswordField === "confirmPassword")
+                              ? "top-2 -translate-y-1/2 text-[11px]"
+                              : "top-1/2 -translate-y-1/2 text-sm",
                             fieldState.invalid
                               ? "text-destructive"
                               : "text-muted-foreground group-focus-within:text-foreground"
@@ -1038,39 +1046,31 @@ export function LoginFormPage() {
                           {REGISTER_FORM_TEXTS.confirmPassword.label}
                         </Label>
 
-                        <div className="relative">
-                          <Input
-                            {...field}
-                            id="confirmPassword"
-                            type={showPassword ? "text" : "password"}
-                            placeholder={
-                              REGISTER_FORM_TEXTS.confirmPassword
-                                .placeholder
-                            }
-                            autoComplete="new-password"
-                            disabled={isLoading}
-                            onKeyDown={handlePasswordKey}
-                            onKeyUp={handlePasswordKey}
-                            onFocus={() => {
-                              setIsTyping(true);
-                              setActivePasswordField(
-                                "confirmPassword"
-                              );
-                            }}
-                            onBlur={() => {
-                              setIsTyping(false);
-                              setActivePasswordField((v) =>
-                                v === "confirmPassword" ? null : v
-                              );
-                            }}
-                            aria-invalid={fieldState.invalid}
-                            className={cn(
-                              "peer h-12 border-border/60 bg-background/60 pr-11",
-                              "focus:border-primary"
-                            )}
-                          />
-
-                          <Button
+                        <Input
+                          {...field}
+                          id="confirmPassword"
+                          type={showPassword ? "text" : "password"}
+                          placeholder=" "
+                          autoComplete="new-password"
+                          disabled={isLoading}
+                          onKeyDown={handlePasswordKey}
+                          onKeyUp={handlePasswordKey}
+                          onFocus={() => {
+                            setIsTyping(true);
+                            setActivePasswordField(
+                              "confirmPassword"
+                            );
+                          }}
+                          onBlur={() => {
+                            setIsTyping(false);
+                            setActivePasswordField((v) =>
+                              v === "confirmPassword" ? null : v
+                            );
+                          }}
+                          aria-invalid={fieldState.invalid}
+                          className="peer h-12 border-border/60 bg-background/60 pr-11"
+                        />
+                        <Button
                             type="button"
                             variant="ghost"
                             size="icon"
@@ -1083,13 +1083,12 @@ export function LoginFormPage() {
                                 : "Показать пароль"
                             }
                           >
-                            {showPassword ? (
-                              <EyeOff className="h-4 w-4" />
-                            ) : (
-                              <Eye className="h-4 w-4" />
-                            )}
-                          </Button>
-                        </div>
+                          {showPassword ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
+                        </Button>
                       </div>
 
                       {fieldState.error?.message && (

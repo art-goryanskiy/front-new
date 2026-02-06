@@ -202,9 +202,6 @@ export const ProfileAdditionalInfoSection = memo(
           </h3>
           <div className={PROFILE_FORM_CLASSES.fieldGrid}>
             <div className="md:col-span-2 space-y-3">
-              <p className="text-sm font-medium text-foreground">
-                {PROFILE_FORM_LABELS.workPlaces}
-              </p>
               {workPlaces.length === 0 ? (
                 <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-muted/20 py-12 text-center">
                   <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
@@ -358,6 +355,7 @@ export const ProfileAdditionalInfoSection = memo(
                       <OrganizationSuggestInput
                         label="Добавить организацию"
                         placeholder="Введите ИНН или название"
+                        clearAfterSelect
                         description={
                           workPlaces.length === 0
                             ? "Выберите организацию из подсказок"
