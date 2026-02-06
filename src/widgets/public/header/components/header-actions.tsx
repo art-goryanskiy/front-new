@@ -3,7 +3,7 @@
 import { memo } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Search, Menu, X, ShoppingCart } from "lucide-react";
+import { Search, Menu, X, ShoppingCart, LogIn } from "lucide-react";
 import { UserMenu } from "@/shared/ui/user-menu/user-menu";
 import { ThemeToggle } from "@/shared/ui/theme-toggle/theme-toggle";
 import { useMyCart } from "@/entities/cart/api/use-my-cart";
@@ -73,11 +73,13 @@ export const HeaderActions = memo(function HeaderActions({
         <UserMenu user={user} onLogout={onLogout} />
       ) : (
         <Button
-          variant="secondary"
+          variant="ghost"
+          size="icon"
+          aria-label="Войти"
           onClick={onLoginClick}
-          className="hidden sm:flex"
+          className="hidden sm:flex text-muted-foreground hover:text-foreground"
         >
-          Войти
+          <LogIn className="h-5 w-5" />
         </Button>
       )}
       <Button
