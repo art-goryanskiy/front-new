@@ -80,15 +80,16 @@ export function Footer() {
   return (
     <footer
       className={cn(
-        "relative mx-auto w-full max-w-7xl flex flex-col items-center justify-center",
+        "relative w-full flex flex-col items-center justify-center",
         "rounded-t-2xl border-t border-border/60 bg-background md:rounded-t-3xl",
         "bg-linear-to-b from-foreground/4 to-transparent",
-        "px-4 py-12 sm:px-6 md:px-8 lg:px-10 lg:py-16 xl:px-12"
+        "py-12 lg:py-16"
       )}
     >
       <div className="bg-foreground/20 absolute left-1/2 top-0 h-px w-1/3 -translate-x-1/2 -translate-y-1/2 rounded-full blur" />
 
-      <div className="grid w-full gap-8 xl:grid-cols-3 xl:gap-8">
+      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12">
+        <div className="grid w-full gap-8 xl:grid-cols-3 xl:gap-8">
         <AnimatedContainer className="space-y-4">
           <Link
             href="/"
@@ -162,6 +163,7 @@ export function Footer() {
             </AnimatedContainer>
           ))}
         </div>
+      </div>
       </div>
     </footer>
   );
