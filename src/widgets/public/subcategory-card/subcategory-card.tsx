@@ -61,12 +61,12 @@ export const SubcategoryCard = memo(function SubcategoryCard({
               />
 
               <div className="min-w-0 flex-1">
-                <h3
+                <h2
                   className={SUBCATEGORY_CARD_CLASSES.title}
                   title={category.name}
                 >
                   {category.name}
-                </h3>
+                </h2>
               </div>
 
               <ArrowRight className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-foreground" />
