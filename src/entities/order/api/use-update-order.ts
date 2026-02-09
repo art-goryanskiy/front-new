@@ -8,6 +8,8 @@ export type UpdateOrderInput = {
   contactEmail?: string | null;
   contactPhone?: string | null;
   organizationId?: string | null;
+  /** ИНН (10/12 цифр) или название организации — приоритет над organizationId */
+  organizationQuery?: string | null;
 };
 
 type UpdateOrderData = {

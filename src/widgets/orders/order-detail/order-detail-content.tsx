@@ -68,7 +68,12 @@ function EditOrderDialog({
   order: OrderFieldsFragment;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSave: (input: { contactEmail?: string; contactPhone?: string; organizationId?: string }) => Promise<void>;
+  onSave: (input: {
+    contactEmail?: string;
+    contactPhone?: string;
+    organizationId?: string;
+    organizationQuery?: string;
+  }) => Promise<void>;
   loading: boolean;
 }) {
   const [email, setEmail] = useState(order.contactEmail ?? "");
@@ -85,11 +90,18 @@ function EditOrderDialog({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave({
-      contactEmail: email || undefined,
-      contactPhone: phone || undefined,
-      organizationId: selectedOrg ? selectedOrg.inn : (order.organizationId ?? undefined),
-    });
+    if (selectedOrg) {
+      onSave({
+        contactEmail: email || undefined,
+        contactPhone: phone || undefined,
+        organizationQuery: selectedOrg.inn,
+      });
+    } else {
+      onSave({
+        contactEmail: email || undefined,
+        contactPhone: phone || undefined,
+      });
+    }
   };
 
   const handleOrgSelect = useCallback((suggestion: OrganizationSuggestion) => {
@@ -220,13 +232,19 @@ export const OrderDetailContent = memo(function OrderDetailContent({
   }, [orderId, deleteOrder, router, showToast]);
 
   const handleEditOrder = useCallback(
-    async (input: { contactEmail?: string; contactPhone?: string; organizationId?: string }) => {
+    async (input: {
+      contactEmail?: string;
+      contactPhone?: string;
+      organizationId?: string;
+      organizationQuery?: string;
+    }) => {
       if (!orderId) return;
       try {
         await updateOrder(orderId, {
           contactEmail: input.contactEmail ?? null,
           contactPhone: input.contactPhone ?? null,
           organizationId: input.organizationId ?? null,
+          organizationQuery: input.organizationQuery ?? null,
         });
         await refetch();
         setEditOpen(false);
