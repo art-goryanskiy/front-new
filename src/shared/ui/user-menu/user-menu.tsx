@@ -75,7 +75,7 @@ export const UserMenu = memo(function UserMenu({
   }, [router]);
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <button
           type="button"
