@@ -27,6 +27,7 @@ import {
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -106,6 +107,9 @@ function EditOrderDialog({
       <DialogContent className="rounded-2xl sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Контактные данные заявки</DialogTitle>
+          <DialogDescription className="sr-only">
+            Измените email, телефон и организацию для заявки
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">

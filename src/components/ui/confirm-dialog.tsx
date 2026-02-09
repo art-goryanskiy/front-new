@@ -50,7 +50,11 @@ export function ConfirmDialog({
         if (!loading) onOpenChange(next);
       }}
     >
-      <DialogContent className="rounded-2xl sm:max-w-md" showClose={!loading}>
+      <DialogContent
+        className="rounded-2xl sm:max-w-md"
+        showClose={!loading}
+        {...(!description ? { "aria-describedby": undefined } : {})}
+      >
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           {description && (
