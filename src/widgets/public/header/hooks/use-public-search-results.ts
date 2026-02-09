@@ -19,11 +19,9 @@ export interface PublicSearchResult {
 }
 
 const ORDER_STATUS_LABELS: Record<string, string> = {
-  DRAFT: "Черновик",
-  PAYMENT_PENDING: "Ожидает оплаты",
+  AWAITING_PAYMENT: "Ожидает оплаты",
   PAID: "Оплачен",
-  SUBMITTED: "Оформлена",
-  DOCUMENTS_GENERATED: "Документы сформированы",
+  IN_PROGRESS: "В работе",
   COMPLETED: "Завершён",
   CANCELLED: "Отменён",
 };
@@ -125,12 +123,14 @@ export function usePublicSearchResults(
     if (isAuthenticated && orders.length > 0) {
       const matchesOrder = (order: {
         id: string;
+        number?: string | null;
         contactEmail?: string | null;
         contactPhone?: string | null;
         status?: string;
         lines?: Array<{ programTitle?: string | null }> | null;
       }) => {
         if (order.id.toLowerCase().includes(q)) return true;
+        if (order.number?.toLowerCase().includes(q)) return true;
         if (order.contactEmail?.toLowerCase().includes(q)) return true;
         if (
           order.contactPhone?.replace(/\D/g, "").includes(q.replace(/\D/g, ""))
@@ -161,10 +161,11 @@ export function usePublicSearchResults(
             ?.map((l) => l.programTitle)
             .filter(Boolean)
             .join(", ") ?? "";
+        const orderNumber = (order as { number?: string | null; id: string }).number ?? order.id;
         results.push({
           id: `order-${order.id}`,
           type: "order",
-          label: `Заявка ${order.id.slice(0, 8)}…`,
+          label: orderNumber.length > 10 ? `Заявка ${orderNumber.slice(0, 10)}…` : `Заявка ${orderNumber}`,
           path: `/orders/${order.id}`,
           icon: "receipt",
           description: programTitles || statusLabel || undefined,

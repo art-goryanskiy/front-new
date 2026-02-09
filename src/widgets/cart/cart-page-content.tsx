@@ -247,7 +247,7 @@ export const CartPageContent = memo(function CartPageContent() {
           Итого: {formatPrice(totalAmount)} ₽
         </div>
         <Button size="lg" className="w-full sm:w-auto" asChild>
-          <Link href="/checkout">Оформить заказ</Link>
+          <Link href="/checkout">Оформить заявку</Link>
         </Button>
       </Surface>
     </div>

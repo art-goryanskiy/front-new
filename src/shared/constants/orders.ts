@@ -1,17 +1,10 @@
-import type { OrderStatus } from "@/shared/api/generated/graphql";
-
-/** Подписи статусов заказа (схема + возможные значения бэкенда: NEW, AWAITING_PAYMENT, IN_PROGRESS). */
+/** Подписи статусов заявки (бэкенд: AWAITING_PAYMENT, PAID, IN_PROGRESS, COMPLETED, CANCELLED). */
 export const ORDER_STATUS_LABELS: Record<string, string> = {
-  DRAFT: "Черновик",
-  SUBMITTED: "Оформлен",
-  NEW: "Новый",
   AWAITING_PAYMENT: "Ожидает оплаты",
-  PAYMENT_PENDING: "Ожидает оплаты",
   PAID: "Оплачен",
   IN_PROGRESS: "В работе",
-  DOCUMENTS_GENERATED: "Документы сформированы",
-  CANCELLED: "Отменён",
   COMPLETED: "Завершён",
+  CANCELLED: "Отменён",
 };
 
 export const ORDER_CUSTOMER_TYPE_LABELS: Record<string, string> = {

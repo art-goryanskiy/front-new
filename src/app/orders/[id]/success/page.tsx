@@ -16,7 +16,7 @@ export default function OrderPaymentSuccessPage() {
           {id ? (
             <OrderPaymentReturnContent orderId={id} variant="success" />
           ) : (
-            <p className="text-muted-foreground">Неверный идентификатор заказа.</p>
+            <p className="text-muted-foreground">Неверный идентификатор заявки.</p>
           )}
         </div>
       </PublicPageLayout>
