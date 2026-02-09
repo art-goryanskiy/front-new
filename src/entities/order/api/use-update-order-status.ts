@@ -18,10 +18,16 @@ type UpdateOrderStatusVariables = {
   status: OrderStatus;
 };
 
-/** Статусы для смены через updateOrderStatus (бэкенд может поддерживать IN_PROGRESS, COMPLETED, CANCELLED). */
-export const UPDATEABLE_ORDER_STATUSES: { value: OrderStatus; label: string }[] = [
+/** Отмена заявки (только для AWAITING_PAYMENT). */
+export const CANCELLED_STATUS_OPTION: { value: OrderStatus; label: string } = {
+  value: OrderStatus.Cancelled,
+  label: "Отменён",
+};
+
+/** Статусы для оплаченных заявок (PAID / IN_PROGRESS → IN_PROGRESS, COMPLETED). */
+export const PROGRESS_ORDER_STATUS_OPTIONS: { value: OrderStatus; label: string }[] = [
+  { value: OrderStatus.InProgress, label: "В работе" },
   { value: OrderStatus.Completed, label: "Завершён" },
-  { value: OrderStatus.Cancelled, label: "Отменён" },
 ];
 
 export function useUpdateOrderStatus() {

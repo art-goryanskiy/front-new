@@ -24,7 +24,23 @@ export const UPDATE_ORDER_STATUS = gql`
   mutation UpdateOrderStatus($orderId: ID!, $status: OrderStatus!) {
     updateOrderStatus(orderId: $orderId, status: $status) {
       id
+      number
       status
+    }
+  }
+`;
+
+export const DELETE_ORDER = gql`
+  mutation DeleteOrder($orderId: ID!) {
+    deleteOrder(orderId: $orderId)
+  }
+`;
+
+export const UPDATE_ORDER = gql`
+  ${ORDER_FIELDS}
+  mutation UpdateOrder($orderId: ID!, $input: UpdateOrderInput!) {
+    updateOrder(orderId: $orderId, input: $input) {
+      ...OrderFields
     }
   }
 `;

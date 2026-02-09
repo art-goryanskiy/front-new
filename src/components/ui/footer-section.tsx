@@ -37,7 +37,7 @@ const footerLinks: FooterSection[] = [
     label: "Кабинет",
     links: [
       { title: "Корзина", href: "/cart" },
-      { title: "Мои заказы", href: "/orders" },
+      { title: "Мои заявки", href: "/orders" },
       { title: "Профиль", href: "/profile" },
     ],
   },
