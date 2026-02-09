@@ -121,6 +121,12 @@ export const UserMenu = memo(function UserMenu({
             e.preventDefault();
           }
         }}
+        onInteractOutside={(e) => {
+          const target = e.target as Element;
+          if (target?.closest?.("[data-user-menu-trigger]")) {
+            e.preventDefault();
+          }
+        }}
       >
         <DropdownMenuLabel className="font-normal">
           <span className="truncate block">{displayName}</span>
