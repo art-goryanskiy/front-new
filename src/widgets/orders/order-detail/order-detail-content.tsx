@@ -32,8 +32,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { OrganizationSuggestInput } from "@/shared/ui/form-fields/organization-suggest-input";
+import type { OrganizationSuggestion } from "@/shared/ui/form-fields/organization-suggest-input";
 import { useRouter } from "next/navigation";
 import { OrderStatus } from "@/shared/api/generated/graphql";
 
@@ -69,24 +72,28 @@ function EditOrderDialog({
 }) {
   const [email, setEmail] = useState(order.contactEmail ?? "");
   const [phone, setPhone] = useState(order.contactPhone ?? "");
-  const [orgId, setOrgId] = useState(order.organizationId ?? "");
+  const [selectedOrg, setSelectedOrg] = useState<OrganizationSuggestion | null>(null);
 
   useEffect(() => {
     if (open) {
       setEmail(order.contactEmail ?? "");
       setPhone(order.contactPhone ?? "");
-      setOrgId(order.organizationId ?? "");
+      setSelectedOrg(null);
     }
-  }, [open, order.contactEmail, order.contactPhone, order.organizationId]);
+  }, [open, order.contactEmail, order.contactPhone]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSave({
       contactEmail: email || undefined,
       contactPhone: phone || undefined,
-      organizationId: orgId || undefined,
+      organizationId: selectedOrg ? selectedOrg.inn : (order.organizationId ?? undefined),
     });
   };
+
+  const handleOrgSelect = useCallback((suggestion: OrganizationSuggestion) => {
+    setSelectedOrg(suggestion);
+  }, []);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -124,13 +131,12 @@ function EditOrderDialog({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="edit-order-org">ID организации (необязательно)</Label>
-            <Input
-              id="edit-order-org"
-              value={orgId}
-              onChange={(e) => setOrgId(e.target.value)}
-              placeholder=""
-              className="rounded-xl"
+            <OrganizationSuggestInput
+              label="Организация"
+              placeholder="ИНН или название организации"
+              description="Необязательно. Введите ИНН или название и выберите из списка."
+              onSelect={handleOrgSelect}
+              clearAfterSelect={false}
             />
           </div>
           <DialogFooter className="gap-2 sm:gap-0">
@@ -166,6 +172,7 @@ export const OrderDetailContent = memo(function OrderDetailContent({
   const { showToast } = useToastState();
   const [updatingStatus, setUpdatingStatus] = useState<OrderStatus | null>(null);
   const [editOpen, setEditOpen] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const { order, loading, error, refetch } = useOrder(orderId);
   const { updateOrderStatus, loading: updateLoading } = useUpdateOrderStatus();
   const { deleteOrder, loading: deleteLoading } = useDeleteOrder();
@@ -193,7 +200,7 @@ export const OrderDetailContent = memo(function OrderDetailContent({
   }, [handleStatusChange]);
 
   const handleDeleteOrder = useCallback(async () => {
-    if (!orderId || !confirm("Удалить заявку? Это действие нельзя отменить.")) return;
+    if (!orderId) return;
     try {
       const ok = await deleteOrder(orderId);
       if (ok) {
@@ -204,6 +211,7 @@ export const OrderDetailContent = memo(function OrderDetailContent({
       }
     } catch (e) {
       showToast("error", getGraphQLErrorMessage(e));
+      throw e;
     }
   }, [orderId, deleteOrder, router, showToast]);
 
@@ -302,12 +310,23 @@ export const OrderDetailContent = memo(function OrderDetailContent({
                 variant="outline"
                 size="sm"
                 disabled={deleteLoading}
-                onClick={handleDeleteOrder}
+                onClick={() => setDeleteConfirmOpen(true)}
                 className="gap-2 text-destructive hover:text-destructive"
               >
-                {deleteLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                <Trash2 className="h-4 w-4" />
                 Удалить
               </Button>
+              <ConfirmDialog
+                open={deleteConfirmOpen}
+                onOpenChange={setDeleteConfirmOpen}
+                title="Удалить заявку?"
+                description="Это действие нельзя отменить."
+                confirmLabel="Удалить"
+                cancelLabel="Отмена"
+                variant="destructive"
+                onConfirm={handleDeleteOrder}
+                loading={deleteLoading}
+              />
             </>
           )}
           <Button
