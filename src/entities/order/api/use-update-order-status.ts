@@ -35,7 +35,11 @@ export function useUpdateOrderStatus() {
     UpdateOrderStatusData,
     UpdateOrderStatusVariables
   >(UPDATE_ORDER_STATUS as DocumentNode, {
-    refetchQueries: [{ query: ORDER as DocumentNode }],
+    refetchQueries: (result) => {
+      const orderId = result.data?.updateOrderStatus?.id;
+      if (!orderId) return [];
+      return [{ query: ORDER as DocumentNode, variables: { id: orderId } }];
+    },
   });
 
   const updateOrderStatus = async (

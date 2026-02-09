@@ -26,7 +26,16 @@ export function useUpdateOrder() {
     UpdateOrderData,
     UpdateOrderVariables
   >(UPDATE_ORDER as DocumentNode, {
-    refetchQueries: [{ query: ORDER as DocumentNode }, { query: MY_ORDERS as DocumentNode }],
+    refetchQueries: (result) => {
+      const orderId = result.data?.updateOrder?.id;
+      const queries: Array<{ query: DocumentNode; variables?: { id: string } }> = [
+        { query: MY_ORDERS as DocumentNode },
+      ];
+      if (orderId) {
+        queries.push({ query: ORDER as DocumentNode, variables: { id: orderId } });
+      }
+      return queries;
+    },
   });
 
   const updateOrder = async (
