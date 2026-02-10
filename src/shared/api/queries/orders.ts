@@ -15,6 +15,8 @@ export const ORDER_FIELDS = gql`
     lines {
       programId
       programTitle
+      subProgramIndex
+      subProgramTitle
       hours
       price
       quantity

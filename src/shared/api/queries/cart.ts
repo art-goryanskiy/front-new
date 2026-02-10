@@ -8,6 +8,9 @@ export const MY_CART = gql`
         pricingIndex
         quantity
         lineAmount
+        subProgramIndex
+        subProgramTitle
+        displayTitle
         program {
           id
           title

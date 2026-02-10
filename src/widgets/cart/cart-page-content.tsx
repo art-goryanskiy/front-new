@@ -47,13 +47,15 @@ export const CartPageContent = memo(function CartPageContent() {
     async (
       programId: string,
       pricingIndex: number,
-      newQuantity: number
+      newQuantity: number,
+      subProgramIndex?: number | null
     ) => {
       try {
         await updateCartItem({
           programId,
           pricingIndex,
           quantity: newQuantity,
+          ...(subProgramIndex != null && { subProgramIndex }),
         });
       } catch (err) {
         if (handleCartError(err, router)) return;
@@ -64,9 +66,17 @@ export const CartPageContent = memo(function CartPageContent() {
   );
 
   const handleRemove = useCallback(
-    async (programId: string, pricingIndex: number) => {
+    async (
+      programId: string,
+      pricingIndex: number,
+      subProgramIndex?: number | null
+    ) => {
       try {
-        await removeFromCart({ programId, pricingIndex });
+        await removeFromCart({
+          programId,
+          pricingIndex,
+          ...(subProgramIndex != null && { subProgramIndex }),
+        });
         showToast("success", "Удалено из корзины");
       } catch (err) {
         if (handleCartError(err, router)) return;
@@ -145,9 +155,11 @@ export const CartPageContent = memo(function CartPageContent() {
             const price = pricing?.price ?? 0;
             const hours = pricing?.hours ?? 0;
 
+            const cartItemKey = `${item.programId}-${item.pricingIndex}-${item.subProgramIndex ?? "p"}`;
+
             return (
               <div
-                key={`${item.programId}-${item.pricingIndex}`}
+                key={cartItemKey}
                 className="flex flex-col gap-4 rounded-xl border border-border/60 bg-background/60 p-4 sm:flex-row sm:items-center sm:gap-6"
               >
                 <Link
@@ -158,7 +170,7 @@ export const CartPageContent = memo(function CartPageContent() {
                     {program.image ? (
                       <img
                         src={program.image}
-                        alt={program.title}
+                        alt={item.displayTitle}
                         className="h-full w-full object-cover"
                       />
                     ) : (
@@ -169,7 +181,7 @@ export const CartPageContent = memo(function CartPageContent() {
                   </div>
                   <div className="min-w-0 flex-1">
                     <h3 className="font-semibold text-foreground line-clamp-2">
-                      {program.shortTitle || program.title}
+                      {item.displayTitle}
                     </h3>
                     <p className="mt-1 text-sm text-muted-foreground">
                       {hours} часов
@@ -186,7 +198,8 @@ export const CartPageContent = memo(function CartPageContent() {
                         handleQuantityChange(
                           item.programId,
                           item.pricingIndex,
-                          Math.max(1, item.quantity - 1)
+                          Math.max(1, item.quantity - 1),
+                          item.subProgramIndex
                         )
                       }
                       disabled={updating || item.quantity <= 1}
@@ -203,7 +216,8 @@ export const CartPageContent = memo(function CartPageContent() {
                         handleQuantityChange(
                           item.programId,
                           item.pricingIndex,
-                          Math.min(100, item.quantity + 1)
+                          Math.min(100, item.quantity + 1),
+                          item.subProgramIndex
                         )
                       }
                       disabled={updating || item.quantity >= 100}
@@ -221,7 +235,11 @@ export const CartPageContent = memo(function CartPageContent() {
                       size="icon"
                       className="text-destructive hover:bg-destructive/10 hover:text-destructive"
                       onClick={() =>
-                        handleRemove(item.programId, item.pricingIndex)
+                        handleRemove(
+                          item.programId,
+                          item.pricingIndex,
+                          item.subProgramIndex
+                        )
                       }
                       disabled={removing}
                       aria-label="Удалить"

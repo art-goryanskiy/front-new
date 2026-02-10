@@ -25,7 +25,7 @@ import {
   Loader2,
   Sparkles,
 } from "lucide-react";
-import { OrderCustomerType } from "@/shared/api/generated/graphql";
+import { OrderCustomerType, OrderStatus } from "@/shared/api/generated/graphql";
 import { cn } from "@/lib/utils";
 
 export const OrderPaymentContent = memo(function OrderPaymentContent({
@@ -114,11 +114,12 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
   }
 
   const isPaymentPending =
-    order.status === "PAYMENT_PENDING" || (order.status as string) === "AWAITING_PAYMENT";
+    order.status === OrderStatus.AwaitingPayment ||
+    (order.status as string) === "PAYMENT_PENDING";
   const isPaid =
-    order.status === "PAID" ||
-    order.status === "COMPLETED" ||
-    order.status === "DOCUMENTS_GENERATED";
+    order.status === OrderStatus.Paid ||
+    order.status === OrderStatus.Completed ||
+    (order.status as string) === "DOCUMENTS_GENERATED";
 
   if (!isPaymentPending && !isPaid) {
     return (
@@ -181,7 +182,9 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
           <ul className="space-y-2 text-sm text-muted-foreground">
             {order.lines.map((line, idx) => (
               <li key={`${line.programId}-${idx}`} className="flex justify-between">
-                <span className="text-foreground">{line.programTitle}</span>
+                <span className="text-foreground">
+                {line.subProgramTitle ?? line.programTitle}
+              </span>
                 <span>{formatPriceWithCurrency(line.lineAmount)}</span>
               </li>
             ))}

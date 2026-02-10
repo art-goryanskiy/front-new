@@ -119,7 +119,9 @@ export const ProgramDetail = memo(function ProgramDetail({
 
           {program.subPrograms && program.subPrograms.length > 0 && (
             <ProgramDetailSubPrograms
+              programId={program.id}
               subPrograms={program.subPrograms}
+              programPricing={program.pricing ?? []}
             />
           )}
 

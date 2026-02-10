@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-import type { OrderStatus } from "@/shared/api/generated/graphql";
+import { OrderStatus } from "@/shared/api/generated/graphql";
 
 function formatOrderDate(date: string | unknown): string {
   if (!date) return "—";
@@ -107,7 +107,8 @@ export const OrderDetailContent = memo(function OrderDetailContent({
           </span>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          {(order.status === "PAYMENT_PENDING" || (order.status as string) === "AWAITING_PAYMENT") && (
+          {(order.status === OrderStatus.AwaitingPayment ||
+            (order.status as string) === "PAYMENT_PENDING") && (
             <Button asChild>
               <Link href={`/orders/${order.id}/pay`}>Оплатить</Link>
             </Button>
@@ -123,7 +124,9 @@ export const OrderDetailContent = memo(function OrderDetailContent({
         </div>
       </div>
 
-      {PAID_LIKE_STATUSES.includes(order.status) && order.status !== "COMPLETED" && order.status !== "CANCELLED" && (
+      {PAID_LIKE_STATUSES.includes(order.status as string) &&
+          order.status !== OrderStatus.Completed &&
+          order.status !== OrderStatus.Cancelled && (
         <Surface variant="inset" className="flex flex-wrap items-center justify-between gap-4 p-4">
           <span className="text-sm font-medium text-muted-foreground">Сменить статус заказа</span>
           <DropdownMenu>
@@ -196,7 +199,7 @@ export const OrderDetailContent = memo(function OrderDetailContent({
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <div>
                     <p className="font-semibold text-foreground">
-                      {line.programTitle}
+                      {line.subProgramTitle ?? line.programTitle}
                     </p>
                     <p className="text-sm text-muted-foreground">
                       {line.hours} ч × {line.quantity} —{" "}

@@ -17,6 +17,8 @@ export function buildOrderLinesFromCart(
 
     return {
       programId: item.programId,
+      pricingIndex: item.pricingIndex,
+      ...(item.subProgramIndex != null && { subProgramIndex: item.subProgramIndex }),
       hours,
       price,
       quantity,
