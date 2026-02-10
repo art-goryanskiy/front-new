@@ -35,7 +35,9 @@ type Documents = {
     "\n  mutation DeleteEducationDocument($id: ID!) {\n    deleteEducationDocument(id: $id) {\n      id\n      name\n      image\n    }\n  }\n": typeof types.DeleteEducationDocumentDocument,
     "\n  \n  mutation CreateOrderFromCart($input: CreateOrderFromCartInput!) {\n    createOrderFromCart(input: $input) {\n      ...OrderFields\n    }\n  }\n": typeof types.CreateOrderFromCartDocument,
     "\n  mutation CreateOrderCardPayment($orderId: ID!) {\n    createOrderCardPayment(orderId: $orderId) {\n      paymentId\n      paymentUrl\n      status\n    }\n  }\n": typeof types.CreateOrderCardPaymentDocument,
-    "\n  mutation UpdateOrderStatus($orderId: ID!, $status: OrderStatus!) {\n    updateOrderStatus(orderId: $orderId, status: $status) {\n      id\n      status\n    }\n  }\n": typeof types.UpdateOrderStatusDocument,
+    "\n  mutation UpdateOrderStatus($orderId: ID!, $status: OrderStatus!) {\n    updateOrderStatus(orderId: $orderId, status: $status) {\n      id\n      number\n      status\n    }\n  }\n": typeof types.UpdateOrderStatusDocument,
+    "\n  mutation DeleteOrder($orderId: ID!) {\n    deleteOrder(orderId: $orderId)\n  }\n": typeof types.DeleteOrderDocument,
+    "\n  \n  mutation UpdateOrder($orderId: ID!, $input: UpdateOrderInput!) {\n    updateOrder(orderId: $orderId, input: $input) {\n      ...OrderFields\n    }\n  }\n": typeof types.UpdateOrderDocument,
     "\n  mutation CreateOrderInvoice(\n    $orderId: ID!\n    $payerInn: String\n    $payerKpp: String\n    $payerName: String\n  ) {\n    createOrderInvoice(\n      orderId: $orderId\n      payerInn: $payerInn\n      payerKpp: $payerKpp\n      payerName: $payerName\n    ) {\n      pdfUrl\n      invoiceId\n      incomingInvoiceUrl\n    }\n  }\n": typeof types.CreateOrderInvoiceDocument,
     "\n  mutation CreateProgram($input: CreateProgramInput!) {\n    createProgram(input: $input) {\n      id\n      title\n      slug\n      educationDocumentId\n      description\n      image\n      category\n      baseHours\n      studentCategory\n      awardedQualification\n      awardedRankFrom\n      awardedRankTo\n      pricing {\n        hours\n        price\n      }\n      subPrograms {\n        title\n        description\n      }\n      views\n      createdAt\n      updatedAt\n    }\n  }\n": typeof types.CreateProgramDocument,
     "\n  mutation UpdateProgram($id: ID!, $input: UpdateProgramInput!) {\n    updateProgram(id: $id, input: $input) {\n      id\n      title\n      slug\n      educationDocumentId\n      description\n      image\n      category\n      baseHours\n      studentCategory\n      awardedQualification\n      awardedRankFrom\n      awardedRankTo\n      pricing {\n        hours\n        price\n      }\n      subPrograms {\n        title\n        description\n      }\n      views\n      createdAt\n      updatedAt\n    }\n  }\n": typeof types.UpdateProgramDocument,
@@ -95,7 +97,9 @@ const documents: Documents = {
     "\n  mutation DeleteEducationDocument($id: ID!) {\n    deleteEducationDocument(id: $id) {\n      id\n      name\n      image\n    }\n  }\n": types.DeleteEducationDocumentDocument,
     "\n  \n  mutation CreateOrderFromCart($input: CreateOrderFromCartInput!) {\n    createOrderFromCart(input: $input) {\n      ...OrderFields\n    }\n  }\n": types.CreateOrderFromCartDocument,
     "\n  mutation CreateOrderCardPayment($orderId: ID!) {\n    createOrderCardPayment(orderId: $orderId) {\n      paymentId\n      paymentUrl\n      status\n    }\n  }\n": types.CreateOrderCardPaymentDocument,
-    "\n  mutation UpdateOrderStatus($orderId: ID!, $status: OrderStatus!) {\n    updateOrderStatus(orderId: $orderId, status: $status) {\n      id\n      status\n    }\n  }\n": types.UpdateOrderStatusDocument,
+    "\n  mutation UpdateOrderStatus($orderId: ID!, $status: OrderStatus!) {\n    updateOrderStatus(orderId: $orderId, status: $status) {\n      id\n      number\n      status\n    }\n  }\n": types.UpdateOrderStatusDocument,
+    "\n  mutation DeleteOrder($orderId: ID!) {\n    deleteOrder(orderId: $orderId)\n  }\n": types.DeleteOrderDocument,
+    "\n  \n  mutation UpdateOrder($orderId: ID!, $input: UpdateOrderInput!) {\n    updateOrder(orderId: $orderId, input: $input) {\n      ...OrderFields\n    }\n  }\n": types.UpdateOrderDocument,
     "\n  mutation CreateOrderInvoice(\n    $orderId: ID!\n    $payerInn: String\n    $payerKpp: String\n    $payerName: String\n  ) {\n    createOrderInvoice(\n      orderId: $orderId\n      payerInn: $payerInn\n      payerKpp: $payerKpp\n      payerName: $payerName\n    ) {\n      pdfUrl\n      invoiceId\n      incomingInvoiceUrl\n    }\n  }\n": types.CreateOrderInvoiceDocument,
     "\n  mutation CreateProgram($input: CreateProgramInput!) {\n    createProgram(input: $input) {\n      id\n      title\n      slug\n      educationDocumentId\n      description\n      image\n      category\n      baseHours\n      studentCategory\n      awardedQualification\n      awardedRankFrom\n      awardedRankTo\n      pricing {\n        hours\n        price\n      }\n      subPrograms {\n        title\n        description\n      }\n      views\n      createdAt\n      updatedAt\n    }\n  }\n": types.CreateProgramDocument,
     "\n  mutation UpdateProgram($id: ID!, $input: UpdateProgramInput!) {\n    updateProgram(id: $id, input: $input) {\n      id\n      title\n      slug\n      educationDocumentId\n      description\n      image\n      category\n      baseHours\n      studentCategory\n      awardedQualification\n      awardedRankFrom\n      awardedRankTo\n      pricing {\n        hours\n        price\n      }\n      subPrograms {\n        title\n        description\n      }\n      views\n      createdAt\n      updatedAt\n    }\n  }\n": types.UpdateProgramDocument,
@@ -235,7 +239,15 @@ export function gql(source: "\n  mutation CreateOrderCardPayment($orderId: ID!) 
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  mutation UpdateOrderStatus($orderId: ID!, $status: OrderStatus!) {\n    updateOrderStatus(orderId: $orderId, status: $status) {\n      id\n      status\n    }\n  }\n"): (typeof documents)["\n  mutation UpdateOrderStatus($orderId: ID!, $status: OrderStatus!) {\n    updateOrderStatus(orderId: $orderId, status: $status) {\n      id\n      status\n    }\n  }\n"];
+export function gql(source: "\n  mutation UpdateOrderStatus($orderId: ID!, $status: OrderStatus!) {\n    updateOrderStatus(orderId: $orderId, status: $status) {\n      id\n      number\n      status\n    }\n  }\n"): (typeof documents)["\n  mutation UpdateOrderStatus($orderId: ID!, $status: OrderStatus!) {\n    updateOrderStatus(orderId: $orderId, status: $status) {\n      id\n      number\n      status\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation DeleteOrder($orderId: ID!) {\n    deleteOrder(orderId: $orderId)\n  }\n"): (typeof documents)["\n  mutation DeleteOrder($orderId: ID!) {\n    deleteOrder(orderId: $orderId)\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  \n  mutation UpdateOrder($orderId: ID!, $input: UpdateOrderInput!) {\n    updateOrder(orderId: $orderId, input: $input) {\n      ...OrderFields\n    }\n  }\n"): (typeof documents)["\n  \n  mutation UpdateOrder($orderId: ID!, $input: UpdateOrderInput!) {\n    updateOrder(orderId: $orderId, input: $input) {\n      ...OrderFields\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
