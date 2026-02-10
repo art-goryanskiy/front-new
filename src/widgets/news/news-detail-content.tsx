@@ -78,12 +78,14 @@ export function NewsDetailContent() {
   const dateStr = formatNewsDate(newsItem.date);
   const photos = newsItem.attachments?.filter((a) => a.type === "photo") ?? [];
   const links = newsItem.attachments?.filter((a) => a.type === "link") ?? [];
+  const firstPhoto = photos[0]?.url ?? null;
+  const restPhotos = firstPhoto ? photos.slice(1) : photos;
 
   return (
     <motion.article
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.35 }}
       className="relative"
     >
       <div className="mb-6 flex flex-wrap items-center gap-3">
@@ -95,98 +97,112 @@ export function NewsDetailContent() {
         </Button>
       </div>
 
-      <div
-        className={cn(
-          "overflow-hidden rounded-2xl border border-border/50 bg-background/95 shadow-lg",
-          "dark:border-white/10 dark:bg-muted/5"
-        )}
-      >
-        <div className="border-b border-border/40 bg-muted/5 px-6 py-4 dark:bg-muted/10">
-          <p className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+      {/* Hero: full-bleed first photo */}
+      {firstPhoto && (
+        <div className="-mx-4 mb-8 overflow-hidden rounded-2xl sm:-mx-6 sm:rounded-3xl lg:-mx-8">
+          <div className="relative aspect-2/1 w-full sm:aspect-21/9">
+            <img
+              src={firstPhoto}
+              alt=""
+              className="h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-linear-to-t from-background/80 via-background/20 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8">
+              <p className="flex items-center gap-2 text-sm font-medium uppercase tracking-wider text-white drop-shadow-md">
+                <Calendar className="h-4 w-4 shrink-0" aria-hidden />
+                {dateStr}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Editorial column: prose + media */}
+      <div className="mx-auto max-w-prose">
+        {!firstPhoto && (
+          <p className="mb-6 flex items-center gap-2 text-sm font-medium uppercase tracking-wider text-muted-foreground">
             <Calendar className="h-4 w-4 shrink-0" aria-hidden />
             {dateStr}
           </p>
-        </div>
+        )}
 
-        <div className="space-y-6 p-6 sm:p-8">
-          <div className="prose prose-neutral dark:prose-invert max-w-none">
-            <div className="whitespace-pre-wrap text-foreground leading-relaxed">
-              {newsItem.text}
-            </div>
+        <div className="prose prose-neutral dark:prose-invert prose-p:leading-relaxed prose-p:text-foreground max-w-none">
+          <div className="whitespace-pre-wrap text-foreground leading-relaxed">
+            {newsItem.text}
           </div>
-
-          {photos.length > 0 && (
-            <div className="space-y-3">
-              <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
-                <Image className="h-4 w-4" aria-hidden />
-                Фотографии
-              </h3>
-              <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {photos.map((att, i) =>
-                  att.url ? (
-                    <li key={i}>
-                      <a
-                        href={att.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block overflow-hidden rounded-xl border border-border/50 transition hover:border-primary/30 hover:shadow-md"
-                      >
-                        <img
-                          src={att.url}
-                          alt=""
-                          className="h-48 w-full object-cover transition-transform duration-300 hover:scale-105"
-                        />
-                      </a>
-                    </li>
-                  ) : null
-                )}
-              </ul>
-            </div>
-          )}
-
-          {links.length > 0 && (
-            <div className="space-y-3">
-              <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
-                <Link2 className="h-4 w-4" aria-hidden />
-                Ссылки
-              </h3>
-              <ul className="space-y-2">
-                {links.map((att, i) =>
-                  att.url ? (
-                    <li key={i}>
-                      <a
-                        href={att.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 text-primary underline decoration-primary/40 underline-offset-2 transition hover:decoration-primary"
-                      >
-                        {att.title ?? att.url}
-                        <ExternalLink className="h-3.5 w-3.5 shrink-0" aria-hidden />
-                      </a>
-                    </li>
-                  ) : null
-                )}
-              </ul>
-            </div>
-          )}
-
-          {newsItem.vkUrl && (
-            <div className="pt-2">
-              <a
-                href={newsItem.vkUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={cn(
-                  "inline-flex items-center gap-2 rounded-xl border border-border/60 bg-muted/20 px-4 py-2.5 text-sm font-medium transition",
-                  "hover:border-primary/30 hover:bg-primary/5 hover:text-primary"
-                )}
-              >
-                <ExternalLink className="h-4 w-4 shrink-0" aria-hidden />
-                Открыть во ВКонтакте
-              </a>
-            </div>
-          )}
         </div>
+
+        {restPhotos.length > 0 && (
+          <div className="mt-10 space-y-4">
+            <h3 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-foreground">
+              <Image className="h-4 w-4" aria-hidden />
+              Фотографии
+            </h3>
+            <ul className="grid gap-3 sm:grid-cols-2">
+              {restPhotos.map((att, i) =>
+                att.url ? (
+                  <li key={i}>
+                    <a
+                      href={att.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block overflow-hidden rounded-xl border border-border/40 transition hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5"
+                    >
+                      <img
+                        src={att.url}
+                        alt=""
+                        className="aspect-4/3 w-full object-cover transition-transform duration-300 hover:scale-[1.02]"
+                      />
+                    </a>
+                  </li>
+                ) : null
+              )}
+            </ul>
+          </div>
+        )}
+
+        {links.length > 0 && (
+          <div className="mt-10 space-y-3">
+            <h3 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-foreground">
+              <Link2 className="h-4 w-4" aria-hidden />
+              Ссылки
+            </h3>
+            <ul className="space-y-2">
+              {links.map((att, i) =>
+                att.url ? (
+                  <li key={i}>
+                    <a
+                      href={att.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 text-primary underline decoration-primary/40 underline-offset-2 transition hover:decoration-primary"
+                    >
+                      {att.title ?? att.url}
+                      <ExternalLink className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                    </a>
+                  </li>
+                ) : null
+              )}
+            </ul>
+          </div>
+        )}
+
+        {newsItem.vkUrl && (
+          <div className="mt-10 pt-6 border-t border-border/40">
+            <a
+              href={newsItem.vkUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={cn(
+                "inline-flex items-center gap-2 rounded-xl border border-border/60 bg-muted/20 px-5 py-2.5 text-sm font-medium transition",
+                "hover:border-primary/30 hover:bg-primary/5 hover:text-primary"
+              )}
+            >
+              <ExternalLink className="h-4 w-4 shrink-0" aria-hidden />
+              Открыть во ВКонтакте
+            </a>
+          </div>
+        )}
       </div>
     </motion.article>
   );
