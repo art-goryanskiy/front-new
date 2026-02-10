@@ -128,21 +128,10 @@ export const CheckoutForm = memo(function CheckoutForm({
     return init;
   });
 
-  useEffect(() => {
-    setLinesLearners((prev) => {
-      const next: Record<string, LearnerFormData[]> = {};
-      items.forEach((item) => {
-        const key = lineKey(item);
-        next[key] =
-          prev[key]?.length === item.quantity
-            ? prev[key]
-            : Array.from({ length: item.quantity }, () =>
-                defaultLearnerFormData()
-              );
-      });
-      return next;
-    });
-  }, [items]);
+  /** Для типа заказчика «не я»: какие слоты слушателей заполнены из профиля («Это я») */
+  const [useMyDataForLearner, setUseMyDataForLearner] = useState<
+    Record<string, boolean>
+  >({});
 
   const {
     register,
@@ -174,6 +163,29 @@ export const CheckoutForm = memo(function CheckoutForm({
     [items]
   );
 
+  const profileLearner = useMemo(() => {
+    if (!user?.profile) return null;
+    return learnerFromProfile(user.profile, user?.email ?? "");
+  }, [user?.profile, user?.email]);
+
+  useEffect(() => {
+    setLinesLearners((prev) => {
+      const next: Record<string, LearnerFormData[]> = {};
+      const fillLearner =
+        customerType === OrderCustomerType.Self && profileLearner
+          ? () => ({ ...profileLearner })
+          : defaultLearnerFormData;
+      items.forEach((item) => {
+        const key = lineKey(item);
+        next[key] =
+          prev[key]?.length === item.quantity
+            ? prev[key]
+            : Array.from({ length: item.quantity }, fillLearner);
+      });
+      return next;
+    });
+  }, [items, customerType, profileLearner]);
+
   useLayoutEffect(() => {
     if (customerType !== OrderCustomerType.Self || !user?.profile)
       return;
@@ -191,17 +203,17 @@ export const CheckoutForm = memo(function CheckoutForm({
     setValue("contactEmail", contactEmail);
     setValue("contactPhone", contactPhone);
 
-    if (totalLearners >= 1 && items.length > 0) {
-      const firstKey = lineKey(items[0]);
-      const firstLearner = learnerFromProfile(
-        user.profile,
-        contactEmail
-      );
+    if (totalLearners >= 1 && items.length > 0 && profileLearner) {
       setLinesLearners((prev) => {
-        const list = prev[firstKey] ?? [];
-        const nextList = [...list];
-        nextList[0] = firstLearner;
-        return { ...prev, [firstKey]: nextList };
+        const next = { ...prev };
+        items.forEach((item) => {
+          const key = lineKey(item);
+          next[key] = Array.from(
+            { length: item.quantity },
+            () => ({ ...profileLearner })
+          );
+        });
+        return next;
       });
     }
   }, [
@@ -212,6 +224,7 @@ export const CheckoutForm = memo(function CheckoutForm({
     reset,
     totalLearners,
     items,
+    profileLearner,
   ]);
 
   const setLearnerData = useCallback(
@@ -224,6 +237,23 @@ export const CheckoutForm = memo(function CheckoutForm({
       });
     },
     []
+  );
+
+  const learnerSlotId = useCallback((key: string, idx: number) => `${key}-${idx}`, []);
+
+  const setUseMyData = useCallback(
+    (key: string, learnerIndex: number, checked: boolean) => {
+      const id = learnerSlotId(key, learnerIndex);
+      setUseMyDataForLearner((prev) => ({ ...prev, [id]: checked }));
+      if (profileLearner) {
+        setLearnerData(
+          key,
+          learnerIndex,
+          checked ? { ...profileLearner } : defaultLearnerFormData()
+        );
+      }
+    },
+    [profileLearner, setLearnerData, learnerSlotId]
   );
 
   const goNext = useCallback(() => {
@@ -369,10 +399,12 @@ export const CheckoutForm = memo(function CheckoutForm({
                 ].map((opt) => (
                   <label
                     key={opt.value}
+                    htmlFor={`customerType-${opt.value}`}
                     className="flex cursor-pointer items-center gap-2"
                   >
                     <input
                       type="radio"
+                      id={`customerType-${opt.value}`}
                       value={opt.value}
                       {...register("customerType")}
                       className="h-4 w-4"
@@ -472,42 +504,51 @@ export const CheckoutForm = memo(function CheckoutForm({
                 <div
                   key={key}
                   className={cn(
-                    "rounded-xl border border-border/60 bg-muted/5 p-4",
-                    itemIndex > 0 && "mt-4"
+                    "rounded-2xl border border-border/50 bg-background/95 p-5 shadow-sm transition-shadow duration-300 hover:shadow-md",
+                    "dark:border-white/10 dark:bg-muted/5",
+                    itemIndex > 0 && "mt-5"
                   )}
                 >
                   <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
-                    <p className="font-semibold text-foreground">
+                    <p className="font-semibold tracking-tight text-foreground">
                       {displayTitle}
                     </p>
                     <p className="text-sm text-muted-foreground">
                       {item.quantity} мест(а) ·{" "}
-                      {formatPriceWithCurrency(item.lineAmount)}
+                      <span className="font-medium text-foreground">
+                        {formatPriceWithCurrency(item.lineAmount)}
+                      </span>
                     </p>
                   </div>
                   <div className="space-y-3">
-                    {learners.map((learner, idx) => (
-                      <LearnerAccordionItem
-                        key={idx}
-                        index={idx}
-                        data={learner}
-                        defaultOpen={itemIndex === 0 && idx === 0}
-                      >
-                        <LearnerFieldsCard
-                          idPrefix={`${key}-${idx}`}
+                    {learners.map((learner, idx) => {
+                      const slotId = learnerSlotId(key, idx);
+                      const useMyData = useMyDataForLearner[slotId] ?? false;
+                      return (
+                        <LearnerAccordionItem
+                          key={idx}
+                          index={idx}
                           data={learner}
-                          onChange={(data) =>
-                            setLearnerData(key, idx, data)
+                          defaultOpen={itemIndex === 0 && idx === 0}
+                          showUseMyDataCheckbox={
+                            !isSelf && !!user?.profile
                           }
-                          fromProfile={
-                            isSelf &&
-                            itemIndex === 0 &&
-                            idx === 0 &&
-                            !!user?.profile
+                          useMyData={useMyData}
+                          onUseMyDataChange={(checked) =>
+                            setUseMyData(key, idx, checked)
                           }
-                        />
-                      </LearnerAccordionItem>
-                    ))}
+                        >
+                          <LearnerFieldsCard
+                            idPrefix={`${key}-${idx}`}
+                            data={learner}
+                            onChange={(data) =>
+                              setLearnerData(key, idx, data)
+                            }
+                            fromProfile={isSelf || useMyData}
+                          />
+                        </LearnerAccordionItem>
+                      );
+                    })}
                   </div>
                 </div>
               );

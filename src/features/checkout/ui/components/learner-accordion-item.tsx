@@ -1,7 +1,8 @@
 "use client";
 
+import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, User } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import type { LearnerFormData } from "../types/learner-form-data.types";
 
@@ -26,6 +27,10 @@ interface LearnerAccordionItemProps {
   defaultOpen?: boolean;
   title?: string;
   children: ReactNode;
+  /** Показать блок «Подставить мои данные» (когда заказчик не «я») */
+  showUseMyDataCheckbox?: boolean;
+  useMyData?: boolean;
+  onUseMyDataChange?: (checked: boolean) => void;
 }
 
 export function LearnerAccordionItem({
@@ -34,31 +39,81 @@ export function LearnerAccordionItem({
   defaultOpen = false,
   title,
   children,
+  showUseMyDataCheckbox = false,
+  useMyData = false,
+  onUseMyDataChange,
 }: LearnerAccordionItemProps) {
   const [open, setOpen] = useState(defaultOpen);
   const label = title ?? `${learnerShortLabel(data)} ${index + 1}`;
 
   return (
-    <div className="rounded-lg border border-border/50 bg-background/80 overflow-hidden">
+    <div
+      className={cn(
+        "overflow-hidden rounded-2xl border bg-background/90 shadow-sm transition-all duration-300",
+        "border-border/50 hover:border-border/70",
+        "dark:border-white/10 dark:hover:border-white/20"
+      )}
+    >
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
         className={cn(
-          "flex w-full items-center justify-between gap-2 px-4 py-3 text-left text-sm font-medium transition-colors",
-          "hover:bg-muted/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-          open && "bg-muted/30"
+          "flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left text-sm font-medium transition-colors duration-200",
+          "hover:bg-muted/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+          open && "bg-muted/25"
         )}
         aria-expanded={open}
       >
         <span className="text-foreground">{label}</span>
         <ChevronDown
-          className={cn("h-4 w-4 shrink-0 text-muted-foreground transition-transform", open && "rotate-180")}
+          className={cn(
+            "h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200",
+            open && "rotate-180"
+          )}
           aria-hidden
         />
       </button>
       {open && (
-        <div className="border-t border-border/50 p-3" role="region">
-          {children}
+        <div className="border-t border-border/40" role="region">
+          {showUseMyDataCheckbox && onUseMyDataChange && (
+            <div
+              className={cn(
+                "relative flex items-center justify-between gap-4 px-4 py-3 transition-all duration-300",
+                "border-b border-border/40",
+                "bg-muted/10",
+                useMyData &&
+                  "border-primary/30 bg-primary/5 dark:bg-primary/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.03)] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)]"
+              )}
+            >
+              <div className="relative flex items-center gap-3">
+                <span
+                  className={cn(
+                    "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border transition-colors duration-200",
+                    useMyData
+                      ? "border-primary/40 bg-primary/10 text-primary"
+                      : "border-border/50 bg-muted/30 text-muted-foreground"
+                  )}
+                >
+                  <User className="h-4 w-4" aria-hidden />
+                </span>
+                <div>
+                  <p className="text-sm font-medium text-foreground">
+                    Подставить мои данные
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Заполнить из профиля
+                  </p>
+                </div>
+              </div>
+              <Switch
+                checked={useMyData}
+                onCheckedChange={onUseMyDataChange}
+                className="relative shrink-0"
+                aria-label="Подставить мои данные из профиля"
+              />
+            </div>
+          )}
+          <div className="p-3">{children}</div>
         </div>
       )}
     </div>
