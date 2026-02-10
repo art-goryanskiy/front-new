@@ -10,6 +10,8 @@ interface GraphQLResponse<T> {
 interface ServerGraphQLOptions {
   revalidate?: number; // Время кэширования в секундах
   tags?: string[]; // Next.js cache tags for on-demand invalidation
+  /** Не кэшировать ответ (для авторизованных запросов, чтобы не отдавать гостевой кэш) */
+  skipCache?: boolean;
 }
 
 export async function serverGraphQLRequest<T>(
@@ -28,13 +30,15 @@ export async function serverGraphQLRequest<T>(
       query,
       variables,
     }),
-    // Для серверных запросов можно использовать cache
-    next: {
-      revalidate: options?.revalidate ?? 60, // По умолчанию 60 секунд
-      tags: options?.tags,
-    },
-    // Передаем куки для авторизации
     credentials: "include",
+    ...(options?.skipCache
+      ? { cache: "no-store" as RequestCache }
+      : {
+          next: {
+            revalidate: options?.revalidate ?? 60,
+            tags: options?.tags,
+          },
+        }),
   });
 
   if (!response.ok) {

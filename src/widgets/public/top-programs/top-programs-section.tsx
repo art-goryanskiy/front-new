@@ -28,26 +28,31 @@ export const TopProgramsSection = memo(function TopProgramsSection({
     CategoryType.QualificationUpgrade
   );
 
-  // Вызываем хуки только если нет initial данных
   const hasInitialData = !!initialAllPrograms && !!initialCategories;
 
+  // Всегда запрашиваем на клиенте (с кукой), чтобы при первой загрузке по URL
+  // данные обновились после гидратации (цены, актуальный список)
   const {
     programs: allProgramsClient,
     loading: programsLoading,
     error: programsError,
-  } = usePrograms(undefined, { skip: hasInitialData });
+  } = usePrograms(undefined);
 
   const { categories: categoriesClient, loading: categoriesLoading } =
-    useCategories(undefined, { skip: hasInitialData });
+    useCategories(undefined);
 
-  // Мемоизируем данные - используем initial если есть, иначе клиентские
+  // Приоритет у клиентских данных (с кукой); пока не пришли — показываем initial
   const allPrograms = useMemo(
-    () => initialAllPrograms || allProgramsClient,
+    () =>
+      allProgramsClient.length > 0
+        ? allProgramsClient
+        : (initialAllPrograms ?? []),
     [initialAllPrograms, allProgramsClient]
   );
 
   const categories = useMemo(
-    () => initialCategories || categoriesClient,
+    () =>
+      categoriesClient.length > 0 ? categoriesClient : (initialCategories ?? []),
     [initialCategories, categoriesClient]
   );
 
