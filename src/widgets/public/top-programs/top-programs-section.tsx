@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { useCategories } from "@/entities/category/api/use-categories";
 import { usePrograms } from "@/entities/program/api/use-programs";
+import { useAuthStatus } from "@/shared/store/auth-store";
 import { CategoryType } from "@/shared/api/generated/graphql";
 import { CATEGORY_TYPE_LABELS } from "@/shared/constants/categories";
 import { EmptyState } from "@/shared/ui/empty-state/empty-state";
@@ -10,7 +11,7 @@ import { ErrorState } from "@/shared/ui/error-state/error-state";
 import { LoadingState } from "@/shared/ui/loading-state/loading-state";
 import { AnimatePresence, motion } from "framer-motion";
 import { BookOpen } from "lucide-react";
-import { memo, useCallback, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useMemo, useState } from "react";
 import { ProgramCard } from "../program-card/program-card";
 import {
   TOP_PROGRAMS_CLASSES,
@@ -29,6 +30,8 @@ export const TopProgramsSection = memo(function TopProgramsSection({
   );
 
   const hasInitialData = !!initialAllPrograms && !!initialCategories;
+  const { isAuthenticated } = useAuthStatus();
+  const wasAuthenticatedRef = useRef(false);
 
   // Всегда запрашиваем на клиенте (с кукой), чтобы при первой загрузке по URL
   // данные обновились после гидратации (цены, актуальный список)
@@ -36,10 +39,26 @@ export const TopProgramsSection = memo(function TopProgramsSection({
     programs: allProgramsClient,
     loading: programsLoading,
     error: programsError,
+    refetch: refetchPrograms,
   } = usePrograms(undefined);
 
-  const { categories: categoriesClient, loading: categoriesLoading } =
-    useCategories(undefined);
+  const {
+    categories: categoriesClient,
+    loading: categoriesLoading,
+    refetch: refetchCategories,
+  } = useCategories(undefined);
+
+  // После логина без перезагрузки — перезапросить программы и категории с кукой (чтобы подтянуть цены)
+  useEffect(() => {
+    if (isAuthenticated && !wasAuthenticatedRef.current) {
+      wasAuthenticatedRef.current = true;
+      refetchPrograms({ fetchPolicy: "network-only" });
+      refetchCategories({ fetchPolicy: "network-only" });
+    }
+    if (!isAuthenticated) {
+      wasAuthenticatedRef.current = false;
+    }
+  }, [isAuthenticated, refetchPrograms, refetchCategories]);
 
   // Приоритет у клиентских данных (с кукой); пока не пришли — показываем initial
   const allPrograms = useMemo(
