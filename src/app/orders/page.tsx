@@ -17,10 +17,10 @@ export default function OrdersPage() {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div className="space-y-2">
               <h1 className="text-2xl font-bold tracking-tight text-balance text-foreground sm:text-3xl">
-                Мои заказы
+                Мои заявки
               </h1>
               <p className="text-sm text-muted-foreground sm:text-base">
-                Список ваших заказов и их статусы.
+                Список ваших заявок и их статусы.
               </p>
             </div>
             <Button

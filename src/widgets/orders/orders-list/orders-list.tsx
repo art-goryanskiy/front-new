@@ -17,7 +17,9 @@ const STATUS_FILTER_OPTIONS: { value: string | undefined; label: string }[] = [
   { value: undefined, label: "Все" },
   { value: "AWAITING_PAYMENT", label: ORDER_STATUS_LABELS["AWAITING_PAYMENT"] ?? "Ожидает оплаты" },
   { value: "PAID", label: ORDER_STATUS_LABELS["PAID"] ?? "Оплачен" },
+  { value: "IN_PROGRESS", label: ORDER_STATUS_LABELS["IN_PROGRESS"] ?? "В работе" },
   { value: "COMPLETED", label: ORDER_STATUS_LABELS["COMPLETED"] ?? "Завершён" },
+  { value: "CANCELLED", label: ORDER_STATUS_LABELS["CANCELLED"] ?? "Отменён" },
 ];
 
 function formatOrderDate(date: string | unknown): string {
@@ -76,7 +78,7 @@ export const OrdersList = memo(function OrdersList() {
   });
 
   if (loading && orders.length === 0) {
-    return <LoadingState message="Загрузка заказов…" />;
+    return <LoadingState message="Загрузка заявок…" />;
   }
 
   if (error) {
@@ -109,11 +111,11 @@ export const OrdersList = memo(function OrdersList() {
 
       {orders.length === 0 ? (
         <EmptyState
-          title="Заказов пока нет"
+          title="Заявок пока нет"
           description={
             statusFilter
-              ? "В этой категории заказов не найдено."
-              : "Оформленные заказы появятся здесь."
+              ? "В этой категории заявок не найдено."
+              : "Оформленные заявки появятся здесь."
           }
           icon={<Package className="h-10 w-10 text-muted-foreground" />}
         />

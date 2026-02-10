@@ -19,11 +19,9 @@ export interface PublicSearchResult {
 }
 
 const ORDER_STATUS_LABELS: Record<string, string> = {
-  DRAFT: "Черновик",
-  PAYMENT_PENDING: "Ожидает оплаты",
+  AWAITING_PAYMENT: "Ожидает оплаты",
   PAID: "Оплачен",
-  SUBMITTED: "Оформлена",
-  DOCUMENTS_GENERATED: "Документы сформированы",
+  IN_PROGRESS: "В работе",
   COMPLETED: "Завершён",
   CANCELLED: "Отменён",
 };
@@ -163,10 +161,11 @@ export function usePublicSearchResults(
             ?.map((l) => l.programTitle)
             .filter(Boolean)
             .join(", ") ?? "";
+        const orderNumber = order.number ?? order.id;
         results.push({
           id: `order-${order.id}`,
           type: "order",
-          label: `Заявка ${(order.number ?? order.id).slice(0, 8)}…`,
+          label: orderNumber.length > 10 ? `Заявка ${orderNumber.slice(0, 10)}…` : `Заявка ${orderNumber}`,
           path: `/orders/${order.id}`,
           icon: "receipt",
           description: programTitles || statusLabel || undefined,

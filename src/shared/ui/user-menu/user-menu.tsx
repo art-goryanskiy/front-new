@@ -75,11 +75,12 @@ export const UserMenu = memo(function UserMenu({
   }, [router]);
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <button
           type="button"
           data-user-menu
+          data-user-menu-trigger
           className={USER_MENU_CLASSES.trigger}
           aria-label="Меню пользователя"
         >
@@ -114,6 +115,18 @@ export const UserMenu = memo(function UserMenu({
         align="end"
         className={USER_MENU_CLASSES.menu}
         data-user-menu
+        onPointerDownOutside={(e) => {
+          const target = e.target as Element;
+          if (target?.closest?.("[data-user-menu-trigger]")) {
+            e.preventDefault();
+          }
+        }}
+        onInteractOutside={(e) => {
+          const target = e.target as Element;
+          if (target?.closest?.("[data-user-menu-trigger]")) {
+            e.preventDefault();
+          }
+        }}
       >
         <DropdownMenuLabel className="font-normal">
           <span className="truncate block">{displayName}</span>

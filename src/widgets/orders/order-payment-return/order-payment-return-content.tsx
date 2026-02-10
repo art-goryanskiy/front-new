@@ -28,15 +28,15 @@ export const OrderPaymentReturnContent = memo(function OrderPaymentReturnContent
   }, [sync?.updated, orderId, refetchOrder]);
 
   if (orderLoading && !order) {
-    return <LoadingState message="Загрузка заказа…" />;
+    return <LoadingState message="Загрузка заявки…" />;
   }
 
   if (!order) {
     return (
       <div className="space-y-4">
-        <ErrorState message="Заказ не найден." />
+        <ErrorState message="Заявка не найдена." />
         <Button asChild variant="outline">
-          <Link href="/orders">К списку заказов</Link>
+          <Link href="/orders">К списку заявок</Link>
         </Button>
       </div>
     );
@@ -78,13 +78,13 @@ export const OrderPaymentReturnContent = memo(function OrderPaymentReturnContent
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
           {isSuccess
-            ? "Заказ получен и принят в обработку. Детали заказа обновлены."
+            ? "Заявка получена и принята в обработку. Детали заявки обновлены."
             : "Платёж не был завершён или произошла ошибка. Вы можете попробовать оплатить снова."}
         </p>
-        <p className="mt-1 text-xs text-muted-foreground">Заказ №{order.number ?? order.id}</p>
+        <p className="mt-1 text-xs text-muted-foreground">Заявка №{order.number ?? order.id}</p>
         <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
           <Button asChild size="lg" className="min-w-[180px] font-medium">
-            <Link href={`/orders/${orderId}`}>К заказу</Link>
+            <Link href={`/orders/${orderId}`}>К заявке</Link>
           </Button>
           {!isSuccess && (
             <Button asChild variant="outline" size="lg" className="min-w-[180px] gap-2 font-medium">
@@ -98,7 +98,7 @@ export const OrderPaymentReturnContent = memo(function OrderPaymentReturnContent
       </Surface>
       <div className="mt-6 text-center">
         <Button variant="link" asChild>
-          <Link href="/orders">К списку заказов</Link>
+          <Link href="/orders">К списку заявок</Link>
         </Button>
       </div>
     </div>

@@ -95,7 +95,7 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
   }, []);
 
   if (orderLoading && !order) {
-    return <LoadingState message="Загрузка заказа…" />;
+    return <LoadingState message="Загрузка заявки…" />;
   }
 
   if (orderError) {
@@ -105,9 +105,9 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
   if (!order) {
     return (
       <Surface variant="floating" className="p-8 text-center">
-        <p className="text-muted-foreground">Заказ не найден.</p>
+        <p className="text-muted-foreground">Заявка не найдена.</p>
         <Button variant="link" className="mt-2" onClick={() => router.push("/orders")}>
-          К списку заказов
+          К списку заявок
         </Button>
       </Surface>
     );
@@ -125,10 +125,10 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
     return (
       <Surface variant="floating" className="p-8 text-center">
         <p className="text-muted-foreground">
-          Оплата для этого заказа недоступна (статус: {order.status}).
+          Оплата для этой заявки недоступна (статус: {order.status}).
         </p>
         <Button asChild variant="outline" className="mt-4">
-          <Link href={`/orders/${orderId}`}>К заказу</Link>
+          <Link href={`/orders/${orderId}`}>К заявке</Link>
         </Button>
       </Surface>
     );
@@ -141,9 +141,9 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
           <Sparkles className="h-7 w-7" />
         </div>
         <h1 className="mt-4 text-xl font-semibold text-foreground">Оплата получена</h1>
-        <p className="mt-2 text-sm text-muted-foreground">Заказ №{order.number ?? order.id} оплачен.</p>
+        <p className="mt-2 text-sm text-muted-foreground">Заявка №{order.number ?? order.id} оплачена.</p>
         <Button asChild variant="outline" className="mt-6">
-          <Link href={`/orders/${orderId}`}>К заказу</Link>
+          <Link href={`/orders/${orderId}`}>К заявке</Link>
         </Button>
       </Surface>
     );
@@ -154,10 +154,10 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Оплата заказа
+            Оплата заявки
           </p>
           <h1 className="mt-1 text-2xl font-bold tracking-tight text-foreground">
-            Заказ №{order.number ?? order.id}
+            Заявка №{order.number ?? order.id}
           </h1>
         </div>
         <Button
@@ -308,7 +308,7 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
                   )}
                   {!needsPayerInn && (
                     <p className="text-sm text-muted-foreground">
-                      Для заказа от организации данные плательщика берутся автоматически.
+                      Для заявки от организации данные плательщика берутся автоматически.
                     </p>
                   )}
                   <Button
@@ -362,7 +362,7 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
 
       <div className="flex justify-center">
         <Button variant="link" asChild>
-          <Link href={`/orders/${orderId}`}>Перейти к заказу</Link>
+          <Link href={`/orders/${orderId}`}>Перейти к заявке</Link>
         </Button>
       </div>
     </div>

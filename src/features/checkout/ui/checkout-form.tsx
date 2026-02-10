@@ -252,14 +252,14 @@ export const CheckoutForm = memo(function CheckoutForm() {
           lines,
         });
         if (order) {
-          showToast("success", "Заказ оформлен");
+          showToast("success", "Заявка оформлена");
           router.replace(`/orders/${order.id}/pay`);
         } else {
-          showToast("error", "Не удалось оформить заказ");
+          showToast("error", "Не удалось оформить заявку");
         }
       } catch (err) {
         const e = err as { message?: string };
-        showToast("error", e?.message ?? "Не удалось оформить заказ");
+        showToast("error", e?.message ?? "Не удалось оформить заявку");
       }
     },
     [
@@ -454,7 +454,7 @@ export const CheckoutForm = memo(function CheckoutForm() {
           Итого: {formatPriceWithCurrency(totalAmount)}
         </div>
         <Button type="submit" size="lg" disabled={isBusy}>
-          {isBusy ? "Оформление…" : "Оформить заказ"}
+          {isBusy ? "Оформление…" : "Оформить заявку"}
         </Button>
       </Surface>
     </form>

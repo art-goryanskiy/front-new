@@ -62,7 +62,7 @@ export async function getProgramsServer(
       ? { filter: variables }
       : undefined,
     headers,
-    { revalidate: 60, tags: [PROGRAMS_TAG] }
+    { revalidate: 60, tags: [PROGRAMS_TAG], skipCache: !!cookie }
   );
 
   return data.programs;
@@ -77,7 +77,7 @@ export async function getTopProgramsServer(
     gqlToString(GET_TOP_PROGRAMS),
     { limit },
     headers,
-    { revalidate: 60, tags: [PROGRAMS_TAG] }
+    { revalidate: 60, tags: [PROGRAMS_TAG], skipCache: !!cookie }
   );
 
   return data.topPrograms;
@@ -92,7 +92,7 @@ export async function getProgramServer(
     gqlToString(GET_PROGRAM),
     { id },
     headers,
-    { revalidate: 60, tags: [PROGRAMS_TAG, `public:program:${id}`] }
+    { revalidate: 60, tags: [PROGRAMS_TAG, `public:program:${id}`], skipCache: !!cookie }
   );
 
   return data.program;
