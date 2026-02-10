@@ -81,7 +81,7 @@ export const OrderPaymentReturnContent = memo(function OrderPaymentReturnContent
             ? "Заявка получена и принята в обработку. Детали заявки обновлены."
             : "Платёж не был завершён или произошла ошибка. Вы можете попробовать оплатить снова."}
         </p>
-        <p className="mt-1 text-xs text-muted-foreground">Заявка №{(order as { number?: string | null; id: string }).number ?? order.id}</p>
+        <p className="mt-1 text-xs text-muted-foreground">Заявка №{order.number ?? order.id}</p>
         <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
           <Button asChild size="lg" className="min-w-[180px] font-medium">
             <Link href={`/orders/${orderId}`}>К заявке</Link>

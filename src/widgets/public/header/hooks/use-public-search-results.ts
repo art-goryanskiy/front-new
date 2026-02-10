@@ -129,8 +129,8 @@ export function usePublicSearchResults(
         status?: string;
         lines?: Array<{ programTitle?: string | null }> | null;
       }) => {
-        if (order.id.toLowerCase().includes(q)) return true;
-        if (order.number?.toLowerCase().includes(q)) return true;
+        const orderNumber = order.number ?? order.id;
+        if (orderNumber.toLowerCase().includes(q)) return true;
         if (order.contactEmail?.toLowerCase().includes(q)) return true;
         if (
           order.contactPhone?.replace(/\D/g, "").includes(q.replace(/\D/g, ""))
@@ -161,7 +161,7 @@ export function usePublicSearchResults(
             ?.map((l) => l.programTitle)
             .filter(Boolean)
             .join(", ") ?? "";
-        const orderNumber = (order as { number?: string | null; id: string }).number ?? order.id;
+        const orderNumber = order.number ?? order.id;
         results.push({
           id: `order-${order.id}`,
           type: "order",

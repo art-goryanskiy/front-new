@@ -25,7 +25,7 @@ import {
   Loader2,
   Sparkles,
 } from "lucide-react";
-import { OrderCustomerType } from "@/shared/api/generated/graphql";
+import { OrderCustomerType, OrderStatus } from "@/shared/api/generated/graphql";
 import { cn } from "@/lib/utils";
 
 export const OrderPaymentContent = memo(function OrderPaymentContent({
@@ -113,8 +113,13 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
     );
   }
 
-  const isPaymentPending = order.status === "AWAITING_PAYMENT";
-  const isPaid = order.status === "PAID" || order.status === "COMPLETED";
+  const isPaymentPending =
+    order.status === OrderStatus.AwaitingPayment ||
+    (order.status as string) === "PAYMENT_PENDING";
+  const isPaid =
+    order.status === OrderStatus.Paid ||
+    order.status === OrderStatus.Completed ||
+    (order.status as string) === "DOCUMENTS_GENERATED";
 
   if (!isPaymentPending && !isPaid) {
     return (
@@ -136,7 +141,7 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
           <Sparkles className="h-7 w-7" />
         </div>
         <h1 className="mt-4 text-xl font-semibold text-foreground">Оплата получена</h1>
-        <p className="mt-2 text-sm text-muted-foreground">Заявка №{(order as { number?: string | null; id: string }).number ?? order.id} оплачена.</p>
+        <p className="mt-2 text-sm text-muted-foreground">Заявка №{order.number ?? order.id} оплачена.</p>
         <Button asChild variant="outline" className="mt-6">
           <Link href={`/orders/${orderId}`}>К заявке</Link>
         </Button>
@@ -152,7 +157,7 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
             Оплата заявки
           </p>
           <h1 className="mt-1 text-2xl font-bold tracking-tight text-foreground">
-            Заявка №{(order as { number?: string | null; id: string }).number ?? order.id}
+            Заявка №{order.number ?? order.id}
           </h1>
         </div>
         <Button
@@ -177,7 +182,9 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
           <ul className="space-y-2 text-sm text-muted-foreground">
             {order.lines.map((line, idx) => (
               <li key={`${line.programId}-${idx}`} className="flex justify-between">
-                <span className="text-foreground">{line.programTitle}</span>
+                <span className="text-foreground">
+                {line.subProgramTitle ?? line.programTitle}
+              </span>
                 <span>{formatPriceWithCurrency(line.lineAmount)}</span>
               </li>
             ))}

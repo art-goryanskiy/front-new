@@ -64,7 +64,7 @@ function learnerToOrderInput(
 }
 
 function lineKey(item: CartItemEntity): string {
-  return `${item.programId}-${item.pricingIndex}`;
+  return `${item.programId}-${item.pricingIndex}-${item.subProgramIndex ?? "p"}`;
 }
 
 export const CheckoutForm = memo(function CheckoutForm() {

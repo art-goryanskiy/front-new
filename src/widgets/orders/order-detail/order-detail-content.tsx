@@ -435,7 +435,7 @@ export const OrderDetailContent = memo(function OrderDetailContent({
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <div>
                     <p className="font-semibold text-foreground">
-                      {line.programTitle}
+                      {line.subProgramTitle ?? line.programTitle}
                     </p>
                     <p className="text-sm text-muted-foreground">
                       {line.hours} ч × {line.quantity} —{" "}
