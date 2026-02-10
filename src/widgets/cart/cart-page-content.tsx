@@ -168,6 +168,19 @@ export const CartPageContent = memo(function CartPageContent() {
     );
   }
 
+  if (items.length === 0 && loadingPricingChangeKey) {
+    return (
+      <Surface
+        variant="floating"
+        className="flex min-h-[320px] items-center justify-center"
+      >
+        <div className="text-sm text-muted-foreground">
+          Изменение тарифа…
+        </div>
+      </Surface>
+    );
+  }
+
   if (items.length === 0) {
     return (
       <Surface

@@ -142,7 +142,6 @@ export const ProgramDetailSubPrograms = memo(
           {subPrograms.map((subProgram, index) => {
             const inCart = isSubProgramInCart(index);
             const loadingThis = loadingSubProgramIndex === index;
-            const anyLoading = loadingSubProgramIndex !== null;
 
             return (
               <div
@@ -169,7 +168,7 @@ export const ProgramDetailSubPrograms = memo(
                         size="sm"
                         variant="secondary"
                         onClick={() => handleRemoveSubProgramFromCart(index)}
-                        disabled={anyLoading}
+                        disabled={loadingThis}
                       >
                         <Check className="mr-1.5 h-4 w-4" />
                         {loadingThis ? "Удаление…" : "В корзине"}
@@ -179,7 +178,7 @@ export const ProgramDetailSubPrograms = memo(
                         size="sm"
                         variant="outline"
                         onClick={() => handleAddSubProgramToCart(index)}
-                        disabled={anyLoading}
+                        disabled={loadingThis}
                       >
                         <ShoppingCart className="mr-1.5 h-4 w-4" />
                         {loadingThis ? "Добавление…" : "В корзину"}

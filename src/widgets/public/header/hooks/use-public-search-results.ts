@@ -125,12 +125,14 @@ export function usePublicSearchResults(
     if (isAuthenticated && orders.length > 0) {
       const matchesOrder = (order: {
         id: string;
+        number?: string | null;
         contactEmail?: string | null;
         contactPhone?: string | null;
         status?: string;
         lines?: Array<{ programTitle?: string | null }> | null;
       }) => {
-        if (order.id.toLowerCase().includes(q)) return true;
+        const orderNumber = order.number ?? order.id;
+        if (orderNumber.toLowerCase().includes(q)) return true;
         if (order.contactEmail?.toLowerCase().includes(q)) return true;
         if (
           order.contactPhone?.replace(/\D/g, "").includes(q.replace(/\D/g, ""))
@@ -164,7 +166,7 @@ export function usePublicSearchResults(
         results.push({
           id: `order-${order.id}`,
           type: "order",
-          label: `Заявка ${order.id.slice(0, 8)}…`,
+          label: `Заявка ${(order.number ?? order.id).slice(0, 8)}…`,
           path: `/orders/${order.id}`,
           icon: "receipt",
           description: programTitles || statusLabel || undefined,

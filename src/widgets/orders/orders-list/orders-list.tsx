@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 
 const STATUS_FILTER_OPTIONS: { value: string | undefined; label: string }[] = [
   { value: undefined, label: "Все" },
-  { value: "PAYMENT_PENDING", label: ORDER_STATUS_LABELS["PAYMENT_PENDING"] ?? "Ожидает оплаты" },
+  { value: "AWAITING_PAYMENT", label: ORDER_STATUS_LABELS["AWAITING_PAYMENT"] ?? "Ожидает оплаты" },
   { value: "PAID", label: ORDER_STATUS_LABELS["PAID"] ?? "Оплачен" },
   { value: "COMPLETED", label: ORDER_STATUS_LABELS["COMPLETED"] ?? "Завершён" },
 ];
@@ -51,7 +51,7 @@ const OrderCard = memo(function OrderCard({
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
             <span className="text-muted-foreground">№</span>
-            <span className="truncate">{order.id}</span>
+            <span className="truncate">{order.number ?? order.id}</span>
           </div>
           <p className="mt-1 text-xs text-muted-foreground">
             {formatOrderDate(order.createdAt)}

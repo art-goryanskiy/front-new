@@ -141,7 +141,7 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
           <Sparkles className="h-7 w-7" />
         </div>
         <h1 className="mt-4 text-xl font-semibold text-foreground">Оплата получена</h1>
-        <p className="mt-2 text-sm text-muted-foreground">Заказ №{order.id} оплачен.</p>
+        <p className="mt-2 text-sm text-muted-foreground">Заказ №{order.number ?? order.id} оплачен.</p>
         <Button asChild variant="outline" className="mt-6">
           <Link href={`/orders/${orderId}`}>К заказу</Link>
         </Button>
@@ -157,7 +157,7 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
             Оплата заказа
           </p>
           <h1 className="mt-1 text-2xl font-bold tracking-tight text-foreground">
-            Заказ №{order.id}
+            Заказ №{order.number ?? order.id}
           </h1>
         </div>
         <Button
