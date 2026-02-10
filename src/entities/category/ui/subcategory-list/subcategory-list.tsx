@@ -18,16 +18,19 @@ export const SubcategoryList = memo(function SubcategoryList({
   description,
   initialCategories,
 }: SubcategoryListProps) {
-  const hasInitialData = !!initialCategories;
+  const hasInitialData = !!initialCategories?.length;
 
+  // Всегда запрашиваем категории на клиенте (с кукой), чтобы при первой загрузке
+  // по URL данные обновились после гидратации
   const {
     categories: clientCategories,
     loading,
     error,
-  } = useCategories(undefined, { skip: hasInitialData });
+  } = useCategories(undefined);
 
   const categories = useMemo(
-    () => initialCategories || clientCategories,
+    () =>
+      clientCategories.length > 0 ? clientCategories : (initialCategories ?? []),
     [initialCategories, clientCategories]
   );
 
