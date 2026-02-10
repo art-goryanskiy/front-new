@@ -1,12 +1,13 @@
 "use client";
 
-import { memo, useCallback } from "react";
+import { memo, useCallback, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Surface } from "@/shared/ui/surface/surface";
 import { useMyCart } from "@/entities/cart/api/use-my-cart";
 import { useUpdateCartItem } from "@/entities/cart/api/use-update-cart-item";
 import { useRemoveFromCart } from "@/entities/cart/api/use-remove-from-cart";
+import { useAddToCart } from "@/entities/cart/api/use-add-to-cart";
 import { formatPrice } from "@/shared/lib/helpers/format-helpers";
 import { ShoppingCart, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -14,6 +15,13 @@ import { useRouter } from "next/navigation";
 import { saveReturnUrl } from "@/shared/lib/auth/utils/auth-redirect-utils";
 import { AUTH_GUARD_ROUTES } from "@/shared/lib/auth/constants/auth-guard-constants";
 import { useToastState } from "@/shared/store/toast-store";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 function handleCartError(
   err: unknown,
@@ -38,10 +46,55 @@ function handleCartError(
 
 export const CartPageContent = memo(function CartPageContent() {
   const router = useRouter();
+  const [loadingPricingChangeKey, setLoadingPricingChangeKey] = useState<
+    string | null
+  >(null);
+
   const { items, totalAmount, loading, error } = useMyCart();
   const { updateCartItem, loading: updating } = useUpdateCartItem();
   const { removeFromCart, loading: removing } = useRemoveFromCart();
+  const { addToCart } = useAddToCart();
   const { showToast } = useToastState();
+
+  const handlePricingChange = useCallback(
+    async (
+      cartItemKey: string,
+      item: {
+        programId: string;
+        pricingIndex: number;
+        quantity: number;
+        subProgramIndex?: number | null;
+      },
+      newPricingIndex: number
+    ) => {
+      if (newPricingIndex === item.pricingIndex) return;
+      setLoadingPricingChangeKey(cartItemKey);
+      try {
+        await removeFromCart({
+          programId: item.programId,
+          pricingIndex: item.pricingIndex,
+          ...(item.subProgramIndex != null && {
+            subProgramIndex: item.subProgramIndex,
+          }),
+        });
+        await addToCart({
+          programId: item.programId,
+          pricingIndex: newPricingIndex,
+          quantity: item.quantity,
+          ...(item.subProgramIndex != null && {
+            subProgramIndex: item.subProgramIndex,
+          }),
+        });
+        showToast("success", "Тариф изменён");
+      } catch (err) {
+        if (handleCartError(err, router)) return;
+        showToast("error", "Не удалось изменить тариф");
+      } finally {
+        setLoadingPricingChangeKey(null);
+      }
+    },
+    [addToCart, removeFromCart, router, showToast]
+  );
 
   const handleQuantityChange = useCallback(
     async (
@@ -183,10 +236,43 @@ export const CartPageContent = memo(function CartPageContent() {
                     <h3 className="font-semibold text-foreground line-clamp-2">
                       {item.displayTitle}
                     </h3>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      {hours} часов
-                      {price > 0 && ` · ${formatPrice(price)} ₽`}
-                    </p>
+                    {program.pricing && program.pricing.length > 1 ? (
+                      <Select
+                        value={String(item.pricingIndex)}
+                        onValueChange={(v) =>
+                          handlePricingChange(
+                            cartItemKey,
+                            {
+                              programId: item.programId,
+                              pricingIndex: item.pricingIndex,
+                              quantity: item.quantity,
+                              subProgramIndex: item.subProgramIndex,
+                            },
+                            Number(v)
+                          )
+                        }
+                        disabled={loadingPricingChangeKey === cartItemKey}
+                      >
+                        <SelectTrigger className="mt-1.5 h-9 w-full max-w-[220px] text-sm">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {program.pricing.map((p, idx) => (
+                            <SelectItem
+                              key={idx}
+                              value={String(idx)}
+                            >
+                              {p.hours} ч — {formatPrice(p.price ?? 0)} ₽
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <p className="mt-1 text-sm text-muted-foreground">
+                        {hours} часов
+                        {price > 0 && ` · ${formatPrice(price)} ₽`}
+                      </p>
+                    )}
                   </div>
                 </Link>
 
