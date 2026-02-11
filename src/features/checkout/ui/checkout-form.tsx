@@ -48,6 +48,10 @@ import type { LearnerFormData } from "./types/learner-form-data.types";
 import { defaultLearnerFormData } from "./types/learner-form-data.types";
 import { individualApplicantFromProfile } from "./utils/individual-applicant-from-profile";
 import { learnerFromProfile } from "./utils/learner-from-profile";
+import {
+  validateLearner,
+  type LearnerFieldErrors,
+} from "./utils/validate-learner";
 
 type CheckoutFormData = {
   customerType: OrderCustomerType;
@@ -85,9 +89,14 @@ export const CheckoutForm = memo(function CheckoutForm({
   onStepChange,
 }: CheckoutFormProps) {
   const router = useRouter();
-  const user = useAuthUser();
-  useMe({ skip: !!user?.profile });
+  const storeUser = useAuthUser();
+  const { user: meUser, refetch: refetchMe } = useMe({ skip: false });
+  const user = meUser ?? storeUser;
   const { items, totalAmount, loading: cartLoading } = useMyCart();
+
+  useEffect(() => {
+    refetchMe({ fetchPolicy: "network-only" });
+  }, [refetchMe]);
   const { createOrderFromCart, loading: submitting } =
     useCreateOrderFromCart();
   const { showToast } = useToastState();
@@ -133,6 +142,19 @@ export const CheckoutForm = memo(function CheckoutForm({
     Record<string, boolean>
   >({});
 
+  /** Ошибки валидации по полям слушателей: key линии -> массив ошибок по индексу слушателя */
+  const [learnerErrors, setLearnerErrors] = useState<
+    Record<string, LearnerFieldErrors[]>
+  >({});
+
+  /** Ошибка валидации поля «Организация» (только при типе заказчика «Организация») */
+  const [organizationError, setOrganizationError] = useState<string | null>(
+    null
+  );
+
+  /** Показывать точки статуса у слушателей только после первой попытки валидации */
+  const [showLearnerStatusDots, setShowLearnerStatusDots] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -168,22 +190,33 @@ export const CheckoutForm = memo(function CheckoutForm({
     return learnerFromProfile(user.profile, user?.email ?? "");
   }, [user?.profile, user?.email]);
 
+  /** При типе «я»: показывать предложение заполнить профиль, если он не заполнен для подстановки */
+  const showProfileSuggestion = useMemo(() => {
+    if (!isSelf) return false;
+    if (!profileLearner) return true;
+    const errors = validateLearner(profileLearner);
+    return Object.keys(errors).length > 0;
+  }, [isSelf, profileLearner]);
+
   useEffect(() => {
+    const isSelf = customerType === OrderCustomerType.Self;
+    const fillLearner =
+      isSelf && profileLearner
+        ? () => ({ ...profileLearner })
+        : defaultLearnerFormData;
     setLinesLearners((prev) => {
       const next: Record<string, LearnerFormData[]> = {};
-      const fillLearner =
-        customerType === OrderCustomerType.Self && profileLearner
-          ? () => ({ ...profileLearner })
-          : defaultLearnerFormData;
       items.forEach((item) => {
         const key = lineKey(item);
-        next[key] =
-          prev[key]?.length === item.quantity
-            ? prev[key]
-            : Array.from({ length: item.quantity }, fillLearner);
+        const keepPrev =
+          isSelf && prev[key]?.length === item.quantity;
+        next[key] = keepPrev
+          ? prev[key]
+          : Array.from({ length: item.quantity }, fillLearner);
       });
       return next;
     });
+    if (!isSelf) setUseMyDataForLearner({});
   }, [items, customerType, profileLearner]);
 
   useLayoutEffect(() => {
@@ -235,6 +268,18 @@ export const CheckoutForm = memo(function CheckoutForm({
         next[learnerIndex] = data;
         return { ...prev, [key]: next };
       });
+      setLearnerErrors((prev) => {
+        const list = prev[key];
+        if (!list?.length) return prev;
+        const next = [...list];
+        next[learnerIndex] = {};
+        const hasAny = next.some((e) => Object.keys(e).length > 0);
+        if (!hasAny) {
+          const { [key]: _, ...rest } = prev;
+          return rest;
+        }
+        return { ...prev, [key]: next };
+      });
     },
     []
   );
@@ -244,6 +289,25 @@ export const CheckoutForm = memo(function CheckoutForm({
   const setUseMyData = useCallback(
     (key: string, learnerIndex: number, checked: boolean) => {
       const id = learnerSlotId(key, learnerIndex);
+      if (checked) {
+        if (!profileLearner) {
+          showToast(
+            "error",
+            "Заполните профиль перед подстановкой данных"
+          );
+          router.push("/profile");
+          return;
+        }
+        const profileErrors = validateLearner(profileLearner);
+        if (Object.keys(profileErrors).length > 0) {
+          showToast(
+            "error",
+            "Заполните все обязательные поля в профиле перед подстановкой данных"
+          );
+          router.push("/profile");
+          return;
+        }
+      }
       setUseMyDataForLearner((prev) => ({ ...prev, [id]: checked }));
       if (profileLearner) {
         setLearnerData(
@@ -253,19 +317,75 @@ export const CheckoutForm = memo(function CheckoutForm({
         );
       }
     },
-    [profileLearner, setLearnerData, learnerSlotId]
+    [profileLearner, setLearnerData, learnerSlotId, showToast, router]
+  );
+
+  /** Валидирует всех слушателей. Возвращает объект ошибок по ключам линий или null, если ошибок нет. */
+  const validateAllLearners = useCallback(
+    (): Record<string, LearnerFieldErrors[]> | null => {
+      const nextErrors: Record<string, LearnerFieldErrors[]> = {};
+      let hasAny = false;
+      items.forEach((item) => {
+        const key = lineKey(item);
+        const learners = linesLearners[key] ?? [];
+        const errs = learners.map((learner) => {
+          const e = validateLearner(learner);
+          if (Object.keys(e).length > 0) hasAny = true;
+          return e;
+        });
+        nextErrors[key] = errs;
+      });
+      return hasAny ? nextErrors : null;
+    },
+    [items, linesLearners]
   );
 
   const goNext = useCallback(() => {
     if (step < 3) {
+      if (step === 1 && isOrganization) {
+        const orgId = getValues("organizationId")?.trim();
+        if (organizations.length === 0) {
+          showToast(
+            "error",
+            "Добавьте организацию в профиле (раздел «Место работы»)."
+          );
+          return;
+        }
+        if (!orgId) {
+          setOrganizationError("Выберите организацию");
+          showToast("error", "Выберите организацию");
+          return;
+        }
+        setOrganizationError(null);
+      }
+      if (step === 2) {
+        setShowLearnerStatusDots(true);
+        const errors = validateAllLearners();
+        if (errors != null) {
+          setLearnerErrors(errors);
+          showToast("error", "Заполните все обязательные поля слушателей");
+          return;
+        }
+        setLearnerErrors({});
+      }
       const next = (step + 1) as CheckoutStep;
       setStep(next);
       onStepChange?.(next);
     }
-  }, [step, onStepChange]);
+  }, [
+    step,
+    onStepChange,
+    validateAllLearners,
+    showToast,
+    isOrganization,
+    organizations.length,
+    getValues,
+  ]);
 
   const goBack = useCallback(() => {
     if (step > 1) {
+      if (step === 3) setLearnerErrors({});
+      if (step === 2) setOrganizationError(null);
       const prev = (step - 1) as CheckoutStep;
       setStep(prev);
       onStepChange?.(prev);
@@ -276,6 +396,10 @@ export const CheckoutForm = memo(function CheckoutForm({
     onStepChange?.(step);
   }, [step, onStepChange]);
 
+  useEffect(() => {
+    if (!isOrganization) setOrganizationError(null);
+  }, [isOrganization]);
+
   const onSubmit = useCallback(
     async (data: CheckoutFormData) => {
       if (items.length === 0) {
@@ -283,7 +407,20 @@ export const CheckoutForm = memo(function CheckoutForm({
         return;
       }
       if (isOrganization && !data.organizationId?.trim()) {
+        setOrganizationError("Выберите организацию");
+        setStep(1);
+        onStepChange?.(1);
         showToast("error", "Выберите организацию");
+        return;
+      }
+
+      const learnerValidationErrors = validateAllLearners();
+      if (learnerValidationErrors != null) {
+        setShowLearnerStatusDots(true);
+        setLearnerErrors(learnerValidationErrors);
+        setStep(2);
+        onStepChange?.(2);
+        showToast("error", "Заполните все обязательные поля слушателей");
         return;
       }
 
@@ -337,6 +474,8 @@ export const CheckoutForm = memo(function CheckoutForm({
       createOrderFromCart,
       showToast,
       router,
+      validateAllLearners,
+      onStepChange,
     ]
   );
 
@@ -417,15 +556,40 @@ export const CheckoutForm = memo(function CheckoutForm({
               </div>
             </div>
 
+            {showProfileSuggestion && (
+              <div className="rounded-xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm">
+                <p className="font-medium text-foreground">
+                  Чтобы данные подставлялись автоматически, заполните профиль.
+                </p>
+                <Button
+                  type="button"
+                  variant="link"
+                  className="mt-2 h-auto p-0 text-primary underline"
+                  onClick={() => router.push("/profile")}
+                >
+                  Перейти в профиль
+                </Button>
+              </div>
+            )}
+
             {isOrganization && (
               <div className="space-y-2">
                 <Label htmlFor="organizationId">Организация *</Label>
                 <Select
                   required={isOrganization}
                   value={watch("organizationId")}
-                  onValueChange={(v) => setValue("organizationId", v)}
+                  onValueChange={(v) => {
+                    setValue("organizationId", v);
+                    setOrganizationError(null);
+                  }}
                 >
-                  <SelectTrigger id="organizationId" className="w-full">
+                  <SelectTrigger
+                    id="organizationId"
+                    className={cn(
+                      "w-full",
+                      organizationError && "border-destructive"
+                    )}
+                  >
                     <SelectValue placeholder="Выберите организацию" />
                   </SelectTrigger>
                   <SelectContent>
@@ -440,6 +604,11 @@ export const CheckoutForm = memo(function CheckoutForm({
                   <p className="text-xs text-muted-foreground">
                     Добавьте организацию в профиле (раздел «Место
                     работы»).
+                  </p>
+                )}
+                {organizationError && (
+                  <p className="text-xs text-destructive">
+                    {organizationError}
                   </p>
                 )}
               </div>
@@ -537,6 +706,12 @@ export const CheckoutForm = memo(function CheckoutForm({
                           onUseMyDataChange={(checked) =>
                             setUseMyData(key, idx, checked)
                           }
+                          showStatusDot={showLearnerStatusDots}
+                          hasErrors={
+                            Object.keys(
+                              learnerErrors[key]?.[idx] ?? {}
+                            ).length > 0
+                          }
                         >
                           <LearnerFieldsCard
                             idPrefix={`${key}-${idx}`}
@@ -545,6 +720,7 @@ export const CheckoutForm = memo(function CheckoutForm({
                               setLearnerData(key, idx, data)
                             }
                             fromProfile={isSelf || useMyData}
+                            errors={learnerErrors[key]?.[idx]}
                           />
                         </LearnerAccordionItem>
                       );

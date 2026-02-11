@@ -109,5 +109,6 @@ export function useMe(options?: { skip?: boolean }) {
     user: meUser || user,
     loading: skip ? false : loading,
     error,
+    refetch,
   };
 }
