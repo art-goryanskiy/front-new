@@ -17,6 +17,7 @@ import { usePathname } from "next/navigation";
 
 function getActiveMenuLabel(pathname: string): string | undefined {
   if (pathname === "/") return "Главная";
+  if (pathname.startsWith("/news")) return "Новости";
   if (
     pathname.startsWith("/qualification-upgrade") ||
     pathname.startsWith("/professional-retraining") ||

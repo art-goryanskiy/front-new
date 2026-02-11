@@ -4,6 +4,7 @@ import {
   GraduationCap,
   Briefcase,
   ShoppingCart,
+  Newspaper,
   type LucideIcon,
 } from "lucide-react";
 import { CATEGORY_TYPE_LABELS } from "@/shared/constants/categories";
@@ -14,6 +15,11 @@ export const GLOW_MENU_NAV_ITEMS = [
     icon: Home as LucideIcon,
     label: "Главная",
     href: "/",
+  },
+  {
+    icon: Newspaper as LucideIcon,
+    label: "Новости",
+    href: "/news",
   },
   {
     icon: BookOpen as LucideIcon,
