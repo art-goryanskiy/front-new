@@ -1,11 +1,24 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { memo } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Calendar } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { NewsEntity } from "@/entities/news/api/news.types";
+
+const ALLOWED_IMAGE_HOSTS = ["standart-images.storage.yandexcloud.net"];
+
+function isOptimizableImageSrc(src: string): boolean {
+  if (src.startsWith("data:")) return false;
+  try {
+    const u = new URL(src);
+    return u.protocol === "https:" && ALLOWED_IMAGE_HOSTS.some((h) => u.hostname === h);
+  } catch {
+    return false;
+  }
+}
 
 function formatNewsDate(iso: string): string {
   try {
@@ -79,11 +92,21 @@ export const NewsCard = memo(function NewsCard({
           <div className="relative z-10 flex w-full min-w-0 flex-col">
             {photoUrl && (
               <div className="relative aspect-21/9 w-full overflow-hidden sm:aspect-3/1">
-                <img
-                  src={photoUrl}
-                  alt=""
-                  className="h-full w-full object-cover saturate-[0.88] transition-[transform,filter] duration-700 group-hover:saturate-100 group-hover:scale-[1.02]"
-                />
+                {isOptimizableImageSrc(photoUrl) ? (
+                  <Image
+                    src={photoUrl}
+                    alt=""
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 1200px"
+                    className="object-cover saturate-[0.88] transition-[transform,filter] duration-700 group-hover:saturate-100 group-hover:scale-[1.02]"
+                  />
+                ) : (
+                  <img
+                    src={photoUrl}
+                    alt=""
+                    className="h-full w-full object-cover saturate-[0.88] transition-[transform,filter] duration-700 group-hover:saturate-100 group-hover:scale-[1.02]"
+                  />
+                )}
                 <div className="absolute inset-0 bg-linear-to-t from-background/90 via-background/20 to-transparent" />
               </div>
             )}
@@ -115,11 +138,21 @@ export const NewsCard = memo(function NewsCard({
                   isWide ? "h-36 w-full sm:h-auto sm:w-48" : "h-36 w-full sm:h-auto sm:w-40"
                 )}
               >
-                <img
-                  src={photoUrl}
-                  alt=""
-                  className="h-full w-full object-cover saturate-[0.88] transition-[transform,filter] duration-500 group-hover:saturate-100 group-hover:scale-105"
-                />
+                {isOptimizableImageSrc(photoUrl) ? (
+                  <Image
+                    src={photoUrl}
+                    alt=""
+                    fill
+                    sizes="(max-width: 640px) 100vw, 160px"
+                    className="object-cover saturate-[0.88] transition-[transform,filter] duration-500 group-hover:saturate-100 group-hover:scale-105"
+                  />
+                ) : (
+                  <img
+                    src={photoUrl}
+                    alt=""
+                    className="h-full w-full object-cover saturate-[0.88] transition-[transform,filter] duration-500 group-hover:saturate-100 group-hover:scale-105"
+                  />
+                )}
                 <div className="absolute inset-0 bg-linear-to-r from-background/70 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 sm:from-transparent sm:to-background/50" />
               </div>
             )}

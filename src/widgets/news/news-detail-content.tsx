@@ -1,14 +1,27 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { ArrowLeft, Calendar, ExternalLink, Image, Link2 } from "lucide-react";
+import { ArrowLeft, Calendar, ExternalLink, Image as ImageIcon, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNewsItem } from "@/entities/news/api/use-news-item";
 import { LoadingState } from "@/shared/ui/loading-state/loading-state";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
 import { cn } from "@/lib/utils";
+
+const ALLOWED_IMAGE_HOSTS = ["standart-images.storage.yandexcloud.net"];
+
+function isOptimizableImageSrc(src: string): boolean {
+  if (src.startsWith("data:")) return false;
+  try {
+    const u = new URL(src);
+    return u.protocol === "https:" && ALLOWED_IMAGE_HOSTS.some((h) => u.hostname === h);
+  } catch {
+    return false;
+  }
+}
 
 function formatNewsDate(iso: string): string {
   try {
@@ -101,11 +114,17 @@ export function NewsDetailContent() {
       {firstPhoto && (
         <div className="-mx-4 mb-8 overflow-hidden rounded-2xl sm:-mx-6 sm:rounded-3xl lg:-mx-8">
           <div className="relative aspect-2/1 w-full sm:aspect-21/9">
-            <img
-              src={firstPhoto}
-              alt=""
-              className="h-full w-full object-cover"
-            />
+            {isOptimizableImageSrc(firstPhoto) ? (
+              <Image
+                src={firstPhoto}
+                alt=""
+                fill
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 1200px"
+                className="object-cover"
+              />
+            ) : (
+              <img src={firstPhoto} alt="" className="h-full w-full object-cover" />
+            )}
             <div className="absolute inset-0 bg-linear-to-t from-background/80 via-background/20 to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8">
               <p className="flex items-center gap-2 text-sm font-medium uppercase tracking-wider text-white drop-shadow-md">
@@ -135,7 +154,7 @@ export function NewsDetailContent() {
         {restPhotos.length > 0 && (
           <div className="mt-10 space-y-4">
             <h3 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-foreground">
-              <Image className="h-4 w-4" aria-hidden />
+              <ImageIcon className="h-4 w-4" aria-hidden />
               Фотографии
             </h3>
             <ul className="grid gap-3 sm:grid-cols-2">
@@ -146,13 +165,23 @@ export function NewsDetailContent() {
                       href={att.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block overflow-hidden rounded-xl border border-border/40 transition hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5"
+                      className="block relative aspect-4/3 overflow-hidden rounded-xl border border-border/40 transition hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5"
                     >
-                      <img
-                        src={att.url}
-                        alt=""
-                        className="aspect-4/3 w-full object-cover transition-transform duration-300 hover:scale-[1.02]"
-                      />
+                      {isOptimizableImageSrc(att.url) ? (
+                        <Image
+                          src={att.url}
+                          alt=""
+                          fill
+                          sizes="(max-width: 640px) 100vw, 50vw"
+                          className="object-cover transition-transform duration-300 hover:scale-[1.02]"
+                        />
+                      ) : (
+                        <img
+                          src={att.url}
+                          alt=""
+                          className="aspect-4/3 w-full object-cover transition-transform duration-300 hover:scale-[1.02]"
+                        />
+                      )}
                     </a>
                   </li>
                 ) : null
