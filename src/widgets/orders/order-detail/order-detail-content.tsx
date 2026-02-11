@@ -11,8 +11,8 @@ import { useDeleteOrder } from "@/entities/order/api/use-delete-order";
 import { useUpdateOrder } from "@/entities/order/api/use-update-order";
 import { useToastState } from "@/shared/store/toast-store";
 import { Surface } from "@/shared/ui/surface/surface";
-import { LoadingState } from "@/shared/ui/loading-state/loading-state";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
+import { OrderDetailSkeleton } from "./order-detail-skeleton";
 import { formatPriceWithCurrency } from "@/shared/lib/helpers/format-helpers";
 import { ORDER_STATUS_LABELS, ORDER_STATUS_BADGE_CLASSES, ORDER_CUSTOMER_TYPE_LABELS } from "@/shared/constants/orders";
 import type { OrderFieldsFragment } from "@/shared/api/generated/graphql";
@@ -251,7 +251,7 @@ export const OrderDetailContent = memo(function OrderDetailContent({
   );
 
   if (loading && !order) {
-    return <LoadingState message="Загрузка заявки…" />;
+    return <OrderDetailSkeleton />;
   }
 
   if (error) {

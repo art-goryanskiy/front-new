@@ -3,7 +3,7 @@
 import { memo, useMemo } from "react";
 import { usePrograms } from "../../api/use-programs";
 import { useCategories } from "@/entities/category/api/use-categories";
-import { LoadingState } from "@/shared/ui/loading-state/loading-state";
+import { ProgramListSkeleton } from "./program-list-skeleton";
 import { EmptyState } from "@/shared/ui/empty-state/empty-state";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
 import { ProgramCard } from "@/widgets/public/program-card/program-card";
@@ -94,12 +94,7 @@ export const ProgramList = memo(function ProgramList({
   );
 
   if (isLoading) {
-    return (
-      <>
-        {backButton}
-        <LoadingState message="Загрузка программ..." />
-      </>
-    );
+    return <ProgramListSkeleton backButton={backButton} />;
   }
 
   if (programsError) {

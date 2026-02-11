@@ -22,7 +22,7 @@ import { DashboardSection } from "@/shared/ui/dashboard-section/dashboard-sectio
 import { DataToolbar } from "@/shared/ui/data-toolbar/data-toolbar";
 import { EmptyState } from "@/shared/ui/empty-state/empty-state";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
-import { LoadingState } from "@/shared/ui/loading-state/loading-state";
+import { CategoryProgramsViewSkeleton } from "@/widgets/admin/programs-by-category/category-programs-view-skeleton";
 
 import { POPULAR_VIEWS_THRESHOLD } from "@/widgets/admin/program-table/constants/program-table-constants";
 import { ProgramList } from "@/widgets/admin/program-table/program-list";
@@ -165,8 +165,7 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
     openCreateProgramModal(categoryId, type);
   }, [openCreateProgramModal, categoryId, type]);
 
-  if (loading && page === 1)
-    return <LoadingState message="Загрузка программ…" />;
+  if (loading && page === 1) return <CategoryProgramsViewSkeleton />;
   if (error) return <ErrorState message={error.message} />;
 
   return (
@@ -335,8 +334,7 @@ export const ProgramsByTypeView = memo(function ProgramsByTypeView({
     [type, categoryId, debouncedQ, pricing, views, sort]
   );
 
-  if (categoriesLoading)
-    return <LoadingState message="Загрузка категорий…" />;
+  if (categoriesLoading) return <CategoryProgramsViewSkeleton />;
   if (categoriesError)
     return <ErrorState message={categoriesError.message} />;
 

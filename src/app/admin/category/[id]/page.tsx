@@ -4,7 +4,7 @@ import type { CategoryEntity } from "@/shared/api/generated/graphql";
 import { GET_CATEGORY } from "@/shared/api/queries/categories";
 import { useAdminNavState } from "@/shared/store/admin-nav-store";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
-import { LoadingState } from "@/shared/ui/loading-state/loading-state";
+import { AdminCategoryPageSkeleton } from "../admin-category-page-skeleton";
 import { PageHeaderWithBack } from "@/shared/ui/page-header-with-back/page-header-with-back";
 import { useQuery } from "@apollo/client/react";
 import {
@@ -66,8 +66,7 @@ const CategoryProgramsPage = memo(function CategoryProgramsPage({
     openCreateProgramModal(id, categoryType);
   }, [id, categoryType, openCreateProgramModal]);
 
-  if (loading)
-    return <LoadingState message="Загрузка категории..." />;
+  if (loading) return <AdminCategoryPageSkeleton />;
 
   if (error || !category) {
     return (

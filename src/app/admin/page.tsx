@@ -1,6 +1,6 @@
 import { AdminHero } from "@/widgets/admin/admin-hero/admin-hero";
 import { StatsCardsSkeleton } from "@/widgets/admin/stats-cards/stats-cards-skeleton";
-import { LoadingState } from "@/shared/ui/loading-state/loading-state";
+import { AdminCategoriesSkeleton } from "./admin-categories-skeleton";
 import { lazy, Suspense } from "react";
 import { AdminPageClient } from "./admin-page-client";
 
@@ -19,9 +19,7 @@ export default function AdminPage() {
         <StatsCards />
       </Suspense>
 
-      <Suspense
-        fallback={<LoadingState message="Загрузка категорий…" />}
-      >
+      <Suspense fallback={<AdminCategoriesSkeleton />}>
         <AdminPageClient />
       </Suspense>
     </div>

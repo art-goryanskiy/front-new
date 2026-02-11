@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft, Calendar, ExternalLink, Image as ImageIcon, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNewsItem } from "@/entities/news/api/use-news-item";
-import { LoadingState } from "@/shared/ui/loading-state/loading-state";
+import { NewsDetailSkeleton } from "./news-detail-skeleton";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
 import { cn } from "@/lib/utils";
 
@@ -57,8 +57,8 @@ export function NewsDetailContent() {
 
   if (loading && !newsItem) {
     return (
-      <div className="flex justify-center py-16">
-        <LoadingState />
+      <div className="py-8">
+        <NewsDetailSkeleton />
       </div>
     );
   }

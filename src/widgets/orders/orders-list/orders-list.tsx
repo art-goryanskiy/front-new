@@ -3,8 +3,8 @@
 import { memo, useState } from "react";
 import Link from "next/link";
 import { useMyOrders } from "@/entities/order/api/use-my-orders";
-import { LoadingState } from "@/shared/ui/loading-state/loading-state";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
+import { OrdersListSkeleton } from "./orders-list-skeleton";
 import { Surface } from "@/shared/ui/surface/surface";
 import { formatPriceWithCurrency } from "@/shared/lib/helpers/format-helpers";
 import { ORDER_STATUS_LABELS, ORDER_STATUS_BADGE_CLASSES } from "@/shared/constants/orders";
@@ -166,7 +166,7 @@ export const OrdersList = memo(function OrdersList() {
   });
 
   if (loading && orders.length === 0) {
-    return <LoadingState message="Загрузка заявок…" />;
+    return <OrdersListSkeleton />;
   }
 
   if (error) {

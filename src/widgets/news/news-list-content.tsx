@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useNews } from "@/entities/news/api/use-news";
 import type { NewsEntity } from "@/entities/news/api/news.types";
 import { NewsCard, type NewsCardVariant } from "./news-card";
-import { LoadingState } from "@/shared/ui/loading-state/loading-state";
+import { NewsListSkeleton } from "./news-list-skeleton";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
 import { EmptyState } from "@/shared/ui/empty-state/empty-state";
 import { Loader2 } from "lucide-react";
@@ -82,9 +82,9 @@ export function NewsListContent() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="flex justify-center py-12"
+            className="py-4"
           >
-            <LoadingState />
+            <NewsListSkeleton />
           </motion.div>
         ) : (
           <motion.div
