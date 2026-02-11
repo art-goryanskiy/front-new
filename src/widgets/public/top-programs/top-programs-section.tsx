@@ -9,7 +9,6 @@ import { CATEGORY_TYPE_LABELS } from "@/shared/constants/categories";
 import { EmptyState } from "@/shared/ui/empty-state/empty-state";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
 import { LoadingState } from "@/shared/ui/loading-state/loading-state";
-import { AnimatePresence, motion } from "framer-motion";
 import { BookOpen } from "lucide-react";
 import { memo, useCallback, useEffect, useRef, useMemo, useState } from "react";
 import { ProgramCard } from "../program-card/program-card";
@@ -29,24 +28,25 @@ export const TopProgramsSection = memo(function TopProgramsSection({
     CategoryType.QualificationUpgrade
   );
 
-  const hasInitialData = !!initialAllPrograms && !!initialCategories;
+  const hasInitialData = !!initialAllPrograms?.length && !!initialCategories?.length;
   const { isAuthenticated } = useAuthStatus();
   const wasAuthenticatedRef = useRef(false);
 
-  // Всегда запрашиваем на клиенте (с кукой), чтобы при первой загрузке по URL
-  // данные обновились после гидратации (цены, актуальный список)
+  // Для гостя с initial-данными не дергаем API (экономия запросов). После логина — refetch для цен.
+  const skipClientFetch = !isAuthenticated && hasInitialData;
+
   const {
     programs: allProgramsClient,
     loading: programsLoading,
     error: programsError,
     refetch: refetchPrograms,
-  } = usePrograms(undefined);
+  } = usePrograms(undefined, { skip: skipClientFetch });
 
   const {
     categories: categoriesClient,
     loading: categoriesLoading,
     refetch: refetchCategories,
-  } = useCategories(undefined);
+  } = useCategories(undefined, { skip: skipClientFetch });
 
   // После логина без перезагрузки — перезапросить программы и категории с кукой (чтобы подтянуть цены)
   useEffect(() => {
@@ -152,22 +152,21 @@ export const TopProgramsSection = memo(function TopProgramsSection({
           </p>
         </div>
 
-        {/* Tabs */}
+        {/* Tabs — CSS transition для производительности */}
         <div className={TOP_PROGRAMS_CLASSES.tabs}>
           {TOP_PROGRAMS_TABS.map((tab) => (
-            <motion.button
+            <button
               key={tab.key}
+              type="button"
               onClick={() => handleTabChange(tab.key)}
               className={`${TOP_PROGRAMS_CLASSES.tab} ${
                 activeTab === tab.key
                   ? TOP_PROGRAMS_CLASSES.tabActive
                   : TOP_PROGRAMS_CLASSES.tabInactive
               }`}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
             >
               {tab.label}
-            </motion.button>
+            </button>
           ))}
         </div>
 
@@ -183,21 +182,15 @@ export const TopProgramsSection = memo(function TopProgramsSection({
           />
         ) : (
           <>
-            <AnimatePresence mode="wait">
-              <motion.div
-                layout
-                className={TOP_PROGRAMS_CLASSES.grid}
-                transition={{ duration: 0.2 }}
-              >
-                {displayedPrograms.map((program) => (
-                  <ProgramCard
-                    key={program.id}
-                    program={program}
-                    categoryType={categoryLabel}
-                  />
-                ))}
-              </motion.div>
-            </AnimatePresence>
+            <div className={TOP_PROGRAMS_CLASSES.grid}>
+              {displayedPrograms.map((program) => (
+                <ProgramCard
+                  key={program.id}
+                  program={program}
+                  categoryType={categoryLabel}
+                />
+              ))}
+            </div>
 
             {/* Show More Button */}
             {sortedPrograms.length > 9 && (

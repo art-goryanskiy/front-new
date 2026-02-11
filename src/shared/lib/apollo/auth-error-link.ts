@@ -25,11 +25,11 @@ function is401Like(options: { error: unknown; operation: { operationName?: strin
 export function createAuthErrorLink(): ErrorLink {
   return new ErrorLink(({ error, operation, forward }) => {
     if (!is401Like({ error, operation })) {
-      return;
+      return forward(operation);
     }
 
     const client = operation.client;
-    if (!client) return;
+    if (!client) return forward(operation);
 
     return from(
       client.mutate<{ refreshToken: UserEntity }>({

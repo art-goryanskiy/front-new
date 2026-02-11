@@ -11,7 +11,6 @@ interface PublicHeaderState {
   isSearchOpen: boolean;
   isSearchExpanded: boolean;
   isMobileMenuOpen: boolean;
-  isMounted: boolean;
 }
 
 export function usePublicHeaderState() {
@@ -25,18 +24,10 @@ export function usePublicHeaderState() {
     isSearchOpen: false,
     isSearchExpanded: false,
     isMobileMenuOpen: false,
-    isMounted: false,
   });
 
   const searchValueRef = useRef(state.searchValue);
   const prevPathnameRef = useRef(pathname);
-
-  // Инициализация mounted
-  useEffect(() => {
-    queueMicrotask(() => {
-      setState((prev) => ({ ...prev, isMounted: true }));
-    });
-  }, []);
 
   // Синхронизация searchValueRef
   useEffect(() => {

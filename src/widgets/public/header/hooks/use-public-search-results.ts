@@ -26,6 +26,12 @@ const ORDER_STATUS_LABELS: Record<string, string> = {
   CANCELLED: "Отменён",
 };
 
+/** Сколько заявок подгружать для поиска по выпадалке (показываем до 5 после фильтрации). */
+const SEARCH_ORDERS_LIMIT = 15;
+
+/** Лимит результатов категорий и программ в подсказках поиска. */
+const SEARCH_RESULTS_LIMIT = 5;
+
 /**
  * Хук для получения результатов поиска:
  * - незарегистрированный: категории и программы;
@@ -40,7 +46,7 @@ export function usePublicSearchResults(
   const isAuthenticated = options?.isAuthenticated ?? false;
 
   const { categories, loading: categoriesLoading } = useCategories(
-    hasQuery ? { search: debouncedQuery, limit: 5 } : undefined,
+    hasQuery ? { search: debouncedQuery, limit: SEARCH_RESULTS_LIMIT } : undefined,
     { skip: !hasQuery }
   );
 
@@ -49,12 +55,12 @@ export function usePublicSearchResults(
   });
 
   const { programs, loading: programsLoading } = usePrograms(
-    hasQuery ? { search: debouncedQuery, limit: 5 } : undefined,
+    hasQuery ? { search: debouncedQuery, limit: SEARCH_RESULTS_LIMIT } : undefined,
     { skip: !hasQuery }
   );
 
   const { orders, loading: ordersLoading } = useMyOrders({
-    filter: { limit: 50 },
+    filter: { limit: SEARCH_ORDERS_LIMIT },
     skip: !isAuthenticated || !hasQuery,
   });
 

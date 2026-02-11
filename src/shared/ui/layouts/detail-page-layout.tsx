@@ -13,9 +13,10 @@ export function DetailPageLayout({
 }: DetailPageLayoutProps) {
   return (
     <>
+      {/* JSON-LD: schema.data только из кода/сервера, не пользовательский ввод */}
       {schemas.map((schema, index) => (
         <script
-          key={index}
+          key={`${schema.type}-${index}`}
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(schema.data),

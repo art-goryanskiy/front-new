@@ -4,6 +4,11 @@ import ReactMarkdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { cn } from "@/lib/utils";
 
+/**
+ * Рендер Markdown без сырого HTML (только remarkGfm).
+ * Контент должен быть из доверенного источника (админка, CMS).
+ * Не подключать rehype-raw для пользовательского ввода без санитизации.
+ */
 interface MarkdownContentProps {
   content: string;
   className?: string;
@@ -91,8 +96,8 @@ export function MarkdownContent({
     <div
       className={cn(
         "space-y-4",
-        leadParagraph && "[&>p:first-child]:!font-medium",
-        leadParagraph && "[&>p:first-child]:!text-foreground",
+        leadParagraph && "[&>p:first-child]:font-medium!",
+        leadParagraph && "[&>p:first-child]:text-foreground!",
         className
       )}
     >
