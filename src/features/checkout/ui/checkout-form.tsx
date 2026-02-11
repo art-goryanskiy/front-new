@@ -89,8 +89,9 @@ export const CheckoutForm = memo(function CheckoutForm({
   onStepChange,
 }: CheckoutFormProps) {
   const router = useRouter();
-  const user = useAuthUser();
-  useMe({ skip: !!user?.profile });
+  const storeUser = useAuthUser();
+  const { user: meUser } = useMe({ skip: false });
+  const user = meUser ?? storeUser;
   const { items, totalAmount, loading: cartLoading } = useMyCart();
   const { createOrderFromCart, loading: submitting } =
     useCreateOrderFromCart();
