@@ -7,7 +7,7 @@ import { useOrder } from "@/entities/order/api/use-order";
 import { useCreateOrderCardPayment } from "@/entities/order/api/use-create-order-card-payment";
 import { useCreateOrderInvoice } from "@/entities/order/api/use-create-order-invoice";
 import { Surface } from "@/shared/ui/surface/surface";
-import { LoadingState } from "@/shared/ui/loading-state/loading-state";
+import { OrderPaymentSkeleton } from "./order-payment-skeleton";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
 import { formatPriceWithCurrency } from "@/shared/lib/helpers/format-helpers";
 import { OrganizationSuggestInput } from "@/shared/ui/form-fields/organization-suggest-input";
@@ -95,7 +95,7 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
   }, []);
 
   if (orderLoading && !order) {
-    return <LoadingState message="Загрузка заявки…" />;
+    return <OrderPaymentSkeleton />;
   }
 
   if (orderError) {

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useOrder } from "@/entities/order/api/use-order";
 import { useOrderPaymentSync } from "@/entities/order/api/use-order-payment-sync";
 import { Surface } from "@/shared/ui/surface/surface";
-import { LoadingState } from "@/shared/ui/loading-state/loading-state";
+import { OrderPaymentReturnSkeleton } from "./order-payment-return-skeleton";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, XCircle, CreditCard } from "lucide-react";
@@ -28,7 +28,7 @@ export const OrderPaymentReturnContent = memo(function OrderPaymentReturnContent
   }, [sync?.updated, orderId, refetchOrder]);
 
   if (orderLoading && !order) {
-    return <LoadingState message="Загрузка заявки…" />;
+    return <OrderPaymentReturnSkeleton />;
   }
 
   if (!order) {

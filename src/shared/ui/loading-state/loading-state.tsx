@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { Spinner } from "@/components/ui/spinner";
+import { OrbitalLoader } from "@/components/ui/orbital-loader";
 import { memo } from "react";
 
 interface LoadingStateProps {
@@ -21,12 +21,11 @@ export const LoadingState = memo(function LoadingState({
       aria-busy="true"
     >
       <CardContent className="flex items-center justify-center py-12">
-        <div className="flex flex-col items-center gap-3">
-          <Spinner size={32} aria-label={message || "Загрузка"} />
-          {message && (
-            <p className="text-sm text-muted-foreground">{message}</p>
-          )}
-        </div>
+        <OrbitalLoader
+          message={message || "Загрузка"}
+          messagePlacement="bottom"
+          className="w-10 h-10"
+        />
       </CardContent>
     </Card>
   );

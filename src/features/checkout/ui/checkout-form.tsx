@@ -24,6 +24,7 @@ import { formatPriceWithCurrency } from "@/shared/lib/helpers/format-helpers";
 import { useAuthUser } from "@/shared/store/auth-store";
 import { useToastState } from "@/shared/store/toast-store";
 import { Surface } from "@/shared/ui/surface/surface";
+import { CheckoutFormSkeleton } from "./checkout-form-skeleton";
 import { ShoppingBag } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
@@ -480,11 +481,7 @@ export const CheckoutForm = memo(function CheckoutForm({
   );
 
   if (cartLoading && items.length === 0) {
-    return (
-      <Surface variant="floating" className="p-8 text-center">
-        <p className="text-muted-foreground">Загрузка корзины…</p>
-      </Surface>
-    );
+    return <CheckoutFormSkeleton />;
   }
 
   if (items.length === 0) {

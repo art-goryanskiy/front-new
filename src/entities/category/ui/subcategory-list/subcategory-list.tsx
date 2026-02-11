@@ -2,7 +2,7 @@
 
 import { memo, useMemo } from "react";
 import { useCategories } from "../../api/use-categories";
-import { LoadingState } from "@/shared/ui/loading-state/loading-state";
+import { SubcategoryListSkeleton } from "./subcategory-list-skeleton";
 import { EmptyState } from "@/shared/ui/empty-state/empty-state";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
 import { SubcategoryCard } from "@/widgets/public/subcategory-card/subcategory-card";
@@ -55,12 +55,7 @@ export const SubcategoryList = memo(function SubcategoryList({
   );
 
   if (!hasInitialData && loading) {
-    return (
-      <>
-        {backButton}
-        <LoadingState message="Загрузка подкатегорий..." />
-      </>
-    );
+    return <SubcategoryListSkeleton backButton={backButton} />;
   }
 
   if (error) {

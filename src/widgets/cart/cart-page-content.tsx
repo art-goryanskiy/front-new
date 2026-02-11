@@ -9,6 +9,7 @@ import { useUpdateCartItem } from "@/entities/cart/api/use-update-cart-item";
 import { useRemoveFromCart } from "@/entities/cart/api/use-remove-from-cart";
 import { useAddToCart } from "@/entities/cart/api/use-add-to-cart";
 import { formatPrice } from "@/shared/lib/helpers/format-helpers";
+import { CartPageSkeleton } from "./cart-page-skeleton";
 import { ShoppingCart, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
@@ -140,16 +141,7 @@ export const CartPageContent = memo(function CartPageContent() {
   );
 
   if (loading && items.length === 0) {
-    return (
-      <Surface
-        variant="floating"
-        className="flex min-h-[320px] items-center justify-center"
-      >
-        <div className="text-sm text-muted-foreground">
-          Загрузка корзины…
-        </div>
-      </Surface>
-    );
+    return <CartPageSkeleton />;
   }
 
   if (error && items.length === 0) {
@@ -169,16 +161,7 @@ export const CartPageContent = memo(function CartPageContent() {
   }
 
   if (items.length === 0 && loadingPricingChangeKey) {
-    return (
-      <Surface
-        variant="floating"
-        className="flex min-h-[320px] items-center justify-center"
-      >
-        <div className="text-sm text-muted-foreground">
-          Изменение тарифа…
-        </div>
-      </Surface>
-    );
+    return <CartPageSkeleton />;
   }
 
   if (items.length === 0) {

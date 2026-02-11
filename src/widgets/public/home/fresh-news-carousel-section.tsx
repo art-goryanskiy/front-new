@@ -6,7 +6,7 @@ import { OfferCarousel } from "@/components/ui/offer-carousel";
 import type { Offer } from "@/components/ui/offer-carousel";
 import { useNews } from "@/entities/news/api/use-news";
 import type { NewsEntity } from "@/entities/news/api/news.types";
-import { LoadingState } from "@/shared/ui/loading-state/loading-state";
+import { FreshNewsCarouselSkeleton } from "./fresh-news-carousel-skeleton";
 import { cn } from "@/lib/utils";
 
 const CAROUSEL_NEWS_LIMIT = 8;
@@ -92,9 +92,7 @@ export const FreshNewsCarouselSection = memo(function FreshNewsCarouselSection()
             <h2 className={SECTION_CLASSES.title}>{TEXTS.title}</h2>
             <p className={SECTION_CLASSES.subtitle}>{TEXTS.subtitle}</p>
           </div>
-          <div className="flex justify-center py-12">
-            <LoadingState />
-          </div>
+          <FreshNewsCarouselSkeleton />
         </div>
       </section>
     );

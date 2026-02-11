@@ -18,7 +18,7 @@ import { DashboardSection } from "@/shared/ui/dashboard-section/dashboard-sectio
 import { DataToolbar } from "@/shared/ui/data-toolbar/data-toolbar";
 import { EmptyState } from "@/shared/ui/empty-state/empty-state";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
-import { LoadingState } from "@/shared/ui/loading-state/loading-state";
+import { CategoryProgramsViewSkeleton } from "./category-programs-view-skeleton";
 
 import { POPULAR_VIEWS_THRESHOLD } from "@/widgets/admin/program-table/constants/program-table-constants";
 import { ProgramList } from "@/widgets/admin/program-table/program-list";
@@ -117,8 +117,7 @@ export const CategoryProgramsView = memo(
       openCreateProgramModal(categoryId, categoryType);
     }, [openCreateProgramModal, categoryId, categoryType]);
 
-    if (loading && page === 1)
-      return <LoadingState message="Загрузка программ…" />;
+    if (loading && page === 1) return <CategoryProgramsViewSkeleton />;
     if (error) return <ErrorState message={error.message} />;
 
     return (

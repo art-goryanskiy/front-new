@@ -8,7 +8,7 @@ import { CategoryType } from "@/shared/api/generated/graphql";
 import { CATEGORY_TYPE_LABELS } from "@/shared/constants/categories";
 import { EmptyState } from "@/shared/ui/empty-state/empty-state";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
-import { LoadingState } from "@/shared/ui/loading-state/loading-state";
+import { TopProgramsSectionSkeleton } from "./top-programs-section-skeleton";
 import { BookOpen } from "lucide-react";
 import { memo, useCallback, useEffect, useRef, useMemo, useState } from "react";
 import { ProgramCard } from "../program-card/program-card";
@@ -172,7 +172,7 @@ export const TopProgramsSection = memo(function TopProgramsSection({
 
         {/* Programs Grid */}
         {loading ? (
-          <LoadingState message={TOP_PROGRAMS_TEXTS.loading} />
+          <TopProgramsSectionSkeleton />
         ) : displayedPrograms.length === 0 ? (
           <EmptyState
             title={TOP_PROGRAMS_TEXTS.noPrograms}

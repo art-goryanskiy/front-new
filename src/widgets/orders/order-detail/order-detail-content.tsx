@@ -3,20 +3,17 @@
 import { memo, useCallback, useState, useEffect } from "react";
 import Link from "next/link";
 import { useOrder } from "@/entities/order/api/use-order";
-import {
-  useUpdateOrderStatus,
-  PROGRESS_ORDER_STATUS_OPTIONS,
-} from "@/entities/order/api/use-update-order-status";
 import { useDeleteOrder } from "@/entities/order/api/use-delete-order";
 import { useUpdateOrder } from "@/entities/order/api/use-update-order";
 import { useToastState } from "@/shared/store/toast-store";
 import { Surface } from "@/shared/ui/surface/surface";
-import { LoadingState } from "@/shared/ui/loading-state/loading-state";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
+import { OrderDetailSkeleton } from "./order-detail-skeleton";
 import { formatPriceWithCurrency } from "@/shared/lib/helpers/format-helpers";
-import { ORDER_STATUS_LABELS, ORDER_CUSTOMER_TYPE_LABELS } from "@/shared/constants/orders";
+import { ORDER_STATUS_LABELS, ORDER_STATUS_BADGE_CLASSES, ORDER_CUSTOMER_TYPE_LABELS } from "@/shared/constants/orders";
 import type { OrderFieldsFragment } from "@/shared/api/generated/graphql";
-import { ArrowLeft, FileText, User, Loader2, ChevronDown, Pencil, Trash2 } from "lucide-react";
+import { FileText, User, Loader2, Pencil, Trash2, MoreVertical } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -31,7 +28,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
@@ -55,8 +51,6 @@ function formatOrderDate(date: string | unknown): string {
     return String(date);
   }
 }
-
-const CAN_CHANGE_PROGRESS_STATUS = [OrderStatus.Paid, OrderStatus.InProgress];
 
 function EditOrderDialog({
   order,
@@ -110,12 +104,6 @@ function EditOrderDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2">
-          <Pencil className="h-4 w-4" />
-          Редактировать
-        </Button>
-      </DialogTrigger>
       <DialogContent className="rounded-2xl sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Контактные данные заявки</DialogTitle>
@@ -186,34 +174,11 @@ export const OrderDetailContent = memo(function OrderDetailContent({
 }) {
   const router = useRouter();
   const { showToast } = useToastState();
-  const [updatingStatus, setUpdatingStatus] = useState<OrderStatus | null>(null);
   const [editOpen, setEditOpen] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const { order, loading, error, refetch } = useOrder(orderId);
-  const { updateOrderStatus, loading: updateLoading } = useUpdateOrderStatus();
   const { deleteOrder, loading: deleteLoading } = useDeleteOrder();
   const { updateOrder, loading: updateOrderLoading } = useUpdateOrder();
-
-  const handleStatusChange = useCallback(
-    async (newStatus: OrderStatus) => {
-      if (!orderId) return;
-      setUpdatingStatus(newStatus);
-      try {
-        await updateOrderStatus(orderId, newStatus);
-        await refetch();
-        showToast("success", "Статус заявки обновлён.");
-      } catch (e) {
-        showToast("error", getGraphQLErrorMessage(e));
-      } finally {
-        setUpdatingStatus(null);
-      }
-    },
-    [orderId, updateOrderStatus, refetch, showToast]
-  );
-
-  const handleCancelOrder = useCallback(() => {
-    handleStatusChange(OrderStatus.Cancelled);
-  }, [handleStatusChange]);
 
   const handleDeleteOrder = useCallback(async () => {
     if (!orderId) return;
@@ -257,7 +222,7 @@ export const OrderDetailContent = memo(function OrderDetailContent({
   );
 
   if (loading && !order) {
-    return <LoadingState message="Загрузка заявки…" />;
+    return <OrderDetailSkeleton />;
   }
 
   if (error) {
@@ -282,6 +247,9 @@ export const OrderDetailContent = memo(function OrderDetailContent({
   const statusLabel =
     ORDER_STATUS_LABELS[order.status as keyof typeof ORDER_STATUS_LABELS] ??
     order.status;
+  const statusBadgeClass =
+    ORDER_STATUS_BADGE_CLASSES[order.status] ??
+    "border-border/60 bg-muted/20 text-muted-foreground";
   const customerTypeLabel =
     ORDER_CUSTOMER_TYPE_LABELS[order.customerType] ?? order.customerType;
   const orderDisplayNumber = (order as OrderFieldsFragment & { number?: string | null }).number ?? order.id;
@@ -289,116 +257,80 @@ export const OrderDetailContent = memo(function OrderDetailContent({
 
   return (
     <div className="space-y-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div className="space-y-1">
-          <p className="text-xs font-semibold text-muted-foreground">
-            Заявка №{orderDisplayNumber}
-          </p>
-          <p className="text-sm text-muted-foreground">
-            {formatOrderDate(order.createdAt)}
-          </p>
-          <span className="inline-block rounded-full border border-border/60 bg-muted/20 px-3 py-1 text-sm font-semibold text-muted-foreground">
-            {statusLabel}
-          </span>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          {isAwaitingPayment && (
-            <Button asChild>
-              <Link href={`/orders/${order.id}/pay`}>Оплатить</Link>
+      <Surface variant="floating" className="relative overflow-hidden p-6">
+        <div className="pointer-events-none absolute -top-20 -right-20 h-64 w-80 rounded-full bg-primary/5 blur-3xl" />
+        <div className="relative z-10 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="space-y-2">
+            <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+              Заявка №{orderDisplayNumber}
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              {formatOrderDate(order.createdAt)}
+            </p>
+            <span
+              className={cn(
+                "inline-flex rounded-full border px-3 py-1 text-sm font-semibold",
+                statusBadgeClass
+              )}
+            >
+              {statusLabel}
+            </span>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            {isAwaitingPayment && (
+              <Button asChild>
+                <Link href={`/orders/${order.id}/pay`}>Оплатить</Link>
+              </Button>
+            )}
+            {isAwaitingPayment && (
+              <>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="icon" className="h-9 w-9" aria-label="Действия с заявкой">
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="min-w-[180px] rounded-xl">
+                    <DropdownMenuItem onClick={() => setEditOpen(true)} className="gap-2">
+                      <Pencil className="h-4 w-4" />
+                      Редактировать
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setDeleteConfirmOpen(true)}
+                      disabled={deleteLoading}
+                      className="gap-2 text-destructive focus:text-destructive"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      Удалить
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <EditOrderDialog
+                  order={order}
+                  open={editOpen}
+                  onOpenChange={setEditOpen}
+                  onSave={handleEditOrder}
+                  loading={updateOrderLoading}
+                />
+                <ConfirmDialog
+                  open={deleteConfirmOpen}
+                  onOpenChange={setDeleteConfirmOpen}
+                  title="Удалить заявку?"
+                  description="Это действие нельзя отменить."
+                  confirmLabel="Удалить"
+                  cancelLabel="Отмена"
+                  variant="destructive"
+                  onConfirm={handleDeleteOrder}
+                  loading={deleteLoading}
+                />
+              </>
+            )}
+            <Button variant="ghost" size="sm" asChild className="gap-2">
+              <Link href="/orders">К списку заявок</Link>
             </Button>
-          )}
-          {isAwaitingPayment && (
-            <>
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={updateLoading && updatingStatus === OrderStatus.Cancelled}
-                onClick={handleCancelOrder}
-                className="gap-2"
-              >
-                {updateLoading && updatingStatus === OrderStatus.Cancelled ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : null}
-                Отменить заявку
-              </Button>
-              <EditOrderDialog
-                order={order}
-                open={editOpen}
-                onOpenChange={setEditOpen}
-                onSave={handleEditOrder}
-                loading={updateOrderLoading}
-              />
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={deleteLoading}
-                onClick={() => setDeleteConfirmOpen(true)}
-                className="gap-2 text-destructive hover:text-destructive"
-              >
-                <Trash2 className="h-4 w-4" />
-                Удалить
-              </Button>
-              <ConfirmDialog
-                open={deleteConfirmOpen}
-                onOpenChange={setDeleteConfirmOpen}
-                title="Удалить заявку?"
-                description="Это действие нельзя отменить."
-                confirmLabel="Удалить"
-                cancelLabel="Отмена"
-                variant="destructive"
-                onConfirm={handleDeleteOrder}
-                loading={deleteLoading}
-              />
-            </>
-          )}
-          <Button
-            variant="ghost"
-            onClick={() => router.back()}
-            className="self-start sm:self-auto"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Назад
-          </Button>
+          </div>
         </div>
-      </div>
-
-      {CAN_CHANGE_PROGRESS_STATUS.includes(order.status) && (
-        <Surface variant="inset" className="flex flex-wrap items-center justify-between gap-4 p-4">
-          <span className="text-sm font-medium text-muted-foreground">Сменить статус заявки</span>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={updateLoading}
-                className="gap-2 rounded-xl border-border/60"
-              >
-                {updateLoading && updatingStatus ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <ChevronDown className="h-4 w-4" />
-                )}
-                Выбрать статус
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="min-w-[180px] rounded-xl">
-              {PROGRESS_ORDER_STATUS_OPTIONS.map(({ value, label }) => (
-                <DropdownMenuItem
-                  key={value}
-                  onClick={() => handleStatusChange(value)}
-                  disabled={value === order.status || (updateLoading && updatingStatus === value)}
-                  className="gap-2"
-                >
-                  {updatingStatus === value ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : null}
-                  {label}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </Surface>
-      )}
+      </Surface>
 
       <Surface variant="floating" className="space-y-6 p-6">
         <div className="grid gap-4 sm:grid-cols-2">
@@ -474,12 +406,6 @@ export const OrderDetailContent = memo(function OrderDetailContent({
           </span>
         </div>
       </Surface>
-
-      <div className="flex justify-start">
-        <Button variant="outline" asChild>
-          <Link href="/orders">К списку заявок</Link>
-        </Button>
-      </div>
     </div>
   );
 });
