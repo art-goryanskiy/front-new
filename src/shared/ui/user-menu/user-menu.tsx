@@ -14,6 +14,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Icon, type IconName } from "@/shared/ui/icons/icon";
+import { useAuthStatus } from "@/shared/store/auth-store";
+import { AUTH_GUARD_ROUTES } from "@/shared/lib/auth/constants/auth-guard-constants";
 import { ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
@@ -47,6 +49,7 @@ export const UserMenu = memo(function UserMenu({
   menuItems = DEFAULT_MENU_ITEMS,
 }: UserMenuProps) {
   const router = useRouter();
+  const { isAdmin } = useAuthStatus();
   const [avatarLoaded, setAvatarLoaded] = useState(false);
   const userEmail = user?.email || "User";
   const userInitial = useMemo(
@@ -72,6 +75,10 @@ export const UserMenu = memo(function UserMenu({
 
   const handleOrders = useCallback(() => {
     router.push("/orders");
+  }, [router]);
+
+  const handleAdmin = useCallback(() => {
+    router.push(AUTH_GUARD_ROUTES.admin);
   }, [router]);
 
   return (
@@ -152,6 +159,12 @@ export const UserMenu = memo(function UserMenu({
             {item.label}
           </DropdownMenuItem>
         ))}
+        {isAdmin && (
+          <DropdownMenuItem onClick={handleAdmin}>
+            <Icon name="settings" className="mr-2 h-4 w-4" size={16} />
+            {USER_MENU_TEXTS.admin}
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem
           onClick={onLogout}
           className="text-destructive focus:text-destructive"

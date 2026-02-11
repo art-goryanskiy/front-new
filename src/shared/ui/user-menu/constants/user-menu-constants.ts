@@ -6,6 +6,7 @@ export const USER_MENU_TEXTS = {
   adminRole: "Администратор",
   profile: "Профиль",
   myOrders: "Мои заявки",
+  admin: "В админку",
   logout: "Выйти",
 } as const;
 
