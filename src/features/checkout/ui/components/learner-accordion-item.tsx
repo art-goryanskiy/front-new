@@ -31,6 +31,8 @@ interface LearnerAccordionItemProps {
   showUseMyDataCheckbox?: boolean;
   useMyData?: boolean;
   onUseMyDataChange?: (checked: boolean) => void;
+  /** Показывать точку статуса (зелёная/красная) — только после первой валидации */
+  showStatusDot?: boolean;
   /** Есть ошибки валидации — индикатор и подпись при свёрнутом виде */
   hasErrors?: boolean;
 }
@@ -44,6 +46,7 @@ export function LearnerAccordionItem({
   showUseMyDataCheckbox = false,
   useMyData = false,
   onUseMyDataChange,
+  showStatusDot = false,
   hasErrors = false,
 }: LearnerAccordionItemProps) {
   const [open, setOpen] = useState(defaultOpen);
@@ -69,20 +72,24 @@ export function LearnerAccordionItem({
       >
         <span className="min-w-0 flex-1 text-foreground">{label}</span>
         <span className="flex shrink-0 items-center gap-2">
-          {hasErrors && !open && (
-            <span className="text-xs text-destructive">
-              Заполните обязательные поля
-            </span>
+          {showStatusDot && (
+            <>
+              {hasErrors && !open && (
+                <span className="text-xs text-destructive">
+                  Заполните обязательные поля
+                </span>
+              )}
+              <span
+                className={cn(
+                  "h-2 w-2 shrink-0 rounded-full shadow-sm",
+                  hasErrors
+                    ? "bg-destructive ring-2 ring-destructive/20"
+                    : "bg-emerald-500 ring-2 ring-emerald-500/20"
+                )}
+                aria-hidden
+              />
+            </>
           )}
-          <span
-            className={cn(
-              "h-2 w-2 shrink-0 rounded-full shadow-sm",
-              hasErrors
-                ? "bg-destructive ring-2 ring-destructive/20"
-                : "bg-emerald-500 ring-2 ring-emerald-500/20"
-            )}
-            aria-hidden
-          />
           <ChevronDown
             className={cn(
               "h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200",

@@ -147,6 +147,9 @@ export const CheckoutForm = memo(function CheckoutForm({
     null
   );
 
+  /** Показывать точки статуса у слушателей только после первой попытки валидации */
+  const [showLearnerStatusDots, setShowLearnerStatusDots] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -351,6 +354,7 @@ export const CheckoutForm = memo(function CheckoutForm({
         setOrganizationError(null);
       }
       if (step === 2) {
+        setShowLearnerStatusDots(true);
         const errors = validateAllLearners();
         if (errors != null) {
           setLearnerErrors(errors);
@@ -407,6 +411,7 @@ export const CheckoutForm = memo(function CheckoutForm({
 
       const learnerValidationErrors = validateAllLearners();
       if (learnerValidationErrors != null) {
+        setShowLearnerStatusDots(true);
         setLearnerErrors(learnerValidationErrors);
         setStep(2);
         onStepChange?.(2);
@@ -696,6 +701,7 @@ export const CheckoutForm = memo(function CheckoutForm({
                           onUseMyDataChange={(checked) =>
                             setUseMyData(key, idx, checked)
                           }
+                          showStatusDot={showLearnerStatusDots}
                           hasErrors={
                             Object.keys(
                               learnerErrors[key]?.[idx] ?? {}
