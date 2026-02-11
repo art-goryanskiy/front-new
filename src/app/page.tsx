@@ -24,7 +24,7 @@ const FreshNewsCarouselSection = dynamic(
       default: m.FreshNewsCarouselSection,
     })),
   {
-    ssr: false,
+    ssr: true,
     loading: () => (
       <section className="relative py-14 sm:py-18 lg:py-22" aria-hidden>
         <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12">
