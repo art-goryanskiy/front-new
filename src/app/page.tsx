@@ -6,6 +6,7 @@ import { generateOrganizationSchema } from "@/shared/lib/seo/structured-data";
 import { PublicFooter } from "@/widgets/public/footer/public-footer";
 import { PublicHeader } from "@/widgets/public/header/public-header";
 import { CategoryTypeTiles } from "@/widgets/public/home/category-type-tiles";
+import { FreshNewsCarouselSection } from "@/widgets/public/home/fresh-news-carousel-section";
 import { TopProgramsSection } from "@/widgets/public/top-programs/top-programs-section";
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
@@ -50,6 +51,7 @@ export default async function Home() {
             initialAllPrograms={allPrograms}
             initialCategories={categories}
           />
+          <FreshNewsCarouselSection />
         </main>
         <PublicFooter />
       </div>
