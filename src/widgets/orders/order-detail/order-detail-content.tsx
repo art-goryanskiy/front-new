@@ -3,10 +3,6 @@
 import { memo, useCallback, useState, useEffect } from "react";
 import Link from "next/link";
 import { useOrder } from "@/entities/order/api/use-order";
-import {
-  useUpdateOrderStatus,
-  PROGRESS_ORDER_STATUS_OPTIONS,
-} from "@/entities/order/api/use-update-order-status";
 import { useDeleteOrder } from "@/entities/order/api/use-delete-order";
 import { useUpdateOrder } from "@/entities/order/api/use-update-order";
 import { useToastState } from "@/shared/store/toast-store";
@@ -16,7 +12,7 @@ import { OrderDetailSkeleton } from "./order-detail-skeleton";
 import { formatPriceWithCurrency } from "@/shared/lib/helpers/format-helpers";
 import { ORDER_STATUS_LABELS, ORDER_STATUS_BADGE_CLASSES, ORDER_CUSTOMER_TYPE_LABELS } from "@/shared/constants/orders";
 import type { OrderFieldsFragment } from "@/shared/api/generated/graphql";
-import { FileText, User, Loader2, ChevronDown, Pencil, Trash2, MoreVertical } from "lucide-react";
+import { FileText, User, Loader2, Pencil, Trash2, MoreVertical } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -55,8 +51,6 @@ function formatOrderDate(date: string | unknown): string {
     return String(date);
   }
 }
-
-const CAN_CHANGE_PROGRESS_STATUS = [OrderStatus.Paid, OrderStatus.InProgress];
 
 function EditOrderDialog({
   order,
@@ -180,34 +174,11 @@ export const OrderDetailContent = memo(function OrderDetailContent({
 }) {
   const router = useRouter();
   const { showToast } = useToastState();
-  const [updatingStatus, setUpdatingStatus] = useState<OrderStatus | null>(null);
   const [editOpen, setEditOpen] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const { order, loading, error, refetch } = useOrder(orderId);
-  const { updateOrderStatus, loading: updateLoading } = useUpdateOrderStatus();
   const { deleteOrder, loading: deleteLoading } = useDeleteOrder();
   const { updateOrder, loading: updateOrderLoading } = useUpdateOrder();
-
-  const handleStatusChange = useCallback(
-    async (newStatus: OrderStatus) => {
-      if (!orderId) return;
-      setUpdatingStatus(newStatus);
-      try {
-        await updateOrderStatus(orderId, newStatus);
-        await refetch();
-        showToast("success", "Статус заявки обновлён.");
-      } catch (e) {
-        showToast("error", getGraphQLErrorMessage(e));
-      } finally {
-        setUpdatingStatus(null);
-      }
-    },
-    [orderId, updateOrderStatus, refetch, showToast]
-  );
-
-  const handleCancelOrder = useCallback(() => {
-    handleStatusChange(OrderStatus.Cancelled);
-  }, [handleStatusChange]);
 
   const handleDeleteOrder = useCallback(async () => {
     if (!orderId) return;
@@ -320,16 +291,6 @@ export const OrderDetailContent = memo(function OrderDetailContent({
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="min-w-[180px] rounded-xl">
-                    <DropdownMenuItem
-                      onClick={handleCancelOrder}
-                      disabled={updateLoading && updatingStatus === OrderStatus.Cancelled}
-                      className="gap-2"
-                    >
-                      {updateLoading && updatingStatus === OrderStatus.Cancelled ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : null}
-                      Отменить заявку
-                    </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => setEditOpen(true)} className="gap-2">
                       <Pencil className="h-4 w-4" />
                       Редактировать
@@ -370,44 +331,6 @@ export const OrderDetailContent = memo(function OrderDetailContent({
           </div>
         </div>
       </Surface>
-
-      {CAN_CHANGE_PROGRESS_STATUS.includes(order.status) && (
-        <Surface variant="inset" className="flex flex-wrap items-center justify-between gap-4 p-4">
-          <span className="text-sm font-medium text-muted-foreground">Сменить статус заявки</span>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={updateLoading}
-                className="gap-2 rounded-xl border-border/60"
-              >
-                {updateLoading && updatingStatus ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <ChevronDown className="h-4 w-4" />
-                )}
-                Выбрать статус
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="min-w-[180px] rounded-xl">
-              {PROGRESS_ORDER_STATUS_OPTIONS.map(({ value, label }) => (
-                <DropdownMenuItem
-                  key={value}
-                  onClick={() => handleStatusChange(value)}
-                  disabled={value === order.status || (updateLoading && updatingStatus === value)}
-                  className="gap-2"
-                >
-                  {updatingStatus === value ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : null}
-                  {label}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </Surface>
-      )}
 
       <Surface variant="floating" className="space-y-6 p-6">
         <div className="grid gap-4 sm:grid-cols-2">
