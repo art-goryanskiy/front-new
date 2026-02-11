@@ -9,6 +9,7 @@ import { useUpdateCartItem } from "@/entities/cart/api/use-update-cart-item";
 import { useRemoveFromCart } from "@/entities/cart/api/use-remove-from-cart";
 import { useAddToCart } from "@/entities/cart/api/use-add-to-cart";
 import { formatPrice } from "@/shared/lib/helpers/format-helpers";
+import { OrbitalLoader } from "@/components/ui/orbital-loader";
 import { ShoppingCart, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
@@ -145,9 +146,7 @@ export const CartPageContent = memo(function CartPageContent() {
         variant="floating"
         className="flex min-h-[320px] items-center justify-center"
       >
-        <div className="text-sm text-muted-foreground">
-          Загрузка корзины…
-        </div>
+        <OrbitalLoader message="Загрузка корзины…" messagePlacement="bottom" className="w-10 h-10" />
       </Surface>
     );
   }
@@ -174,9 +173,7 @@ export const CartPageContent = memo(function CartPageContent() {
         variant="floating"
         className="flex min-h-[320px] items-center justify-center"
       >
-        <div className="text-sm text-muted-foreground">
-          Изменение тарифа…
-        </div>
+        <OrbitalLoader message="Изменение тарифа…" messagePlacement="bottom" className="w-10 h-10" />
       </Surface>
     );
   }

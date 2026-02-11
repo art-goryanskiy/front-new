@@ -1,3 +1,5 @@
+import { OrbitalLoader } from "@/components/ui/orbital-loader";
+
 export default function LoginLoading() {
   return (
     <main className="min-h-screen w-full bg-background">
@@ -11,10 +13,9 @@ export default function LoginLoading() {
               учебный центр
             </p>
           </div>
-          <div
-            className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent mx-auto"
-            aria-hidden
-          />
+          <div className="flex justify-center">
+            <OrbitalLoader />
+          </div>
         </div>
       </div>
     </main>
