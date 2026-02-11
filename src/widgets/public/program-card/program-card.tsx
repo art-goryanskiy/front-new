@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { memo, useCallback, useMemo } from "react";
-import { motion } from "framer-motion";
 import { ArrowRight, Check, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePriceVisibility } from "@/shared/store/auth-store";
@@ -131,12 +130,7 @@ export const ProgramCard = memo(
     const isLoading = addLoading || removeLoading;
 
     return (
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-        className="flex h-full"
-      >
+      <div className="flex h-full">
         <Link
           href={`/programs/${program.id}`}
           className="block h-full w-full"
@@ -153,7 +147,7 @@ export const ProgramCard = memo(
             <div className="relative z-10 flex h-full min-h-[88px] flex-col justify-between gap-3">
               <div className="flex items-start gap-3">
                 <h3
-                  className="line-clamp-2 min-w-0 flex-1 text-sm leading-snug font-semibold break-words hyphens-auto text-foreground"
+                  className="line-clamp-2 min-w-0 flex-1 text-sm leading-snug font-semibold wrap-break-word hyphens-auto text-foreground"
                   title={program.title}
                 >
                   {cardTitle}
@@ -214,7 +208,7 @@ export const ProgramCard = memo(
             </div>
           </Surface>
         </Link>
-      </motion.div>
+      </div>
     );
   },
   (prevProps, nextProps) =>
