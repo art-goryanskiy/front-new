@@ -200,10 +200,11 @@ export const CheckoutForm = memo(function CheckoutForm({
       const next: Record<string, LearnerFormData[]> = {};
       items.forEach((item) => {
         const key = lineKey(item);
-        next[key] =
-          prev[key]?.length === item.quantity
-            ? prev[key]
-            : Array.from({ length: item.quantity }, fillLearner);
+        const keepPrev =
+          isSelf && prev[key]?.length === item.quantity;
+        next[key] = keepPrev
+          ? prev[key]
+          : Array.from({ length: item.quantity }, fillLearner);
       });
       return next;
     });
