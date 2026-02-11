@@ -90,9 +90,13 @@ export const CheckoutForm = memo(function CheckoutForm({
 }: CheckoutFormProps) {
   const router = useRouter();
   const storeUser = useAuthUser();
-  const { user: meUser } = useMe({ skip: false });
+  const { user: meUser, refetch: refetchMe } = useMe({ skip: false });
   const user = meUser ?? storeUser;
   const { items, totalAmount, loading: cartLoading } = useMyCart();
+
+  useEffect(() => {
+    refetchMe({ fetchPolicy: "network-only" });
+  }, [refetchMe]);
   const { createOrderFromCart, loading: submitting } =
     useCreateOrderFromCart();
   const { showToast } = useToastState();
