@@ -93,18 +93,13 @@ export function useMe(options?: { skip?: boolean }) {
       setLoading(false);
     }
 
-    // Обновляем user только если значение действительно изменилось
+    // Обновляем user только при успешном ответе me. Не сбрасываем user при ошибке
+    // или пустом data (сеть, таймаут, потеря кэша) — иначе аватар пропадает при
+    // долгой работе/переключении вкладок. Очистка стора только через logout() в
+    // auth-error-link при 401 и неудачном refresh.
     if (meUser && previousUserRef.current !== meUser) {
       setUser(meUser);
       previousUserRef.current = meUser;
-    } else if (
-      !meUser &&
-      !loading &&
-      (error || !data) &&
-      previousUserRef.current !== null
-    ) {
-      setUser(null);
-      previousUserRef.current = null;
     }
     // Убираем setUser из зависимостей, так как он стабилен из Zustand
     // eslint-disable-next-line react-hooks/exhaustive-deps
