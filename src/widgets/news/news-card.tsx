@@ -82,7 +82,7 @@ export const NewsCard = memo(function NewsCard({
                 <img
                   src={photoUrl}
                   alt=""
-                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+                  className="h-full w-full object-cover saturate-[0.88] transition-[transform,filter] duration-700 group-hover:saturate-100 group-hover:scale-[1.02]"
                 />
                 <div className="absolute inset-0 bg-linear-to-t from-background/90 via-background/20 to-transparent" />
               </div>
@@ -118,7 +118,7 @@ export const NewsCard = memo(function NewsCard({
                 <img
                   src={photoUrl}
                   alt=""
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="h-full w-full object-cover saturate-[0.88] transition-[transform,filter] duration-500 group-hover:saturate-100 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-linear-to-r from-background/70 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 sm:from-transparent sm:to-background/50" />
               </div>
