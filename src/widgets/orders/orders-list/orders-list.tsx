@@ -7,7 +7,7 @@ import { LoadingState } from "@/shared/ui/loading-state/loading-state";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
 import { Surface } from "@/shared/ui/surface/surface";
 import { formatPriceWithCurrency } from "@/shared/lib/helpers/format-helpers";
-import { ORDER_STATUS_LABELS } from "@/shared/constants/orders";
+import { ORDER_STATUS_LABELS, ORDER_STATUS_BADGE_CLASSES } from "@/shared/constants/orders";
 import type { OrderFieldsFragment } from "@/shared/api/generated/graphql";
 import { Package, ChevronRight, CreditCard } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -22,18 +22,6 @@ const STATUS_FILTER_OPTIONS: { value: string | undefined; label: string }[] = [
   { value: "COMPLETED", label: ORDER_STATUS_LABELS["COMPLETED"] ?? "Завершён" },
   { value: "CANCELLED", label: ORDER_STATUS_LABELS["CANCELLED"] ?? "Отменён" },
 ];
-
-const STATUS_BADGE_CLASSES: Record<string, string> = {
-  AWAITING_PAYMENT:
-    "border-amber-500/40 bg-amber-500/15 text-amber-800 dark:text-amber-300",
-  PAID: "border-emerald-500/40 bg-emerald-500/15 text-emerald-800 dark:text-emerald-300",
-  IN_PROGRESS:
-    "border-blue-500/40 bg-blue-500/15 text-blue-800 dark:text-blue-300",
-  COMPLETED:
-    "border-border/60 bg-muted/50 text-muted-foreground",
-  CANCELLED:
-    "border-destructive/40 bg-destructive/10 text-destructive",
-};
 
 function formatOrderDate(date: string | unknown): string {
   if (!date) return "—";
@@ -50,6 +38,36 @@ function formatOrderDate(date: string | unknown): string {
   }
 }
 
+function pluralPrograms(n: number): string {
+  if (n === 1) return "1 программа";
+  if (n >= 2 && n <= 4) return `${n} программы`;
+  return `${n} программ`;
+}
+
+function pluralLearners(n: number): string {
+  if (n === 1) return "1 слушатель";
+  if (n >= 2 && n <= 4) return `${n} слушателя`;
+  return `${n} слушателей`;
+}
+
+function orderSummary(order: OrderFieldsFragment): {
+  programsCount: number;
+  learnersCount: number;
+  firstProgramTitle: string | null;
+} {
+  const lines = order.lines ?? [];
+  const programsCount = lines.length;
+  const learnersCount = lines.reduce((sum, line) => sum + (line.learners?.length ?? 0), 0);
+  const firstLine = lines[0];
+  const firstProgramTitle =
+    firstLine?.programTitle?.trim() || firstLine?.subProgramTitle?.trim() || null;
+  return {
+    programsCount,
+    learnersCount,
+    firstProgramTitle: firstProgramTitle ?? null,
+  };
+}
+
 const OrderCard = memo(function OrderCard({
   order,
 }: {
@@ -57,9 +75,11 @@ const OrderCard = memo(function OrderCard({
 }) {
   const statusLabel = ORDER_STATUS_LABELS[order.status] ?? order.status;
   const statusClass =
-    STATUS_BADGE_CLASSES[order.status] ??
+    ORDER_STATUS_BADGE_CLASSES[order.status] ??
     "border-border/60 bg-muted/20 text-muted-foreground";
   const isAwaitingPayment = order.status === "AWAITING_PAYMENT";
+  const { programsCount, learnersCount, firstProgramTitle } = orderSummary(order);
+  const summaryLine = [pluralPrograms(programsCount), pluralLearners(learnersCount)].join(" · ");
 
   return (
     <Link
@@ -87,6 +107,14 @@ const OrderCard = memo(function OrderCard({
           <p className="text-xs text-muted-foreground">
             {formatOrderDate(order.createdAt)}
           </p>
+          <p className="text-xs text-muted-foreground">
+            {summaryLine}
+          </p>
+          {firstProgramTitle && (
+            <p className="line-clamp-1 text-sm text-foreground/90" title={firstProgramTitle}>
+              {firstProgramTitle}
+            </p>
+          )}
           <p className="text-base font-semibold text-foreground">
             {formatPriceWithCurrency(order.totalAmount)}
           </p>
