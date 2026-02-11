@@ -106,7 +106,7 @@ export function NewsListContent() {
         )}
       </AnimatePresence>
 
-      {list.length > 0 && hasMore && (
+      {list.length > 0 && (hasMore || isLoadingMore) && (
         <div className="flex justify-center pt-6">
           <Button
             variant="outline"

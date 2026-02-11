@@ -17,11 +17,6 @@ export const GLOW_MENU_NAV_ITEMS = [
     href: "/",
   },
   {
-    icon: Newspaper as LucideIcon,
-    label: "Новости",
-    href: "/news",
-  },
-  {
     icon: BookOpen as LucideIcon,
     label: CATEGORY_TYPE_LABELS.QUALIFICATION_UPGRADE,
     href: "/qualification-upgrade",
@@ -35,6 +30,11 @@ export const GLOW_MENU_NAV_ITEMS = [
     icon: Briefcase as LucideIcon,
     label: CATEGORY_TYPE_LABELS.PROFESSIONAL_EDUCATION,
     href: "/professional-education",
+  },
+  {
+    icon: Newspaper as LucideIcon,
+    label: "Новости",
+    href: "/news",
   },
   {
     icon: ShoppingCart as LucideIcon,

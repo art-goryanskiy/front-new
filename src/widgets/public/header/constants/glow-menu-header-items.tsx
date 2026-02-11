@@ -21,14 +21,6 @@ export const GLOW_MENU_HEADER_ITEMS: GlowMenuItem[] = [
     iconColor: "text-primary",
   },
   {
-    icon: Newspaper,
-    label: "Новости",
-    href: "/news",
-    gradient:
-      "radial-gradient(circle, rgba(229,9,20,0.12) 0%, rgba(196,8,18,0.05) 50%, transparent 100%)",
-    iconColor: "text-primary-600 dark:text-primary-400",
-  },
-  {
     icon: GraduationCap,
     label: "Обучение",
     gradient:
@@ -51,5 +43,13 @@ export const GLOW_MENU_HEADER_ITEMS: GlowMenuItem[] = [
         icon: Briefcase,
       },
     ],
+  },
+  {
+    icon: Newspaper,
+    label: "Новости",
+    href: "/news",
+    gradient:
+      "radial-gradient(circle, rgba(229,9,20,0.12) 0%, rgba(196,8,18,0.05) 50%, transparent 100%)",
+    iconColor: "text-primary-600 dark:text-primary-400",
   },
 ];
