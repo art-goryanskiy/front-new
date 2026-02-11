@@ -55,17 +55,21 @@ function truncateText(text: string, maxLength: number): string {
   return trimmed.slice(0, maxLength).trimEnd() + "…";
 }
 
+const FALLBACK_DESCRIPTION = "Подробнее на странице новости.";
+
 function newsToOffer(news: NewsEntity): Offer {
   const photoUrl = getFirstPhotoUrl(news);
-  const title = truncateText(news.text, 60);
-  const description = truncateText(news.text, 100);
+  const rawTitle = truncateText(news.text, 60);
+  const rawDescription = truncateText(news.text, 100);
   const dateStr = formatNewsDate(news.date);
+  const title = rawTitle || `Новость от ${dateStr}`;
+  const description = rawDescription || FALLBACK_DESCRIPTION;
   return {
     id: news.id,
     imageSrc: photoUrl ?? PLACEHOLDER_IMAGE,
-    imageAlt: title || "",
+    imageAlt: title,
     tag: TEXTS.tag,
-    title: title || "Новость",
+    title,
     description,
     brandName: dateStr,
     href: `/news/${encodeURIComponent(news.id)}`,
