@@ -31,6 +31,8 @@ interface LearnerAccordionItemProps {
   showUseMyDataCheckbox?: boolean;
   useMyData?: boolean;
   onUseMyDataChange?: (checked: boolean) => void;
+  /** Есть ошибки валидации — индикатор и подпись при свёрнутом виде */
+  hasErrors?: boolean;
 }
 
 export function LearnerAccordionItem({
@@ -42,6 +44,7 @@ export function LearnerAccordionItem({
   showUseMyDataCheckbox = false,
   useMyData = false,
   onUseMyDataChange,
+  hasErrors = false,
 }: LearnerAccordionItemProps) {
   const [open, setOpen] = useState(defaultOpen);
   const label = title ?? `${learnerShortLabel(data)} ${index + 1}`;
@@ -64,14 +67,30 @@ export function LearnerAccordionItem({
         )}
         aria-expanded={open}
       >
-        <span className="text-foreground">{label}</span>
-        <ChevronDown
-          className={cn(
-            "h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200",
-            open && "rotate-180"
+        <span className="min-w-0 flex-1 text-foreground">{label}</span>
+        <span className="flex shrink-0 items-center gap-2">
+          {hasErrors && !open && (
+            <span className="text-xs text-destructive">
+              Заполните обязательные поля
+            </span>
           )}
-          aria-hidden
-        />
+          <span
+            className={cn(
+              "h-2 w-2 shrink-0 rounded-full shadow-sm",
+              hasErrors
+                ? "bg-destructive ring-2 ring-destructive/20"
+                : "bg-emerald-500 ring-2 ring-emerald-500/20"
+            )}
+            aria-hidden
+          />
+          <ChevronDown
+            className={cn(
+              "h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200",
+              open && "rotate-180"
+            )}
+            aria-hidden
+          />
+        </span>
       </button>
       {open && (
         <div className="border-t border-border/40" role="region">

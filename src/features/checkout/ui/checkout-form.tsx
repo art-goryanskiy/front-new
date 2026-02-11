@@ -696,6 +696,11 @@ export const CheckoutForm = memo(function CheckoutForm({
                           onUseMyDataChange={(checked) =>
                             setUseMyData(key, idx, checked)
                           }
+                          hasErrors={
+                            Object.keys(
+                              learnerErrors[key]?.[idx] ?? {}
+                            ).length > 0
+                          }
                         >
                           <LearnerFieldsCard
                             idPrefix={`${key}-${idx}`}
