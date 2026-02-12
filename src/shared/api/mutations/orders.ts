@@ -141,3 +141,13 @@ export const ADMIN_GENERATE_ORDER_TRAINING_APPLICATION = gql`
     }
   }
 `;
+
+/** Задать сроки обучения по заявке (только для админа) */
+export const ADMIN_SET_ORDER_TRAINING_DATES = gql`
+  ${ORDER_FIELDS}
+  mutation AdminSetOrderTrainingDates($orderId: ID!, $input: AdminSetOrderTrainingDatesInput!) {
+    adminSetOrderTrainingDates(orderId: $orderId, input: $input) {
+      ...OrderFields
+    }
+  }
+`;

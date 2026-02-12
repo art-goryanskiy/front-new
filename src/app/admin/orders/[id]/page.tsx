@@ -1,12 +1,13 @@
 "use client";
 
-import { memo, useCallback, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useAdminOrder } from "@/entities/order/api/use-admin-order";
 import { useAdminOrderDocuments } from "@/entities/order/api/use-admin-order-documents";
 import { useAdminUpdateOrderStatus } from "@/entities/order/api/use-admin-update-order-status";
 import { useAdminDeleteOrder } from "@/entities/order/api/use-admin-delete-order";
+import { useAdminSetOrderTrainingDates } from "@/entities/order/api/use-admin-set-order-training-dates";
 import {
   useAdminGenerateOrderContract,
   useAdminGenerateOrderAct,
@@ -46,7 +47,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { FileText, FileDown, User, ArrowLeft, Loader2 } from "lucide-react";
+import { FileText, FileDown, User, ArrowLeft, Loader2, Calendar } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 function formatOrderDate(date: string | unknown): string {
@@ -106,10 +107,28 @@ const AdminOrderDetailContent = memo(function AdminOrderDetailContent() {
     useAdminGenerateOrderTrainingApplication(orderId ?? "");
   const { adminUpdateOrderDocumentDate, loading: dateLoading } =
     useAdminUpdateOrderDocumentDate(orderId ?? "");
+  const { adminSetOrderTrainingDates, loading: trainingDatesLoading } =
+    useAdminSetOrderTrainingDates(orderId ?? "");
 
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [editDateDocId, setEditDateDocId] = useState<string | null>(null);
   const [editDateValue, setEditDateValue] = useState("");
+  const [trainingStartInput, setTrainingStartInput] = useState("");
+  const [trainingEndInput, setTrainingEndInput] = useState("");
+
+  useEffect(() => {
+    if (!order) return;
+    setTrainingStartInput(
+      order.trainingStartDate
+        ? new Date(order.trainingStartDate).toISOString().slice(0, 10)
+        : ""
+    );
+    setTrainingEndInput(
+      order.trainingEndDate
+        ? new Date(order.trainingEndDate).toISOString().slice(0, 10)
+        : ""
+    );
+  }, [order?.id, order?.trainingStartDate, order?.trainingEndDate]);
 
   const handleStatusChange = useCallback(
     async (status: OrderStatus) => {
@@ -161,6 +180,29 @@ const AdminOrderDetailContent = memo(function AdminOrderDetailContent() {
       showToast("error", (e as Error)?.message ?? "Ошибка формирования акта");
     }
   }, [adminGenerateOrderAct, showToast, refetchDocs]);
+
+  const handleSaveTrainingDates = useCallback(async () => {
+    try {
+      await adminSetOrderTrainingDates({
+        trainingStartDate: trainingStartInput
+          ? `${trainingStartInput}T00:00:00.000Z`
+          : undefined,
+        trainingEndDate: trainingEndInput
+          ? `${trainingEndInput}T00:00:00.000Z`
+          : undefined,
+      });
+      showToast("success", "Сроки обучения сохранены");
+      refetch();
+    } catch (e) {
+      showToast("error", (e as Error)?.message ?? "Ошибка сохранения сроков");
+    }
+  }, [
+    adminSetOrderTrainingDates,
+    trainingStartInput,
+    trainingEndInput,
+    showToast,
+    refetch,
+  ]);
 
   const handleGenerateTrainingApplication = useCallback(async () => {
     try {
@@ -356,6 +398,47 @@ const AdminOrderDetailContent = memo(function AdminOrderDetailContent() {
             {formatPriceWithCurrency(order.totalAmount)}
           </span>
         </div>
+      </Surface>
+
+      {/* Сроки обучения */}
+      <Surface variant="floating" className="space-y-4 p-6">
+        <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground">
+          <Calendar className="h-5 w-5" />
+          Сроки обучения
+        </h2>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="space-y-2">
+            <Label htmlFor="training-start">Дата начала</Label>
+            <Input
+              id="training-start"
+              type="date"
+              value={trainingStartInput}
+              onChange={(e) => setTrainingStartInput(e.target.value)}
+              className="rounded-xl"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="training-end">Дата окончания</Label>
+            <Input
+              id="training-end"
+              type="date"
+              value={trainingEndInput}
+              onChange={(e) => setTrainingEndInput(e.target.value)}
+              className="rounded-xl"
+            />
+          </div>
+        </div>
+        <Button
+          onClick={handleSaveTrainingDates}
+          disabled={trainingDatesLoading}
+          className="rounded-xl"
+        >
+          {trainingDatesLoading ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            "Сохранить"
+          )}
+        </Button>
       </Surface>
 
       {/* Документы заявки (админ): список + кнопки формирования */}
