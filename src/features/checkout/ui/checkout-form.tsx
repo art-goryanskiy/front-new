@@ -61,10 +61,8 @@ type CheckoutFormData = {
   contactPhone: string;
 };
 
-/** Дополнительные поля уровня заявки (срок обучения, форма, руководитель, контактное лицо) */
+/** Дополнительные поля уровня заявки (форма, язык, руководитель, контактное лицо) */
 type OrderLevelData = {
-  trainingStartDate: string;
-  trainingEndDate: string;
   trainingForm: string;
   trainingLanguage: string;
   headPosition: string;
@@ -74,8 +72,6 @@ type OrderLevelData = {
 };
 
 const defaultOrderLevelData = (): OrderLevelData => ({
-  trainingStartDate: "",
-  trainingEndDate: "",
   trainingForm: "",
   trainingLanguage: "",
   headPosition: "",
@@ -490,9 +486,6 @@ export const CheckoutForm = memo(function CheckoutForm({
         getLearnersForLine
       );
 
-      const trainingStartDate = toIsoDateOrUndefined(orderLevelData.trainingStartDate);
-      const trainingEndDate = toIsoDateOrUndefined(orderLevelData.trainingEndDate);
-
       try {
         const order = await createOrderFromCart({
           customerType: data.customerType,
@@ -502,8 +495,6 @@ export const CheckoutForm = memo(function CheckoutForm({
           contactEmail: contactEmailSubmit,
           contactPhone: contactPhoneSubmit,
           lines,
-          trainingStartDate: trainingStartDate ?? undefined,
-          trainingEndDate: trainingEndDate ?? undefined,
           trainingForm: orderLevelData.trainingForm?.trim() || undefined,
           trainingLanguage: orderLevelData.trainingLanguage?.trim() || undefined,
           headPosition: orderLevelData.headPosition?.trim() || undefined,
@@ -701,42 +692,12 @@ export const CheckoutForm = memo(function CheckoutForm({
               />
             )}
 
-            {/* Дополнительные данные заявки: срок, форма, язык; для организации — руководитель и контактное лицо */}
+            {/* Дополнительные данные заявки: форма, язык; для организации — руководитель и контактное лицо */}
             <div className="rounded-2xl border border-border/50 bg-muted/5 p-5 dark:border-white/10">
               <h3 className="mb-4 text-sm font-semibold text-foreground">
                 Данные заявки
               </h3>
               <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="trainingStartDate">Срок обучения с</Label>
-                  <Input
-                    id="trainingStartDate"
-                    type="date"
-                    value={orderLevelData.trainingStartDate}
-                    onChange={(e) =>
-                      setOrderLevelData((p) => ({
-                        ...p,
-                        trainingStartDate: e.target.value,
-                      }))
-                    }
-                    className="rounded-xl"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="trainingEndDate">Срок обучения по</Label>
-                  <Input
-                    id="trainingEndDate"
-                    type="date"
-                    value={orderLevelData.trainingEndDate}
-                    onChange={(e) =>
-                      setOrderLevelData((p) => ({
-                        ...p,
-                        trainingEndDate: e.target.value,
-                      }))
-                    }
-                    className="rounded-xl"
-                  />
-                </div>
                 <div className="space-y-2 sm:col-span-2">
                   <Label htmlFor="trainingForm">Форма обучения</Label>
                   <Select
