@@ -24,6 +24,8 @@ import { formatPriceWithCurrency } from "@/shared/lib/helpers/format-helpers";
 import { useAuthUser } from "@/shared/store/auth-store";
 import { useToastState } from "@/shared/store/toast-store";
 import { Surface } from "@/shared/ui/surface/surface";
+import { OrganizationSuggestInput } from "@/shared/ui/form-fields/organization-suggest-input";
+import type { OrganizationSuggestion } from "@/shared/ui/form-fields/organization-suggest-input";
 import { CheckoutFormSkeleton } from "./checkout-form-skeleton";
 import { ShoppingBag } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -193,6 +195,10 @@ export const CheckoutForm = memo(function CheckoutForm({
   const [organizationError, setOrganizationError] = useState<string | null>(
     null
   );
+
+  /** Организация, выбранная по ИНН/названию через OrganizationSuggestInput (приоритет над organizationId) */
+  const [organizationFromSuggest, setOrganizationFromSuggest] =
+    useState<OrganizationSuggestion | null>(null);
 
   /** Показывать точки статуса у слушателей только после первой попытки валидации */
   const [showLearnerStatusDots, setShowLearnerStatusDots] = useState(false);
@@ -439,7 +445,10 @@ export const CheckoutForm = memo(function CheckoutForm({
   }, [step, onStepChange]);
 
   useEffect(() => {
-    if (!isOrganization) setOrganizationError(null);
+    if (!isOrganization) {
+      setOrganizationError(null);
+      setOrganizationFromSuggest(null);
+    }
   }, [isOrganization]);
 
   const onSubmit = useCallback(
@@ -448,11 +457,13 @@ export const CheckoutForm = memo(function CheckoutForm({
         showToast("error", "Корзина пуста");
         return;
       }
-      if (isOrganization && !data.organizationId?.trim()) {
-        setOrganizationError("Выберите организацию");
+      const hasOrgFromSuggest = !!organizationFromSuggest;
+      const hasOrgId = !!data.organizationId?.trim();
+      if (isOrganization && !hasOrgFromSuggest && !hasOrgId) {
+        setOrganizationError("Укажите организацию: введите ИНН/название или выберите из профиля");
         setStep(1);
         onStepChange?.(1);
-        showToast("error", "Выберите организацию");
+        showToast("error", "Укажите организацию");
         return;
       }
 
@@ -489,9 +500,8 @@ export const CheckoutForm = memo(function CheckoutForm({
       try {
         const order = await createOrderFromCart({
           customerType: data.customerType,
-          organizationId: isOrganization
-            ? data.organizationId
-            : undefined,
+          organizationId: isOrganization && !organizationFromSuggest ? data.organizationId : undefined,
+          organizationQuery: isOrganization && organizationFromSuggest ? organizationFromSuggest.inn : undefined,
           contactEmail: contactEmailSubmit,
           contactPhone: contactPhoneSubmit,
           lines,
@@ -525,6 +535,7 @@ export const CheckoutForm = memo(function CheckoutForm({
       router,
       validateAllLearners,
       onStepChange,
+      organizationFromSuggest,
     ]
   );
 
@@ -618,43 +629,63 @@ export const CheckoutForm = memo(function CheckoutForm({
             )}
 
             {isOrganization && (
-              <div className="space-y-2">
-                <Label htmlFor="organizationId">Организация *</Label>
-                <Select
-                  required={isOrganization}
-                  value={watch("organizationId")}
-                  onValueChange={(v) => {
-                    setValue("organizationId", v);
-                    setOrganizationError(null);
-                  }}
-                >
-                  <SelectTrigger
-                    id="organizationId"
-                    className={cn(
-                      "w-full",
-                      organizationError && "border-destructive"
-                    )}
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <OrganizationSuggestInput
+                    label="Организация *"
+                    placeholder="Введите ИНН или название организации"
+                    description="Введите ИНН или название — выберите из списка. Либо выберите организацию из профиля ниже."
+                    onSelect={(suggestion) => {
+                      setOrganizationFromSuggest(suggestion);
+                      setValue("organizationId", "");
+                      setOrganizationError(null);
+                    }}
+                    clearAfterSelect={false}
+                  />
+                  {organizationFromSuggest && (
+                    <p className="text-sm text-muted-foreground">
+                      Выбрано: {organizationFromSuggest.displayName}
+                      {organizationFromSuggest.inn && ` (ИНН ${organizationFromSuggest.inn})`}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <p className="text-xs font-medium text-muted-foreground">
+                    Или выберите из добавленных в профиле
+                  </p>
+                  <Select
+                    value={watch("organizationId")}
+                    onValueChange={(v) => {
+                      setValue("organizationId", v);
+                      setOrganizationFromSuggest(null);
+                      setOrganizationError(null);
+                    }}
                   >
-                    <SelectValue placeholder="Выберите организацию" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {organizations.map((org) => (
-                      <SelectItem key={org.id} value={org.id}>
-                        {org.displayName}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {organizations.length === 0 && (
-                  <p className="text-xs text-muted-foreground">
-                    Добавьте организацию в профиле (раздел «Место
-                    работы»).
-                  </p>
-                )}
+                    <SelectTrigger
+                      id="organizationId"
+                      className={cn(
+                        "w-full rounded-xl",
+                        organizationError && "border-destructive"
+                      )}
+                    >
+                      <SelectValue placeholder="Выберите организацию из профиля" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {organizations.map((org) => (
+                        <SelectItem key={org.id} value={org.id}>
+                          {org.displayName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {organizations.length === 0 && (
+                    <p className="text-xs text-muted-foreground">
+                      Добавьте организацию в профиле (раздел «Место работы»).
+                    </p>
+                  )}
+                </div>
                 {organizationError && (
-                  <p className="text-xs text-destructive">
-                    {organizationError}
-                  </p>
+                  <p className="text-xs text-destructive">{organizationError}</p>
                 )}
               </div>
             )}

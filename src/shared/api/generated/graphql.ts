@@ -174,6 +174,7 @@ export type CreateOrderFromCartInput = {
   headPosition?: InputMaybe<Scalars['String']['input']>;
   lines: Array<CreateOrderLineInput>;
   organizationId?: InputMaybe<Scalars['ID']['input']>;
+  organizationQuery?: InputMaybe<Scalars['String']['input']>;
   trainingEndDate?: InputMaybe<Scalars['DateTime']['input']>;
   trainingForm?: InputMaybe<Scalars['String']['input']>;
   trainingLanguage?: InputMaybe<Scalars['String']['input']>;
