@@ -467,6 +467,32 @@ export const CheckoutForm = memo(function CheckoutForm({
         return;
       }
 
+      if (isOrganization) {
+        const hasEmail = !!data.contactEmail?.trim();
+        const hasPhone = !!data.contactPhone?.trim();
+        const hasTrainingForm = !!orderLevelData.trainingForm?.trim();
+        const hasTrainingLanguage = !!orderLevelData.trainingLanguage?.trim();
+        const hasHeadPosition = !!orderLevelData.headPosition?.trim();
+        const hasHeadFullName = !!orderLevelData.headFullName?.trim();
+        const hasContactPersonName = !!orderLevelData.contactPersonName?.trim();
+        const hasContactPersonPosition = !!orderLevelData.contactPersonPosition?.trim();
+        if (
+          !hasEmail ||
+          !hasPhone ||
+          !hasTrainingForm ||
+          !hasTrainingLanguage ||
+          !hasHeadPosition ||
+          !hasHeadFullName ||
+          !hasContactPersonName ||
+          !hasContactPersonPosition
+        ) {
+          setStep(1);
+          onStepChange?.(1);
+          showToast("error", "Заполните все обязательные поля заявки от организации");
+          return;
+        }
+      }
+
       const learnerValidationErrors = validateAllLearners();
       if (learnerValidationErrors != null) {
         setShowLearnerStatusDots(true);
@@ -693,21 +719,25 @@ export const CheckoutForm = memo(function CheckoutForm({
             {!isIndividualOrSelf && (
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="contactEmail">Email</Label>
+                  <Label htmlFor="contactEmail">
+                    Email {isOrganization && <span className="text-destructive">*</span>}
+                  </Label>
                   <Input
                     id="contactEmail"
                     type="email"
-                    {...register("contactEmail")}
+                    {...register("contactEmail", { required: isOrganization })}
                     className="w-full"
                     placeholder="email@example.com"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="contactPhone">Телефон</Label>
+                  <Label htmlFor="contactPhone">
+                    Телефон {isOrganization && <span className="text-destructive">*</span>}
+                  </Label>
                   <Input
                     id="contactPhone"
                     type="tel"
-                    {...register("contactPhone")}
+                    {...register("contactPhone", { required: isOrganization })}
                     className="w-full"
                     placeholder="+7 (999) 000-00-00"
                   />
@@ -730,7 +760,9 @@ export const CheckoutForm = memo(function CheckoutForm({
               </h3>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2 sm:col-span-2">
-                  <Label htmlFor="trainingForm">Форма обучения</Label>
+                  <Label htmlFor="trainingForm">
+                    Форма обучения {isOrganization && <span className="text-destructive">*</span>}
+                  </Label>
                   <Select
                     value={orderLevelData.trainingForm || "none"}
                     onValueChange={(v) =>
@@ -753,7 +785,9 @@ export const CheckoutForm = memo(function CheckoutForm({
                   </Select>
                 </div>
                 <div className="space-y-2 sm:col-span-2">
-                  <Label htmlFor="trainingLanguage">Язык обучения</Label>
+                  <Label htmlFor="trainingLanguage">
+                    Язык обучения {isOrganization && <span className="text-destructive">*</span>}
+                  </Label>
                   <Select
                     value={orderLevelData.trainingLanguage || "none"}
                     onValueChange={(v) =>
@@ -782,7 +816,9 @@ export const CheckoutForm = memo(function CheckoutForm({
                       </p>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="headPosition">Должность руководителя</Label>
+                      <Label htmlFor="headPosition">
+                        Должность руководителя <span className="text-destructive">*</span>
+                      </Label>
                       <Input
                         id="headPosition"
                         value={orderLevelData.headPosition}
@@ -797,7 +833,9 @@ export const CheckoutForm = memo(function CheckoutForm({
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="headFullName">ФИО руководителя</Label>
+                      <Label htmlFor="headFullName">
+                        ФИО руководителя <span className="text-destructive">*</span>
+                      </Label>
                       <Input
                         id="headFullName"
                         value={orderLevelData.headFullName}
@@ -817,7 +855,9 @@ export const CheckoutForm = memo(function CheckoutForm({
                       </p>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="contactPersonName">ФИО контактного лица</Label>
+                      <Label htmlFor="contactPersonName">
+                        ФИО контактного лица <span className="text-destructive">*</span>
+                      </Label>
                       <Input
                         id="contactPersonName"
                         value={orderLevelData.contactPersonName}
@@ -832,7 +872,9 @@ export const CheckoutForm = memo(function CheckoutForm({
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="contactPersonPosition">Должность контактного лица</Label>
+                      <Label htmlFor="contactPersonPosition">
+                        Должность контактного лица <span className="text-destructive">*</span>
+                      </Label>
                       <Input
                         id="contactPersonPosition"
                         value={orderLevelData.contactPersonPosition}
