@@ -3,6 +3,7 @@ import {
   AdminUpdateOrderDocumentDateDocument,
   AdminGenerateOrderContractDocument,
   AdminGenerateOrderActDocument,
+  AdminGenerateOrderTrainingApplicationDocument,
   AdminOrderDocumentsDocument,
   type AdminUpdateOrderDocumentDateMutation,
   type AdminUpdateOrderDocumentDateMutationVariables,
@@ -10,6 +11,8 @@ import {
   type AdminGenerateOrderContractMutationVariables,
   type AdminGenerateOrderActMutation,
   type AdminGenerateOrderActMutationVariables,
+  type AdminGenerateOrderTrainingApplicationMutation,
+  type AdminGenerateOrderTrainingApplicationMutationVariables,
   type OrderDocument,
 } from "@/shared/api/generated/graphql";
 
@@ -76,4 +79,20 @@ export function useAdminGenerateOrderAct(orderId: string) {
   };
 
   return { adminGenerateOrderAct, loading, error };
+}
+
+export function useAdminGenerateOrderTrainingApplication(orderId: string) {
+  const [mutate, { loading, error }] = useMutation<
+    AdminGenerateOrderTrainingApplicationMutation,
+    AdminGenerateOrderTrainingApplicationMutationVariables
+  >(AdminGenerateOrderTrainingApplicationDocument, {
+    refetchQueries: () => refetchDoc(orderId),
+  });
+
+  const adminGenerateOrderTrainingApplication = async (): Promise<OrderDocument | null> => {
+    const result = await mutate({ variables: { orderId } });
+    return result.data?.adminGenerateOrderTrainingApplication ?? null;
+  };
+
+  return { adminGenerateOrderTrainingApplication, loading, error };
 }

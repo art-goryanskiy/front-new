@@ -126,3 +126,18 @@ export const ADMIN_GENERATE_ORDER_ACT = gql`
     }
   }
 `;
+
+/** Сформировать заявку на обучение (PDF) по заявке (только для админа) */
+export const ADMIN_GENERATE_ORDER_TRAINING_APPLICATION = gql`
+  mutation AdminGenerateOrderTrainingApplication($orderId: ID!) {
+    adminGenerateOrderTrainingApplication(orderId: $orderId) {
+      id
+      orderId
+      kind
+      fileUrl
+      documentDate
+      createdAt
+      updatedAt
+    }
+  }
+`;

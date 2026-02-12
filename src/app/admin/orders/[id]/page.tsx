@@ -10,6 +10,7 @@ import { useAdminDeleteOrder } from "@/entities/order/api/use-admin-delete-order
 import {
   useAdminGenerateOrderContract,
   useAdminGenerateOrderAct,
+  useAdminGenerateOrderTrainingApplication,
   useAdminUpdateOrderDocumentDate,
 } from "@/entities/order/api/use-admin-order-document-mutations";
 import { Surface } from "@/shared/ui/surface/surface";
@@ -100,6 +101,8 @@ const AdminOrderDetailContent = memo(function AdminOrderDetailContent() {
     useAdminGenerateOrderContract(orderId ?? "");
   const { adminGenerateOrderAct, loading: actLoading } =
     useAdminGenerateOrderAct(orderId ?? "");
+  const { adminGenerateOrderTrainingApplication, loading: trainingAppLoading } =
+    useAdminGenerateOrderTrainingApplication(orderId ?? "");
   const { adminUpdateOrderDocumentDate, loading: dateLoading } =
     useAdminUpdateOrderDocumentDate(orderId ?? "");
 
@@ -157,6 +160,16 @@ const AdminOrderDetailContent = memo(function AdminOrderDetailContent() {
       showToast("error", (e as Error)?.message ?? "Ошибка формирования акта");
     }
   }, [adminGenerateOrderAct, showToast, refetchDocs]);
+
+  const handleGenerateTrainingApplication = useCallback(async () => {
+    try {
+      await adminGenerateOrderTrainingApplication();
+      showToast("success", "Заявка на обучение сформирована");
+      refetchDocs();
+    } catch (e) {
+      showToast("error", (e as Error)?.message ?? "Ошибка формирования заявки на обучение");
+    }
+  }, [adminGenerateOrderTrainingApplication, showToast, refetchDocs]);
 
   const handleSaveDocumentDate = useCallback(async () => {
     if (!editDateDocId || !editDateValue.trim()) return;
@@ -351,6 +364,19 @@ const AdminOrderDetailContent = memo(function AdminOrderDetailContent() {
           Документы
         </h2>
         <div className="flex flex-wrap gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="rounded-xl"
+            onClick={handleGenerateTrainingApplication}
+            disabled={trainingAppLoading}
+          >
+            {trainingAppLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              "Сформировать заявку на обучение"
+            )}
+          </Button>
           <Button
             variant="outline"
             size="sm"
