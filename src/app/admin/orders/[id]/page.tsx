@@ -41,6 +41,7 @@ import { Label } from "@/components/ui/label";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -476,6 +477,9 @@ const AdminOrderDetailContent = memo(function AdminOrderDetailContent() {
         <DialogContent className="rounded-2xl sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Изменить дату документа</DialogTitle>
+            <DialogDescription className="sr-only">
+              Укажите новую дату документа
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-2 py-2">
             <Label htmlFor="doc-date">Дата</Label>

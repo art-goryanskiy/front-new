@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -437,9 +438,11 @@ export const ProfileAdditionalInfoSection = memo(
                   <DialogTitle className="text-lg">
                     Место работы — ручной ввод
                   </DialogTitle>
-                  <p className="text-sm text-muted-foreground">
-                    Заполните данные организации, если она не найдена по ИНН
-                  </p>
+                  <DialogDescription asChild>
+                    <p className="text-sm text-muted-foreground">
+                      Заполните данные организации, если она не найдена по ИНН
+                    </p>
+                  </DialogDescription>
                 </DialogHeader>
 
                 <form

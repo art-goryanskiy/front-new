@@ -4,6 +4,7 @@ import { memo, useCallback, useMemo } from "react";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogFooter,
   DialogTitle,
@@ -45,6 +46,9 @@ export const DeleteConfirmModal = memo(function DeleteConfirmModal({
       <DialogContent showClose={!loading}>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
+          <DialogDescription className="sr-only">
+            Подтверждение удаления
+          </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
           {error && (
