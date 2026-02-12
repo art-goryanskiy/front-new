@@ -391,20 +391,25 @@ export const CheckoutForm = memo(function CheckoutForm({
   const goNext = useCallback(() => {
     if (step < 3) {
       if (step === 1 && isOrganization) {
+        const hasOrgFromSuggest = !!organizationFromSuggest;
         const orgId = getValues("organizationId")?.trim();
-        if (organizations.length === 0) {
-          showToast(
-            "error",
-            "Добавьте организацию в профиле (раздел «Место работы»)."
-          );
-          return;
+        if (hasOrgFromSuggest) {
+          setOrganizationError(null);
+        } else {
+          if (organizations.length === 0) {
+            showToast(
+              "error",
+              "Добавьте организацию в профиле (раздел «Место работы»)."
+            );
+            return;
+          }
+          if (!orgId) {
+            setOrganizationError("Выберите организацию");
+            showToast("error", "Выберите организацию");
+            return;
+          }
+          setOrganizationError(null);
         }
-        if (!orgId) {
-          setOrganizationError("Выберите организацию");
-          showToast("error", "Выберите организацию");
-          return;
-        }
-        setOrganizationError(null);
       }
       if (step === 2) {
         setShowLearnerStatusDots(true);
@@ -428,6 +433,7 @@ export const CheckoutForm = memo(function CheckoutForm({
     isOrganization,
     organizations.length,
     getValues,
+    organizationFromSuggest,
   ]);
 
   const goBack = useCallback(() => {
