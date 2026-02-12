@@ -61,15 +61,15 @@ const OfferCard = React.forwardRef<HTMLAnchorElement, OfferCardProps>(({ offer, 
           alt={offer.imageAlt}
           fill
           sizes={CARD_IMAGE_SIZES}
-          quality={70}
-          className="object-cover saturate-[0.88] transition-[transform,filter] duration-500 group-hover:saturate-100 group-hover:scale-110"
+          quality={50}
+          className="object-cover object-top saturate-[0.88] transition-[transform,filter] duration-500 group-hover:saturate-100 group-hover:scale-110"
           loading={index < 2 ? "eager" : "lazy"}
         />
       ) : (
         <img
           src={offer.imageSrc}
           alt={offer.imageAlt}
-          className="w-full h-full object-cover saturate-[0.88] transition-[transform,filter] duration-500 group-hover:saturate-100 group-hover:scale-110"
+          className="w-full h-full object-cover object-top saturate-[0.88] transition-[transform,filter] duration-500 group-hover:saturate-100 group-hover:scale-110"
           loading={index < 2 ? "eager" : "lazy"}
           decoding="async"
         />
