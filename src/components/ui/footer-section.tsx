@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useCallback } from "react";
 import type { ComponentProps, ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -11,6 +11,7 @@ import {
   VKIcon,
   MailIcon,
 } from "@/components/ui/footer-social-icons";
+import { useToastState } from "@/shared/store/toast-store";
 
 interface FooterLink {
   title: string;
@@ -74,8 +75,25 @@ function isExternal(href: string): boolean {
   return href.startsWith("http") || href.startsWith("mailto:");
 }
 
+const FOOTER_EMAIL = "info@standart82.ru";
+
 export function Footer() {
   const year = new Date().getFullYear();
+  const { showToast } = useToastState();
+
+  const handleEmailClick = useCallback(
+    async (e: React.MouseEvent) => {
+      e.preventDefault();
+      try {
+        await navigator.clipboard.writeText(FOOTER_EMAIL);
+        showToast("success", "Email скопирован");
+      } catch {
+        showToast("error", "Не удалось скопировать email");
+      }
+      window.location.href = `mailto:${FOOTER_EMAIL}`;
+    },
+    [showToast]
+  );
 
   return (
     <footer
@@ -131,19 +149,22 @@ export function Footer() {
                       {link.title}
                     </>
                   );
+                  const isMailto = link.href.startsWith("mailto:");
                   return (
                     <li key={link.title}>
-                      {isExternal(link.href) ? (
+                      {isMailto ? (
+                        <button
+                          type="button"
+                          onClick={handleEmailClick}
+                          className="inline-flex cursor-pointer items-center border-0 bg-transparent p-0 text-left font-inherit transition-all duration-300 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded"
+                        >
+                          {content}
+                        </button>
+                      ) : isExternal(link.href) ? (
                         <a
                           href={link.href}
-                          target={
-                            link.href.startsWith("mailto:") ? undefined : "_blank"
-                          }
-                          rel={
-                            link.href.startsWith("mailto:")
-                              ? undefined
-                              : "noopener noreferrer"
-                          }
+                          target="_blank"
+                          rel="noopener noreferrer"
                           className="inline-flex items-center transition-all duration-300 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded"
                         >
                           {content}
