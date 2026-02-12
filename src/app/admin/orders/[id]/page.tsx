@@ -78,13 +78,28 @@ function documentKindLabel(kind: OrderDocumentKind): string {
   }
 }
 
+/** Статусы, которые админ может выбрать. «Оплачен» не в списке — выставляется автоматически. */
 const ADMIN_STATUS_OPTIONS: { value: OrderStatus; label: string }[] = [
   { value: OrderStatus.AwaitingPayment, label: ORDER_STATUS_LABELS["AWAITING_PAYMENT"] ?? "Ожидает оплаты" },
-  { value: OrderStatus.Paid, label: ORDER_STATUS_LABELS["PAID"] ?? "Оплачен" },
   { value: OrderStatus.InProgress, label: ORDER_STATUS_LABELS["IN_PROGRESS"] ?? "В работе" },
   { value: OrderStatus.Completed, label: ORDER_STATUS_LABELS["COMPLETED"] ?? "Завершён" },
   { value: OrderStatus.Cancelled, label: ORDER_STATUS_LABELS["CANCELLED"] ?? "Отменён" },
 ];
+
+type AdminStatusOption = { value: OrderStatus; label: string; disabled?: boolean };
+
+/** Для оплаченной заявки админ может только «В работе» или «Завершён»; текущий «Оплачен» показываем, но не даём выбрать. */
+function getAdminStatusOptions(orderStatus: OrderStatus): AdminStatusOption[] {
+  if (orderStatus === OrderStatus.Paid) {
+    return [
+      { value: OrderStatus.Paid, label: ORDER_STATUS_LABELS["PAID"] ?? "Оплачен", disabled: true },
+      ...ADMIN_STATUS_OPTIONS.filter(
+        (opt) => opt.value === OrderStatus.InProgress || opt.value === OrderStatus.Completed
+      ),
+    ];
+  }
+  return ADMIN_STATUS_OPTIONS;
+}
 
 const AdminOrderDetailContent = memo(function AdminOrderDetailContent() {
   const params = useParams();
@@ -305,8 +320,8 @@ const AdminOrderDetailContent = memo(function AdminOrderDetailContent() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {ADMIN_STATUS_OPTIONS.map((opt) => (
-                  <SelectItem key={opt.value} value={opt.value}>
+                {getAdminStatusOptions(order.status).map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value} disabled={opt.disabled}>
                     {opt.label}
                   </SelectItem>
                 ))}
