@@ -61,6 +61,34 @@ type CheckoutFormData = {
   contactPhone: string;
 };
 
+/** Дополнительные поля уровня заявки (срок обучения, форма, руководитель, контактное лицо) */
+type OrderLevelData = {
+  trainingStartDate: string;
+  trainingEndDate: string;
+  trainingForm: string;
+  trainingLanguage: string;
+  headPosition: string;
+  headFullName: string;
+  contactPersonName: string;
+  contactPersonPosition: string;
+};
+
+const defaultOrderLevelData = (): OrderLevelData => ({
+  trainingStartDate: "",
+  trainingEndDate: "",
+  trainingForm: "",
+  trainingLanguage: "",
+  headPosition: "",
+  headFullName: "",
+  contactPersonName: "",
+  contactPersonPosition: "",
+});
+
+function toIsoDateOrUndefined(s: string | undefined): string | undefined {
+  const t = s?.trim();
+  return t ? t : undefined;
+}
+
 function learnerToOrderInput(l: LearnerFormData): OrderLineLearnerInput {
   return {
     lastName: l.lastName,
@@ -68,6 +96,20 @@ function learnerToOrderInput(l: LearnerFormData): OrderLineLearnerInput {
     middleName: l.middleName?.trim() || undefined,
     email: l.email?.trim() || undefined,
     phone: l.phone?.trim() || undefined,
+    dateOfBirth: toIsoDateOrUndefined(l.dateOfBirth),
+    citizenship: l.citizenship?.trim() || undefined,
+    passportSeries: l.passportSeries?.trim() || undefined,
+    passportNumber: l.passportNumber?.trim() || undefined,
+    passportIssuedBy: l.passportIssuedBy?.trim() || undefined,
+    passportIssuedAt: toIsoDateOrUndefined(l.passportIssuedAt),
+    passportDepartmentCode: l.passportDepartmentCode?.trim() || undefined,
+    snils: l.snils?.trim() || undefined,
+    educationQualification: l.educationQualification?.trim() || undefined,
+    educationDocumentIssuedAt: toIsoDateOrUndefined(l.educationDocumentIssuedAt),
+    passportRegistrationAddress: l.passportRegistrationAddress?.trim() || undefined,
+    residentialAddress: l.residentialAddress?.trim() || undefined,
+    workPlaceName: l.workPlaceName?.trim() || undefined,
+    position: l.position?.trim() || undefined,
   };
 }
 
@@ -124,6 +166,9 @@ export const CheckoutForm = memo(function CheckoutForm({
     useState<IndividualApplicantData>(() =>
       defaultIndividualApplicantData()
     );
+
+  const [orderLevelData, setOrderLevelData] =
+    useState<OrderLevelData>(defaultOrderLevelData);
 
   const [linesLearners, setLinesLearners] = useState<
     Record<string, LearnerFormData[]>
@@ -445,6 +490,9 @@ export const CheckoutForm = memo(function CheckoutForm({
         getLearnersForLine
       );
 
+      const trainingStartDate = toIsoDateOrUndefined(orderLevelData.trainingStartDate);
+      const trainingEndDate = toIsoDateOrUndefined(orderLevelData.trainingEndDate);
+
       try {
         const order = await createOrderFromCart({
           customerType: data.customerType,
@@ -454,6 +502,14 @@ export const CheckoutForm = memo(function CheckoutForm({
           contactEmail: contactEmailSubmit,
           contactPhone: contactPhoneSubmit,
           lines,
+          trainingStartDate: trainingStartDate ?? undefined,
+          trainingEndDate: trainingEndDate ?? undefined,
+          trainingForm: orderLevelData.trainingForm?.trim() || undefined,
+          trainingLanguage: orderLevelData.trainingLanguage?.trim() || undefined,
+          headPosition: orderLevelData.headPosition?.trim() || undefined,
+          headFullName: orderLevelData.headFullName?.trim() || undefined,
+          contactPersonName: orderLevelData.contactPersonName?.trim() || undefined,
+          contactPersonPosition: orderLevelData.contactPersonPosition?.trim() || undefined,
         });
         if (order) {
           showToast("success", "Заявка оформлена");
@@ -472,6 +528,7 @@ export const CheckoutForm = memo(function CheckoutForm({
       isIndividualOrSelf,
       linesLearners,
       individualData,
+      orderLevelData,
       createOrderFromCart,
       showToast,
       router,
@@ -643,6 +700,164 @@ export const CheckoutForm = memo(function CheckoutForm({
                 fromProfile={customerType === OrderCustomerType.Self}
               />
             )}
+
+            {/* Дополнительные данные заявки: срок, форма, язык; для организации — руководитель и контактное лицо */}
+            <div className="rounded-2xl border border-border/50 bg-muted/5 p-5 dark:border-white/10">
+              <h3 className="mb-4 text-sm font-semibold text-foreground">
+                Данные заявки
+              </h3>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="trainingStartDate">Срок обучения с</Label>
+                  <Input
+                    id="trainingStartDate"
+                    type="date"
+                    value={orderLevelData.trainingStartDate}
+                    onChange={(e) =>
+                      setOrderLevelData((p) => ({
+                        ...p,
+                        trainingStartDate: e.target.value,
+                      }))
+                    }
+                    className="rounded-xl"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="trainingEndDate">Срок обучения по</Label>
+                  <Input
+                    id="trainingEndDate"
+                    type="date"
+                    value={orderLevelData.trainingEndDate}
+                    onChange={(e) =>
+                      setOrderLevelData((p) => ({
+                        ...p,
+                        trainingEndDate: e.target.value,
+                      }))
+                    }
+                    className="rounded-xl"
+                  />
+                </div>
+                <div className="space-y-2 sm:col-span-2">
+                  <Label htmlFor="trainingForm">Форма обучения</Label>
+                  <Select
+                    value={orderLevelData.trainingForm || "none"}
+                    onValueChange={(v) =>
+                      setOrderLevelData((p) => ({
+                        ...p,
+                        trainingForm: v === "none" ? "" : v,
+                      }))
+                    }
+                  >
+                    <SelectTrigger id="trainingForm" className="rounded-xl">
+                      <SelectValue placeholder="Выберите форму" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">Не указано</SelectItem>
+                      <SelectItem value="очная">Очная</SelectItem>
+                      <SelectItem value="очно-заочная">Очно-заочная</SelectItem>
+                      <SelectItem value="заочная">Заочная</SelectItem>
+                      <SelectItem value="дистанционная">Дистанционная</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2 sm:col-span-2">
+                  <Label htmlFor="trainingLanguage">Язык обучения</Label>
+                  <Select
+                    value={orderLevelData.trainingLanguage || "none"}
+                    onValueChange={(v) =>
+                      setOrderLevelData((p) => ({
+                        ...p,
+                        trainingLanguage: v === "none" ? "" : v,
+                      }))
+                    }
+                  >
+                    <SelectTrigger id="trainingLanguage" className="rounded-xl">
+                      <SelectValue placeholder="Выберите язык" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">Не указано</SelectItem>
+                      <SelectItem value="русский">Русский</SelectItem>
+                      <SelectItem value="крымскотатарский">Крымскотатарский</SelectItem>
+                      <SelectItem value="украинский">Украинский</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                {isOrganization && (
+                  <>
+                    <div className="space-y-2 sm:col-span-2">
+                      <p className="text-xs font-medium text-muted-foreground">
+                        Руководитель
+                      </p>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="headPosition">Должность руководителя</Label>
+                      <Input
+                        id="headPosition"
+                        value={orderLevelData.headPosition}
+                        onChange={(e) =>
+                          setOrderLevelData((p) => ({
+                            ...p,
+                            headPosition: e.target.value,
+                          }))
+                        }
+                        placeholder="Должность"
+                        className="rounded-xl"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="headFullName">ФИО руководителя</Label>
+                      <Input
+                        id="headFullName"
+                        value={orderLevelData.headFullName}
+                        onChange={(e) =>
+                          setOrderLevelData((p) => ({
+                            ...p,
+                            headFullName: e.target.value,
+                          }))
+                        }
+                        placeholder="ФИО"
+                        className="rounded-xl"
+                      />
+                    </div>
+                    <div className="space-y-2 sm:col-span-2">
+                      <p className="text-xs font-medium text-muted-foreground">
+                        Контактное лицо
+                      </p>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="contactPersonName">ФИО контактного лица</Label>
+                      <Input
+                        id="contactPersonName"
+                        value={orderLevelData.contactPersonName}
+                        onChange={(e) =>
+                          setOrderLevelData((p) => ({
+                            ...p,
+                            contactPersonName: e.target.value,
+                          }))
+                        }
+                        placeholder="ФИО"
+                        className="rounded-xl"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="contactPersonPosition">Должность контактного лица</Label>
+                      <Input
+                        id="contactPersonPosition"
+                        value={orderLevelData.contactPersonPosition}
+                        onChange={(e) =>
+                          setOrderLevelData((p) => ({
+                            ...p,
+                            contactPersonPosition: e.target.value,
+                          }))
+                        }
+                        placeholder="Должность"
+                        className="rounded-xl"
+                      />
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
           </div>
         </Surface>
       )}

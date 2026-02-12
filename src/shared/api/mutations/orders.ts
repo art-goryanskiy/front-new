@@ -64,3 +64,65 @@ export const CREATE_ORDER_INVOICE = gql`
     }
   }
 `;
+
+/** Изменить статус заявки (только для админа) */
+export const ADMIN_UPDATE_ORDER_STATUS = gql`
+  ${ORDER_FIELDS}
+  mutation AdminUpdateOrderStatus($orderId: ID!, $status: OrderStatus!) {
+    adminUpdateOrderStatus(orderId: $orderId, status: $status) {
+      ...OrderFields
+    }
+  }
+`;
+
+/** Удалить заявку (только для админа) */
+export const ADMIN_DELETE_ORDER = gql`
+  mutation AdminDeleteOrder($orderId: ID!) {
+    adminDeleteOrder(orderId: $orderId)
+  }
+`;
+
+/** Изменить дату документа (только для админа) */
+export const ADMIN_UPDATE_ORDER_DOCUMENT_DATE = gql`
+  mutation AdminUpdateOrderDocumentDate($input: AdminUpdateOrderDocumentDateInput!) {
+    adminUpdateOrderDocumentDate(input: $input) {
+      id
+      orderId
+      kind
+      fileUrl
+      documentDate
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+/** Сформировать договор по заявке (только для админа) */
+export const ADMIN_GENERATE_ORDER_CONTRACT = gql`
+  mutation AdminGenerateOrderContract($input: AdminGenerateOrderDocumentInput!) {
+    adminGenerateOrderContract(input: $input) {
+      id
+      orderId
+      kind
+      fileUrl
+      documentDate
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+/** Сформировать акт оказанных услуг по заявке (только для админа) */
+export const ADMIN_GENERATE_ORDER_ACT = gql`
+  mutation AdminGenerateOrderAct($input: AdminGenerateOrderDocumentInput!) {
+    adminGenerateOrderAct(input: $input) {
+      id
+      orderId
+      kind
+      fileUrl
+      documentDate
+      createdAt
+      updatedAt
+    }
+  }
+`;

@@ -3,6 +3,7 @@
 import { memo, useCallback, useState, useEffect } from "react";
 import Link from "next/link";
 import { useOrder } from "@/entities/order/api/use-order";
+import { useOrderDocuments } from "@/entities/order/api/use-order-documents";
 import { useDeleteOrder } from "@/entities/order/api/use-delete-order";
 import { useUpdateOrder } from "@/entities/order/api/use-update-order";
 import { useToastState } from "@/shared/store/toast-store";
@@ -12,7 +13,7 @@ import { OrderDetailSkeleton } from "./order-detail-skeleton";
 import { formatPriceWithCurrency } from "@/shared/lib/helpers/format-helpers";
 import { ORDER_STATUS_LABELS, ORDER_STATUS_BADGE_CLASSES, ORDER_CUSTOMER_TYPE_LABELS } from "@/shared/constants/orders";
 import type { OrderFieldsFragment } from "@/shared/api/generated/graphql";
-import { FileText, User, Loader2, Pencil, Trash2, MoreVertical } from "lucide-react";
+import { FileDown, FileText, User, Loader2, Pencil, Trash2, MoreVertical } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -35,7 +36,7 @@ import { Label } from "@/components/ui/label";
 import { OrganizationSuggestInput } from "@/shared/ui/form-fields/organization-suggest-input";
 import type { OrganizationSuggestion } from "@/shared/ui/form-fields/organization-suggest-input";
 import { useRouter } from "next/navigation";
-import { OrderStatus } from "@/shared/api/generated/graphql";
+import { OrderDocumentKind, OrderStatus } from "@/shared/api/generated/graphql";
 
 function formatOrderDate(date: string | unknown): string {
   if (!date) return "—";
@@ -177,6 +178,7 @@ export const OrderDetailContent = memo(function OrderDetailContent({
   const [editOpen, setEditOpen] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const { order, loading, error, refetch } = useOrder(orderId);
+  const { documents, loading: documentsLoading } = useOrderDocuments(orderId);
   const { deleteOrder, loading: deleteLoading } = useDeleteOrder();
   const { updateOrder, loading: updateOrderLoading } = useUpdateOrder();
 
@@ -405,6 +407,60 @@ export const OrderDetailContent = memo(function OrderDetailContent({
             {formatPriceWithCurrency(order.totalAmount)}
           </span>
         </div>
+      </Surface>
+
+      {/* Документы заявки */}
+      <Surface variant="floating" className="space-y-4 p-6">
+        <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground">
+          <FileText className="h-5 w-5" />
+          Документы
+        </h2>
+        {documentsLoading ? (
+          <p className="text-sm text-muted-foreground">Загрузка…</p>
+        ) : documents.length === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            Документы по заявке пока не сформированы.
+          </p>
+        ) : (
+          <ul className="space-y-2">
+            {documents.map((doc) => {
+              const label =
+                doc.kind === OrderDocumentKind.TrainingApplication
+                  ? "Заявка на обучение"
+                  : doc.kind === OrderDocumentKind.Contract
+                    ? "Договор"
+                    : doc.kind === OrderDocumentKind.Act
+                      ? "Акт оказанных услуг"
+                      : doc.kind;
+              return (
+                <li
+                  key={doc.id}
+                  className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-border/50 bg-muted/5 px-4 py-3 dark:border-white/10"
+                >
+                  <span className="text-sm font-medium text-foreground">
+                    {label}
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {formatOrderDate(doc.documentDate)}
+                  </span>
+                  {doc.fileUrl && (
+                    <Button variant="outline" size="sm" asChild className="gap-2 rounded-xl">
+                      <a
+                        href={doc.fileUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center"
+                      >
+                        <FileDown className="h-4 w-4" />
+                        Скачать PDF
+                      </a>
+                    </Button>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        )}
       </Surface>
     </div>
   );
