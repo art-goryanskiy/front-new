@@ -91,20 +91,20 @@ export const NewsCard = memo(function NewsCard({
         {isFeatured ? (
           <div className="relative z-10 flex w-full min-w-0 flex-col">
             {photoUrl && (
-              <div className="relative aspect-21/9 w-full overflow-hidden sm:aspect-3/1">
+              <div className="relative aspect-video w-full overflow-hidden">
                 {isOptimizableImageSrc(photoUrl) ? (
                   <Image
                     src={photoUrl}
                     alt=""
                     fill
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 1200px"
-                    className="object-cover saturate-[0.88] transition-[transform,filter] duration-700 group-hover:saturate-100 group-hover:scale-[1.02]"
+                    className="object-cover object-top saturate-[0.88] transition-[transform,filter] duration-700 group-hover:saturate-100 group-hover:scale-[1.02]"
                   />
                 ) : (
                   <img
                     src={photoUrl}
                     alt=""
-                    className="h-full w-full object-cover saturate-[0.88] transition-[transform,filter] duration-700 group-hover:saturate-100 group-hover:scale-[1.02]"
+                    className="h-full w-full object-cover object-top saturate-[0.88] transition-[transform,filter] duration-700 group-hover:saturate-100 group-hover:scale-[1.02]"
                   />
                 )}
                 <div className="absolute inset-0 bg-linear-to-t from-background/90 via-background/20 to-transparent" />
@@ -144,13 +144,13 @@ export const NewsCard = memo(function NewsCard({
                     alt=""
                     fill
                     sizes="(max-width: 640px) 100vw, 160px"
-                    className="object-cover saturate-[0.88] transition-[transform,filter] duration-500 group-hover:saturate-100 group-hover:scale-105"
+                    className="object-cover object-top saturate-[0.88] transition-[transform,filter] duration-500 group-hover:saturate-100 group-hover:scale-105"
                   />
                 ) : (
                   <img
                     src={photoUrl}
                     alt=""
-                    className="h-full w-full object-cover saturate-[0.88] transition-[transform,filter] duration-500 group-hover:saturate-100 group-hover:scale-105"
+                    className="h-full w-full object-cover object-top saturate-[0.88] transition-[transform,filter] duration-500 group-hover:saturate-100 group-hover:scale-105"
                   />
                 )}
                 <div className="absolute inset-0 bg-linear-to-r from-background/70 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 sm:from-transparent sm:to-background/50" />

@@ -113,17 +113,17 @@ export function NewsDetailContent() {
       {/* Hero: full-bleed first photo */}
       {firstPhoto && (
         <div className="-mx-4 mb-8 overflow-hidden rounded-2xl sm:-mx-6 sm:rounded-3xl lg:-mx-8">
-          <div className="relative aspect-2/1 w-full sm:aspect-21/9">
+          <div className="relative aspect-video w-full">
             {isOptimizableImageSrc(firstPhoto) ? (
               <Image
                 src={firstPhoto}
                 alt=""
                 fill
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 1200px"
-                className="object-cover"
+                className="object-cover object-top"
               />
             ) : (
-              <img src={firstPhoto} alt="" className="h-full w-full object-cover" />
+              <img src={firstPhoto} alt="" className="h-full w-full object-cover object-top" />
             )}
             <div className="absolute inset-0 bg-linear-to-t from-background/80 via-background/20 to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8">
@@ -173,13 +173,13 @@ export function NewsDetailContent() {
                           alt=""
                           fill
                           sizes="(max-width: 640px) 100vw, 50vw"
-                          className="object-cover transition-transform duration-300 hover:scale-[1.02]"
+                          className="object-cover object-top transition-transform duration-300 hover:scale-[1.02]"
                         />
                       ) : (
                         <img
                           src={att.url}
                           alt=""
-                          className="aspect-4/3 w-full object-cover transition-transform duration-300 hover:scale-[1.02]"
+                          className="aspect-4/3 w-full object-cover object-top transition-transform duration-300 hover:scale-[1.02]"
                         />
                       )}
                     </a>

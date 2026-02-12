@@ -3,29 +3,24 @@
  */
 export const TOASTER_CONFIG = {
   autoHideDuration: 3000,
-  position: {
-    top: "top-4",
-    left: "left-1/2",
-    transform: "-translate-x-1/2",
-  },
 } as const;
 
 export const TOASTER_ANIMATIONS = {
-  initial: { opacity: 0, y: -50, x: "-50%" },
-  animate: { opacity: 1, y: 0, x: "-50%" },
-  exit: { opacity: 0, y: -50, x: "-50%" },
+  initial: { opacity: 0, x: 24 },
+  animate: { opacity: 1, x: 0 },
+  exit: { opacity: 0, x: 24 },
 } as const;
 
 export const TOASTER_CLASSES = {
-  container: "fixed top-4 left-1/2 z-50 transform -translate-x-1/2",
+  container: "fixed bottom-4 right-4 z-50 sm:bottom-6 sm:right-6",
   toast: {
-    base: "px-6 py-4 rounded-xl shadow-2xl backdrop-blur-xl border",
+    base: "px-3 py-2 rounded-lg shadow-lg backdrop-blur-xl border text-sm",
     success: "bg-emerald-500/90 text-white border-emerald-400",
     error: "bg-rose-500/90 text-white border-rose-400",
     info: "bg-blue-500/90 text-white border-blue-400",
   },
-  content: "flex items-center gap-3",
-  icon: "text-xl",
+  content: "flex items-center gap-2",
+  icon: "text-base shrink-0",
   message: "font-medium",
 } as const;
 
