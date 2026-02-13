@@ -63,7 +63,7 @@ type CheckoutFormData = {
   contactPhone: string;
 };
 
-/** Дополнительные поля уровня заявки (форма, язык, руководитель, контактное лицо) */
+/** Дополнительные поля уровня заявки (форма, язык, руководитель, контактное лицо, банк) */
 type OrderLevelData = {
   trainingForm: string;
   trainingLanguage: string;
@@ -71,6 +71,10 @@ type OrderLevelData = {
   headFullName: string;
   contactPersonName: string;
   contactPersonPosition: string;
+  bankAccount: string;
+  bankName: string;
+  bik: string;
+  correspondentAccount: string;
 };
 
 const defaultOrderLevelData = (): OrderLevelData => ({
@@ -80,6 +84,10 @@ const defaultOrderLevelData = (): OrderLevelData => ({
   headFullName: "",
   contactPersonName: "",
   contactPersonPosition: "",
+  bankAccount: "",
+  bankName: "",
+  bik: "",
+  correspondentAccount: "",
 });
 
 function toIsoDateOrUndefined(s: string | undefined): string | undefined {
@@ -156,6 +164,10 @@ export const CheckoutForm = memo(function CheckoutForm({
           id: wp.organization!.id,
           displayName:
             wp.organization!.displayName ?? wp.organization!.id,
+          bankAccount: wp.organization?.bankAccount ?? undefined,
+          bankName: wp.organization?.bankName ?? undefined,
+          bik: wp.organization?.bik ?? undefined,
+          correspondentAccount: wp.organization?.correspondentAccount ?? undefined,
         })),
     [workPlaces]
   );
@@ -671,6 +683,13 @@ export const CheckoutForm = memo(function CheckoutForm({
                       setOrganizationFromSuggest(suggestion);
                       setValue("organizationId", "");
                       setOrganizationError(null);
+                      setOrderLevelData((prev) => ({
+                        ...prev,
+                        bankAccount: "",
+                        bankName: "",
+                        bik: "",
+                        correspondentAccount: "",
+                      }));
                     }}
                     clearAfterSelect={false}
                   />
@@ -691,6 +710,16 @@ export const CheckoutForm = memo(function CheckoutForm({
                       setValue("organizationId", v);
                       setOrganizationFromSuggest(null);
                       setOrganizationError(null);
+                      const org = organizations.find((o) => o.id === v);
+                      if (org) {
+                        setOrderLevelData((prev) => ({
+                          ...prev,
+                          bankAccount: org.bankAccount ?? "",
+                          bankName: org.bankName ?? "",
+                          bik: org.bik ?? "",
+                          correspondentAccount: org.correspondentAccount ?? "",
+                        }));
+                      }
                     }}
                   >
                     <SelectTrigger
@@ -893,6 +922,73 @@ export const CheckoutForm = memo(function CheckoutForm({
                         placeholder="Должность"
                         className="rounded-xl"
                       />
+                    </div>
+                    <div className="border-t border-border/60 pt-4 sm:col-span-2">
+                      <p className="mb-3 text-xs font-medium text-muted-foreground">
+                        Банковские реквизиты (опционально)
+                      </p>
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <div className="space-y-2">
+                          <Label htmlFor="bankAccount">Расчётный счёт (р/с)</Label>
+                          <Input
+                            id="bankAccount"
+                            value={orderLevelData.bankAccount}
+                            onChange={(e) =>
+                              setOrderLevelData((p) => ({
+                                ...p,
+                                bankAccount: e.target.value,
+                              }))
+                            }
+                            placeholder="20 цифр"
+                            className="rounded-xl"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="bankName">Наименование банка</Label>
+                          <Input
+                            id="bankName"
+                            value={orderLevelData.bankName}
+                            onChange={(e) =>
+                              setOrderLevelData((p) => ({
+                                ...p,
+                                bankName: e.target.value,
+                              }))
+                            }
+                            placeholder="Название банка"
+                            className="rounded-xl"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="bik">БИК</Label>
+                          <Input
+                            id="bik"
+                            value={orderLevelData.bik}
+                            onChange={(e) =>
+                              setOrderLevelData((p) => ({
+                                ...p,
+                                bik: e.target.value,
+                              }))
+                            }
+                            placeholder="9 цифр"
+                            className="rounded-xl"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="correspondentAccount">Корреспондентский счёт (к/с)</Label>
+                          <Input
+                            id="correspondentAccount"
+                            value={orderLevelData.correspondentAccount}
+                            onChange={(e) =>
+                              setOrderLevelData((p) => ({
+                                ...p,
+                                correspondentAccount: e.target.value,
+                              }))
+                            }
+                            placeholder="20 цифр"
+                            className="rounded-xl"
+                          />
+                        </div>
+                      </div>
                     </div>
                   </>
                 )}

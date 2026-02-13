@@ -672,6 +672,10 @@ export enum OrderStatus {
 export type OrganizationEntity = {
   __typename?: 'OrganizationEntity';
   actualAddress?: Maybe<Scalars['String']['output']>;
+  bankAccount?: Maybe<Scalars['String']['output']>;
+  bankName?: Maybe<Scalars['String']['output']>;
+  bik?: Maybe<Scalars['String']['output']>;
+  correspondentAccount?: Maybe<Scalars['String']['output']>;
   displayName: Scalars['String']['output'];
   email?: Maybe<Scalars['String']['output']>;
   fioFirst?: Maybe<Scalars['String']['output']>;
@@ -959,6 +963,10 @@ export type SetMyWorkPlaceByInnInput = {
 export type SetMyWorkPlaceManualInput = {
   actualAddress?: InputMaybe<Scalars['String']['input']>;
   actualSameAsLegal?: InputMaybe<Scalars['Boolean']['input']>;
+  bankAccount?: InputMaybe<Scalars['String']['input']>;
+  bankName?: InputMaybe<Scalars['String']['input']>;
+  bik?: InputMaybe<Scalars['String']['input']>;
+  correspondentAccount?: InputMaybe<Scalars['String']['input']>;
   displayName?: InputMaybe<Scalars['String']['input']>;
   email?: InputMaybe<Scalars['String']['input']>;
   fioFirst?: InputMaybe<Scalars['String']['input']>;
@@ -1400,7 +1408,7 @@ export type AdminSetUserBlockedMutation = { __typename?: 'Mutation', adminSetUse
     & { ' $fragmentRefs'?: { 'AdminUserFieldsMutationsFragment': AdminUserFieldsMutationsFragment } }
   ) };
 
-export type WorkPlacesFieldsFragment = { __typename?: 'UserProfileEntity', workPlaces?: Array<{ __typename?: 'UserWorkPlaceEntity', position?: string | null, isPrimary: boolean, organization: { __typename?: 'OrganizationEntity', id: string, type: OrganizationType, displayName: string, inn: string, kpp?: string | null, ogrn: string, legalAddress?: string | null } }> | null } & { ' $fragmentName'?: 'WorkPlacesFieldsFragment' };
+export type WorkPlacesFieldsFragment = { __typename?: 'UserProfileEntity', workPlaces?: Array<{ __typename?: 'UserWorkPlaceEntity', position?: string | null, isPrimary: boolean, organization: { __typename?: 'OrganizationEntity', id: string, type: OrganizationType, displayName: string, inn: string, kpp?: string | null, ogrn: string, legalAddress?: string | null, bankAccount?: string | null, bankName?: string | null, bik?: string | null, correspondentAccount?: string | null } }> | null } & { ' $fragmentName'?: 'WorkPlacesFieldsFragment' };
 
 export type SetMyWorkPlaceByInnMutationVariables = Exact<{
   input: SetMyWorkPlaceByInnInput;
@@ -1430,7 +1438,7 @@ export type AddressSuggestionsQueryVariables = Exact<{
 
 export type AddressSuggestionsQuery = { __typename?: 'Query', addressSuggestions: Array<{ __typename?: 'AddressSuggestionEntity', value: string, unrestrictedValue?: string | null, region?: string | null, city?: string | null, street?: string | null, house?: string | null, flat?: string | null, postalCode?: string | null, fiasId?: string | null, kladrId?: string | null, geoLat?: string | null, geoLon?: string | null }> };
 
-export type MeUserProfileFieldsFragment = { __typename?: 'UserProfileEntity', lastName?: string | null, firstName?: string | null, middleName?: string | null, dateOfBirth?: any | null, citizenship?: string | null, phone?: string | null, passportRegistrationAddress?: string | null, residentialAddress?: string | null, snils?: string | null, avatar?: string | null, passport?: { __typename?: 'PassportInfoEntity', series?: string | null, number?: string | null, issuedBy?: string | null, issuedAt?: any | null, departmentCode?: string | null } | null, education?: { __typename?: 'EducationInfoEntity', qualification?: string | null, documentIssuedAt?: any | null } | null, workPlaces?: Array<{ __typename?: 'UserWorkPlaceEntity', position?: string | null, isPrimary: boolean, organization: { __typename?: 'OrganizationEntity', id: string, type: OrganizationType, displayName: string, inn: string, kpp?: string | null, ogrn: string, legalAddress?: string | null } }> | null } & { ' $fragmentName'?: 'MeUserProfileFieldsFragment' };
+export type MeUserProfileFieldsFragment = { __typename?: 'UserProfileEntity', lastName?: string | null, firstName?: string | null, middleName?: string | null, dateOfBirth?: any | null, citizenship?: string | null, phone?: string | null, passportRegistrationAddress?: string | null, residentialAddress?: string | null, snils?: string | null, avatar?: string | null, passport?: { __typename?: 'PassportInfoEntity', series?: string | null, number?: string | null, issuedBy?: string | null, issuedAt?: any | null, departmentCode?: string | null } | null, education?: { __typename?: 'EducationInfoEntity', qualification?: string | null, documentIssuedAt?: any | null } | null, workPlaces?: Array<{ __typename?: 'UserWorkPlaceEntity', position?: string | null, isPrimary: boolean, organization: { __typename?: 'OrganizationEntity', id: string, type: OrganizationType, displayName: string, inn: string, kpp?: string | null, ogrn: string, legalAddress?: string | null, bankAccount?: string | null, bankName?: string | null, bik?: string | null, correspondentAccount?: string | null } }> | null } & { ' $fragmentName'?: 'MeUserProfileFieldsFragment' };
 
 export type MeUserFieldsFragment = { __typename?: 'UserEntity', id: string, email: string, role: UserRole, isBlocked: boolean, isEmailVerified: boolean, firstName?: string | null, lastName?: string | null, phone?: string | null, createdAt: any, updatedAt: any, profile?: (
     { __typename?: 'UserProfileEntity' }

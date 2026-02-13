@@ -109,6 +109,10 @@ export const ProfileAdditionalInfoSection = memo(
       phone?: string;
       position?: string;
       isPrimary?: boolean;
+      bankAccount?: string;
+      bankName?: string;
+      bik?: string;
+      correspondentAccount?: string;
     };
 
     const manualForm = useForm<ManualForm>({
@@ -133,6 +137,10 @@ export const ProfileAdditionalInfoSection = memo(
         phone: "",
         position: "",
         isPrimary: false,
+        bankAccount: "",
+        bankName: "",
+        bik: "",
+        correspondentAccount: "",
       },
       mode: "onChange",
     });
@@ -482,6 +490,48 @@ export const ProfileAdditionalInfoSection = memo(
                         return;
                       }
 
+                      const bankAccountRaw = data.bankAccount?.trim();
+                      const bikRaw = data.bik?.trim();
+                      const correspondentAccountRaw =
+                        data.correspondentAccount?.trim();
+                      const bankAccount =
+                        bankAccountRaw ? normalizeDigits(bankAccountRaw) : "";
+                      const bik = bikRaw ? normalizeDigits(bikRaw) : "";
+                      const correspondentAccount =
+                        correspondentAccountRaw
+                          ? normalizeDigits(correspondentAccountRaw)
+                          : "";
+
+                      if (bankAccount && bankAccount.length !== 20) {
+                        showToast(
+                          "error",
+                          "Расчётный счёт (р/с) должен содержать 20 цифр"
+                        );
+                        return;
+                      }
+                      if (bik && bik.length !== 9) {
+                        showToast(
+                          "error",
+                          "БИК должен содержать 9 цифр"
+                        );
+                        return;
+                      }
+                      if (
+                        correspondentAccount &&
+                        correspondentAccount.length !== 20
+                      ) {
+                        showToast(
+                          "error",
+                          "Корреспондентский счёт (к/с) должен содержать 20 цифр"
+                        );
+                        return;
+                      }
+
+                      const bankName = data.bankName?.trim();
+                      const bankNameLimited = bankName
+                        ? bankName.slice(0, 300)
+                        : undefined;
+
                       const isFirst = workPlaces.length === 0;
                       const input = {
                         type: data.type,
@@ -519,6 +569,11 @@ export const ProfileAdditionalInfoSection = memo(
                           data.isPrimary || isFirst
                             ? true
                             : undefined,
+                        bankAccount: bankAccount || undefined,
+                        bankName: bankNameLimited,
+                        bik: bik || undefined,
+                        correspondentAccount:
+                          correspondentAccount || undefined,
                       };
 
                       const result: FetchResult<{
@@ -786,6 +841,47 @@ export const ProfileAdditionalInfoSection = memo(
                         inputMode="tel"
                         placeholder="+7..."
                       />
+                    </div>
+
+                    <div className="border-t border-border/60 pt-4 md:col-span-2">
+                      <p className="mb-3 text-sm font-medium text-foreground">
+                        Банковские реквизиты (опционально)
+                      </p>
+                      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                        <div className="space-y-2">
+                          <Label>Расчётный счёт (р/с)</Label>
+                          <Input
+                            {...manualForm.register("bankAccount")}
+                            placeholder="20 цифр"
+                            className="rounded-xl"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Наименование банка</Label>
+                          <Input
+                            {...manualForm.register("bankName")}
+                            placeholder="Название банка"
+                            className="rounded-xl"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>БИК</Label>
+                          <Input
+                            {...manualForm.register("bik")}
+                            inputMode="numeric"
+                            placeholder="9 цифр"
+                            className="rounded-xl"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Корреспондентский счёт (к/с)</Label>
+                          <Input
+                            {...manualForm.register("correspondentAccount")}
+                            placeholder="20 цифр"
+                            className="rounded-xl"
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
 
