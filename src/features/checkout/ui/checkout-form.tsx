@@ -95,6 +95,10 @@ function toIsoDateOrUndefined(s: string | undefined): string | undefined {
   return t ? t : undefined;
 }
 
+function normalizeDigits(s: string): string {
+  return s.replace(/\D/g, "");
+}
+
 function learnerToOrderInput(l: LearnerFormData): OrderLineLearnerInput {
   return {
     lastName: l.lastName,
@@ -541,6 +545,42 @@ export const CheckoutForm = memo(function CheckoutForm({
         getLearnersForLine
       );
 
+      let bankAccount: string | undefined;
+      let bankName: string | undefined;
+      let bik: string | undefined;
+      let correspondentAccount: string | undefined;
+      if (isOrganization) {
+        const bankAccountRaw = orderLevelData.bankAccount?.trim();
+        const bikRaw = orderLevelData.bik?.trim();
+        const correspondentAccountRaw = orderLevelData.correspondentAccount?.trim();
+        bankAccount = bankAccountRaw ? normalizeDigits(bankAccountRaw) : undefined;
+        bik = bikRaw ? normalizeDigits(bikRaw) : undefined;
+        correspondentAccount = correspondentAccountRaw
+          ? normalizeDigits(correspondentAccountRaw)
+          : undefined;
+        bankName = orderLevelData.bankName?.trim();
+        if (bankName) bankName = bankName.slice(0, 300);
+
+        if (bankAccount && bankAccount.length !== 20) {
+          setStep(1);
+          onStepChange?.(1);
+          showToast("error", "Расчётный счёт (р/с) должен содержать 20 цифр");
+          return;
+        }
+        if (bik && bik.length !== 9) {
+          setStep(1);
+          onStepChange?.(1);
+          showToast("error", "БИК должен содержать 9 цифр");
+          return;
+        }
+        if (correspondentAccount && correspondentAccount.length !== 20) {
+          setStep(1);
+          onStepChange?.(1);
+          showToast("error", "Корреспондентский счёт (к/с) должен содержать 20 цифр");
+          return;
+        }
+      }
+
       try {
         const order = await createOrderFromCart({
           customerType: data.customerType,
@@ -555,6 +595,10 @@ export const CheckoutForm = memo(function CheckoutForm({
           headFullName: orderLevelData.headFullName?.trim() || undefined,
           contactPersonName: orderLevelData.contactPersonName?.trim() || undefined,
           contactPersonPosition: orderLevelData.contactPersonPosition?.trim() || undefined,
+          bankAccount: bankAccount || undefined,
+          bankName: bankName || undefined,
+          bik: bik || undefined,
+          correspondentAccount: correspondentAccount || undefined,
         });
         if (order) {
           showToast("success", "Заявка оформлена");
@@ -932,11 +976,13 @@ export const CheckoutForm = memo(function CheckoutForm({
                           <Label htmlFor="bankAccount">Расчётный счёт (р/с)</Label>
                           <Input
                             id="bankAccount"
+                            inputMode="numeric"
+                            maxLength={20}
                             value={orderLevelData.bankAccount}
                             onChange={(e) =>
                               setOrderLevelData((p) => ({
                                 ...p,
-                                bankAccount: e.target.value,
+                                bankAccount: e.target.value.replace(/\D/g, "").slice(0, 20),
                               }))
                             }
                             placeholder="20 цифр"
@@ -947,11 +993,12 @@ export const CheckoutForm = memo(function CheckoutForm({
                           <Label htmlFor="bankName">Наименование банка</Label>
                           <Input
                             id="bankName"
+                            maxLength={300}
                             value={orderLevelData.bankName}
                             onChange={(e) =>
                               setOrderLevelData((p) => ({
                                 ...p,
-                                bankName: e.target.value,
+                                bankName: e.target.value.slice(0, 300),
                               }))
                             }
                             placeholder="Название банка"
@@ -962,11 +1009,13 @@ export const CheckoutForm = memo(function CheckoutForm({
                           <Label htmlFor="bik">БИК</Label>
                           <Input
                             id="bik"
+                            inputMode="numeric"
+                            maxLength={9}
                             value={orderLevelData.bik}
                             onChange={(e) =>
                               setOrderLevelData((p) => ({
                                 ...p,
-                                bik: e.target.value,
+                                bik: e.target.value.replace(/\D/g, "").slice(0, 9),
                               }))
                             }
                             placeholder="9 цифр"
@@ -977,11 +1026,13 @@ export const CheckoutForm = memo(function CheckoutForm({
                           <Label htmlFor="correspondentAccount">Корреспондентский счёт (к/с)</Label>
                           <Input
                             id="correspondentAccount"
+                            inputMode="numeric"
+                            maxLength={20}
                             value={orderLevelData.correspondentAccount}
                             onChange={(e) =>
                               setOrderLevelData((p) => ({
                                 ...p,
-                                correspondentAccount: e.target.value,
+                                correspondentAccount: e.target.value.replace(/\D/g, "").slice(0, 20),
                               }))
                             }
                             placeholder="20 цифр"

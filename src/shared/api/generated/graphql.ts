@@ -165,10 +165,14 @@ export type CreateOrderCardPaymentResult = {
 };
 
 export type CreateOrderFromCartInput = {
+  bankAccount?: InputMaybe<Scalars['String']['input']>;
+  bankName?: InputMaybe<Scalars['String']['input']>;
+  bik?: InputMaybe<Scalars['String']['input']>;
   contactEmail?: InputMaybe<Scalars['String']['input']>;
   contactPersonName?: InputMaybe<Scalars['String']['input']>;
   contactPersonPosition?: InputMaybe<Scalars['String']['input']>;
   contactPhone?: InputMaybe<Scalars['String']['input']>;
+  correspondentAccount?: InputMaybe<Scalars['String']['input']>;
   customerType: OrderCustomerType;
   headFullName?: InputMaybe<Scalars['String']['input']>;
   headPosition?: InputMaybe<Scalars['String']['input']>;

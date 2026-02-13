@@ -850,35 +850,74 @@ export const ProfileAdditionalInfoSection = memo(
                       <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                         <div className="space-y-2">
                           <Label>Расчётный счёт (р/с)</Label>
-                          <Input
-                            {...manualForm.register("bankAccount")}
-                            placeholder="20 цифр"
-                            className="rounded-xl"
+                          <Controller
+                            control={manualForm.control}
+                            name="bankAccount"
+                            render={({ field }) => (
+                              <Input
+                                {...field}
+                                inputMode="numeric"
+                                maxLength={20}
+                                placeholder="20 цифр"
+                                className="rounded-xl"
+                                onChange={(e) =>
+                                  field.onChange(
+                                    e.target.value.replace(/\D/g, "").slice(0, 20)
+                                  )
+                                }
+                              />
+                            )}
                           />
                         </div>
                         <div className="space-y-2">
                           <Label>Наименование банка</Label>
                           <Input
                             {...manualForm.register("bankName")}
+                            maxLength={300}
                             placeholder="Название банка"
                             className="rounded-xl"
                           />
                         </div>
                         <div className="space-y-2">
                           <Label>БИК</Label>
-                          <Input
-                            {...manualForm.register("bik")}
-                            inputMode="numeric"
-                            placeholder="9 цифр"
-                            className="rounded-xl"
+                          <Controller
+                            control={manualForm.control}
+                            name="bik"
+                            render={({ field }) => (
+                              <Input
+                                {...field}
+                                inputMode="numeric"
+                                maxLength={9}
+                                placeholder="9 цифр"
+                                className="rounded-xl"
+                                onChange={(e) =>
+                                  field.onChange(
+                                    e.target.value.replace(/\D/g, "").slice(0, 9)
+                                  )
+                                }
+                              />
+                            )}
                           />
                         </div>
                         <div className="space-y-2">
                           <Label>Корреспондентский счёт (к/с)</Label>
-                          <Input
-                            {...manualForm.register("correspondentAccount")}
-                            placeholder="20 цифр"
-                            className="rounded-xl"
+                          <Controller
+                            control={manualForm.control}
+                            name="correspondentAccount"
+                            render={({ field }) => (
+                              <Input
+                                {...field}
+                                inputMode="numeric"
+                                maxLength={20}
+                                placeholder="20 цифр"
+                                className="rounded-xl"
+                                onChange={(e) =>
+                                  field.onChange(
+                                    e.target.value.replace(/\D/g, "").slice(0, 20)
+                                  )
+                                }
+                              />
+                            )}
                           />
                         </div>
                       </div>
