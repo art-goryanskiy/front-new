@@ -150,7 +150,7 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
   }
 
   return (
-    <div className="mx-auto w-full max-w-2xl space-y-8">
+    <div className="mx-auto w-full max-w-4xl space-y-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -181,11 +181,11 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
         <div className="p-6">
           <ul className="space-y-2 text-sm text-muted-foreground">
             {order.lines.map((line, idx) => (
-              <li key={`${line.programId}-${idx}`} className="flex justify-between">
-                <span className="text-foreground">
-                {line.subProgramTitle ?? line.programTitle}
-              </span>
-                <span>{formatPriceWithCurrency(line.lineAmount)}</span>
+              <li key={`${line.programId}-${idx}`} className="flex justify-between gap-4">
+                <span className="min-w-0 flex-1 text-foreground">
+                  {line.subProgramTitle ?? line.programTitle}
+                </span>
+                <span className="shrink-0">{formatPriceWithCurrency(line.lineAmount)}</span>
               </li>
             ))}
           </ul>
