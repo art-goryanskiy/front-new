@@ -65,6 +65,11 @@ function formatOrderDate(date: string | unknown): string {
   }
 }
 
+function documentFileLabel(fileUrl: string): string {
+  const lower = fileUrl.toLowerCase();
+  return lower.endsWith(".docx") || lower.includes(".docx?") ? "DOCX" : "PDF";
+}
+
 function documentKindLabel(kind: OrderDocumentKind): string {
   switch (kind) {
     case OrderDocumentKind.TrainingApplication:
@@ -539,19 +544,27 @@ const AdminOrderDetailContent = memo(function AdminOrderDetailContent() {
                   >
                     Изменить дату
                   </Button>
-                  {doc.fileUrl && (
-                    <Button variant="outline" size="sm" asChild className="gap-2 rounded-xl">
-                      <a
-                        href={doc.fileUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center"
-                      >
-                        <FileDown className="h-4 w-4" />
-                        PDF
-                      </a>
-                    </Button>
-                  )}
+                  {doc.fileUrl && (() => {
+                    const fileLabel = documentFileLabel(doc.fileUrl);
+                    const isDocx = fileLabel === "DOCX";
+                    return (
+                      <Button variant="outline" size="sm" asChild className="gap-2 rounded-xl">
+                        <a
+                          href={doc.fileUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center"
+                        >
+                          {isDocx ? (
+                            <FileText className="h-4 w-4" aria-hidden />
+                          ) : (
+                            <FileDown className="h-4 w-4" aria-hidden />
+                          )}
+                          {fileLabel}
+                        </a>
+                      </Button>
+                    );
+                  })()}
                 </div>
               </li>
             ))}
