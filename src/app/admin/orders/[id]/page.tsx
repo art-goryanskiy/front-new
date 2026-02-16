@@ -12,7 +12,6 @@ import {
   useAdminGenerateOrderContract,
   useAdminGenerateOrderAct,
   useAdminGenerateOrderTrainingApplication,
-  useAdminUpdateOrderDocumentDate,
 } from "@/entities/order/api/use-admin-order-document-mutations";
 import { Surface } from "@/shared/ui/surface/surface";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
@@ -39,14 +38,6 @@ import {
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { FileText, FileDown, User, ArrowLeft, Loader2, Calendar } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -125,14 +116,10 @@ const AdminOrderDetailContent = memo(function AdminOrderDetailContent() {
     useAdminGenerateOrderAct(orderId ?? "");
   const { adminGenerateOrderTrainingApplication, loading: trainingAppLoading } =
     useAdminGenerateOrderTrainingApplication(orderId ?? "");
-  const { adminUpdateOrderDocumentDate, loading: dateLoading } =
-    useAdminUpdateOrderDocumentDate(orderId ?? "");
   const { adminSetOrderTrainingDates, loading: trainingDatesLoading } =
     useAdminSetOrderTrainingDates(orderId ?? "");
 
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
-  const [editDateDocId, setEditDateDocId] = useState<string | null>(null);
-  const [editDateValue, setEditDateValue] = useState("");
   const [trainingStartInput, setTrainingStartInput] = useState("");
   const [trainingEndInput, setTrainingEndInput] = useState("");
 
@@ -233,25 +220,6 @@ const AdminOrderDetailContent = memo(function AdminOrderDetailContent() {
       showToast("error", (e as Error)?.message ?? "Ошибка формирования заявки на обучение");
     }
   }, [adminGenerateOrderTrainingApplication, showToast, refetchDocs]);
-
-  const handleSaveDocumentDate = useCallback(async () => {
-    if (!editDateDocId || !editDateValue.trim()) return;
-    try {
-      await adminUpdateOrderDocumentDate(editDateDocId, editDateValue.trim());
-      showToast("success", "Дата документа обновлена");
-      setEditDateDocId(null);
-      setEditDateValue("");
-      refetchDocs();
-    } catch (e) {
-      showToast("error", (e as Error)?.message ?? "Ошибка обновления даты");
-    }
-  }, [
-    editDateDocId,
-    editDateValue,
-    adminUpdateOrderDocumentDate,
-    showToast,
-    refetchDocs,
-  ]);
 
   if (loading && !order) {
     return (
@@ -516,58 +484,53 @@ const AdminOrderDetailContent = memo(function AdminOrderDetailContent() {
           </p>
         ) : (
           <ul className="space-y-2">
-            {documents.map((doc) => (
-              <li
-                key={doc.id}
-                className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-border/50 bg-muted/5 px-4 py-3 dark:border-white/10"
-              >
-                <span className="text-sm font-medium text-foreground">
-                  {documentKindLabel(doc.kind)}
-                </span>
-                <span className="text-xs text-muted-foreground">
-                  {formatOrderDate(doc.documentDate)}
-                </span>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="rounded-lg text-xs"
-                    onClick={() => {
-                      setEditDateDocId(doc.id);
-                      setEditDateValue(
-                        doc.documentDate
-                          ? new Date(doc.documentDate).toISOString().slice(0, 10)
-                          : ""
-                      );
-                    }}
-                    disabled={dateLoading}
-                  >
-                    Изменить дату
-                  </Button>
-                  {doc.fileUrl && (() => {
-                    const fileLabel = documentFileLabel(doc.fileUrl);
-                    const isDocx = fileLabel === "DOCX";
-                    return (
-                      <Button variant="outline" size="sm" asChild className="gap-2 rounded-xl">
-                        <a
-                          href={doc.fileUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center"
-                        >
-                          {isDocx ? (
-                            <FileText className="h-4 w-4" aria-hidden />
-                          ) : (
-                            <FileDown className="h-4 w-4" aria-hidden />
-                          )}
-                          {fileLabel}
-                        </a>
-                      </Button>
-                    );
-                  })()}
-                </div>
-              </li>
-            ))}
+            {documents.map((doc) => {
+              const fileLabel = doc.fileUrl
+                ? documentFileLabel(doc.fileUrl)
+                : null;
+              const isDocx = fileLabel === "DOCX";
+              return (
+                <li
+                  key={doc.id}
+                  className="grid grid-cols-[auto_1fr_auto_auto] items-center gap-4 rounded-xl border border-border/50 bg-muted/5 px-4 py-3 dark:border-white/10 sm:gap-6"
+                >
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted/50 text-muted-foreground">
+                    {doc.fileUrl && isDocx ? (
+                      <FileText className="h-4 w-4" aria-hidden />
+                    ) : doc.fileUrl ? (
+                      <FileDown className="h-4 w-4" aria-hidden />
+                    ) : (
+                      <FileText className="h-4 w-4" aria-hidden />
+                    )}
+                  </span>
+                  <span className="min-w-0 text-sm font-medium text-foreground">
+                    {documentKindLabel(doc.kind)}
+                  </span>
+                  <span className="text-sm text-muted-foreground tabular-nums">
+                    {formatOrderDate(doc.documentDate)}
+                  </span>
+                  {doc.fileUrl ? (
+                    <Button variant="outline" size="sm" asChild className="shrink-0 gap-2 rounded-xl">
+                      <a
+                        href={doc.fileUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center"
+                      >
+                        {isDocx ? (
+                          <FileText className="h-4 w-4" aria-hidden />
+                        ) : (
+                          <FileDown className="h-4 w-4" aria-hidden />
+                        )}
+                        {fileLabel}
+                      </a>
+                    </Button>
+                  ) : (
+                    <span className="w-[72px] shrink-0 text-xs text-muted-foreground">—</span>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         )}
       </Surface>
@@ -583,43 +546,6 @@ const AdminOrderDetailContent = memo(function AdminOrderDetailContent() {
         onConfirm={handleDelete}
         loading={deleteLoading}
       />
-
-      <Dialog open={!!editDateDocId} onOpenChange={() => setEditDateDocId(null)}>
-        <DialogContent className="rounded-2xl sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Изменить дату документа</DialogTitle>
-            <DialogDescription className="sr-only">
-              Укажите новую дату документа
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-2 py-2">
-            <Label htmlFor="doc-date">Дата</Label>
-            <Input
-              id="doc-date"
-              type="date"
-              value={editDateValue}
-              onChange={(e) => setEditDateValue(e.target.value)}
-              className="rounded-xl"
-            />
-          </div>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setEditDateDocId(null)}
-              className="rounded-xl"
-            >
-              Отмена
-            </Button>
-            <Button
-              onClick={handleSaveDocumentDate}
-              disabled={dateLoading || !editDateValue.trim()}
-              className="rounded-xl"
-            >
-              {dateLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Сохранить"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 });
