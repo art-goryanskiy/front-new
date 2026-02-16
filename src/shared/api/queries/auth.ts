@@ -30,6 +30,10 @@ const ME_USER_PROFILE_FIELDS = gql`
         kpp
         ogrn
         legalAddress
+        bankAccount
+        bankName
+        bik
+        correspondentAccount
       }
       position
       isPrimary

@@ -15,7 +15,7 @@ export function formatPriceWithCurrency(
   price: number | null | undefined
 ): string {
   if (!price || price === 0) return "-";
-  return `${formatPrice(price)} ₽`;
+  return `${formatPrice(price)}\u00A0₽`;
 }
 
 /**

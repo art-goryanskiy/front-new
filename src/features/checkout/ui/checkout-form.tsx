@@ -24,6 +24,8 @@ import { formatPriceWithCurrency } from "@/shared/lib/helpers/format-helpers";
 import { useAuthUser } from "@/shared/store/auth-store";
 import { useToastState } from "@/shared/store/toast-store";
 import { Surface } from "@/shared/ui/surface/surface";
+import { OrganizationSuggestInput } from "@/shared/ui/form-fields/organization-suggest-input";
+import type { OrganizationSuggestion } from "@/shared/ui/form-fields/organization-suggest-input";
 import { CheckoutFormSkeleton } from "./checkout-form-skeleton";
 import { ShoppingBag } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -61,6 +63,42 @@ type CheckoutFormData = {
   contactPhone: string;
 };
 
+/** Дополнительные поля уровня заявки (форма, язык, руководитель, контактное лицо, банк) */
+type OrderLevelData = {
+  trainingForm: string;
+  trainingLanguage: string;
+  headPosition: string;
+  headFullName: string;
+  contactPersonName: string;
+  contactPersonPosition: string;
+  bankAccount: string;
+  bankName: string;
+  bik: string;
+  correspondentAccount: string;
+};
+
+const defaultOrderLevelData = (): OrderLevelData => ({
+  trainingForm: "",
+  trainingLanguage: "",
+  headPosition: "",
+  headFullName: "",
+  contactPersonName: "",
+  contactPersonPosition: "",
+  bankAccount: "",
+  bankName: "",
+  bik: "",
+  correspondentAccount: "",
+});
+
+function toIsoDateOrUndefined(s: string | undefined): string | undefined {
+  const t = s?.trim();
+  return t ? t : undefined;
+}
+
+function normalizeDigits(s: string): string {
+  return s.replace(/\D/g, "");
+}
+
 function learnerToOrderInput(l: LearnerFormData): OrderLineLearnerInput {
   return {
     lastName: l.lastName,
@@ -68,6 +106,20 @@ function learnerToOrderInput(l: LearnerFormData): OrderLineLearnerInput {
     middleName: l.middleName?.trim() || undefined,
     email: l.email?.trim() || undefined,
     phone: l.phone?.trim() || undefined,
+    dateOfBirth: toIsoDateOrUndefined(l.dateOfBirth),
+    citizenship: l.citizenship?.trim() || undefined,
+    passportSeries: l.passportSeries?.trim() || undefined,
+    passportNumber: l.passportNumber?.trim() || undefined,
+    passportIssuedBy: l.passportIssuedBy?.trim() || undefined,
+    passportIssuedAt: toIsoDateOrUndefined(l.passportIssuedAt),
+    passportDepartmentCode: l.passportDepartmentCode?.trim() || undefined,
+    snils: l.snils?.trim() || undefined,
+    educationQualification: l.educationQualification?.trim() || undefined,
+    educationDocumentIssuedAt: toIsoDateOrUndefined(l.educationDocumentIssuedAt),
+    passportRegistrationAddress: l.passportRegistrationAddress?.trim() || undefined,
+    residentialAddress: l.residentialAddress?.trim() || undefined,
+    workPlaceName: l.workPlaceName?.trim() || undefined,
+    position: l.position?.trim() || undefined,
   };
 }
 
@@ -116,6 +168,10 @@ export const CheckoutForm = memo(function CheckoutForm({
           id: wp.organization!.id,
           displayName:
             wp.organization!.displayName ?? wp.organization!.id,
+          bankAccount: wp.organization?.bankAccount ?? undefined,
+          bankName: wp.organization?.bankName ?? undefined,
+          bik: wp.organization?.bik ?? undefined,
+          correspondentAccount: wp.organization?.correspondentAccount ?? undefined,
         })),
     [workPlaces]
   );
@@ -124,6 +180,9 @@ export const CheckoutForm = memo(function CheckoutForm({
     useState<IndividualApplicantData>(() =>
       defaultIndividualApplicantData()
     );
+
+  const [orderLevelData, setOrderLevelData] =
+    useState<OrderLevelData>(defaultOrderLevelData);
 
   const [linesLearners, setLinesLearners] = useState<
     Record<string, LearnerFormData[]>
@@ -152,6 +211,10 @@ export const CheckoutForm = memo(function CheckoutForm({
   const [organizationError, setOrganizationError] = useState<string | null>(
     null
   );
+
+  /** Организация, выбранная по ИНН/названию через OrganizationSuggestInput (приоритет над organizationId) */
+  const [organizationFromSuggest, setOrganizationFromSuggest] =
+    useState<OrganizationSuggestion | null>(null);
 
   /** Показывать точки статуса у слушателей только после первой попытки валидации */
   const [showLearnerStatusDots, setShowLearnerStatusDots] = useState(false);
@@ -344,20 +407,25 @@ export const CheckoutForm = memo(function CheckoutForm({
   const goNext = useCallback(() => {
     if (step < 3) {
       if (step === 1 && isOrganization) {
+        const hasOrgFromSuggest = !!organizationFromSuggest;
         const orgId = getValues("organizationId")?.trim();
-        if (organizations.length === 0) {
-          showToast(
-            "error",
-            "Добавьте организацию в профиле (раздел «Место работы»)."
-          );
-          return;
+        if (hasOrgFromSuggest) {
+          setOrganizationError(null);
+        } else {
+          if (organizations.length === 0) {
+            showToast(
+              "error",
+              "Добавьте организацию в профиле (раздел «Место работы»)."
+            );
+            return;
+          }
+          if (!orgId) {
+            setOrganizationError("Выберите организацию");
+            showToast("error", "Выберите организацию");
+            return;
+          }
+          setOrganizationError(null);
         }
-        if (!orgId) {
-          setOrganizationError("Выберите организацию");
-          showToast("error", "Выберите организацию");
-          return;
-        }
-        setOrganizationError(null);
       }
       if (step === 2) {
         setShowLearnerStatusDots(true);
@@ -381,6 +449,7 @@ export const CheckoutForm = memo(function CheckoutForm({
     isOrganization,
     organizations.length,
     getValues,
+    organizationFromSuggest,
   ]);
 
   const goBack = useCallback(() => {
@@ -398,7 +467,10 @@ export const CheckoutForm = memo(function CheckoutForm({
   }, [step, onStepChange]);
 
   useEffect(() => {
-    if (!isOrganization) setOrganizationError(null);
+    if (!isOrganization) {
+      setOrganizationError(null);
+      setOrganizationFromSuggest(null);
+    }
   }, [isOrganization]);
 
   const onSubmit = useCallback(
@@ -407,12 +479,40 @@ export const CheckoutForm = memo(function CheckoutForm({
         showToast("error", "Корзина пуста");
         return;
       }
-      if (isOrganization && !data.organizationId?.trim()) {
-        setOrganizationError("Выберите организацию");
+      const hasOrgFromSuggest = !!organizationFromSuggest;
+      const hasOrgId = !!data.organizationId?.trim();
+      if (isOrganization && !hasOrgFromSuggest && !hasOrgId) {
+        setOrganizationError("Укажите организацию: введите ИНН/название или выберите из профиля");
         setStep(1);
         onStepChange?.(1);
-        showToast("error", "Выберите организацию");
+        showToast("error", "Укажите организацию");
         return;
+      }
+
+      if (isOrganization) {
+        const hasEmail = !!data.contactEmail?.trim();
+        const hasPhone = !!data.contactPhone?.trim();
+        const hasTrainingForm = !!orderLevelData.trainingForm?.trim();
+        const hasTrainingLanguage = !!orderLevelData.trainingLanguage?.trim();
+        const hasHeadPosition = !!orderLevelData.headPosition?.trim();
+        const hasHeadFullName = !!orderLevelData.headFullName?.trim();
+        const hasContactPersonName = !!orderLevelData.contactPersonName?.trim();
+        const hasContactPersonPosition = !!orderLevelData.contactPersonPosition?.trim();
+        if (
+          !hasEmail ||
+          !hasPhone ||
+          !hasTrainingForm ||
+          !hasTrainingLanguage ||
+          !hasHeadPosition ||
+          !hasHeadFullName ||
+          !hasContactPersonName ||
+          !hasContactPersonPosition
+        ) {
+          setStep(1);
+          onStepChange?.(1);
+          showToast("error", "Заполните все обязательные поля заявки от организации");
+          return;
+        }
       }
 
       const learnerValidationErrors = validateAllLearners();
@@ -445,15 +545,60 @@ export const CheckoutForm = memo(function CheckoutForm({
         getLearnersForLine
       );
 
+      let bankAccount: string | undefined;
+      let bankName: string | undefined;
+      let bik: string | undefined;
+      let correspondentAccount: string | undefined;
+      if (isOrganization) {
+        const bankAccountRaw = orderLevelData.bankAccount?.trim();
+        const bikRaw = orderLevelData.bik?.trim();
+        const correspondentAccountRaw = orderLevelData.correspondentAccount?.trim();
+        bankAccount = bankAccountRaw ? normalizeDigits(bankAccountRaw) : undefined;
+        bik = bikRaw ? normalizeDigits(bikRaw) : undefined;
+        correspondentAccount = correspondentAccountRaw
+          ? normalizeDigits(correspondentAccountRaw)
+          : undefined;
+        bankName = orderLevelData.bankName?.trim();
+        if (bankName) bankName = bankName.slice(0, 300);
+
+        if (bankAccount && bankAccount.length !== 20) {
+          setStep(1);
+          onStepChange?.(1);
+          showToast("error", "Расчётный счёт (р/с) должен содержать 20 цифр");
+          return;
+        }
+        if (bik && bik.length !== 9) {
+          setStep(1);
+          onStepChange?.(1);
+          showToast("error", "БИК должен содержать 9 цифр");
+          return;
+        }
+        if (correspondentAccount && correspondentAccount.length !== 20) {
+          setStep(1);
+          onStepChange?.(1);
+          showToast("error", "Корреспондентский счёт (к/с) должен содержать 20 цифр");
+          return;
+        }
+      }
+
       try {
         const order = await createOrderFromCart({
           customerType: data.customerType,
-          organizationId: isOrganization
-            ? data.organizationId
-            : undefined,
+          organizationId: isOrganization && !organizationFromSuggest ? data.organizationId : undefined,
+          organizationQuery: isOrganization && organizationFromSuggest ? organizationFromSuggest.inn : undefined,
           contactEmail: contactEmailSubmit,
           contactPhone: contactPhoneSubmit,
           lines,
+          trainingForm: orderLevelData.trainingForm?.trim() || undefined,
+          trainingLanguage: orderLevelData.trainingLanguage?.trim() || undefined,
+          headPosition: orderLevelData.headPosition?.trim() || undefined,
+          headFullName: orderLevelData.headFullName?.trim() || undefined,
+          contactPersonName: orderLevelData.contactPersonName?.trim() || undefined,
+          contactPersonPosition: orderLevelData.contactPersonPosition?.trim() || undefined,
+          bankAccount: bankAccount || undefined,
+          bankName: bankName || undefined,
+          bik: bik || undefined,
+          correspondentAccount: correspondentAccount || undefined,
         });
         if (order) {
           showToast("success", "Заявка оформлена");
@@ -472,11 +617,13 @@ export const CheckoutForm = memo(function CheckoutForm({
       isIndividualOrSelf,
       linesLearners,
       individualData,
+      orderLevelData,
       createOrderFromCart,
       showToast,
       router,
       validateAllLearners,
       onStepChange,
+      organizationFromSuggest,
     ]
   );
 
@@ -570,43 +717,80 @@ export const CheckoutForm = memo(function CheckoutForm({
             )}
 
             {isOrganization && (
-              <div className="space-y-2">
-                <Label htmlFor="organizationId">Организация *</Label>
-                <Select
-                  required={isOrganization}
-                  value={watch("organizationId")}
-                  onValueChange={(v) => {
-                    setValue("organizationId", v);
-                    setOrganizationError(null);
-                  }}
-                >
-                  <SelectTrigger
-                    id="organizationId"
-                    className={cn(
-                      "w-full",
-                      organizationError && "border-destructive"
-                    )}
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <OrganizationSuggestInput
+                    label="Организация *"
+                    placeholder="Введите ИНН или название организации"
+                    description="Введите ИНН или название — выберите из списка. Либо выберите организацию из профиля ниже."
+                    onSelect={(suggestion) => {
+                      setOrganizationFromSuggest(suggestion);
+                      setValue("organizationId", "");
+                      setOrganizationError(null);
+                      setOrderLevelData((prev) => ({
+                        ...prev,
+                        bankAccount: "",
+                        bankName: "",
+                        bik: "",
+                        correspondentAccount: "",
+                      }));
+                    }}
+                    clearAfterSelect={false}
+                  />
+                  {organizationFromSuggest && (
+                    <p className="text-sm text-muted-foreground">
+                      Выбрано: {organizationFromSuggest.displayName}
+                      {organizationFromSuggest.inn && ` (ИНН ${organizationFromSuggest.inn})`}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <p className="text-xs font-medium text-muted-foreground">
+                    Или выберите из добавленных в профиле
+                  </p>
+                  <Select
+                    value={watch("organizationId")}
+                    onValueChange={(v) => {
+                      setValue("organizationId", v);
+                      setOrganizationFromSuggest(null);
+                      setOrganizationError(null);
+                      const org = organizations.find((o) => o.id === v);
+                      if (org) {
+                        setOrderLevelData((prev) => ({
+                          ...prev,
+                          bankAccount: org.bankAccount ?? "",
+                          bankName: org.bankName ?? "",
+                          bik: org.bik ?? "",
+                          correspondentAccount: org.correspondentAccount ?? "",
+                        }));
+                      }
+                    }}
                   >
-                    <SelectValue placeholder="Выберите организацию" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {organizations.map((org) => (
-                      <SelectItem key={org.id} value={org.id}>
-                        {org.displayName}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {organizations.length === 0 && (
-                  <p className="text-xs text-muted-foreground">
-                    Добавьте организацию в профиле (раздел «Место
-                    работы»).
-                  </p>
-                )}
+                    <SelectTrigger
+                      id="organizationId"
+                      className={cn(
+                        "w-full rounded-xl",
+                        organizationError && "border-destructive"
+                      )}
+                    >
+                      <SelectValue placeholder="Выберите организацию из профиля" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {organizations.map((org) => (
+                        <SelectItem key={org.id} value={org.id}>
+                          {org.displayName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {organizations.length === 0 && (
+                    <p className="text-xs text-muted-foreground">
+                      Добавьте организацию в профиле (раздел «Место работы»).
+                    </p>
+                  )}
+                </div>
                 {organizationError && (
-                  <p className="text-xs text-destructive">
-                    {organizationError}
-                  </p>
+                  <p className="text-xs text-destructive">{organizationError}</p>
                 )}
               </div>
             )}
@@ -614,21 +798,25 @@ export const CheckoutForm = memo(function CheckoutForm({
             {!isIndividualOrSelf && (
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="contactEmail">Email</Label>
+                  <Label htmlFor="contactEmail">
+                    Email {isOrganization && <span className="text-destructive">*</span>}
+                  </Label>
                   <Input
                     id="contactEmail"
                     type="email"
-                    {...register("contactEmail")}
+                    {...register("contactEmail", { required: isOrganization })}
                     className="w-full"
                     placeholder="email@example.com"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="contactPhone">Телефон</Label>
+                  <Label htmlFor="contactPhone">
+                    Телефон {isOrganization && <span className="text-destructive">*</span>}
+                  </Label>
                   <Input
                     id="contactPhone"
                     type="tel"
-                    {...register("contactPhone")}
+                    {...register("contactPhone", { required: isOrganization })}
                     className="w-full"
                     placeholder="+7 (999) 000-00-00"
                   />
@@ -643,6 +831,220 @@ export const CheckoutForm = memo(function CheckoutForm({
                 fromProfile={customerType === OrderCustomerType.Self}
               />
             )}
+
+            {/* Дополнительные данные заявки: форма, язык; для организации — руководитель и контактное лицо */}
+            <div className="rounded-2xl border border-border/50 bg-muted/5 p-5 dark:border-white/10">
+              <h3 className="mb-4 text-sm font-semibold text-foreground">
+                Данные заявки
+              </h3>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2 sm:col-span-2">
+                  <Label htmlFor="trainingForm">
+                    Форма обучения {isOrganization && <span className="text-destructive">*</span>}
+                  </Label>
+                  <Select
+                    value={orderLevelData.trainingForm || "none"}
+                    onValueChange={(v) =>
+                      setOrderLevelData((p) => ({
+                        ...p,
+                        trainingForm: v === "none" ? "" : v,
+                      }))
+                    }
+                  >
+                    <SelectTrigger id="trainingForm" className="rounded-xl">
+                      <SelectValue placeholder="Выберите форму" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">Не указано</SelectItem>
+                      <SelectItem value="очная">Очная</SelectItem>
+                      <SelectItem value="очно-заочная">Очно-заочная</SelectItem>
+                      <SelectItem value="заочная">Заочная</SelectItem>
+                      <SelectItem value="дистанционная">Дистанционная</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2 sm:col-span-2">
+                  <Label htmlFor="trainingLanguage">
+                    Язык обучения {isOrganization && <span className="text-destructive">*</span>}
+                  </Label>
+                  <Select
+                    value={orderLevelData.trainingLanguage || "none"}
+                    onValueChange={(v) =>
+                      setOrderLevelData((p) => ({
+                        ...p,
+                        trainingLanguage: v === "none" ? "" : v,
+                      }))
+                    }
+                  >
+                    <SelectTrigger id="trainingLanguage" className="rounded-xl">
+                      <SelectValue placeholder="Выберите язык" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">Не указано</SelectItem>
+                      <SelectItem value="русский">Русский</SelectItem>
+                      <SelectItem value="крымскотатарский">Крымскотатарский</SelectItem>
+                      <SelectItem value="украинский">Украинский</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                {isOrganization && (
+                  <>
+                    <div className="space-y-2 sm:col-span-2">
+                      <p className="text-xs font-medium text-muted-foreground">
+                        Руководитель
+                      </p>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="headPosition">
+                        Должность руководителя <span className="text-destructive">*</span>
+                      </Label>
+                      <Input
+                        id="headPosition"
+                        value={orderLevelData.headPosition}
+                        onChange={(e) =>
+                          setOrderLevelData((p) => ({
+                            ...p,
+                            headPosition: e.target.value,
+                          }))
+                        }
+                        placeholder="Должность"
+                        className="rounded-xl"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="headFullName">
+                        ФИО руководителя <span className="text-destructive">*</span>
+                      </Label>
+                      <Input
+                        id="headFullName"
+                        value={orderLevelData.headFullName}
+                        onChange={(e) =>
+                          setOrderLevelData((p) => ({
+                            ...p,
+                            headFullName: e.target.value,
+                          }))
+                        }
+                        placeholder="ФИО"
+                        className="rounded-xl"
+                      />
+                    </div>
+                    <div className="space-y-2 sm:col-span-2">
+                      <p className="text-xs font-medium text-muted-foreground">
+                        Контактное лицо
+                      </p>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="contactPersonName">
+                        ФИО контактного лица <span className="text-destructive">*</span>
+                      </Label>
+                      <Input
+                        id="contactPersonName"
+                        value={orderLevelData.contactPersonName}
+                        onChange={(e) =>
+                          setOrderLevelData((p) => ({
+                            ...p,
+                            contactPersonName: e.target.value,
+                          }))
+                        }
+                        placeholder="ФИО"
+                        className="rounded-xl"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="contactPersonPosition">
+                        Должность контактного лица <span className="text-destructive">*</span>
+                      </Label>
+                      <Input
+                        id="contactPersonPosition"
+                        value={orderLevelData.contactPersonPosition}
+                        onChange={(e) =>
+                          setOrderLevelData((p) => ({
+                            ...p,
+                            contactPersonPosition: e.target.value,
+                          }))
+                        }
+                        placeholder="Должность"
+                        className="rounded-xl"
+                      />
+                    </div>
+                    <div className="border-t border-border/60 pt-4 sm:col-span-2">
+                      <p className="mb-3 text-xs font-medium text-muted-foreground">
+                        Банковские реквизиты (опционально)
+                      </p>
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <div className="space-y-2">
+                          <Label htmlFor="bankAccount">Расчётный счёт (р/с)</Label>
+                          <Input
+                            id="bankAccount"
+                            inputMode="numeric"
+                            maxLength={20}
+                            value={orderLevelData.bankAccount}
+                            onChange={(e) =>
+                              setOrderLevelData((p) => ({
+                                ...p,
+                                bankAccount: e.target.value.replace(/\D/g, "").slice(0, 20),
+                              }))
+                            }
+                            placeholder="20 цифр"
+                            className="rounded-xl"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="bankName">Наименование банка</Label>
+                          <Input
+                            id="bankName"
+                            maxLength={300}
+                            value={orderLevelData.bankName}
+                            onChange={(e) =>
+                              setOrderLevelData((p) => ({
+                                ...p,
+                                bankName: e.target.value.slice(0, 300),
+                              }))
+                            }
+                            placeholder="Название банка"
+                            className="rounded-xl"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="bik">БИК</Label>
+                          <Input
+                            id="bik"
+                            inputMode="numeric"
+                            maxLength={9}
+                            value={orderLevelData.bik}
+                            onChange={(e) =>
+                              setOrderLevelData((p) => ({
+                                ...p,
+                                bik: e.target.value.replace(/\D/g, "").slice(0, 9),
+                              }))
+                            }
+                            placeholder="9 цифр"
+                            className="rounded-xl"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="correspondentAccount">Корреспондентский счёт (к/с)</Label>
+                          <Input
+                            id="correspondentAccount"
+                            inputMode="numeric"
+                            maxLength={20}
+                            value={orderLevelData.correspondentAccount}
+                            onChange={(e) =>
+                              setOrderLevelData((p) => ({
+                                ...p,
+                                correspondentAccount: e.target.value.replace(/\D/g, "").slice(0, 20),
+                              }))
+                            }
+                            placeholder="20 цифр"
+                            className="rounded-xl"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
           </div>
         </Surface>
       )}
