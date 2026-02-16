@@ -53,7 +53,21 @@ function formatOrderDate(date: string | unknown): string {
   }
 }
 
-function documentFileLabel(fileUrl: string): string {
+/** Только дата (без времени), чтобы не показывать 03:00 из-за UTC. */
+function formatDocumentDate(date: string | unknown): string {
+  if (!date) return "—";
+  try {
+    return new Date(String(date)).toLocaleDateString("ru-RU", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  } catch {
+    return String(date);
+  }
+}
+
+function documentFileLabel(fileUrl: string): "PDF" | "DOCX" {
   const lower = fileUrl.toLowerCase();
   return lower.endsWith(".docx") || lower.includes(".docx?") ? "DOCX" : "PDF";
 }
@@ -444,30 +458,42 @@ export const OrderDetailContent = memo(function OrderDetailContent({
               const fileLabel = doc.fileUrl
                 ? documentFileLabel(doc.fileUrl)
                 : "PDF";
+              const isPdf = fileLabel === "PDF";
               return (
                 <li
                   key={doc.id}
-                  className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-border/50 bg-muted/5 px-4 py-3 dark:border-white/10"
+                  className="grid grid-cols-[auto_1fr_auto_auto] items-center gap-3 rounded-xl border border-border/50 bg-muted/5 px-4 py-3 dark:border-white/10 sm:gap-4"
                 >
-                  <span className="text-sm font-medium text-foreground">
+                  <span
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted/50"
+                    aria-hidden
+                  >
+                    <FileText
+                      className={cn(
+                        "h-4 w-4",
+                        isPdf ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400"
+                      )}
+                    />
+                  </span>
+                  <span className="min-w-0 text-sm font-medium text-foreground">
                     {documentKindLabel(doc.kind)}
                   </span>
-                  <span className="text-xs text-muted-foreground">
-                    {formatOrderDate(doc.documentDate)}
+                  <span className="text-sm text-muted-foreground tabular-nums">
+                    {formatDocumentDate(doc.documentDate)}
                   </span>
-                  {doc.fileUrl && (
-                    <Button variant="outline" size="sm" asChild className="gap-2 rounded-xl">
+                  {doc.fileUrl ? (
+                    <Button variant="outline" size="sm" asChild className="shrink-0 gap-2 rounded-xl">
                       <a
                         href={doc.fileUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center"
                       >
-                        <FileDown className="h-4 w-4" aria-hidden />
+                        <FileDown className="h-4 w-4 shrink-0" aria-hidden />
                         Скачать {fileLabel}
                       </a>
                     </Button>
-                  )}
+                  ) : null}
                 </li>
               );
             })}
