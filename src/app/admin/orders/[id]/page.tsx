@@ -507,7 +507,7 @@ const AdminOrderDetailContent = memo(function AdminOrderDetailContent() {
               return (
                 <li
                   key={doc.id}
-                  className="grid grid-cols-[auto_1fr_auto_auto] items-center gap-3 rounded-xl border border-border/50 bg-muted/5 px-4 py-3 dark:border-white/10 sm:gap-4"
+                  className="grid grid-cols-[auto_1fr_auto] items-center gap-3 rounded-xl border border-border/50 bg-muted/5 px-4 py-3 dark:border-white/10 sm:gap-4"
                 >
                   <span
                     className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted/50"
@@ -526,24 +526,26 @@ const AdminOrderDetailContent = memo(function AdminOrderDetailContent() {
                   <span className="min-w-0 text-sm font-medium text-foreground">
                     {documentKindLabel(doc.kind)}
                   </span>
-                  <span className="text-sm text-muted-foreground tabular-nums">
-                    {formatDocumentDate(doc.documentDate)}
-                  </span>
-                  {doc.fileUrl ? (
-                    <Button variant="outline" size="sm" asChild className="shrink-0 gap-2 rounded-xl">
-                      <a
-                        href={doc.fileUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center"
-                      >
-                        <FileDown className="h-4 w-4 shrink-0" aria-hidden />
-                        Скачать {fileLabel}
-                      </a>
-                    </Button>
-                  ) : (
-                    <span className="w-[72px] shrink-0 text-xs text-muted-foreground">—</span>
-                  )}
+                  <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+                    <span className="shrink-0 text-left text-sm text-muted-foreground tabular-nums">
+                      {formatDocumentDate(doc.documentDate)}
+                    </span>
+                    {doc.fileUrl ? (
+                      <Button variant="outline" size="sm" asChild className="shrink-0 gap-2 rounded-xl">
+                        <a
+                          href={doc.fileUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center"
+                        >
+                          <FileDown className="h-4 w-4 shrink-0" aria-hidden />
+                          Скачать {fileLabel}
+                        </a>
+                      </Button>
+                    ) : (
+                      <span className="shrink-0 text-xs text-muted-foreground">—</span>
+                    )}
+                  </div>
                 </li>
               );
             })}
