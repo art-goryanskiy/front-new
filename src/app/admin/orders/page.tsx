@@ -9,6 +9,7 @@ import { formatPriceWithCurrency } from "@/shared/lib/helpers/format-helpers";
 import {
   ORDER_STATUS_LABELS,
   ORDER_STATUS_BADGE_CLASSES,
+  ORDER_CUSTOMER_TYPE_LABELS,
 } from "@/shared/constants/orders";
 import type { OrderFieldsFragment } from "@/shared/api/generated/graphql";
 import type { OrderStatus } from "@/shared/api/generated/graphql";
@@ -61,6 +62,31 @@ function formatOrderDate(date: string | unknown): string {
   }
 }
 
+function formatShortDate(date: string | unknown): string {
+  if (!date) return "";
+  try {
+    return new Date(String(date)).toLocaleDateString("ru-RU", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  } catch {
+    return String(date);
+  }
+}
+
+function formatTrainingDates(
+  start: string | unknown,
+  end: string | unknown
+): string {
+  const s = formatShortDate(start).trim();
+  const e = formatShortDate(end).trim();
+  if (s && e) return `${s} – ${e}`;
+  if (s) return s;
+  if (e) return e;
+  return "—";
+}
+
 function orderSummary(order: OrderFieldsFragment) {
   const lines = order.lines ?? [];
   const programsCount = lines.length;
@@ -85,9 +111,20 @@ const OrderRow = memo(function OrderRow({
   const statusClass =
     ORDER_STATUS_BADGE_CLASSES[order.status] ??
     "border-border/60 bg-muted/20 text-muted-foreground";
+  const customerTypeLabel =
+    ORDER_CUSTOMER_TYPE_LABELS[order.customerType] ?? order.customerType;
   const { programsCount, learnersCount, firstProgramTitle } =
     orderSummary(order);
   const displayNumber = (order as { number?: string | null }).number ?? order.id;
+  const customerDisplayName =
+    order.customerDisplayName?.trim() || "—";
+  const trainingDates = formatTrainingDates(
+    order.trainingStartDate,
+    order.trainingEndDate
+  );
+  const statusChangedAtFormatted = order.statusChangedAt
+    ? formatOrderDate(order.statusChangedAt)
+    : null;
 
   return (
     <Link href={`/admin/orders/${order.id}`}>
@@ -103,15 +140,26 @@ const OrderRow = memo(function OrderRow({
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
             <Package className="h-5 w-5" />
           </div>
-          <div className="min-w-0 flex-1">
+          <div className="min-w-0 flex-1 space-y-1">
             <p className="font-semibold text-foreground">
               Заявка №{displayNumber}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              {customerTypeLabel} · {customerDisplayName}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Сроки обучения: {trainingDates}
             </p>
             <p className="text-sm text-muted-foreground">
               {formatOrderDate(order.createdAt)} · {programsCount} поз. ·{" "}
               {learnersCount} слуш.
               {firstProgramTitle ? ` · ${firstProgramTitle}` : ""}
             </p>
+            {statusChangedAtFormatted && (
+              <p className="text-xs text-muted-foreground/80">
+                Статус изменён: {statusChangedAtFormatted}
+              </p>
+            )}
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-3">

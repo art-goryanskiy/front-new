@@ -6,6 +6,7 @@ import { useCreateCategory } from "@/entities/category/api/use-create-category";
 import { useUpdateCategory } from "@/entities/category/api/use-update-category";
 import { useCategoryModalState } from "@/shared/store/modal-store";
 import { useToastState } from "@/shared/store/toast-store";
+import { getAdminFormErrorMessage } from "@/shared/lib/graphql/error-to-user-message";
 import { FormErrorSummary } from "@/shared/ui/form-error-summary/form-error-summary";
 import { memo, useCallback, useEffect, useMemo } from "react";
 import { useForm, useWatch } from "react-hook-form";
@@ -122,11 +123,12 @@ export const CategoryForm = memo(function CategoryForm({
         reset();
         resetImageState();
         onDirtyChange?.(false);
-      } catch {
-        showToast(
-          "error",
+      } catch (err) {
+        const message = getAdminFormErrorMessage(
+          err,
           `Ошибка при ${isEditMode ? "обновлении" : "создании"} категории`
         );
+        showToast("error", message);
       }
     },
     [
@@ -167,8 +169,10 @@ export const CategoryForm = memo(function CategoryForm({
       {error && (
         <div className={FORM_CLASSES.errorContainer}>
           <p className={FORM_CLASSES.errorText}>
-            {error.message ||
-              `Ошибка при ${isEditMode ? "обновлении" : "создании"} категории`}
+            {getAdminFormErrorMessage(
+              error,
+              `Ошибка при ${isEditMode ? "обновлении" : "создании"} категории`
+            )}
           </p>
         </div>
       )}

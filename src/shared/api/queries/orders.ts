@@ -6,6 +6,7 @@ export const ORDER_FIELDS = gql`
     number
     userId
     customerType
+    customerDisplayName
     organizationId
     contactEmail
     contactPhone
@@ -13,6 +14,7 @@ export const ORDER_FIELDS = gql`
     totalAmount
     createdAt
     updatedAt
+    statusChangedAt
     trainingStartDate
     trainingEndDate
     trainingForm

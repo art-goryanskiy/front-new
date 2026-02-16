@@ -6,6 +6,7 @@ import { useCreateProgram } from "@/entities/program/api/use-create-programs";
 import { useUpdateProgram } from "@/entities/program/api/use-update-program";
 import { useProgramModalState } from "@/shared/store/modal-store";
 import { useToastState } from "@/shared/store/toast-store";
+import { getAdminFormErrorMessage } from "@/shared/lib/graphql/error-to-user-message";
 import { FormErrorSummary } from "@/shared/ui/form-error-summary/form-error-summary";
 import { memo, useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
@@ -49,12 +50,14 @@ const ProgramFormError = memo(function ProgramFormError({
 }: ProgramFormErrorProps) {
   if (!error) return null;
 
+  const message = getAdminFormErrorMessage(
+    error,
+    `Ошибка при ${isEditMode ? "обновлении" : "создании"} программы`
+  );
+
   return (
     <div className={FORM_CLASSES.errorContainer}>
-      <p className={FORM_CLASSES.errorText}>
-        {error.message ||
-          `Ошибка при ${isEditMode ? "обновлении" : "создании"} программы`}
-      </p>
+      <p className={FORM_CLASSES.errorText}>{message}</p>
     </div>
   );
 });
@@ -130,11 +133,12 @@ export const ProgramForm = memo(function ProgramForm({
 
         reset();
         onDirtyChange?.(false);
-      } catch {
-        showToast(
-          "error",
+      } catch (err) {
+        const message = getAdminFormErrorMessage(
+          err,
           `Ошибка при ${isEditMode ? "обновлении" : "создании"} программы`
         );
+        showToast("error", message);
       }
     },
     [
