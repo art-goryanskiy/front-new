@@ -22,15 +22,17 @@ export function filterValidPricing(
 }
 
 /**
- * Форматирует ранг из диапазона
+ * Форматирует ранг: один разряд или диапазон «с — по»
  */
 export function formatRank(
   from?: number | null,
   to?: number | null
 ): string {
   if (from != null && to != null) {
-    return `${from} - ${to}`;
+    return from === to ? String(from) : `${from} - ${to}`;
   }
+  if (from != null) return String(from);
+  if (to != null) return String(to);
   return "-";
 }
 
