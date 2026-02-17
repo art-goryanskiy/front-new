@@ -285,10 +285,12 @@ export const LearnerFieldsCard = memo(function LearnerFieldsCard({
               id={id("passportRegistrationAddress")}
               value={data.passportRegistrationAddress}
               onChange={(e) => {
-                set("passportRegistrationAddress", e.target.value);
-                if (data.sameAsRegistration) {
-                  set("residentialAddress", e.target.value);
-                }
+                const value = e.target.value;
+                onChange({
+                  ...data,
+                  passportRegistrationAddress: value,
+                  ...(data.sameAsRegistration ? { residentialAddress: value } : {}),
+                });
               }}
               placeholder="Адрес регистрации"
               className={fieldClass("passportRegistrationAddress")}

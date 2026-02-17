@@ -72,7 +72,9 @@ export const ProgramFormAwardedRankFields = memo(
                 {FORM_LABELS.awardedRankFrom}
               </Label>
               <Input
-                {...field}
+                ref={field.ref}
+                name={field.name}
+                onBlur={field.onBlur}
                 id="awardedRankFrom"
                 type="number"
                 min={RANK_MIN}
@@ -96,7 +98,9 @@ export const ProgramFormAwardedRankFields = memo(
                 {FORM_LABELS.awardedRankTo}
               </Label>
               <Input
-                {...field}
+                ref={field.ref}
+                name={field.name}
+                onBlur={field.onBlur}
                 id="awardedRankTo"
                 type="number"
                 min={RANK_MIN}
