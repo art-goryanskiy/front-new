@@ -266,16 +266,29 @@ export const CheckoutForm = memo(function CheckoutForm({
 
   useEffect(() => {
     const isSelf = customerType === OrderCustomerType.Self;
-    const fillLearner =
-      isSelf && profileLearner
-        ? () => ({ ...profileLearner })
-        : defaultLearnerFormData;
     setLinesLearners((prev) => {
       const next: Record<string, LearnerFormData[]> = {};
       items.forEach((item) => {
         const key = lineKey(item);
         const currentList = prev[key];
         const currentLen = currentList?.length ?? 0;
+
+        if (!isSelf) {
+          // Заказчик не «Я»: каждый слот — либо из профиля (если включено «Подставить мои данные»), либо пустая форма
+          next[key] = Array.from(
+            { length: item.quantity },
+            (_, idx) => {
+              const slotId = `${key}-${idx}`;
+              return useMyDataForLearner[slotId] && profileLearner
+                ? { ...profileLearner }
+                : defaultLearnerFormData();
+            }
+          );
+        } else {
+          const fillLearner =
+          profileLearner
+            ? () => ({ ...profileLearner })
+            : defaultLearnerFormData;
         if (currentLen === item.quantity) {
           next[key] = currentList!;
         } else if (currentList && item.quantity > currentLen) {
@@ -293,6 +306,7 @@ export const CheckoutForm = memo(function CheckoutForm({
             { length: item.quantity },
             fillLearner
           );
+        }
         }
       });
       return next;
