@@ -4,6 +4,7 @@ import { memo } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { AddressSuggestInput } from "@/shared/ui/form-fields/address-suggest-field";
 import type { LearnerFormData } from "../types/learner-form-data.types";
 import type { LearnerFieldErrors } from "../utils/validate-learner";
 import { PROFILE_FORM_LABELS } from "@/features/profile/ui/constants/profile-form-constants";
@@ -277,26 +278,23 @@ export const LearnerFieldsCard = memo(function LearnerFieldsCard({
       <div>
         <h4 className="mb-2 text-sm font-semibold text-foreground">Адреса</h4>
         <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor={id("passportRegistrationAddress")}>
-              {LABELS.passportRegistrationAddress}{REQUIRED_SUFFIX}
-            </Label>
-            <Input
-              id={id("passportRegistrationAddress")}
-              value={data.passportRegistrationAddress}
-              onChange={(e) => {
-                set("passportRegistrationAddress", e.target.value);
-                if (data.sameAsRegistration) {
-                  set("residentialAddress", e.target.value);
-                }
-              }}
-              placeholder="Адрес регистрации"
-              className={fieldClass("passportRegistrationAddress")}
-            />
-            {errors.passportRegistrationAddress && (
-              <p className="text-xs text-destructive">{errors.passportRegistrationAddress}</p>
-            )}
-          </div>
+          <AddressSuggestInput
+            id={id("passportRegistrationAddress")}
+            label={`${LABELS.passportRegistrationAddress}${REQUIRED_SUFFIX}`}
+            placeholder="Адрес регистрации"
+            value={data.passportRegistrationAddress}
+            onChange={(value) =>
+              onChange({
+                ...data,
+                passportRegistrationAddress: value,
+                ...(data.sameAsRegistration ? { residentialAddress: value } : {}),
+              })
+            }
+            isRequired
+            className={fieldClass("passportRegistrationAddress")}
+            error={errors.passportRegistrationAddress}
+            invalid={Boolean(errors.passportRegistrationAddress)}
+          />
           <div className="flex items-center gap-2">
             <Switch
               id={id("sameAsRegistration")}
@@ -308,21 +306,17 @@ export const LearnerFieldsCard = memo(function LearnerFieldsCard({
             </Label>
           </div>
           {!data.sameAsRegistration && (
-            <div className="space-y-2">
-              <Label htmlFor={id("residentialAddress")}>
-                {LABELS.residentialAddress}{REQUIRED_SUFFIX}
-              </Label>
-              <Input
-                id={id("residentialAddress")}
-                value={data.residentialAddress}
-                onChange={(e) => set("residentialAddress", e.target.value)}
-                placeholder="Адрес проживания"
-                className={fieldClass("residentialAddress")}
-              />
-              {errors.residentialAddress && (
-                <p className="text-xs text-destructive">{errors.residentialAddress}</p>
-              )}
-            </div>
+            <AddressSuggestInput
+              id={id("residentialAddress")}
+              label={`${LABELS.residentialAddress}${REQUIRED_SUFFIX}`}
+              placeholder="Адрес проживания"
+              value={data.residentialAddress}
+              onChange={(value) => set("residentialAddress", value)}
+              isRequired
+              className={fieldClass("residentialAddress")}
+              error={errors.residentialAddress}
+              invalid={Boolean(errors.residentialAddress)}
+            />
           )}
         </div>
       </div>

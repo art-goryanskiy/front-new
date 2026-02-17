@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useMyCart } from "@/entities/cart/api/use-my-cart";
+import { useUpdateCartItem } from "@/entities/cart/api/use-update-cart-item";
 import { buildOrderLinesFromCart } from "@/entities/order/api/build-order-lines-from-cart";
 import { useCreateOrderFromCart } from "@/entities/order/api/use-create-order-from-cart";
 import { useMe } from "@/features/auth/api/use-me";
@@ -27,7 +28,7 @@ import { Surface } from "@/shared/ui/surface/surface";
 import { OrganizationSuggestInput } from "@/shared/ui/form-fields/organization-suggest-input";
 import type { OrganizationSuggestion } from "@/shared/ui/form-fields/organization-suggest-input";
 import { CheckoutFormSkeleton } from "./checkout-form-skeleton";
-import { ShoppingBag } from "lucide-react";
+import { ShoppingBag, UserPlus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
   memo,
@@ -146,6 +147,7 @@ export const CheckoutForm = memo(function CheckoutForm({
   const { user: meUser, refetch: refetchMe } = useMe({ skip: false });
   const user = meUser ?? storeUser;
   const { items, totalAmount, loading: cartLoading } = useMyCart();
+  const { updateCartItem, loading: updatingCart } = useUpdateCartItem();
 
   useEffect(() => {
     refetchMe({ fetchPolicy: "network-only" });
@@ -264,19 +266,48 @@ export const CheckoutForm = memo(function CheckoutForm({
 
   useEffect(() => {
     const isSelf = customerType === OrderCustomerType.Self;
-    const fillLearner =
-      isSelf && profileLearner
-        ? () => ({ ...profileLearner })
-        : defaultLearnerFormData;
     setLinesLearners((prev) => {
       const next: Record<string, LearnerFormData[]> = {};
       items.forEach((item) => {
         const key = lineKey(item);
-        const keepPrev =
-          isSelf && prev[key]?.length === item.quantity;
-        next[key] = keepPrev
-          ? prev[key]
-          : Array.from({ length: item.quantity }, fillLearner);
+        const currentList = prev[key];
+        const currentLen = currentList?.length ?? 0;
+
+        if (!isSelf) {
+          // Заказчик не «Я»: каждый слот — либо из профиля (если включено «Подставить мои данные»), либо пустая форма
+          next[key] = Array.from(
+            { length: item.quantity },
+            (_, idx) => {
+              const slotId = `${key}-${idx}`;
+              return useMyDataForLearner[slotId] && profileLearner
+                ? { ...profileLearner }
+                : defaultLearnerFormData();
+            }
+          );
+        } else {
+          const fillLearner =
+          profileLearner
+            ? () => ({ ...profileLearner })
+            : defaultLearnerFormData;
+        if (currentLen === item.quantity) {
+          next[key] = currentList!;
+        } else if (currentList && item.quantity > currentLen) {
+          next[key] = [
+            ...currentList,
+            ...Array.from(
+              { length: item.quantity - currentLen },
+              fillLearner
+            ),
+          ];
+        } else if (currentList && item.quantity < currentLen) {
+          next[key] = currentList.slice(0, item.quantity);
+        } else {
+          next[key] = Array.from(
+            { length: item.quantity },
+            fillLearner
+          );
+        }
+        }
       });
       return next;
     });
@@ -349,6 +380,36 @@ export const CheckoutForm = memo(function CheckoutForm({
   );
 
   const learnerSlotId = useCallback((key: string, idx: number) => `${key}-${idx}`, []);
+
+  /** Добавить слот слушателя по линии: обновить корзину (quantity+1) и локально добавить пустую форму */
+  const addLearnerToLine = useCallback(
+    async (key: string, item: CartItemEntity) => {
+      const fillLearner =
+        isSelf && profileLearner
+          ? () => ({ ...profileLearner })
+          : defaultLearnerFormData;
+      setLinesLearners((prev) => ({
+        ...prev,
+        [key]: [...(prev[key] ?? []), fillLearner()],
+      }));
+      try {
+        await updateCartItem({
+          programId: item.programId,
+          pricingIndex: item.pricingIndex,
+          quantity: item.quantity + 1,
+          subProgramIndex: item.subProgramIndex ?? undefined,
+        });
+      } catch {
+        showToast("error", "Не удалось добавить место");
+        setLinesLearners((prev) => {
+          const list = prev[key] ?? [];
+          if (list.length <= item.quantity) return prev;
+          return { ...prev, [key]: list.slice(0, item.quantity) };
+        });
+      }
+    },
+    [isSelf, profileLearner, updateCartItem, showToast]
+  );
 
   const setUseMyData = useCallback(
     (key: string, learnerIndex: number, checked: boolean) => {
@@ -934,23 +995,6 @@ export const CheckoutForm = memo(function CheckoutForm({
                       </p>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="contactPersonName">
-                        ФИО контактного лица <span className="text-destructive">*</span>
-                      </Label>
-                      <Input
-                        id="contactPersonName"
-                        value={orderLevelData.contactPersonName}
-                        onChange={(e) =>
-                          setOrderLevelData((p) => ({
-                            ...p,
-                            contactPersonName: e.target.value,
-                          }))
-                        }
-                        placeholder="ФИО"
-                        className="rounded-xl"
-                      />
-                    </div>
-                    <div className="space-y-2">
                       <Label htmlFor="contactPersonPosition">
                         Должность контактного лица <span className="text-destructive">*</span>
                       </Label>
@@ -964,6 +1008,23 @@ export const CheckoutForm = memo(function CheckoutForm({
                           }))
                         }
                         placeholder="Должность"
+                        className="rounded-xl"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="contactPersonName">
+                        ФИО контактного лица <span className="text-destructive">*</span>
+                      </Label>
+                      <Input
+                        id="contactPersonName"
+                        value={orderLevelData.contactPersonName}
+                        onChange={(e) =>
+                          setOrderLevelData((p) => ({
+                            ...p,
+                            contactPersonName: e.target.value,
+                          }))
+                        }
+                        placeholder="ФИО"
                         className="rounded-xl"
                       />
                     </div>
@@ -1077,16 +1138,29 @@ export const CheckoutForm = memo(function CheckoutForm({
                     itemIndex > 0 && "mt-5"
                   )}
                 >
-                  <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
+                  <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
                     <p className="font-semibold tracking-tight text-foreground">
                       {displayTitle}
                     </p>
-                    <p className="text-sm text-muted-foreground">
-                      {item.quantity} мест(а) ·{" "}
-                      <span className="font-medium text-foreground">
-                        {formatPriceWithCurrency(item.lineAmount)}
-                      </span>
-                    </p>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="text-sm text-muted-foreground">
+                        {item.quantity} мест(а) ·{" "}
+                        <span className="font-medium text-foreground">
+                          {formatPriceWithCurrency(item.lineAmount)}
+                        </span>
+                      </p>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        disabled={updatingCart}
+                        onClick={() => addLearnerToLine(key, item)}
+                        className="shrink-0"
+                      >
+                        <UserPlus className="mr-1.5 h-4 w-4" aria-hidden />
+                        Добавить слушателя
+                      </Button>
+                    </div>
                   </div>
                   <div className="space-y-3">
                     {learners.map((learner, idx) => {
