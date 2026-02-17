@@ -99,7 +99,7 @@ export const ProgramForm = memo(function ProgramForm({
     [editingProgram]
   );
 
-  const { control, handleSubmit, reset, formState } =
+  const { control, handleSubmit, reset, setValue, formState } =
     useForm<ProgramFormData>({
       defaultValues,
     });
@@ -208,7 +208,7 @@ export const ProgramForm = memo(function ProgramForm({
             <ProgramFormAwardedQualificationField control={control} />
           )}
           {config.showAwardedRank && (
-            <ProgramFormAwardedRankFields control={control} />
+            <ProgramFormAwardedRankFields control={control} setValue={setValue} />
           )}
         </div>
       )}

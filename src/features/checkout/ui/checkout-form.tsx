@@ -934,23 +934,6 @@ export const CheckoutForm = memo(function CheckoutForm({
                       </p>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="contactPersonName">
-                        ФИО контактного лица <span className="text-destructive">*</span>
-                      </Label>
-                      <Input
-                        id="contactPersonName"
-                        value={orderLevelData.contactPersonName}
-                        onChange={(e) =>
-                          setOrderLevelData((p) => ({
-                            ...p,
-                            contactPersonName: e.target.value,
-                          }))
-                        }
-                        placeholder="ФИО"
-                        className="rounded-xl"
-                      />
-                    </div>
-                    <div className="space-y-2">
                       <Label htmlFor="contactPersonPosition">
                         Должность контактного лица <span className="text-destructive">*</span>
                       </Label>
@@ -964,6 +947,23 @@ export const CheckoutForm = memo(function CheckoutForm({
                           }))
                         }
                         placeholder="Должность"
+                        className="rounded-xl"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="contactPersonName">
+                        ФИО контактного лица <span className="text-destructive">*</span>
+                      </Label>
+                      <Input
+                        id="contactPersonName"
+                        value={orderLevelData.contactPersonName}
+                        onChange={(e) =>
+                          setOrderLevelData((p) => ({
+                            ...p,
+                            contactPersonName: e.target.value,
+                          }))
+                        }
+                        placeholder="ФИО"
                         className="rounded-xl"
                       />
                     </div>
