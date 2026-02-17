@@ -121,36 +121,45 @@ function toStoredAddressString(sug: AddressSuggestion): string {
   return `${postalCode}, ${value}`;
 }
 
-export const AddressSuggestField = memo(function AddressSuggestField<
-  TFieldValues extends FieldValues = FieldValues,
->({
-  control,
-  name,
+/** Пропсы для поля с подсказками адреса (value/onChange, без react-hook-form) */
+export interface AddressSuggestInputProps {
+  value: string;
+  onChange: (value: string) => void;
+  id: string;
+  label: string;
+  placeholder?: string;
+  isRequired?: boolean;
+  className?: string;
+  description?: string;
+  isDisabled?: boolean;
+  minQueryLength?: number;
+  debounceMs?: number;
+  count?: number;
+  error?: string;
+  invalid?: boolean;
+}
+
+function AddressSuggestFieldInner({
+  value,
+  onChange,
+  id,
   label,
   placeholder,
   isRequired = false,
-  rules,
   className = "w-full",
   description,
   isDisabled,
   minQueryLength = 3,
   debounceMs = 350,
   count = 8,
-}: AddressSuggestFieldProps<TFieldValues>) {
+  error,
+  invalid = false,
+}: AddressSuggestInputProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
 
-  const { field, fieldState } = useController({
-    name,
-    control,
-    rules,
-  });
-
-  const rawValue = useMemo(
-    () => String(field.value ?? ""),
-    [field.value]
-  );
+  const rawValue = useMemo(() => String(value ?? ""), [value]);
   const q = useMemo(() => rawValue.trim(), [rawValue]);
   const debounced = useDebounce(q, debounceMs);
 
@@ -164,9 +173,8 @@ export const AddressSuggestField = memo(function AddressSuggestField<
 
   const items = queryState.data?.addressSuggestions ?? [];
   const loading = queryState.loading;
-  const error = queryState.error;
-
-  const rateLimited = useMemo(() => is429(error), [error]);
+  const queryError = queryState.error;
+  const rateLimited = useMemo(() => is429(queryError), [queryError]);
 
   const shouldQuery =
     isOpen &&
@@ -181,10 +189,8 @@ export const AddressSuggestField = memo(function AddressSuggestField<
     });
   }, [count, debounced, loadSuggestions, shouldQuery]);
 
-  // Close on click outside
   useEffect(() => {
     if (!isOpen) return;
-
     const onDocMouseDown = (event: MouseEvent) => {
       const el = containerRef.current;
       if (!el) return;
@@ -193,42 +199,37 @@ export const AddressSuggestField = memo(function AddressSuggestField<
         setActiveIndex(-1);
       }
     };
-
     document.addEventListener("mousedown", onDocMouseDown);
     return () =>
       document.removeEventListener("mousedown", onDocMouseDown);
   }, [isOpen]);
 
   const selectSuggestion = useCallback(
-    (value: string) => {
-      field.onChange(value);
+    (v: string) => {
+      onChange(v);
       setIsOpen(false);
       setActiveIndex(-1);
     },
-    [field]
+    [onChange]
   );
 
   const showDropdown =
     isOpen && q.length >= minQueryLength && !isDisabled;
 
-  const baseId = useMemo(() => {
-    const raw = String(name);
-    return raw.replace(/[^a-zA-Z0-9_-]/g, "-");
-  }, [name]);
+  const baseId = useMemo(
+    () => id.replace(/[^a-zA-Z0-9_-]/g, "-"),
+    [id]
+  );
 
   const currentIndex = useMemo(() => {
     if (!showDropdown) return -1;
-    if (activeIndex >= 0 && activeIndex < items.length)
-      return activeIndex;
+    if (activeIndex >= 0 && activeIndex < items.length) return activeIndex;
     return items.length > 0 ? 0 : -1;
   }, [activeIndex, items.length, showDropdown]);
 
   useEffect(() => {
-    if (!showDropdown) return;
-    if (currentIndex < 0) return;
-    const el = document.getElementById(
-      `${baseId}-opt-${currentIndex}`
-    );
+    if (!showDropdown || currentIndex < 0) return;
+    const el = document.getElementById(`${baseId}-opt-${currentIndex}`);
     el?.scrollIntoView({ block: "nearest" });
   }, [baseId, currentIndex, showDropdown]);
 
@@ -247,10 +248,10 @@ export const AddressSuggestField = memo(function AddressSuggestField<
     >
       <div className="group relative pt-2">
         <Label
-          htmlFor={name}
+          htmlFor={id}
           className={cn(
             "absolute top-2 left-3 z-10 -translate-y-1/2 rounded-md bg-background/80 px-1 text-[11px] font-medium backdrop-blur-sm transition-colors",
-            fieldState.invalid
+            invalid
               ? "text-destructive"
               : "text-muted-foreground group-focus-within:text-foreground"
           )}
@@ -261,8 +262,16 @@ export const AddressSuggestField = memo(function AddressSuggestField<
 
         <div className="relative">
           <Input
-            {...field}
-            id={name}
+            value={value}
+            onChange={(e) => {
+              const next = e.target.value;
+              onChange(next);
+              if (!isDisabled) {
+                setIsOpen(next.trim().length >= minQueryLength);
+                setActiveIndex(0);
+              }
+            }}
+            id={id}
             type="text"
             placeholder={placeholder}
             required={isRequired}
@@ -270,11 +279,12 @@ export const AddressSuggestField = memo(function AddressSuggestField<
             spellCheck={true}
             autoCorrect="on"
             disabled={isDisabled}
-            aria-invalid={fieldState.invalid}
+            aria-invalid={invalid}
             aria-label={label}
             className={cn(
               "peer bg-background/60 pr-10",
-              showDropdown && "rounded-b-none"
+              showDropdown && "rounded-b-none",
+              invalid && "border-destructive focus-visible:ring-destructive/20"
             )}
             onFocus={() => {
               if (!isDisabled && q.length >= minQueryLength) {
@@ -282,27 +292,15 @@ export const AddressSuggestField = memo(function AddressSuggestField<
                 setActiveIndex(0);
               }
             }}
-            onChange={(e) => {
-              const next = e.target.value;
-              field.onChange(next);
-              if (isDisabled) return;
-              setIsOpen(next.trim().length >= minQueryLength);
-              setActiveIndex(0);
-            }}
             onKeyDown={(e) => {
               if (e.key === "Escape") {
                 setIsOpen(false);
                 setActiveIndex(-1);
                 return;
               }
-
               if (e.key === "ArrowDown") {
                 e.preventDefault();
-                if (
-                  !isOpen &&
-                  q.length >= minQueryLength &&
-                  !isDisabled
-                ) {
+                if (!isOpen && q.length >= minQueryLength && !isDisabled) {
                   setIsOpen(true);
                   setActiveIndex(0);
                   return;
@@ -314,7 +312,6 @@ export const AddressSuggestField = memo(function AddressSuggestField<
                 });
                 return;
               }
-
               if (e.key === "ArrowUp") {
                 e.preventDefault();
                 setActiveIndex((prev) => {
@@ -324,10 +321,8 @@ export const AddressSuggestField = memo(function AddressSuggestField<
                 });
                 return;
               }
-
               if (e.key === "Enter") {
-                if (!showDropdown) return;
-                if (currentIndex < 0) return;
+                if (!showDropdown || currentIndex < 0) return;
                 const sug = items[currentIndex];
                 if (!sug) return;
                 e.preventDefault();
@@ -360,7 +355,7 @@ export const AddressSuggestField = memo(function AddressSuggestField<
                     <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
                     Слишком часто. Попробуйте позже.
                   </div>
-                ) : error ? (
+                ) : queryError ? (
                   <div className="px-4 py-3 text-sm text-muted-foreground">
                     Не удалось загрузить подсказки.
                   </div>
@@ -373,9 +368,7 @@ export const AddressSuggestField = memo(function AddressSuggestField<
                     {items.map((sug, idx) => {
                       const secondary =
                         sug.region || sug.city
-                          ? [sug.region, sug.city]
-                              .filter(Boolean)
-                              .join(", ")
+                          ? [sug.region, sug.city].filter(Boolean).join(", ")
                           : null;
                       const active = idx === currentIndex;
                       return (
@@ -385,14 +378,9 @@ export const AddressSuggestField = memo(function AddressSuggestField<
                           type="button"
                           role="option"
                           aria-selected={active}
-                          onMouseDown={(e) => {
-                            // Prevent input blur before click
-                            e.preventDefault();
-                          }}
+                          onMouseDown={(e) => e.preventDefault()}
                           onClick={() =>
-                            selectSuggestion(
-                              toStoredAddressString(sug)
-                            )
+                            selectSuggestion(toStoredAddressString(sug))
                           }
                           className={cn(
                             "w-full rounded-lg px-4 py-2 text-left text-sm text-foreground transition-colors hover:bg-muted/60",
@@ -418,20 +406,65 @@ export const AddressSuggestField = memo(function AddressSuggestField<
         </div>
       </div>
 
-      {description && !fieldState.error && !rateLimited && (
+      {description && !error && !rateLimited && (
         <p className="text-sm text-muted-foreground">{description}</p>
       )}
-      {rateLimited && !fieldState.error && (
+      {rateLimited && !error && (
         <p className="text-sm text-muted-foreground">
           Слишком часто, попробуйте позже.
         </p>
       )}
-      {fieldState.error?.message && (
-        <p className="text-sm text-destructive">
-          {fieldState.error.message}
-        </p>
-      )}
+      {error && <p className="text-sm text-destructive">{error}</p>}
     </div>
+  );
+}
+
+/** Поле адреса с подсказками по value/onChange (без react-hook-form) */
+export const AddressSuggestInput = memo(function AddressSuggestInput(
+  props: AddressSuggestInputProps
+) {
+  return <AddressSuggestFieldInner {...props} />;
+});
+
+export const AddressSuggestField = memo(function AddressSuggestField<
+  TFieldValues extends FieldValues = FieldValues,
+>({
+  control,
+  name,
+  label,
+  placeholder,
+  isRequired = false,
+  rules,
+  className = "w-full",
+  description,
+  isDisabled,
+  minQueryLength = 3,
+  debounceMs = 350,
+  count = 8,
+}: AddressSuggestFieldProps<TFieldValues>) {
+  const { field, fieldState } = useController({
+    name,
+    control,
+    rules,
+  });
+
+  return (
+    <AddressSuggestFieldInner
+      value={field.value ?? ""}
+      onChange={field.onChange}
+      id={String(name)}
+      label={label}
+      placeholder={placeholder}
+      isRequired={isRequired}
+      className={className}
+      description={description}
+      isDisabled={isDisabled}
+      minQueryLength={minQueryLength}
+      debounceMs={debounceMs}
+      count={count}
+      error={fieldState.error?.message}
+      invalid={fieldState.invalid}
+    />
   );
 }) as <TFieldValues extends FieldValues = FieldValues>(
   props: AddressSuggestFieldProps<TFieldValues>
