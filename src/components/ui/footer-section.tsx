@@ -28,7 +28,6 @@ const footerLinks: FooterSection[] = [
   {
     label: "Программы",
     links: [
-      { title: "Главная", href: "/" },
       { title: "Повышение квалификации", href: "/qualification-upgrade" },
       { title: "Проф. переподготовка", href: "/professional-retraining" },
       { title: "Проф. обучение", href: "/professional-education" },
@@ -41,10 +40,6 @@ const footerLinks: FooterSection[] = [
       { title: "Мои заявки", href: "/orders" },
       { title: "Профиль", href: "/profile" },
     ],
-  },
-  {
-    label: "О нас",
-    links: [{ title: "Контакты", href: "/contacts" }],
   },
   {
     label: "Документы",
@@ -128,7 +123,9 @@ export function Footer() {
             />
           </Link>
           <p className="mt-6 text-sm text-muted-foreground md:mt-0">
-            © {year} ООО ЦОК «СТАНДАРТ ПЛЮС». Все права защищены.
+            © {year} ООО ЦОК «СТАНДАРТ ПЛЮС».
+            <br />
+            Все права защищены.
           </p>
         </AnimatedContainer>
 
