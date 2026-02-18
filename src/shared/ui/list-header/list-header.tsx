@@ -1,6 +1,7 @@
 "use client";
 
 import { memo, ReactNode } from "react";
+import { MarkdownContent } from "@/shared/ui/markdown/markdown-content";
 
 interface ListHeaderProps {
   title: string;
@@ -25,7 +26,9 @@ export const ListHeader = memo(function ListHeader({
       <div className="space-y-2">
         <h1 className={titleClassName}>{title}</h1>
         {description && (
-          <p className={descriptionClassName}>{description}</p>
+          <div className={descriptionClassName}>
+            <MarkdownContent content={description} />
+          </div>
         )}
       </div>
     </div>
