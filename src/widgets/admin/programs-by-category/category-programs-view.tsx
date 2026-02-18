@@ -117,7 +117,8 @@ export const CategoryProgramsView = memo(
       openCreateProgramModal(categoryId, categoryType);
     }, [openCreateProgramModal, categoryId, categoryType]);
 
-    if (loading && page === 1) return <CategoryProgramsViewSkeleton />;
+    if (loading && page === 1)
+      return <CategoryProgramsViewSkeleton />;
     if (error) return <ErrorState message={error.message} />;
 
     return (

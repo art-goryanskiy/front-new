@@ -16,7 +16,9 @@ export default function OrderDetailPage() {
           {id ? (
             <OrderDetailContent orderId={id} />
           ) : (
-            <p className="text-muted-foreground">Неверный идентификатор заявки.</p>
+            <p className="text-muted-foreground">
+              Неверный идентификатор заявки.
+            </p>
           )}
         </div>
       </PublicPageLayout>

@@ -21,12 +21,13 @@ export function getCategoryIdsByType<T extends CategoryWithType>(
 /**
  * Фильтрует программы по списку id категорий.
  */
-export function filterProgramsByCategoryIds<T extends ProgramWithCategory>(
-  programs: T[],
-  categoryIds: string[]
-): T[] {
+export function filterProgramsByCategoryIds<
+  T extends ProgramWithCategory,
+>(programs: T[], categoryIds: string[]): T[] {
   if (!categoryIds.length) return [];
-  return programs.filter((program) => categoryIds.includes(program.category));
+  return programs.filter((program) =>
+    categoryIds.includes(program.category)
+  );
 }
 
 /**

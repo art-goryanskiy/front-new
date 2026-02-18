@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCategories } from "@/entities/category/api/use-categories";
 import { CategoryType } from "@/shared/api/generated/graphql";
+import { formatProgramsCount } from "@/shared/lib/helpers/plural";
 import { useCategoryModalState } from "@/shared/store/modal-store";
 import { DashboardSection } from "@/shared/ui/dashboard-section/dashboard-section";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
@@ -180,7 +181,9 @@ export const AdminPageClient = memo(function AdminPageClient() {
                       <span className="inline-flex items-center rounded-full border border-border/60 bg-muted/20 px-2 py-1 text-[11px] text-muted-foreground">
                         {loading
                           ? "…"
-                          : `${stats?.programsSum ?? 0} программ`}
+                          : formatProgramsCount(
+                              stats?.programsSum ?? 0
+                            )}
                       </span>
                     </div>
                   </div>

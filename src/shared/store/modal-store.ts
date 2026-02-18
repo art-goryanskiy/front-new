@@ -49,8 +49,12 @@ interface ModalStore {
   deletingEducationDocument: EducationDocumentEntity | null;
 
   openCreateEducationDocumentModal: () => void;
-  openEditEducationDocumentModal: (doc: EducationDocumentEntity) => void;
-  openDeleteEducationDocumentModal: (doc: EducationDocumentEntity) => void;
+  openEditEducationDocumentModal: (
+    doc: EducationDocumentEntity
+  ) => void;
+  openDeleteEducationDocumentModal: (
+    doc: EducationDocumentEntity
+  ) => void;
   closeEducationDocumentModal: () => void;
   closeDeleteEducationDocumentModal: () => void;
 
@@ -245,14 +249,16 @@ export const useProgramModalState = () =>
 export const useEducationDocumentModalState = () =>
   useModalStore(
     useShallow((state) => ({
-      isEducationDocumentModalOpen: state.isEducationDocumentModalOpen,
+      isEducationDocumentModalOpen:
+        state.isEducationDocumentModalOpen,
       isDeleteEducationDocumentModalOpen:
         state.isDeleteEducationDocumentModalOpen,
       editingEducationDocument: state.editingEducationDocument,
       deletingEducationDocument: state.deletingEducationDocument,
       openCreateEducationDocumentModal:
         state.openCreateEducationDocumentModal,
-      openEditEducationDocumentModal: state.openEditEducationDocumentModal,
+      openEditEducationDocumentModal:
+        state.openEditEducationDocumentModal,
       openDeleteEducationDocumentModal:
         state.openDeleteEducationDocumentModal,
       closeEducationDocumentModal: state.closeEducationDocumentModal,

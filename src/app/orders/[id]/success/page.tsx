@@ -14,9 +14,14 @@ export default function OrderPaymentSuccessPage() {
       <PublicPageLayout>
         <div className="flex min-h-0 flex-1 flex-col gap-6">
           {id ? (
-            <OrderPaymentReturnContent orderId={id} variant="success" />
+            <OrderPaymentReturnContent
+              orderId={id}
+              variant="success"
+            />
           ) : (
-            <p className="text-muted-foreground">Неверный идентификатор заявки.</p>
+            <p className="text-muted-foreground">
+              Неверный идентификатор заявки.
+            </p>
           )}
         </div>
       </PublicPageLayout>

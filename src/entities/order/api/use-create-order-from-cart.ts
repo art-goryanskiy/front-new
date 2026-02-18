@@ -19,7 +19,9 @@ export function useCreateOrderFromCart() {
   const createOrderFromCart = async (
     input: CreateOrderFromCartMutationVariables["input"]
   ): Promise<OrderFieldsFragment | null> => {
-    const result = await createOrderMutation({ variables: { input } });
+    const result = await createOrderMutation({
+      variables: { input },
+    });
     const raw = result.data?.createOrderFromCart ?? null;
     return raw as OrderFieldsFragment | null;
   };

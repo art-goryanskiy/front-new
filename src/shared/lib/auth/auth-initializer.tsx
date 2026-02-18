@@ -10,7 +10,7 @@ export function AuthInitializer() {
   // После логина Login возвращает user без profile; если Me тогда упал — в сторе
   // остаётся user без profile.avatar, и аватар не показывается до перезагрузки.
   useMe({
-    skip: !!(user?.profile),
+    skip: !!user?.profile,
   });
 
   return null;

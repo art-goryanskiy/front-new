@@ -1,10 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import {
-  Avatar,
-  AvatarFallback,
-} from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,7 +15,13 @@ import { useAuthStatus } from "@/shared/store/auth-store";
 import { AUTH_GUARD_ROUTES } from "@/shared/lib/auth/constants/auth-guard-constants";
 import { ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { cn } from "@/lib/utils";
 import {
   USER_MENU_CLASSES,
@@ -62,11 +65,17 @@ export const UserMenu = memo(function UserMenu({
     const last = user?.lastName ?? user?.profile?.lastName ?? "";
     const name = [first, last].filter(Boolean).join(" ").trim();
     return name || userEmail;
-  }, [user?.firstName, user?.lastName, user?.profile?.firstName, user?.profile?.lastName, userEmail]);
+  }, [
+    user?.firstName,
+    user?.lastName,
+    user?.profile?.firstName,
+    user?.profile?.lastName,
+    userEmail,
+  ]);
 
   const avatarUrl = user?.profile?.avatar ?? null;
   useEffect(() => {
-    setAvatarLoaded(false);
+    queueMicrotask(() => setAvatarLoaded(false));
   }, [avatarUrl]);
 
   const handleProfile = useCallback(() => {
@@ -136,7 +145,7 @@ export const UserMenu = memo(function UserMenu({
         }}
       >
         <DropdownMenuLabel className="font-normal">
-          <span className="truncate block">{displayName}</span>
+          <span className="block truncate">{displayName}</span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         {menuItems.map((item) => (
@@ -161,7 +170,11 @@ export const UserMenu = memo(function UserMenu({
         ))}
         {isAdmin && (
           <DropdownMenuItem onClick={handleAdmin}>
-            <Icon name="settings" className="mr-2 h-4 w-4" size={16} />
+            <Icon
+              name="settings"
+              className="mr-2 h-4 w-4"
+              size={16}
+            />
             {USER_MENU_TEXTS.admin}
           </DropdownMenuItem>
         )}

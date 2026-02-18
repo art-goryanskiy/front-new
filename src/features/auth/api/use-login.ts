@@ -22,7 +22,9 @@ export function useLogin() {
       setUser(result.data.login);
       setLoading(false);
       try {
-        const { data } = await client.query<{ me: UserEntity | null }>({
+        const { data } = await client.query<{
+          me: UserEntity | null;
+        }>({
           query: ME,
           fetchPolicy: "network-only",
         });

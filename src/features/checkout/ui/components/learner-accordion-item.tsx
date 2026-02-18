@@ -8,7 +8,9 @@ import type { LearnerFormData } from "../types/learner-form-data.types";
 
 function learnerShortLabel(data: LearnerFormData): string {
   const hasName =
-    data.lastName?.trim() || data.firstName?.trim() || data.middleName?.trim();
+    data.lastName?.trim() ||
+    data.firstName?.trim() ||
+    data.middleName?.trim();
   if (hasName) {
     const last = (data.lastName?.trim() || "").trim();
     const first = (data.firstName?.trim() || "").charAt(0);
@@ -70,7 +72,9 @@ export function LearnerAccordionItem({
         )}
         aria-expanded={open}
       >
-        <span className="min-w-0 flex-1 text-foreground">{label}</span>
+        <span className="min-w-0 flex-1 text-foreground">
+          {label}
+        </span>
         <span className="flex shrink-0 items-center gap-2">
           {showStatusDot && (
             <>
@@ -108,7 +112,7 @@ export function LearnerAccordionItem({
                 "border-b border-border/40",
                 "bg-muted/10",
                 useMyData &&
-                  "border-primary/30 bg-primary/5 dark:bg-primary/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.03)] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)]"
+                  "border-primary/30 bg-primary/5 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.03)] dark:bg-primary/10 dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)]"
               )}
             >
               <div className="relative flex items-center gap-3">

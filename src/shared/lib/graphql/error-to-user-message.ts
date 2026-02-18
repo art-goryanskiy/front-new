@@ -14,20 +14,33 @@ export function parseApolloError(error: unknown): ParsedApolloError {
 
   if (error && typeof error === "object") {
     const o = error as Record<string, unknown>;
-    const gql = o.graphQLErrors as Array<{ message?: string; extensions?: { code?: string } }> | undefined;
+    const gql = o.graphQLErrors as
+      | Array<{ message?: string; extensions?: { code?: string } }>
+      | undefined;
     if (Array.isArray(gql) && gql.length > 0) {
       if (gql[0]?.message) message = String(gql[0].message).trim();
-      is401 = gql.some((g) => g?.extensions?.code === "UNAUTHENTICATED");
+      is401 = gql.some(
+        (g) => g?.extensions?.code === "UNAUTHENTICATED"
+      );
     }
-    if (!message && o.networkError && typeof o.networkError === "object") {
-      const net = o.networkError as { message?: string; statusCode?: number };
+    if (
+      !message &&
+      o.networkError &&
+      typeof o.networkError === "object"
+    ) {
+      const net = o.networkError as {
+        message?: string;
+        statusCode?: number;
+      };
       if (net.message) message = String(net.message).trim();
       if (net.statusCode === 401) is401 = true;
     }
-    if (!message && typeof o.message === "string") message = (o.message as string).trim();
+    if (!message && typeof o.message === "string")
+      message = (o.message as string).trim();
   }
 
-  if (!message && error instanceof Error) message = error.message.trim();
+  if (!message && error instanceof Error)
+    message = error.message.trim();
 
   return { message, is401 };
 }

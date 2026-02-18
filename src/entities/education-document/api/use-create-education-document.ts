@@ -14,8 +14,12 @@ export function useCreateEducationDocument() {
     awaitRefetchQueries: true,
   });
 
-  const handleCreate = async (input: CreateEducationDocumentInput) => {
-    const result = await createEducationDocument({ variables: { input } });
+  const handleCreate = async (
+    input: CreateEducationDocumentInput
+  ) => {
+    const result = await createEducationDocument({
+      variables: { input },
+    });
     return result.data?.createEducationDocument;
   };
 

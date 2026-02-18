@@ -28,176 +28,194 @@ import {
   updateEducationDocumentInput,
 } from "./utils/education-document-form-utils";
 
-export const EducationDocumentForm = memo(function EducationDocumentForm({
-  editingDocument,
-  onDirtyChange,
-  onBusyChange,
-}: EducationDocumentFormProps) {
-  const isEditMode = !!editingDocument;
-  const { createEducationDocument, loading: creating, error: createError } =
-    useCreateEducationDocument();
-  const { updateEducationDocument, loading: updating, error: updateError } =
-    useUpdateEducationDocument();
+export const EducationDocumentForm = memo(
+  function EducationDocumentForm({
+    editingDocument,
+    onDirtyChange,
+    onBusyChange,
+  }: EducationDocumentFormProps) {
+    const isEditMode = !!editingDocument;
+    const {
+      createEducationDocument,
+      loading: creating,
+      error: createError,
+    } = useCreateEducationDocument();
+    const {
+      updateEducationDocument,
+      loading: updating,
+      error: updateError,
+    } = useUpdateEducationDocument();
 
-  const { closeEducationDocumentModal: closeModal } =
-    useEducationDocumentModalState();
-  const { showToast } = useToastState();
+    const { closeEducationDocumentModal: closeModal } =
+      useEducationDocumentModalState();
+    const { showToast } = useToastState();
 
-  const loading = creating || updating;
-  const error = createError || updateError;
+    const loading = creating || updating;
+    const error = createError || updateError;
 
-  const {
-    imagePreview,
-    uploadingImage,
-    handleImageFile,
-    uploadImageFile,
-    resetImageState,
-  } = useEducationDocumentImage({
-    initialImage: editingDocument?.image || null,
-    editingImage: editingDocument?.image || null,
-  });
-
-  const busy = loading || uploadingImage;
-
-  const defaultValues = useMemo(
-    () => getDefaultValues(editingDocument),
-    [editingDocument]
-  );
-
-  const { control, handleSubmit, reset, formState } =
-    useForm<EducationDocumentFormData>({
-      defaultValues,
+    const {
+      imagePreview,
+      uploadingImage,
+      handleImageFile,
+      uploadImageFile,
+      resetImageState,
+    } = useEducationDocumentImage({
+      initialImage: editingDocument?.image || null,
+      editingImage: editingDocument?.image || null,
     });
 
-  const imageFile = useWatch({ control, name: "image" });
+    const busy = loading || uploadingImage;
 
-  useEffect(() => {
-    onDirtyChange?.(formState.isDirty);
-  }, [formState.isDirty, onDirtyChange]);
+    const defaultValues = useMemo(
+      () => getDefaultValues(editingDocument),
+      [editingDocument]
+    );
 
-  useEffect(() => {
-    onBusyChange?.(busy);
-  }, [busy, onBusyChange]);
+    const { control, handleSubmit, reset, formState } =
+      useForm<EducationDocumentFormData>({
+        defaultValues,
+      });
 
-  useEffect(() => {
-    handleImageFile(imageFile ?? null);
-  }, [imageFile, handleImageFile]);
+    const imageFile = useWatch({ control, name: "image" });
 
-  const onSubmit = useCallback(
-    async (data: EducationDocumentFormData) => {
-      try {
-        const imageUrl = await uploadImageFile(data.image ?? null);
+    useEffect(() => {
+      onDirtyChange?.(formState.isDirty);
+    }, [formState.isDirty, onDirtyChange]);
 
-        if (isEditMode && editingDocument) {
-          const input = updateEducationDocumentInput(data, imageUrl);
-          await updateEducationDocument(editingDocument.id, input);
-          showToast("success", "Документ обновлён");
-          closeModal();
-        } else {
-          const input = createEducationDocumentInput(data, imageUrl);
-          await createEducationDocument(input);
-          showToast("success", "Документ создан");
-          closeModal();
+    useEffect(() => {
+      onBusyChange?.(busy);
+    }, [busy, onBusyChange]);
+
+    useEffect(() => {
+      handleImageFile(imageFile ?? null);
+    }, [imageFile, handleImageFile]);
+
+    const onSubmit = useCallback(
+      async (data: EducationDocumentFormData) => {
+        try {
+          const imageUrl = await uploadImageFile(data.image ?? null);
+
+          if (isEditMode && editingDocument) {
+            const input = updateEducationDocumentInput(
+              data,
+              imageUrl
+            );
+            await updateEducationDocument(editingDocument.id, input);
+            showToast("success", "Документ обновлён");
+            closeModal();
+          } else {
+            const input = createEducationDocumentInput(
+              data,
+              imageUrl
+            );
+            await createEducationDocument(input);
+            showToast("success", "Документ создан");
+            closeModal();
+          }
+
+          reset();
+          resetImageState();
+          onDirtyChange?.(false);
+        } catch {
+          showToast(
+            "error",
+            `Ошибка при ${isEditMode ? "обновлении" : "создании"} документа`
+          );
         }
+      },
+      [
+        isEditMode,
+        editingDocument,
+        uploadImageFile,
+        updateEducationDocument,
+        createEducationDocument,
+        closeModal,
+        reset,
+        resetImageState,
+        showToast,
+        onDirtyChange,
+      ]
+    );
 
-        reset();
-        resetImageState();
-        onDirtyChange?.(false);
-      } catch {
-        showToast(
-          "error",
-          `Ошибка при ${isEditMode ? "обновлении" : "создании"} документа`
-        );
-      }
-    },
-    [
-      isEditMode,
-      editingDocument,
-      uploadImageFile,
-      updateEducationDocument,
-      createEducationDocument,
-      closeModal,
-      reset,
-      resetImageState,
-      showToast,
-      onDirtyChange,
-    ]
-  );
+    const onInvalid = useCallback(() => {
+      const el = document.getElementById("form-error-summary");
+      el?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, []);
 
-  const onInvalid = useCallback(() => {
-    const el = document.getElementById("form-error-summary");
-    el?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, []);
-
-  return (
-    <form
-      onSubmit={handleSubmit(onSubmit, onInvalid)}
-      className={FORM_CLASSES.form}
-    >
-      <div id="form-error-summary">
-        <FormErrorSummary<EducationDocumentFormData>
-          errors={formState.errors}
-          labels={{ name: FORM_LABELS.name }}
-        />
-      </div>
-
-      {error && (
-        <div className={FORM_CLASSES.errorContainer}>
-          <p className={FORM_CLASSES.errorText}>
-            {error.message ||
-              `Ошибка при ${isEditMode ? "обновлении" : "создании"} документа`}
-          </p>
+    return (
+      <form
+        onSubmit={handleSubmit(onSubmit, onInvalid)}
+        className={FORM_CLASSES.form}
+      >
+        <div id="form-error-summary">
+          <FormErrorSummary<EducationDocumentFormData>
+            errors={formState.errors}
+            labels={{ name: FORM_LABELS.name }}
+          />
         </div>
-      )}
 
-      <div className={FORM_CLASSES.section}>
-        <h3 className={FORM_CLASSES.sectionTitle}>Основная информация</h3>
-        <RequiredTextInputField
-          control={control}
-          name="name"
-          label={FORM_LABELS.name}
-          placeholder={FORM_PLACEHOLDERS.name}
-          requiredMessage={FORM_MESSAGES.nameRequired}
-        />
-      </div>
+        {error && (
+          <div className={FORM_CLASSES.errorContainer}>
+            <p className={FORM_CLASSES.errorText}>
+              {error.message ||
+                `Ошибка при ${isEditMode ? "обновлении" : "создании"} документа`}
+            </p>
+          </div>
+        )}
 
-      <div className={FORM_CLASSES.section}>
-        <h3 className={FORM_CLASSES.sectionTitle}>Изображение</h3>
-        <EducationDocumentFormImageField
-          control={control}
-          imagePreview={imagePreview}
-          uploadingImage={uploadingImage}
-          onImageFileChange={handleImageFile}
-        />
-      </div>
+        <div className={FORM_CLASSES.section}>
+          <h3 className={FORM_CLASSES.sectionTitle}>
+            Основная информация
+          </h3>
+          <RequiredTextInputField
+            control={control}
+            name="name"
+            label={FORM_LABELS.name}
+            placeholder={FORM_PLACEHOLDERS.name}
+            requiredMessage={FORM_MESSAGES.nameRequired}
+          />
+        </div>
 
-      <div className={FORM_CLASSES.actions}>
-        <Button
-          type="button"
-          variant="ghost"
-          onClick={closeModal}
-          disabled={loading || uploadingImage}
-          className="min-w-24"
-        >
-          {FORM_MESSAGES.cancel}
-        </Button>
-        <Button
-          type="submit"
-          disabled={loading || uploadingImage}
-          className="min-w-32 font-semibold shadow-lg transition-shadow hover:shadow-xl"
-        >
-          {loading || uploadingImage ? (
-            <>
-              <Spinner className="mr-2 h-4 w-4" size={16} />
-              {isEditMode ? FORM_MESSAGES.save : FORM_MESSAGES.create}
-            </>
-          ) : isEditMode ? (
-            FORM_MESSAGES.save
-          ) : (
-            FORM_MESSAGES.create
-          )}
-        </Button>
-      </div>
-    </form>
-  );
-});
+        <div className={FORM_CLASSES.section}>
+          <h3 className={FORM_CLASSES.sectionTitle}>Изображение</h3>
+          <EducationDocumentFormImageField
+            control={control}
+            imagePreview={imagePreview}
+            uploadingImage={uploadingImage}
+            onImageFileChange={handleImageFile}
+          />
+        </div>
+
+        <div className={FORM_CLASSES.actions}>
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={closeModal}
+            disabled={loading || uploadingImage}
+            className="min-w-24"
+          >
+            {FORM_MESSAGES.cancel}
+          </Button>
+          <Button
+            type="submit"
+            disabled={loading || uploadingImage}
+            className="min-w-32 font-semibold shadow-lg transition-shadow hover:shadow-xl"
+          >
+            {loading || uploadingImage ? (
+              <>
+                <Spinner className="mr-2 h-4 w-4" size={16} />
+                {isEditMode
+                  ? FORM_MESSAGES.save
+                  : FORM_MESSAGES.create}
+              </>
+            ) : isEditMode ? (
+              FORM_MESSAGES.save
+            ) : (
+              FORM_MESSAGES.create
+            )}
+          </Button>
+        </div>
+      </form>
+    );
+  }
+);

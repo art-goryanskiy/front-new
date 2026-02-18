@@ -33,10 +33,15 @@ export const Component = () => {
   const speedY = 0.5;
 
   useEffect(() => {
-    const handleVisibility = () => setIsVisible(document.visibilityState === "visible");
+    const handleVisibility = () =>
+      setIsVisible(document.visibilityState === "visible");
     handleVisibility();
     document.addEventListener("visibilitychange", handleVisibility);
-    return () => document.removeEventListener("visibilitychange", handleVisibility);
+    return () =>
+      document.removeEventListener(
+        "visibilitychange",
+        handleVisibility
+      );
   }, []);
 
   useAnimationFrame(() => {

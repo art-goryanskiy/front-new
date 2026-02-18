@@ -2,6 +2,7 @@
 
 import { memo, useCallback, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Surface } from "@/shared/ui/surface/surface";
 import { useMyCart } from "@/entities/cart/api/use-my-cart";
@@ -47,9 +48,8 @@ function handleCartError(
 
 export const CartPageContent = memo(function CartPageContent() {
   const router = useRouter();
-  const [loadingPricingChangeKey, setLoadingPricingChangeKey] = useState<
-    string | null
-  >(null);
+  const [loadingPricingChangeKey, setLoadingPricingChangeKey] =
+    useState<string | null>(null);
 
   const { items, totalAmount, loading, error } = useMyCart();
   const { updateCartItem, loading: updating } = useUpdateCartItem();
@@ -178,7 +178,8 @@ export const CartPageContent = memo(function CartPageContent() {
             Корзина пуста
           </h2>
           <p className="text-sm text-muted-foreground">
-            Добавьте программы со страниц программ, чтобы оформить запись.
+            Добавьте программы со страниц программ, чтобы оформить
+            запись.
           </p>
         </div>
         <Button asChild>
@@ -197,7 +198,8 @@ export const CartPageContent = memo(function CartPageContent() {
         <div className="pointer-events-none absolute -top-20 -right-20 h-64 w-80 rounded-full bg-primary/5 blur-3xl" />
         <div className="relative z-10 space-y-4">
           {items.map((item) => {
-            const pricing = item.program?.pricing?.[item.pricingIndex];
+            const pricing =
+              item.program?.pricing?.[item.pricingIndex];
             const program = item.program;
             if (!program) return null;
 
@@ -217,10 +219,13 @@ export const CartPageContent = memo(function CartPageContent() {
                 >
                   <div className="relative h-20 w-28 shrink-0 overflow-hidden rounded-lg bg-muted">
                     {program.image ? (
-                      <img
+                      <Image
                         src={program.image}
                         alt={item.displayTitle}
-                        className="h-full w-full object-cover"
+                        fill
+                        sizes="112px"
+                        className="object-cover"
+                        unoptimized
                       />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center">
@@ -229,7 +234,7 @@ export const CartPageContent = memo(function CartPageContent() {
                     )}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <h3 className="font-semibold text-foreground line-clamp-2">
+                    <h3 className="line-clamp-2 font-semibold text-foreground">
                       {item.displayTitle}
                     </h3>
                     {program.pricing && program.pricing.length > 1 ? (
@@ -247,18 +252,18 @@ export const CartPageContent = memo(function CartPageContent() {
                             Number(v)
                           )
                         }
-                        disabled={loadingPricingChangeKey === cartItemKey}
+                        disabled={
+                          loadingPricingChangeKey === cartItemKey
+                        }
                       >
                         <SelectTrigger className="mt-1.5 h-9 w-full max-w-[220px] text-sm">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
                           {program.pricing.map((p, idx) => (
-                            <SelectItem
-                              key={idx}
-                              value={String(idx)}
-                            >
-                              {p.hours} ч — {formatPrice(p.price ?? 0)} ₽
+                            <SelectItem key={idx} value={String(idx)}>
+                              {p.hours} ч —{" "}
+                              {formatPrice(p.price ?? 0)} ₽
                             </SelectItem>
                           ))}
                         </SelectContent>

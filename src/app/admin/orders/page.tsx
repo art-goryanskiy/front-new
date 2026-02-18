@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback, useMemo, useState } from "react";
+import { memo, useMemo, useState } from "react";
 import Link from "next/link";
 import { useAdminOrders } from "@/entities/order/api/use-admin-orders";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
@@ -16,7 +16,6 @@ import type { OrderStatus } from "@/shared/api/generated/graphql";
 import { AdminPageHeader } from "@/shared/ui/admin-page-header/admin-page-header";
 import { DashboardSection } from "@/shared/ui/dashboard-section/dashboard-section";
 import { Package, ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -26,13 +25,20 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
-const STATUS_OPTIONS: { value: OrderStatus | "all"; label: string }[] = [
+const STATUS_OPTIONS: {
+  value: OrderStatus | "all";
+  label: string;
+}[] = [
   { value: "all", label: "Все статусы" },
   {
     value: "AWAITING_PAYMENT" as OrderStatus,
-    label: ORDER_STATUS_LABELS["AWAITING_PAYMENT"] ?? "Ожидает оплаты",
+    label:
+      ORDER_STATUS_LABELS["AWAITING_PAYMENT"] ?? "Ожидает оплаты",
   },
-  { value: "PAID" as OrderStatus, label: ORDER_STATUS_LABELS["PAID"] ?? "Оплачен" },
+  {
+    value: "PAID" as OrderStatus,
+    label: ORDER_STATUS_LABELS["PAID"] ?? "Оплачен",
+  },
   {
     value: "IN_PROGRESS" as OrderStatus,
     label: ORDER_STATUS_LABELS["IN_PROGRESS"] ?? "В работе",
@@ -107,15 +113,18 @@ const OrderRow = memo(function OrderRow({
 }: {
   order: OrderFieldsFragment;
 }) {
-  const statusLabel = ORDER_STATUS_LABELS[order.status] ?? order.status;
+  const statusLabel =
+    ORDER_STATUS_LABELS[order.status] ?? order.status;
   const statusClass =
     ORDER_STATUS_BADGE_CLASSES[order.status] ??
     "border-border/60 bg-muted/20 text-muted-foreground";
   const customerTypeLabel =
-    ORDER_CUSTOMER_TYPE_LABELS[order.customerType] ?? order.customerType;
+    ORDER_CUSTOMER_TYPE_LABELS[order.customerType] ??
+    order.customerType;
   const { programsCount, learnersCount, firstProgramTitle } =
     orderSummary(order);
-  const displayNumber = (order as { number?: string | null }).number ?? order.id;
+  const displayNumber =
+    (order as { number?: string | null }).number ?? order.id;
   const customerDisplayName =
     order.customerDisplayName?.trim() || "—";
   const trainingDates = formatTrainingDates(
@@ -151,8 +160,8 @@ const OrderRow = memo(function OrderRow({
               Сроки обучения: {trainingDates}
             </p>
             <p className="text-sm text-muted-foreground">
-              {formatOrderDate(order.createdAt)} · {programsCount} поз. ·{" "}
-              {learnersCount} слуш.
+              {formatOrderDate(order.createdAt)} · {programsCount}{" "}
+              поз. · {learnersCount} слуш.
               {firstProgramTitle ? ` · ${firstProgramTitle}` : ""}
             </p>
             {statusChangedAtFormatted && (
@@ -196,7 +205,9 @@ function AdminOrdersListSkeleton() {
 }
 
 const AdminOrdersPage = memo(function AdminOrdersPage() {
-  const [statusFilter, setStatusFilter] = useState<OrderStatus | "all">("all");
+  const [statusFilter, setStatusFilter] = useState<
+    OrderStatus | "all"
+  >("all");
 
   const filter = useMemo(
     () =>
@@ -221,7 +232,9 @@ const AdminOrdersPage = memo(function AdminOrdersPage() {
         actions={
           <Select
             value={statusFilter}
-            onValueChange={(v) => setStatusFilter(v as OrderStatus | "all")}
+            onValueChange={(v) =>
+              setStatusFilter(v as OrderStatus | "all")
+            }
           >
             <SelectTrigger className="h-9 w-[180px] rounded-xl bg-background/60">
               <SelectValue />

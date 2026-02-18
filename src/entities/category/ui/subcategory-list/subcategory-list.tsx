@@ -30,7 +30,9 @@ export const SubcategoryList = memo(function SubcategoryList({
 
   const categories = useMemo(
     () =>
-      clientCategories.length > 0 ? clientCategories : (initialCategories ?? []),
+      clientCategories.length > 0
+        ? clientCategories
+        : (initialCategories ?? []),
     [initialCategories, clientCategories]
   );
 

@@ -22,7 +22,9 @@ import { AUTH_GUARD_ROUTES } from "@/shared/lib/auth/constants/auth-guard-consta
 import { isApolloUnauthenticated } from "@/shared/lib/graphql/error-to-user-message";
 import { BlurGlowBackground } from "@/shared/ui/blur-glow-background/blur-glow-background";
 
-function getFirstPricingIndex(program: { pricing?: Array<{ price?: number | null }> | null }): number | null {
+function getFirstPricingIndex(program: {
+  pricing?: Array<{ price?: number | null }> | null;
+}): number | null {
   if (!program.pricing?.length) return null;
   const idx = program.pricing.findIndex(
     (p) => typeof p?.price === "number" && p.price > 0
@@ -34,9 +36,10 @@ export const ProgramCard = memo(
   function ProgramCard({ program }: ProgramCardProps) {
     const router = useRouter();
     const { canSeePrice, isAuthLoading } = usePriceVisibility();
-    const { minPrice } = useProgramCardPricing(program);
+    const { minPrice, hoursRange } = useProgramCardPricing(program);
     const { addToCart, loading: addLoading } = useAddToCart();
-    const { removeFromCart, loading: removeLoading } = useRemoveFromCart();
+    const { removeFromCart, loading: removeLoading } =
+      useRemoveFromCart();
     const { items: cartItems } = useMyCart({ skip: !canSeePrice });
 
     const cartItem = useMemo(
@@ -62,7 +65,8 @@ export const ProgramCard = memo(
       [program]
     );
 
-    const canAddToCart = minPrice !== null && minPrice > 0 && firstPricingIndex !== null;
+    const canAddToCart =
+      minPrice !== null && minPrice > 0 && firstPricingIndex !== null;
 
     const handleLearnPrice = useCallback(
       (e: React.MouseEvent) => {
@@ -130,7 +134,7 @@ export const ProgramCard = memo(
         >
           <Surface
             variant="floating"
-            className="group relative h-full w-full overflow-hidden p-4 transition-[border,transform,box-shadow] hover:-translate-y-0.5 hover:border-border/80"
+            className="group relative h-full w-full overflow-hidden p-4 transition-[border,transform,box-shadow] hover:-translate-y-px hover:border-border/80"
           >
             <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
               <BlurGlowBackground
@@ -167,7 +171,9 @@ export const ProgramCard = memo(
                         : "border-border/60 bg-background/60 text-muted-foreground hover:bg-muted/20 hover:text-foreground disabled:opacity-50"
                     )}
                     aria-label={
-                      isInCart ? "Удалить из корзины" : "Добавить в корзину"
+                      isInCart
+                        ? "Удалить из корзины"
+                        : "Добавить в корзину"
                     }
                   >
                     {isInCart ? (
@@ -183,14 +189,19 @@ export const ProgramCard = memo(
                 {isAuthLoading ? (
                   <Skeleton className="h-5 w-24" />
                 ) : canSeePrice ? (
-                  <div className="text-sm font-semibold text-foreground">
+                  <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-semibold text-foreground">
                     {priceText}
+                    {hoursRange && (
+                      <span className="font-normal text-muted-foreground">
+                        {hoursRange}
+                      </span>
+                    )}
                   </div>
                 ) : (
                   <button
                     type="button"
                     onClick={handleLearnPrice}
-                    className="group/cta relative inline-flex min-h-5 items-center gap-1.5 rounded-full border border-border/50 bg-muted/10 px-2.5 py-1 text-xs font-medium text-muted-foreground backdrop-blur-sm transition-all duration-300 hover:border-primary/40 hover:bg-primary/5 hover:text-primary hover:shadow-[0_0_12px_color-mix(in_srgb,var(--primary)_12%,transparent)] focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2 focus:ring-offset-background"
+                    className="group/cta relative inline-flex min-h-5 items-center gap-1.5 rounded-full border border-border/50 bg-muted/10 px-2.5 py-1 text-xs font-medium text-muted-foreground backdrop-blur-sm transition-all duration-300 hover:border-primary/40 hover:bg-primary/5 hover:text-primary hover:shadow-[0_0_12px_color-mix(in_srgb,var(--primary)_12%,transparent)] focus:ring-2 focus:ring-primary/30 focus:ring-offset-2 focus:ring-offset-background focus:outline-none"
                     aria-label="Войти, чтобы увидеть стоимость"
                   >
                     <span>Узнать стоимость</span>

@@ -112,74 +112,76 @@ export const UserForm = memo(function UserForm({
 
   return (
     <FormProvider {...form}>
-    <form
-      onSubmit={handleSubmit(onSubmit, () => {
-        const el = document.getElementById("form-error-summary");
-        el?.scrollIntoView({ behavior: "smooth", block: "start" });
-      })}
-      className={`${FORM_CLASSES.form} w-full`}
-    >
-      <div id="form-error-summary">
-        <FormErrorSummary<UserFormData>
-          errors={formState.errors}
-          labels={{
-            email: FORM_LABELS.email,
-            password: FORM_LABELS.password,
-            role: FORM_LABELS.role,
-          }}
-        />
-      </div>
-
-      <UserFormError error={error} isEditMode={isEditMode} />
-
-      <Tabs defaultValue="basic" className="w-full">
-        <TabsList className="w-full">
-          <TabsTrigger value="basic" className="flex-1">
-            Основная информация
-          </TabsTrigger>
-          <TabsTrigger value="profile" className="flex-1">
-            Профиль
-          </TabsTrigger>
-        </TabsList>
-        <TabsContent value="basic">
-          <UserFormBasicTab
-            control={control}
-            isEditMode={isEditMode}
+      <form
+        onSubmit={handleSubmit(onSubmit, () => {
+          const el = document.getElementById("form-error-summary");
+          el?.scrollIntoView({ behavior: "smooth", block: "start" });
+        })}
+        className={`${FORM_CLASSES.form} w-full`}
+      >
+        <div id="form-error-summary">
+          <FormErrorSummary<UserFormData>
+            errors={formState.errors}
+            labels={{
+              email: FORM_LABELS.email,
+              password: FORM_LABELS.password,
+              role: FORM_LABELS.role,
+            }}
           />
-        </TabsContent>
-        <TabsContent value="profile">
-          <UserFormProfileTab control={control} />
-        </TabsContent>
-      </Tabs>
+        </div>
 
-      <div className={FORM_CLASSES.actions}>
-        <Button
-          type="button"
-          variant="ghost"
-          onClick={closeModal}
-          disabled={loading}
-          className="min-w-24"
-        >
-          {FORM_MESSAGES.cancel}
-        </Button>
-        <Button
-          type="submit"
-          disabled={loading}
-          className="min-w-32 font-semibold shadow-lg transition-shadow hover:shadow-xl"
-        >
-          {loading ? (
-            <>
-              <Spinner className="mr-2 h-4 w-4" size={16} />
-              {isEditMode ? FORM_MESSAGES.save : FORM_MESSAGES.create}
-            </>
-          ) : isEditMode ? (
-            FORM_MESSAGES.save
-          ) : (
-            FORM_MESSAGES.create
-          )}
-        </Button>
-      </div>
-    </form>
+        <UserFormError error={error} isEditMode={isEditMode} />
+
+        <Tabs defaultValue="basic" className="w-full">
+          <TabsList className="w-full">
+            <TabsTrigger value="basic" className="flex-1">
+              Основная информация
+            </TabsTrigger>
+            <TabsTrigger value="profile" className="flex-1">
+              Профиль
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="basic">
+            <UserFormBasicTab
+              control={control}
+              isEditMode={isEditMode}
+            />
+          </TabsContent>
+          <TabsContent value="profile">
+            <UserFormProfileTab control={control} />
+          </TabsContent>
+        </Tabs>
+
+        <div className={FORM_CLASSES.actions}>
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={closeModal}
+            disabled={loading}
+            className="min-w-24"
+          >
+            {FORM_MESSAGES.cancel}
+          </Button>
+          <Button
+            type="submit"
+            disabled={loading}
+            className="min-w-32 font-semibold shadow-lg transition-shadow hover:shadow-xl"
+          >
+            {loading ? (
+              <>
+                <Spinner className="mr-2 h-4 w-4" size={16} />
+                {isEditMode
+                  ? FORM_MESSAGES.save
+                  : FORM_MESSAGES.create}
+              </>
+            ) : isEditMode ? (
+              FORM_MESSAGES.save
+            ) : (
+              FORM_MESSAGES.create
+            )}
+          </Button>
+        </div>
+      </form>
     </FormProvider>
   );
 });

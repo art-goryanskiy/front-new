@@ -54,9 +54,9 @@ export function useProgramCardPricing(program: ProgramEntity) {
     const maxHours = Math.max(...hours);
 
     if (minHours === maxHours) {
-      return `${minHours} часов`;
+      return `${minHours}ч`;
     }
-    return `${minHours}-${maxHours} часов`;
+    return `${minHours}-${maxHours}ч`;
   }, [program.pricing]);
 
   return { minPrice, hoursRange };

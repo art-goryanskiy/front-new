@@ -16,7 +16,10 @@ interface CheckoutStepperProps {
   className?: string;
 }
 
-export function CheckoutStepper({ currentStep, className }: CheckoutStepperProps) {
+export function CheckoutStepper({
+  currentStep,
+  className,
+}: CheckoutStepperProps) {
   return (
     <nav
       aria-label="Прогресс оформления заявки"
@@ -57,7 +60,9 @@ export function CheckoutStepper({ currentStep, className }: CheckoutStepperProps
                 <span
                   className={cn(
                     "text-xs font-medium sm:text-sm",
-                    isCurrent ? "text-foreground" : "text-muted-foreground"
+                    isCurrent
+                      ? "text-foreground"
+                      : "text-muted-foreground"
                   )}
                 >
                   {step.label}

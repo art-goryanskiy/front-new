@@ -30,7 +30,10 @@ export interface EditingUser {
       organizationId?: string | null;
       position?: string | null;
       isPrimary?: boolean | null;
-      organization?: { id?: string | null; displayName?: string | null } | null;
+      organization?: {
+        id?: string | null;
+        displayName?: string | null;
+      } | null;
     }> | null;
     avatar?: string | null;
     passport?: {

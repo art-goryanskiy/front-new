@@ -1,5 +1,8 @@
 import type { CategoryType } from "@/shared/api/generated/graphql";
-import type { CategoryEntity, ProgramEntity } from "@/shared/api/generated/graphql";
+import type {
+  CategoryEntity,
+  ProgramEntity,
+} from "@/shared/api/generated/graphql";
 import { CATEGORY_TYPE_LABELS } from "@/shared/constants/categories";
 
 /**
@@ -35,7 +38,9 @@ export function getParentCategoryNameForProgram(
   allCategories: CategoryEntity[],
   categoriesMap: Map<string, string>
 ): string | undefined {
-  const programCategory = allCategories.find((c) => c.id === program.category);
+  const programCategory = allCategories.find(
+    (c) => c.id === program.category
+  );
   if (!programCategory) return undefined;
   return getParentCategoryName(programCategory, categoriesMap);
 }

@@ -26,9 +26,13 @@ export function useMe(options?: { skip?: boolean }) {
 
   const meUser = useMemo(() => data?.me || null, [data?.me]);
 
-  const previousUserRef = useRef<UserEntity | null | undefined>(undefined);
+  const previousUserRef = useRef<UserEntity | null | undefined>(
+    undefined
+  );
   const retryCountRef = useRef(0);
-  const nextRetryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const nextRetryTimerRef = useRef<ReturnType<
+    typeof setTimeout
+  > | null>(null);
 
   // Повторные запросы при отсутствии user (холодный старт, me: null при неготовой сессии).
   // Запускаем цепочку retry из callback refetch — иначе второй retry никогда не планируется
@@ -48,7 +52,9 @@ export function useMe(options?: { skip?: boolean }) {
       nextRetryTimerRef.current = setTimeout(async () => {
         nextRetryTimerRef.current = null;
         try {
-          const result = await refetch({ fetchPolicy: "network-only" });
+          const result = await refetch({
+            fetchPolicy: "network-only",
+          });
           const nextUser = result?.data?.me ?? null;
           if (nextUser) {
             setUser(nextUser);

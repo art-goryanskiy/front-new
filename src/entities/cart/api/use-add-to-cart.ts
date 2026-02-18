@@ -1,4 +1,7 @@
-import type { AddToCartInput, CartEntity } from "@/shared/api/generated/graphql";
+import type {
+  AddToCartInput,
+  CartEntity,
+} from "@/shared/api/generated/graphql";
 import { ADD_TO_CART } from "@/shared/api/mutations/cart";
 import { MY_CART } from "@/shared/api/queries/cart";
 import { useMutation } from "@apollo/client/react";

@@ -15,7 +15,9 @@ export function useUpdateCartItem() {
   });
 
   const updateCartItem = async (input: UpdateCartItemInput) => {
-    const result = await updateCartItemMutation({ variables: { input } });
+    const result = await updateCartItemMutation({
+      variables: { input },
+    });
     return result.data?.updateCartItem;
   };
 

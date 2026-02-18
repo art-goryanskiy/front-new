@@ -8,7 +8,8 @@ export const FORM_LABELS = {
   studentCategory: "Категория студентов",
   educationDocument: "Документ об образовании",
   awardedQualification: "Присваиваемая квалификация",
-  awardedRankFrom: "Разряд с (или единственный разряд); необязательно",
+  awardedRankFrom:
+    "Разряд с (или единственный разряд); необязательно",
   awardedRankTo: "Разряд по (или единственный разряд); необязательно",
   pricing: "Цены и часы",
   hours: "Часы",

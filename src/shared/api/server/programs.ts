@@ -92,7 +92,11 @@ export async function getProgramServer(
     gqlToString(GET_PROGRAM),
     { id },
     headers,
-    { revalidate: 60, tags: [PROGRAMS_TAG, `public:program:${id}`], skipCache: !!cookie }
+    {
+      revalidate: 60,
+      tags: [PROGRAMS_TAG, `public:program:${id}`],
+      skipCache: !!cookie,
+    }
   );
 
   return data.program;

@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback, useState, useEffect } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "lucide-react";
 import type { ProgramPricing } from "@/shared/api/generated/graphql";
@@ -52,14 +52,18 @@ export const ProgramDetailAddToCart = memo(
     );
     const [quantity, setQuantity] = useState(1);
 
-    useEffect(() => {
-      if (pricingsWithPrice.length > 0 && !pricingsWithPrice.some((p) => p.index === selectedIndex)) {
-        setSelectedIndex(pricingsWithPrice[0].index);
-      }
+    const effectiveSelectedIndex = useMemo(() => {
+      if (pricingsWithPrice.length === 0) return 0;
+      const valid = pricingsWithPrice.some(
+        (p) => p.index === selectedIndex
+      );
+      return valid ? selectedIndex : pricingsWithPrice[0].index;
     }, [pricingsWithPrice, selectedIndex]);
 
     const handleAddToCart = useCallback(async () => {
-      const item = pricingsWithPrice.find((p) => p.index === selectedIndex);
+      const item = pricingsWithPrice.find(
+        (p) => p.index === effectiveSelectedIndex
+      );
       if (!item) return;
 
       try {
@@ -92,14 +96,20 @@ export const ProgramDetailAddToCart = memo(
       pricingsWithPrice,
       quantity,
       router,
-      selectedIndex,
+      effectiveSelectedIndex,
       showToast,
     ]);
 
     if (pricingsWithPrice.length === 0) return null;
 
     return (
-      <div className={compact ? "space-y-3 pt-2 border-t border-border/60" : "space-y-4"}>
+      <div
+        className={
+          compact
+            ? "space-y-3 border-t border-border/60 pt-2"
+            : "space-y-4"
+        }
+      >
         {!compact && (
           <h3 className={PROGRAM_DETAIL_CLASSES.sectionTitle}>
             Добавить в корзину
@@ -112,7 +122,7 @@ export const ProgramDetailAddToCart = memo(
               Тариф
             </label>
             <Select
-              value={String(selectedIndex)}
+              value={String(effectiveSelectedIndex)}
               onValueChange={(v) => setSelectedIndex(Number(v))}
             >
               <SelectTrigger className="h-10 w-full">
@@ -144,7 +154,8 @@ export const ProgramDetailAddToCart = memo(
             value={quantity}
             onChange={(e) => {
               const v = parseInt(e.target.value, 10);
-              if (!isNaN(v)) setQuantity(Math.max(1, Math.min(100, v)));
+              if (!isNaN(v))
+                setQuantity(Math.max(1, Math.min(100, v)));
             }}
             className="h-10 w-full rounded-lg border border-border/60 bg-background px-3 text-sm"
           />

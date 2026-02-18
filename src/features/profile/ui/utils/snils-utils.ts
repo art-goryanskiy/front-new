@@ -38,7 +38,9 @@ function getSnilsControlDigits(digits: string): string {
   if (sum < 100) return sum.toString().padStart(2, "0");
   if (sum === 100 || sum === 101) return "00";
   const remainder = sum % 101;
-  return remainder === 100 ? "00" : remainder.toString().padStart(2, "0");
+  return remainder === 100
+    ? "00"
+    : remainder.toString().padStart(2, "0");
 }
 
 /** Проверяет, что СНИЛС из 11 цифр и контрольная сумма совпадает. */

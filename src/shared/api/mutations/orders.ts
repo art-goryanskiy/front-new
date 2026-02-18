@@ -68,7 +68,10 @@ export const CREATE_ORDER_INVOICE = gql`
 /** Изменить статус заявки (только для админа) */
 export const ADMIN_UPDATE_ORDER_STATUS = gql`
   ${ORDER_FIELDS}
-  mutation AdminUpdateOrderStatus($orderId: ID!, $status: OrderStatus!) {
+  mutation AdminUpdateOrderStatus(
+    $orderId: ID!
+    $status: OrderStatus!
+  ) {
     adminUpdateOrderStatus(orderId: $orderId, status: $status) {
       ...OrderFields
     }
@@ -84,7 +87,9 @@ export const ADMIN_DELETE_ORDER = gql`
 
 /** Изменить дату документа (только для админа) */
 export const ADMIN_UPDATE_ORDER_DOCUMENT_DATE = gql`
-  mutation AdminUpdateOrderDocumentDate($input: AdminUpdateOrderDocumentDateInput!) {
+  mutation AdminUpdateOrderDocumentDate(
+    $input: AdminUpdateOrderDocumentDateInput!
+  ) {
     adminUpdateOrderDocumentDate(input: $input) {
       id
       orderId
@@ -99,7 +104,9 @@ export const ADMIN_UPDATE_ORDER_DOCUMENT_DATE = gql`
 
 /** Сформировать договор по заявке (только для админа) */
 export const ADMIN_GENERATE_ORDER_CONTRACT = gql`
-  mutation AdminGenerateOrderContract($input: AdminGenerateOrderDocumentInput!) {
+  mutation AdminGenerateOrderContract(
+    $input: AdminGenerateOrderDocumentInput!
+  ) {
     adminGenerateOrderContract(input: $input) {
       id
       orderId
@@ -114,7 +121,9 @@ export const ADMIN_GENERATE_ORDER_CONTRACT = gql`
 
 /** Сформировать акт оказанных услуг по заявке (только для админа) */
 export const ADMIN_GENERATE_ORDER_ACT = gql`
-  mutation AdminGenerateOrderAct($input: AdminGenerateOrderDocumentInput!) {
+  mutation AdminGenerateOrderAct(
+    $input: AdminGenerateOrderDocumentInput!
+  ) {
     adminGenerateOrderAct(input: $input) {
       id
       orderId
@@ -145,7 +154,10 @@ export const ADMIN_GENERATE_ORDER_TRAINING_APPLICATION = gql`
 /** Задать сроки обучения по заявке (только для админа) */
 export const ADMIN_SET_ORDER_TRAINING_DATES = gql`
   ${ORDER_FIELDS}
-  mutation AdminSetOrderTrainingDates($orderId: ID!, $input: AdminSetOrderTrainingDatesInput!) {
+  mutation AdminSetOrderTrainingDates(
+    $orderId: ID!
+    $input: AdminSetOrderTrainingDatesInput!
+  ) {
     adminSetOrderTrainingDates(orderId: $orderId, input: $input) {
       ...OrderFields
     }

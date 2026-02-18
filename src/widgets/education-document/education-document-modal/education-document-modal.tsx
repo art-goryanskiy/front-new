@@ -117,7 +117,9 @@ export const EducationDocumentModal = memo(
             <div className="relative z-10 max-h-[calc(90dvh-6.5rem)] overflow-x-hidden overflow-y-auto px-6 py-6">
               <EducationDocumentForm
                 key={formKey}
-                editingDocument={editingEducationDocument ?? undefined}
+                editingDocument={
+                  editingEducationDocument ?? undefined
+                }
                 onDirtyChange={setIsDirty}
                 onBusyChange={setIsBusy}
               />

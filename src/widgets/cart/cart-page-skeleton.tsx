@@ -25,19 +25,31 @@ export const CartPageSkeleton = memo(function CartPageSkeleton() {
                   className="h-20 w-28 shrink-0 rounded-lg"
                 />
                 <div className="min-w-0 flex-1 space-y-2">
-                  <Skeleton variant="premium" className="h-4 w-full max-w-[200px]" />
+                  <Skeleton
+                    variant="premium"
+                    className="h-4 w-full max-w-[200px]"
+                  />
                   <Skeleton variant="premium" className="h-3 w-24" />
                 </div>
               </div>
               <div className="flex items-center justify-between gap-4 sm:justify-end">
                 <div className="flex items-center gap-2">
-                  <Skeleton variant="premium" className="h-9 w-9 rounded-lg" />
+                  <Skeleton
+                    variant="premium"
+                    className="h-9 w-9 rounded-lg"
+                  />
                   <Skeleton variant="premium" className="h-4 w-8" />
-                  <Skeleton variant="premium" className="h-9 w-9 rounded-lg" />
+                  <Skeleton
+                    variant="premium"
+                    className="h-9 w-9 rounded-lg"
+                  />
                 </div>
                 <div className="flex items-center gap-3">
                   <Skeleton variant="premium" className="h-5 w-16" />
-                  <Skeleton variant="premium" className="h-9 w-9 rounded-lg" />
+                  <Skeleton
+                    variant="premium"
+                    className="h-9 w-9 rounded-lg"
+                  />
                 </div>
               </div>
             </div>
@@ -53,7 +65,10 @@ export const CartPageSkeleton = memo(function CartPageSkeleton() {
         )}
       >
         <Skeleton variant="premium" className="h-6 w-32" />
-        <Skeleton variant="premium" className="h-10 w-full rounded-xl sm:w-40" />
+        <Skeleton
+          variant="premium"
+          className="h-10 w-full rounded-xl sm:w-40"
+        />
       </Surface>
     </div>
   );

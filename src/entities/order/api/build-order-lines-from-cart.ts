@@ -1,4 +1,8 @@
-import type { CartItemEntity, CreateOrderLineInput, OrderLineLearnerInput } from "@/shared/api/generated/graphql";
+import type {
+  CartItemEntity,
+  CreateOrderLineInput,
+  OrderLineLearnerInput,
+} from "@/shared/api/generated/graphql";
 
 /**
  * Собирает массив CreateOrderLineInput из элементов корзины.
@@ -6,7 +10,10 @@ import type { CartItemEntity, CreateOrderLineInput, OrderLineLearnerInput } from
  */
 export function buildOrderLinesFromCart(
   cartItems: CartItemEntity[],
-  getLearnersForLine: (item: CartItemEntity, lineIndex: number) => OrderLineLearnerInput[] = () => []
+  getLearnersForLine: (
+    item: CartItemEntity,
+    lineIndex: number
+  ) => OrderLineLearnerInput[] = () => []
 ): CreateOrderLineInput[] {
   return cartItems.map((item, lineIndex) => {
     const pricing = item.program.pricing?.[item.pricingIndex];
@@ -18,7 +25,9 @@ export function buildOrderLinesFromCart(
     return {
       programId: item.programId,
       pricingIndex: item.pricingIndex,
-      ...(item.subProgramIndex != null && { subProgramIndex: item.subProgramIndex }),
+      ...(item.subProgramIndex != null && {
+        subProgramIndex: item.subProgramIndex,
+      }),
       hours,
       price,
       quantity,

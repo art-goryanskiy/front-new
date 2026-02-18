@@ -119,12 +119,16 @@ export const ProfileBasicInfoSection = memo(
                 typeof field.value === "string" && field.value
                   ? field.value.includes("(")
                     ? field.value
-                    : format(stripPhone(field.value), PHONE_MASK_OPTIONS)
+                    : format(
+                        stripPhone(field.value),
+                        PHONE_MASK_OPTIONS
+                      )
                   : "";
-              const hasPhoneValue = stripPhone(String(rawValue)).length >= 10;
+              const hasPhoneValue =
+                stripPhone(String(rawValue)).length >= 10;
               const floated = hasPhoneValue || isPhoneFocused;
               return (
-                <div className="space-y-2 w-full">
+                <div className="w-full space-y-2">
                   <div className="group relative pt-2">
                     <Label
                       htmlFor="phone"
@@ -157,11 +161,11 @@ export const ProfileBasicInfoSection = memo(
                       className="h-12 min-h-11 rounded-xl border-border/60 bg-background/60 px-4 text-base transition-colors focus-visible:ring-2 focus-visible:ring-ring/50 sm:text-sm"
                       value={rawValue}
                       onChange={field.onChange}
-                      onBlur={(e) => {
+                      onBlur={() => {
                         field.onBlur();
                         setIsPhoneFocused(false);
                       }}
-                      onFocus={(e) => {
+                      onFocus={() => {
                         setIsPhoneFocused(true);
                       }}
                     />

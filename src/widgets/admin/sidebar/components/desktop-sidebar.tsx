@@ -97,7 +97,10 @@ export const DesktopSidebar = memo(function DesktopSidebar() {
 
           <SidebarNavItem
             item={ORDERS_MENU_ITEM}
-            isActive={isNavItemActive(pathname, ORDERS_MENU_ITEM.path)}
+            isActive={isNavItemActive(
+              pathname,
+              ORDERS_MENU_ITEM.path
+            )}
             isCollapsed={isCollapsed}
             onNavigate={handleNavigate}
           />

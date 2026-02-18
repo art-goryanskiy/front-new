@@ -10,10 +10,7 @@ const DEFAULT_LIMIT = 10;
 const MAX_LIMIT = 100;
 
 export function useNews(filter?: GetNewsQueryVariables["filter"]) {
-  const limit = Math.min(
-    filter?.limit ?? DEFAULT_LIMIT,
-    MAX_LIMIT
-  );
+  const limit = Math.min(filter?.limit ?? DEFAULT_LIMIT, MAX_LIMIT);
   const offset = filter?.offset ?? 0;
 
   const { data, loading, error, refetch } = useQuery<

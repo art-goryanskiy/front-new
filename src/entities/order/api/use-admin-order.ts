@@ -8,7 +8,10 @@ import {
   type OrderFieldsFragment,
 } from "@/shared/api/generated/graphql";
 
-export function useAdminOrder(id: string | null, options?: { skip?: boolean }) {
+export function useAdminOrder(
+  id: string | null,
+  options?: { skip?: boolean }
+) {
   const { data, loading, error, refetch } = useQuery<
     AdminOrderQuery,
     AdminOrderQueryVariables
@@ -19,10 +22,10 @@ export function useAdminOrder(id: string | null, options?: { skip?: boolean }) {
   });
 
   const rawOrder = data?.adminOrder ?? null;
-  const order = useFragment(
-    OrderFieldsFragmentDoc,
-    rawOrder
-  ) as OrderFieldsFragment | null | undefined;
+  const order = useFragment(OrderFieldsFragmentDoc, rawOrder) as
+    | OrderFieldsFragment
+    | null
+    | undefined;
 
   return {
     order: order ?? null,

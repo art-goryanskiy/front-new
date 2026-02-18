@@ -15,7 +15,8 @@ export const ORDER_STATUS_BADGE_CLASSES: Record<string, string> = {
   IN_PROGRESS:
     "border-blue-500/40 bg-blue-500/15 text-blue-800 dark:text-blue-300",
   COMPLETED: "border-border/60 bg-muted/50 text-muted-foreground",
-  CANCELLED: "border-destructive/40 bg-destructive/10 text-destructive",
+  CANCELLED:
+    "border-destructive/40 bg-destructive/10 text-destructive",
 };
 
 export const ORDER_CUSTOMER_TYPE_LABELS: Record<string, string> = {

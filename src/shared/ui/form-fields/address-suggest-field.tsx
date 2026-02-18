@@ -223,13 +223,16 @@ function AddressSuggestFieldInner({
 
   const currentIndex = useMemo(() => {
     if (!showDropdown) return -1;
-    if (activeIndex >= 0 && activeIndex < items.length) return activeIndex;
+    if (activeIndex >= 0 && activeIndex < items.length)
+      return activeIndex;
     return items.length > 0 ? 0 : -1;
   }, [activeIndex, items.length, showDropdown]);
 
   useEffect(() => {
     if (!showDropdown || currentIndex < 0) return;
-    const el = document.getElementById(`${baseId}-opt-${currentIndex}`);
+    const el = document.getElementById(
+      `${baseId}-opt-${currentIndex}`
+    );
     el?.scrollIntoView({ block: "nearest" });
   }, [baseId, currentIndex, showDropdown]);
 
@@ -284,7 +287,8 @@ function AddressSuggestFieldInner({
             className={cn(
               "peer bg-background/60 pr-10",
               showDropdown && "rounded-b-none",
-              invalid && "border-destructive focus-visible:ring-destructive/20"
+              invalid &&
+                "border-destructive focus-visible:ring-destructive/20"
             )}
             onFocus={() => {
               if (!isDisabled && q.length >= minQueryLength) {
@@ -300,7 +304,11 @@ function AddressSuggestFieldInner({
               }
               if (e.key === "ArrowDown") {
                 e.preventDefault();
-                if (!isOpen && q.length >= minQueryLength && !isDisabled) {
+                if (
+                  !isOpen &&
+                  q.length >= minQueryLength &&
+                  !isDisabled
+                ) {
                   setIsOpen(true);
                   setActiveIndex(0);
                   return;
@@ -368,7 +376,9 @@ function AddressSuggestFieldInner({
                     {items.map((sug, idx) => {
                       const secondary =
                         sug.region || sug.city
-                          ? [sug.region, sug.city].filter(Boolean).join(", ")
+                          ? [sug.region, sug.city]
+                              .filter(Boolean)
+                              .join(", ")
                           : null;
                       const active = idx === currentIndex;
                       return (
@@ -380,7 +390,9 @@ function AddressSuggestFieldInner({
                           aria-selected={active}
                           onMouseDown={(e) => e.preventDefault()}
                           onClick={() =>
-                            selectSuggestion(toStoredAddressString(sug))
+                            selectSuggestion(
+                              toStoredAddressString(sug)
+                            )
                           }
                           className={cn(
                             "w-full rounded-lg px-4 py-2 text-left text-sm text-foreground transition-colors hover:bg-muted/60",

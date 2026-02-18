@@ -25,6 +25,7 @@ function getActiveMenuLabel(pathname: string): string | undefined {
   ) {
     return "Обучение";
   }
+  if (pathname.startsWith("/contacts")) return "О нас";
   return undefined;
 }
 
@@ -59,6 +60,7 @@ export const PublicHeader = memo(function PublicHeader() {
               <MenuBar
                 items={GLOW_MENU_HEADER_ITEMS}
                 activeItem={getActiveMenuLabel(pathname)}
+                pathname={pathname}
                 className="py-0"
               />
             </nav>

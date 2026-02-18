@@ -10,6 +10,7 @@ import { SUBCATEGORY_CARD_CLASSES } from "./constants/subcategory-card-constants
 import { SubcategoryCardImage } from "./components/subcategory-card-image";
 import { SubcategoryCardPrice } from "./components/subcategory-card-price";
 import { useSubcategoryPricing } from "./hooks/use-subcategory-pricing";
+import { formatProgramsCount } from "@/shared/lib/helpers/plural";
 import { cn } from "@/lib/utils";
 
 export const SubcategoryCard = memo(function SubcategoryCard({
@@ -19,16 +20,10 @@ export const SubcategoryCard = memo(function SubcategoryCard({
   const { canSeePrice, isAuthLoading } = usePriceVisibility();
   const priceRange = useSubcategoryPricing(category);
 
-  const programsLabel = useMemo(() => {
-    if (
-      category.programsCount === null ||
-      category.programsCount === undefined
-    ) {
-      return "— программ";
-    }
-    const n = category.programsCount;
-    return `${n} ${n === 1 ? "программа" : "программ"}`;
-  }, [category.programsCount]);
+  const programsLabel = useMemo(
+    () => formatProgramsCount(category.programsCount),
+    [category.programsCount]
+  );
 
   return (
     <motion.div

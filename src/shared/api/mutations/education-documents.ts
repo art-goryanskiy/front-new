@@ -1,7 +1,9 @@
 import { gql } from "@apollo/client";
 
 export const CREATE_EDUCATION_DOCUMENT = gql`
-  mutation CreateEducationDocument($input: CreateEducationDocumentInput!) {
+  mutation CreateEducationDocument(
+    $input: CreateEducationDocumentInput!
+  ) {
     createEducationDocument(input: $input) {
       id
       name
@@ -13,7 +15,10 @@ export const CREATE_EDUCATION_DOCUMENT = gql`
 `;
 
 export const UPDATE_EDUCATION_DOCUMENT = gql`
-  mutation UpdateEducationDocument($id: ID!, $input: UpdateEducationDocumentInput!) {
+  mutation UpdateEducationDocument(
+    $id: ID!
+    $input: UpdateEducationDocumentInput!
+  ) {
     updateEducationDocument(id: $id, input: $input) {
       id
       name

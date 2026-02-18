@@ -15,7 +15,9 @@ import { formatPhone, toApiPhone } from "./phone-utils";
 import { formatSnils, stripSnils } from "./snils-utils";
 
 /** Преобразует ISO дату (2014-04-04T00:00:00.000Z) в формат YYYY-MM-DD для input[type="date"]. */
-export function toDateInputValue(isoDate: string | null | undefined): string {
+export function toDateInputValue(
+  isoDate: string | null | undefined
+): string {
   if (!isoDate) return "";
   // Берём первые 10 символов: YYYY-MM-DD
   const dateOnly = isoDate.slice(0, 10);
@@ -64,7 +66,9 @@ export function createProfileInput(
   if (Array.isArray(data.workPlaces) && data.workPlaces.length > 0) {
     (profile as Record<string, unknown>).workPlaces = data.workPlaces
       .filter(
-        (wp: WorkPlaceFormData): wp is WorkPlaceFormData & { organizationId: string } =>
+        (
+          wp: WorkPlaceFormData
+        ): wp is WorkPlaceFormData & { organizationId: string } =>
           Boolean(wp.organizationId?.trim())
       )
       .map((wp) => ({
@@ -197,7 +201,8 @@ export function getProfileDefaultValues(
                 inn: wp.organization.inn || undefined,
                 kpp: wp.organization.kpp || undefined,
                 ogrn: wp.organization.ogrn || undefined,
-                legalAddress: wp.organization.legalAddress || undefined,
+                legalAddress:
+                  wp.organization.legalAddress || undefined,
               }
             : null,
         };

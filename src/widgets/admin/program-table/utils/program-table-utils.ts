@@ -28,7 +28,8 @@ export function formatRank(
   from?: number | null,
   to?: number | null
 ): string {
-  const noRank = (n: number | null | undefined) => n == null || n === 0;
+  const noRank = (n: number | null | undefined) =>
+    n == null || n === 0;
   if (noRank(from) && noRank(to)) return "-";
   if (from != null && from > 0 && to != null && to > 0) {
     return from === to ? String(from) : `${from} - ${to}`;

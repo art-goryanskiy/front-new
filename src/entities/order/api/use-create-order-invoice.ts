@@ -13,7 +13,9 @@ export function useCreateOrderInvoice() {
 
   const createOrderInvoice = async (
     variables: CreateOrderInvoiceMutationVariables
-  ): Promise<CreateOrderInvoiceMutation["createOrderInvoice"] | null> => {
+  ): Promise<
+    CreateOrderInvoiceMutation["createOrderInvoice"] | null
+  > => {
     const result = await createInvoiceMutation({ variables });
     return result.data?.createOrderInvoice ?? null;
   };
