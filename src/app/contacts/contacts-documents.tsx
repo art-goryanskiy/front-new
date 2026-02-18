@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { FileCheck, FileText } from "lucide-react";
 import { BlurGlowBackground } from "@/shared/ui/blur-glow-background/blur-glow-background";
 import { Surface } from "@/shared/ui/surface/surface";
+import { MagicCard } from "@/components/ui/magic-card";
 import {
   Dialog,
   DialogContent,
@@ -61,56 +62,55 @@ export function ContactsDocuments() {
             <div className="mx-auto mt-5 h-px w-20 rounded-full bg-primary/30" />
           </header>
 
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {CONTACT_DOCUMENTS.map((doc, index) => (
               <motion.div
                 key={doc.href}
-                initial={{ opacity: 0, y: 8 }}
+                initial={{ opacity: 0, y: 12 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-24px" }}
-                transition={{ duration: 0.35, delay: index * 0.04 }}
+                transition={{ duration: 0.4, delay: index * 0.05 }}
+                className="min-w-0"
               >
-                <motion.button
-                  type="button"
-                  onClick={() => openLightbox(doc.href, doc.title)}
-                  className={cn(
-                    "group relative flex w-full items-center gap-4 overflow-hidden rounded-2xl border border-border/60 bg-card/60 p-4 text-left",
-                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-                  )}
-                  whileHover={{
-                    y: -6,
-                    scale: 1.02,
-                    transition: {
-                      type: "spring",
-                      stiffness: 400,
-                      damping: 25,
-                    },
-                  }}
-                  whileTap={{ scale: 0.98 }}
-                  initial={false}
+                <MagicCard
+                  gradientSize={280}
+                  gradientFrom="hsl(var(--primary) / 0.4)"
+                  gradientTo="hsl(var(--primary) / 0.08)"
+                  gradientColor="hsl(var(--primary) / 0.12)"
+                  gradientOpacity={0.7}
+                  className="border border-border/60 shadow-md transition-shadow duration-300 hover:shadow-xl"
                 >
-                  {/* Блик при наведении */}
-                  <span
-                    className="pointer-events-none absolute inset-0 z-0 -translate-x-full bg-linear-to-r from-transparent via-white/15 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-full"
-                    aria-hidden
-                  />
-                  {/* Подсветка по границе */}
-                  <span
-                    className="pointer-events-none absolute inset-0 z-0 rounded-2xl opacity-0 shadow-[0_0_0_1px_hsl(var(--primary)/0.2),0_12px_40px_-8px_hsl(var(--primary)/0.25)] transition-opacity duration-300 group-hover:opacity-100"
-                    aria-hidden
-                  />
-                  <span className="relative z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors duration-300 group-hover:bg-primary/20 group-hover:text-primary">
-                    <motion.span
-                      transition={{ type: "spring", stiffness: 400, damping: 20 }}
-                      whileHover={{ rotate: 5, scale: 1.08 }}
-                    >
-                      <FileText className="h-6 w-6" aria-hidden />
-                    </motion.span>
-                  </span>
-                  <span className="relative z-10 min-w-0 flex-1 text-sm font-medium text-foreground transition-colors duration-300 group-hover:text-foreground sm:text-base">
-                    {doc.title}
-                  </span>
-                </motion.button>
+                  <motion.button
+                    type="button"
+                    onClick={() => openLightbox(doc.href, doc.title)}
+                    className={cn(
+                      "group/card relative flex w-full items-center gap-5 overflow-hidden p-6 text-left sm:p-7",
+                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-2xl"
+                    )}
+                    whileHover={{
+                      y: -4,
+                      transition: {
+                        type: "spring",
+                        stiffness: 380,
+                        damping: 22,
+                      },
+                    }}
+                    whileTap={{ scale: 0.99 }}
+                    initial={false}
+                  >
+                    {/* Блик при наведении */}
+                    <span
+                      className="pointer-events-none absolute inset-0 z-0 -translate-x-full bg-linear-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 ease-out group-hover/card:translate-x-full"
+                      aria-hidden
+                    />
+                    <span className="relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary transition-colors duration-300 group-hover/card:bg-primary/15 sm:h-16 sm:w-16">
+                      <FileText className="h-7 w-7 sm:h-8 sm:w-8" aria-hidden />
+                    </span>
+                    <span className="relative z-10 min-w-0 flex-1 text-base font-medium text-foreground transition-colors duration-300 group-hover/card:text-foreground sm:text-lg">
+                      {doc.title}
+                    </span>
+                  </motion.button>
+                </MagicCard>
               </motion.div>
             ))}
           </div>
