@@ -139,12 +139,7 @@ export default function ContactsPage() {
         </section>
 
         {/* Отзывы */}
-        <section>
-          <h2 className="mb-4 text-lg font-semibold text-foreground">
-            Отзывы
-          </h2>
-          <ContactsReviews />
-        </section>
+        <ContactsReviews />
 
         <div className="flex justify-center pb-4">
           <Button asChild variant="outline" size="lg">
