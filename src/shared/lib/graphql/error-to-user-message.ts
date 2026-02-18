@@ -1,5 +1,44 @@
 const GENERIC_ERROR = "Произошла ошибка. Попробуйте позже.";
 
+export interface ParsedApolloError {
+  message: string;
+  is401: boolean;
+}
+
+/**
+ * Разбирает ошибку Apollo/GraphQL: извлекает текст сообщения и признак 401 (UNAUTHENTICATED).
+ */
+export function parseApolloError(error: unknown): ParsedApolloError {
+  let message = "";
+  let is401 = false;
+
+  if (error && typeof error === "object") {
+    const o = error as Record<string, unknown>;
+    const gql = o.graphQLErrors as Array<{ message?: string; extensions?: { code?: string } }> | undefined;
+    if (Array.isArray(gql) && gql.length > 0) {
+      if (gql[0]?.message) message = String(gql[0].message).trim();
+      is401 = gql.some((g) => g?.extensions?.code === "UNAUTHENTICATED");
+    }
+    if (!message && o.networkError && typeof o.networkError === "object") {
+      const net = o.networkError as { message?: string; statusCode?: number };
+      if (net.message) message = String(net.message).trim();
+      if (net.statusCode === 401) is401 = true;
+    }
+    if (!message && typeof o.message === "string") message = (o.message as string).trim();
+  }
+
+  if (!message && error instanceof Error) message = error.message.trim();
+
+  return { message, is401 };
+}
+
+/**
+ * Проверяет, является ли ошибка 401 / UNAUTHENTICATED (редирект на логин).
+ */
+export function isApolloUnauthenticated(error: unknown): boolean {
+  return parseApolloError(error).is401;
+}
+
 /**
  * Извлекает понятное сообщение об ошибке для форм админки (категории, программы).
  * Учитывает Apollo/GraphQL (graphQLErrors, networkError) и обычные Error.
@@ -8,23 +47,7 @@ export function getAdminFormErrorMessage(
   error: unknown,
   fallback: string
 ): string {
-  let raw = "";
-
-  if (error && typeof error === "object") {
-    const o = error as Record<string, unknown>;
-    const gql = o.graphQLErrors as Array<{ message?: string }> | undefined;
-    if (Array.isArray(gql) && gql.length > 0 && gql[0]?.message) {
-      raw = String(gql[0].message).trim();
-    }
-    if (!raw && o.networkError && typeof o.networkError === "object") {
-      const msg = (o.networkError as { message?: string }).message;
-      if (msg) raw = String(msg).trim();
-    }
-    if (!raw && typeof o.message === "string") raw = o.message.trim();
-  }
-
-  if (!raw && error instanceof Error) raw = error.message.trim();
-
+  const { message: raw } = parseApolloError(error);
   if (!raw) return fallback;
   const friendly = toUserFriendlyMessage(raw);
   return friendly || fallback;

@@ -19,6 +19,8 @@ import { useToastState } from "@/shared/store/toast-store";
 import { useRouter } from "next/navigation";
 import { saveReturnUrl } from "@/shared/lib/auth/utils/auth-redirect-utils";
 import { AUTH_GUARD_ROUTES } from "@/shared/lib/auth/constants/auth-guard-constants";
+import { isApolloUnauthenticated } from "@/shared/lib/graphql/error-to-user-message";
+import { BlurGlowBackground } from "@/shared/ui/blur-glow-background/blur-glow-background";
 
 function getFirstPricingIndex(program: { pricing?: Array<{ price?: number | null }> | null }): number | null {
   if (!program.pricing?.length) return null;
@@ -97,16 +99,7 @@ export const ProgramCard = memo(
           });
           showToast("success", "Добавлено в корзину");
         } catch (err) {
-          const e = err as {
-            networkError?: { statusCode?: number };
-            graphQLErrors?: Array<{ extensions?: { code?: string } }>;
-          };
-          const is401 =
-            e?.networkError?.statusCode === 401 ||
-            e?.graphQLErrors?.some(
-              (g) => g?.extensions?.code === "UNAUTHENTICATED"
-            );
-          if (is401) {
+          if (isApolloUnauthenticated(err)) {
             saveReturnUrl(window.location.pathname);
             router.replace(AUTH_GUARD_ROUTES.login);
             return;
@@ -140,8 +133,15 @@ export const ProgramCard = memo(
             className="group relative h-full w-full overflow-hidden p-4 transition-[border,transform,box-shadow] hover:-translate-y-0.5 hover:border-border/80"
           >
             <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-              <div className="absolute -top-24 -right-24 h-[260px] w-[360px] rounded-full bg-primary/10 blur-3xl" />
-              <div className="absolute inset-0 bg-linear-to-b from-transparent via-background/10 to-background/60" />
+              <BlurGlowBackground
+                spots={[
+                  {
+                    position: "top-right-card",
+                    color: "bg-primary/10",
+                    size: "small",
+                  },
+                ]}
+              />
             </div>
 
             <div className="relative z-10 flex h-full min-h-[88px] flex-col justify-between gap-3">

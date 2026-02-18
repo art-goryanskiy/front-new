@@ -1,21 +1,11 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useMyCart } from "@/entities/cart/api/use-my-cart";
 import { useUpdateCartItem } from "@/entities/cart/api/use-update-cart-item";
 import { buildOrderLinesFromCart } from "@/entities/order/api/build-order-lines-from-cart";
 import { useCreateOrderFromCart } from "@/entities/order/api/use-create-order-from-cart";
 import { useMe } from "@/features/auth/api/use-me";
-import { cn } from "@/lib/utils";
 import type {
   CartItemEntity,
   OrderLineLearnerInput,
@@ -25,7 +15,6 @@ import { formatPriceWithCurrency } from "@/shared/lib/helpers/format-helpers";
 import { useAuthUser } from "@/shared/store/auth-store";
 import { useToastState } from "@/shared/store/toast-store";
 import { Surface } from "@/shared/ui/surface/surface";
-import { OrganizationSuggestInput } from "@/shared/ui/form-fields/organization-suggest-input";
 import type { OrganizationSuggestion } from "@/shared/ui/form-fields/organization-suggest-input";
 import { CheckoutFormSkeleton } from "./checkout-form-skeleton";
 import { ShoppingBag, UserPlus } from "lucide-react";
@@ -43,53 +32,21 @@ import {
   CheckoutStepper,
   type CheckoutStep,
 } from "./components/checkout-stepper";
-import { IndividualApplicantSection } from "./components/individual-applicant-section";
-import { LearnerAccordionItem } from "./components/learner-accordion-item";
-import { LearnerFieldsCard } from "./components/learner-fields-card";
+import { CheckoutStepCustomer } from "./components/checkout-step-customer";
+import { CheckoutStepLearners } from "./components/checkout-step-learners";
+import { CheckoutStepConfirm } from "./components/checkout-step-confirm";
 import type { IndividualApplicantData } from "./types/individual-applicant.types";
 import { defaultIndividualApplicantData } from "./types/individual-applicant.types";
 import type { LearnerFormData } from "./types/learner-form-data.types";
 import { defaultLearnerFormData } from "./types/learner-form-data.types";
+import type { CheckoutFormData, OrderLevelData } from "./types/checkout-form.types";
+import { defaultOrderLevelData, STEP_TITLES } from "./types/checkout-form.types";
 import { individualApplicantFromProfile } from "./utils/individual-applicant-from-profile";
 import { learnerFromProfile } from "./utils/learner-from-profile";
 import {
   validateLearner,
   type LearnerFieldErrors,
 } from "./utils/validate-learner";
-
-type CheckoutFormData = {
-  customerType: OrderCustomerType;
-  organizationId: string;
-  contactEmail: string;
-  contactPhone: string;
-};
-
-/** Дополнительные поля уровня заявки (форма, язык, руководитель, контактное лицо, банк) */
-type OrderLevelData = {
-  trainingForm: string;
-  trainingLanguage: string;
-  headPosition: string;
-  headFullName: string;
-  contactPersonName: string;
-  contactPersonPosition: string;
-  bankAccount: string;
-  bankName: string;
-  bik: string;
-  correspondentAccount: string;
-};
-
-const defaultOrderLevelData = (): OrderLevelData => ({
-  trainingForm: "",
-  trainingLanguage: "",
-  headPosition: "",
-  headFullName: "",
-  contactPersonName: "",
-  contactPersonPosition: "",
-  bankAccount: "",
-  bankName: "",
-  bik: "",
-  correspondentAccount: "",
-});
 
 function toIsoDateOrUndefined(s: string | undefined): string | undefined {
   const t = s?.trim();
@@ -127,12 +84,6 @@ function learnerToOrderInput(l: LearnerFormData): OrderLineLearnerInput {
 function lineKey(item: CartItemEntity): string {
   return `${item.programId}-${item.pricingIndex}-${item.subProgramIndex ?? "p"}`;
 }
-
-const STEP_TITLES: Record<CheckoutStep, string> = {
-  1: "Заказчик и контакты",
-  2: "Данные слушателей",
-  3: "Подтверждение заявки",
-};
 
 export interface CheckoutFormProps {
   /** Опционально: вызывается при смене шага (для заголовка страницы) */
@@ -715,546 +666,53 @@ export const CheckoutForm = memo(function CheckoutForm({
         <CheckoutStepper currentStep={step} />
       </Surface>
 
-      {/* Step 1: Заказчик и контакты */}
       {step === 1 && (
-        <Surface variant="floating" className="space-y-6 p-6">
-          <h2 className="text-lg font-semibold text-foreground">
-            {STEP_TITLES[1]}
-          </h2>
-          <div className="space-y-6">
-            <div>
-              <p className="mb-3 text-sm font-medium text-foreground">
-                Тип заказчика
-              </p>
-              <div className="flex flex-wrap gap-4">
-                {[
-                  {
-                    value: OrderCustomerType.Self,
-                    label: "Физ. лицо (я)",
-                  },
-                  {
-                    value: OrderCustomerType.Individual,
-                    label: "Физ. лицо",
-                  },
-                  {
-                    value: OrderCustomerType.Organization,
-                    label: "Организация",
-                  },
-                ].map((opt) => (
-                  <label
-                    key={opt.value}
-                    htmlFor={`customerType-${opt.value}`}
-                    className="flex cursor-pointer items-center gap-2"
-                  >
-                    <input
-                      type="radio"
-                      id={`customerType-${opt.value}`}
-                      value={opt.value}
-                      {...register("customerType")}
-                      className="h-4 w-4"
-                    />
-                    <span className="text-sm font-medium text-foreground">
-                      {opt.label}
-                    </span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {showProfileSuggestion && (
-              <div className="rounded-xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm">
-                <p className="font-medium text-foreground">
-                  Чтобы данные подставлялись автоматически, заполните профиль.
-                </p>
-                <Button
-                  type="button"
-                  variant="link"
-                  className="mt-2 h-auto p-0 text-primary underline"
-                  onClick={() => router.push("/profile")}
-                >
-                  Перейти в профиль
-                </Button>
-              </div>
-            )}
-
-            {isOrganization && (
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <OrganizationSuggestInput
-                    label="Организация *"
-                    placeholder="Введите ИНН или название организации"
-                    description="Введите ИНН или название — выберите из списка. Либо выберите организацию из профиля ниже."
-                    onSelect={(suggestion) => {
-                      setOrganizationFromSuggest(suggestion);
-                      setValue("organizationId", "");
-                      setOrganizationError(null);
-                      setOrderLevelData((prev) => ({
-                        ...prev,
-                        bankAccount: "",
-                        bankName: "",
-                        bik: "",
-                        correspondentAccount: "",
-                      }));
-                    }}
-                    clearAfterSelect={false}
-                  />
-                  {organizationFromSuggest && (
-                    <p className="text-sm text-muted-foreground">
-                      Выбрано: {organizationFromSuggest.displayName}
-                      {organizationFromSuggest.inn && ` (ИНН ${organizationFromSuggest.inn})`}
-                    </p>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  <p className="text-xs font-medium text-muted-foreground">
-                    Или выберите из добавленных в профиле
-                  </p>
-                  <Select
-                    value={watch("organizationId")}
-                    onValueChange={(v) => {
-                      setValue("organizationId", v);
-                      setOrganizationFromSuggest(null);
-                      setOrganizationError(null);
-                      const org = organizations.find((o) => o.id === v);
-                      if (org) {
-                        setOrderLevelData((prev) => ({
-                          ...prev,
-                          bankAccount: org.bankAccount ?? "",
-                          bankName: org.bankName ?? "",
-                          bik: org.bik ?? "",
-                          correspondentAccount: org.correspondentAccount ?? "",
-                        }));
-                      }
-                    }}
-                  >
-                    <SelectTrigger
-                      id="organizationId"
-                      className={cn(
-                        "w-full rounded-xl",
-                        organizationError && "border-destructive"
-                      )}
-                    >
-                      <SelectValue placeholder="Выберите организацию из профиля" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {organizations.map((org) => (
-                        <SelectItem key={org.id} value={org.id}>
-                          {org.displayName}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {organizations.length === 0 && (
-                    <p className="text-xs text-muted-foreground">
-                      Добавьте организацию в профиле (раздел «Место работы»).
-                    </p>
-                  )}
-                </div>
-                {organizationError && (
-                  <p className="text-xs text-destructive">{organizationError}</p>
-                )}
-              </div>
-            )}
-
-            {!isIndividualOrSelf && (
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="contactEmail">
-                    Email {isOrganization && <span className="text-destructive">*</span>}
-                  </Label>
-                  <Input
-                    id="contactEmail"
-                    type="email"
-                    {...register("contactEmail", { required: isOrganization })}
-                    className="w-full"
-                    placeholder="email@example.com"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="contactPhone">
-                    Телефон {isOrganization && <span className="text-destructive">*</span>}
-                  </Label>
-                  <Input
-                    id="contactPhone"
-                    type="tel"
-                    {...register("contactPhone", { required: isOrganization })}
-                    className="w-full"
-                    placeholder="+7 (999) 000-00-00"
-                  />
-                </div>
-              </div>
-            )}
-
-            {isIndividualOrSelf && (
-              <IndividualApplicantSection
-                data={individualData}
-                onChange={setIndividualData}
-                fromProfile={customerType === OrderCustomerType.Self}
-              />
-            )}
-
-            {/* Дополнительные данные заявки: форма, язык; для организации — руководитель и контактное лицо */}
-            <div className="rounded-2xl border border-border/50 bg-muted/5 p-5 dark:border-white/10">
-              <h3 className="mb-4 text-sm font-semibold text-foreground">
-                Данные заявки
-              </h3>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-2 sm:col-span-2">
-                  <Label htmlFor="trainingForm">
-                    Форма обучения {isOrganization && <span className="text-destructive">*</span>}
-                  </Label>
-                  <Select
-                    value={orderLevelData.trainingForm || "none"}
-                    onValueChange={(v) =>
-                      setOrderLevelData((p) => ({
-                        ...p,
-                        trainingForm: v === "none" ? "" : v,
-                      }))
-                    }
-                  >
-                    <SelectTrigger id="trainingForm" className="rounded-xl">
-                      <SelectValue placeholder="Выберите форму" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="none">Не указано</SelectItem>
-                      <SelectItem value="очная">Очная</SelectItem>
-                      <SelectItem value="очно-заочная">Очно-заочная</SelectItem>
-                      <SelectItem value="заочная">Заочная</SelectItem>
-                      <SelectItem value="дистанционная">Дистанционная</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2 sm:col-span-2">
-                  <Label htmlFor="trainingLanguage">
-                    Язык обучения {isOrganization && <span className="text-destructive">*</span>}
-                  </Label>
-                  <Select
-                    value={orderLevelData.trainingLanguage || "none"}
-                    onValueChange={(v) =>
-                      setOrderLevelData((p) => ({
-                        ...p,
-                        trainingLanguage: v === "none" ? "" : v,
-                      }))
-                    }
-                  >
-                    <SelectTrigger id="trainingLanguage" className="rounded-xl">
-                      <SelectValue placeholder="Выберите язык" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="none">Не указано</SelectItem>
-                      <SelectItem value="русский">Русский</SelectItem>
-                      <SelectItem value="крымскотатарский">Крымскотатарский</SelectItem>
-                      <SelectItem value="украинский">Украинский</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                {isOrganization && (
-                  <>
-                    <div className="space-y-2 sm:col-span-2">
-                      <p className="text-xs font-medium text-muted-foreground">
-                        Руководитель
-                      </p>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="headPosition">
-                        Должность руководителя <span className="text-destructive">*</span>
-                      </Label>
-                      <Input
-                        id="headPosition"
-                        value={orderLevelData.headPosition}
-                        onChange={(e) =>
-                          setOrderLevelData((p) => ({
-                            ...p,
-                            headPosition: e.target.value,
-                          }))
-                        }
-                        placeholder="Должность"
-                        className="rounded-xl"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="headFullName">
-                        ФИО руководителя <span className="text-destructive">*</span>
-                      </Label>
-                      <Input
-                        id="headFullName"
-                        value={orderLevelData.headFullName}
-                        onChange={(e) =>
-                          setOrderLevelData((p) => ({
-                            ...p,
-                            headFullName: e.target.value,
-                          }))
-                        }
-                        placeholder="ФИО"
-                        className="rounded-xl"
-                      />
-                    </div>
-                    <div className="space-y-2 sm:col-span-2">
-                      <p className="text-xs font-medium text-muted-foreground">
-                        Контактное лицо
-                      </p>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="contactPersonPosition">
-                        Должность контактного лица <span className="text-destructive">*</span>
-                      </Label>
-                      <Input
-                        id="contactPersonPosition"
-                        value={orderLevelData.contactPersonPosition}
-                        onChange={(e) =>
-                          setOrderLevelData((p) => ({
-                            ...p,
-                            contactPersonPosition: e.target.value,
-                          }))
-                        }
-                        placeholder="Должность"
-                        className="rounded-xl"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="contactPersonName">
-                        ФИО контактного лица <span className="text-destructive">*</span>
-                      </Label>
-                      <Input
-                        id="contactPersonName"
-                        value={orderLevelData.contactPersonName}
-                        onChange={(e) =>
-                          setOrderLevelData((p) => ({
-                            ...p,
-                            contactPersonName: e.target.value,
-                          }))
-                        }
-                        placeholder="ФИО"
-                        className="rounded-xl"
-                      />
-                    </div>
-                    <div className="border-t border-border/60 pt-4 sm:col-span-2">
-                      <p className="mb-3 text-xs font-medium text-muted-foreground">
-                        Банковские реквизиты (опционально)
-                      </p>
-                      <div className="grid gap-4 sm:grid-cols-2">
-                        <div className="space-y-2">
-                          <Label htmlFor="bankAccount">Расчётный счёт (р/с)</Label>
-                          <Input
-                            id="bankAccount"
-                            inputMode="numeric"
-                            maxLength={20}
-                            value={orderLevelData.bankAccount}
-                            onChange={(e) =>
-                              setOrderLevelData((p) => ({
-                                ...p,
-                                bankAccount: e.target.value.replace(/\D/g, "").slice(0, 20),
-                              }))
-                            }
-                            placeholder="20 цифр"
-                            className="rounded-xl"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="bankName">Наименование банка</Label>
-                          <Input
-                            id="bankName"
-                            maxLength={300}
-                            value={orderLevelData.bankName}
-                            onChange={(e) =>
-                              setOrderLevelData((p) => ({
-                                ...p,
-                                bankName: e.target.value.slice(0, 300),
-                              }))
-                            }
-                            placeholder="Название банка"
-                            className="rounded-xl"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="bik">БИК</Label>
-                          <Input
-                            id="bik"
-                            inputMode="numeric"
-                            maxLength={9}
-                            value={orderLevelData.bik}
-                            onChange={(e) =>
-                              setOrderLevelData((p) => ({
-                                ...p,
-                                bik: e.target.value.replace(/\D/g, "").slice(0, 9),
-                              }))
-                            }
-                            placeholder="9 цифр"
-                            className="rounded-xl"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="correspondentAccount">Корреспондентский счёт (к/с)</Label>
-                          <Input
-                            id="correspondentAccount"
-                            inputMode="numeric"
-                            maxLength={20}
-                            value={orderLevelData.correspondentAccount}
-                            onChange={(e) =>
-                              setOrderLevelData((p) => ({
-                                ...p,
-                                correspondentAccount: e.target.value.replace(/\D/g, "").slice(0, 20),
-                              }))
-                            }
-                            placeholder="20 цифр"
-                            className="rounded-xl"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-        </Surface>
+        <CheckoutStepCustomer
+          register={register}
+          watch={watch}
+          setValue={setValue}
+          customerType={customerType}
+          isOrganization={isOrganization}
+          isIndividualOrSelf={isIndividualOrSelf}
+          isSelf={isSelf}
+          organizations={organizations}
+          orderLevelData={orderLevelData}
+          setOrderLevelData={setOrderLevelData}
+          organizationFromSuggest={organizationFromSuggest}
+          setOrganizationFromSuggest={setOrganizationFromSuggest}
+          organizationError={organizationError}
+          setOrganizationError={setOrganizationError}
+          showProfileSuggestion={showProfileSuggestion}
+          individualData={individualData}
+          setIndividualData={setIndividualData}
+        />
       )}
 
-      {/* Step 2: Слушатели (аккордеон по каждому) */}
       {step === 2 && (
-        <Surface variant="floating" className="space-y-6 p-6">
-          <div>
-            <h2 className="text-lg font-semibold text-foreground">
-              {STEP_TITLES[2]}
-            </h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Укажите данные слушателей по каждой позиции: ФИО, дата
-              рождения, гражданство, паспорт, СНИЛС, образование,
-              адреса, место работы, должность, контакты.
-            </p>
-          </div>
-          <div className="space-y-6">
-            {items.map((item, itemIndex) => {
-              const key = lineKey(item);
-              const learners = linesLearners[key] ?? [];
-              const displayTitle =
-                item.displayTitle ?? item.program.title;
-              return (
-                <div
-                  key={key}
-                  className={cn(
-                    "rounded-2xl border border-border/50 bg-background/95 p-5 shadow-sm transition-shadow duration-300 hover:shadow-md",
-                    "dark:border-white/10 dark:bg-muted/5",
-                    itemIndex > 0 && "mt-5"
-                  )}
-                >
-                  <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-                    <p className="font-semibold tracking-tight text-foreground">
-                      {displayTitle}
-                    </p>
-                    <div className="flex flex-wrap items-center gap-2">
-                      <p className="text-sm text-muted-foreground">
-                        {item.quantity} мест(а) ·{" "}
-                        <span className="font-medium text-foreground">
-                          {formatPriceWithCurrency(item.lineAmount)}
-                        </span>
-                      </p>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        disabled={updatingCart}
-                        onClick={() => addLearnerToLine(key, item)}
-                        className="shrink-0"
-                      >
-                        <UserPlus className="mr-1.5 h-4 w-4" aria-hidden />
-                        Добавить слушателя
-                      </Button>
-                    </div>
-                  </div>
-                  <div className="space-y-3">
-                    {learners.map((learner, idx) => {
-                      const slotId = learnerSlotId(key, idx);
-                      const useMyData = useMyDataForLearner[slotId] ?? false;
-                      return (
-                        <LearnerAccordionItem
-                          key={idx}
-                          index={idx}
-                          data={learner}
-                          defaultOpen={itemIndex === 0 && idx === 0}
-                          showUseMyDataCheckbox={
-                            !isSelf && !!user?.profile
-                          }
-                          useMyData={useMyData}
-                          onUseMyDataChange={(checked) =>
-                            setUseMyData(key, idx, checked)
-                          }
-                          showStatusDot={showLearnerStatusDots}
-                          hasErrors={
-                            Object.keys(
-                              learnerErrors[key]?.[idx] ?? {}
-                            ).length > 0
-                          }
-                        >
-                          <LearnerFieldsCard
-                            idPrefix={`${key}-${idx}`}
-                            data={learner}
-                            onChange={(data) =>
-                              setLearnerData(key, idx, data)
-                            }
-                            fromProfile={isSelf || useMyData}
-                            errors={learnerErrors[key]?.[idx]}
-                          />
-                        </LearnerAccordionItem>
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </Surface>
+        <CheckoutStepLearners
+          items={items}
+          lineKey={lineKey}
+          linesLearners={linesLearners}
+          learnerSlotId={learnerSlotId}
+          useMyDataForLearner={useMyDataForLearner}
+          setUseMyData={setUseMyData}
+          addLearnerToLine={addLearnerToLine}
+          updatingCart={updatingCart}
+          showLearnerStatusDots={showLearnerStatusDots}
+          learnerErrors={learnerErrors}
+          setLearnerData={setLearnerData}
+          isSelf={isSelf}
+          hasUserProfile={!!user?.profile}
+        />
       )}
 
-      {/* Step 3: Итог и отправка */}
       {step === 3 && (
-        <Surface variant="floating" className="space-y-6 p-6">
-          <h2 className="text-lg font-semibold text-foreground">
-            {STEP_TITLES[3]}
-          </h2>
-          <div className="space-y-4">
-            <div className="rounded-lg border border-border/50 bg-muted/20 p-4">
-              <p className="text-sm font-medium text-muted-foreground">
-                Заказчик
-              </p>
-              <p className="mt-1 text-sm text-foreground">
-                {customerType === OrderCustomerType.Self &&
-                  "Физ. лицо (я)"}
-                {customerType === OrderCustomerType.Individual &&
-                  "Физ. лицо"}
-                {customerType === OrderCustomerType.Organization &&
-                  "Организация"}
-                {isIndividualOrSelf &&
-                  individualData.lastName &&
-                  ` — ${individualData.lastName} ${individualData.firstName} ${individualData.middleName ?? ""}`.trim()}
-                {isIndividualOrSelf &&
-                  (individualData.email || individualData.phone) &&
-                  ` (${[individualData.email, individualData.phone].filter(Boolean).join(", ")})`}
-              </p>
-            </div>
-            <ul className="space-y-2">
-              {items.map((item) => {
-                const key = lineKey(item);
-                const displayTitle =
-                  item.displayTitle ?? item.program.title;
-                return (
-                  <li
-                    key={key}
-                    className="flex flex-wrap items-baseline justify-between gap-2 rounded-lg border border-border/40 bg-background/60 px-3 py-2 text-sm"
-                  >
-                    <span className="font-medium text-foreground">
-                      {displayTitle}
-                    </span>
-                    <span className="text-muted-foreground">
-                      {item.quantity} мест(а) ·{" "}
-                      {formatPriceWithCurrency(item.lineAmount)}
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        </Surface>
+        <CheckoutStepConfirm
+          customerType={customerType}
+          isIndividualOrSelf={isIndividualOrSelf}
+          individualData={individualData}
+          items={items}
+        />
       )}
 
       {/* Нижняя панель: Назад / Далее или Итого + Оформить */}

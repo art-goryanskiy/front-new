@@ -28,6 +28,9 @@ import { ProgramTableRankContent } from "./cells/program-table-rank-content";
 import { ProgramTableSubprogramsContent } from "./cells/program-table-subprograms-content";
 import { ProgramTableTitleContent } from "./cells/program-table-title-content";
 import { ProgramTableViewsContent } from "./cells/program-table-views-content";
+import { VirtualizedProgramTable } from "./virtualized-program-table";
+
+const VIRTUALIZE_THRESHOLD = 40;
 
 export const ProgramList = memo(function ProgramList({
   programs,
@@ -143,8 +146,15 @@ export const ProgramList = memo(function ProgramList({
         ))}
       </div>
 
-      {/* DESKTOP (md+): premium table */}
+      {/* DESKTOP (md+): table or virtualized table for large lists */}
       <div className="hidden md:block">
+        {programs.length > VIRTUALIZE_THRESHOLD ? (
+          <VirtualizedProgramTable
+            programs={programs}
+            categoryType={categoryType}
+            caption={caption ?? `Показано ${programs.length} программ`}
+          />
+        ) : (
         <Surface variant="floating" className={TABLE_CLASSES.wrapper}>
           <Table id={tableId} aria-label="Таблица программ">
             <TableHeader className={TABLE_CLASSES.thead}>
@@ -261,6 +271,7 @@ export const ProgramList = memo(function ProgramList({
             </TableCaption>
           </Table>
         </Surface>
+        )}
       </div>
     </>
   );
