@@ -8,6 +8,7 @@ import {
 import { Surface } from "@/shared/ui/surface/surface";
 import { BlurGlowBackground } from "@/shared/ui/blur-glow-background/blur-glow-background";
 import { ContactsMap } from "./contacts-map";
+import { ContactsDocuments } from "./contacts-documents";
 import { ContactsReviews } from "./contacts-reviews";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -137,6 +138,9 @@ export default function ContactsPage() {
           </h2>
           <ContactsMap />
         </section>
+
+        {/* Документы */}
+        <ContactsDocuments />
 
         {/* Отзывы */}
         <ContactsReviews />
