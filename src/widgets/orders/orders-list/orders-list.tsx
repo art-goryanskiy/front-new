@@ -7,6 +7,7 @@ import { ErrorState } from "@/shared/ui/error-state/error-state";
 import { OrdersListSkeleton } from "./orders-list-skeleton";
 import { Surface } from "@/shared/ui/surface/surface";
 import { formatPriceWithCurrency } from "@/shared/lib/helpers/format-helpers";
+import { formatProgramsCount, formatLearnersCount } from "@/shared/lib/helpers/plural";
 import { ORDER_STATUS_LABELS, ORDER_STATUS_BADGE_CLASSES } from "@/shared/constants/orders";
 import type { OrderFieldsFragment } from "@/shared/api/generated/graphql";
 import { Package, ChevronRight, CreditCard } from "lucide-react";
@@ -38,18 +39,6 @@ function formatOrderDate(date: string | unknown): string {
   }
 }
 
-function pluralPrograms(n: number): string {
-  if (n === 1) return "1 программа";
-  if (n >= 2 && n <= 4) return `${n} программы`;
-  return `${n} программ`;
-}
-
-function pluralLearners(n: number): string {
-  if (n === 1) return "1 слушатель";
-  if (n >= 2 && n <= 4) return `${n} слушателя`;
-  return `${n} слушателей`;
-}
-
 function orderSummary(order: OrderFieldsFragment): {
   programsCount: number;
   learnersCount: number;
@@ -79,7 +68,7 @@ const OrderCard = memo(function OrderCard({
     "border-border/60 bg-muted/20 text-muted-foreground";
   const isAwaitingPayment = order.status === "AWAITING_PAYMENT";
   const { programsCount, learnersCount, firstProgramTitle } = orderSummary(order);
-  const summaryLine = [pluralPrograms(programsCount), pluralLearners(learnersCount)].join(" · ");
+  const summaryLine = [formatProgramsCount(programsCount), formatLearnersCount(learnersCount)].join(" · ");
 
   return (
     <Link

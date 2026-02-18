@@ -3,6 +3,7 @@ import { Surface } from "@/shared/ui/surface/surface";
 import type { CategoryEntity } from "@/shared/api/generated/graphql";
 import { CategoryType } from "@/shared/api/generated/graphql";
 import { CATEGORY_TYPE_LABELS } from "@/shared/constants/categories";
+import { formatProgramsCount } from "@/shared/lib/helpers/plural";
 import {
   ArrowRight,
   GraduationCap,
@@ -75,7 +76,7 @@ export function CategoryTypeTiles({
         <div className="mb-8 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
           <div className="space-y-2">
             <div className="inline-flex items-center rounded-full border border-border/60 bg-muted/20 px-3 py-1 text-xs font-semibold text-foreground/90 backdrop-blur">
-              {totalPrograms} программ в каталоге
+              {formatProgramsCount(totalPrograms)} в каталоге
             </div>
             <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
               Направления обучения
@@ -99,7 +100,7 @@ export function CategoryTypeTiles({
               >
                 <Surface
                   variant="floating"
-                  className="relative overflow-hidden p-5 transition-[border,transform,box-shadow] hover:-translate-y-0.5 hover:border-border/80"
+                  className="relative overflow-hidden p-5 transition-[border,transform,box-shadow] hover:-translate-y-px hover:border-border/80"
                 >
                   {/* shader-lite */}
                   <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
@@ -129,7 +130,7 @@ export function CategoryTypeTiles({
                         {stats.categories} катег.
                       </span>
                       <span className="inline-flex items-center rounded-full border border-border/60 bg-muted/20 px-2 py-1 text-[11px] font-medium text-foreground/90">
-                        {stats.programs} программ
+                        {formatProgramsCount(stats.programs)}
                       </span>
                     </div>
                   </div>

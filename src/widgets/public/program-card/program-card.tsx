@@ -34,7 +34,7 @@ export const ProgramCard = memo(
   function ProgramCard({ program }: ProgramCardProps) {
     const router = useRouter();
     const { canSeePrice, isAuthLoading } = usePriceVisibility();
-    const { minPrice } = useProgramCardPricing(program);
+    const { minPrice, hoursRange } = useProgramCardPricing(program);
     const { addToCart, loading: addLoading } = useAddToCart();
     const { removeFromCart, loading: removeLoading } = useRemoveFromCart();
     const { items: cartItems } = useMyCart({ skip: !canSeePrice });
@@ -130,7 +130,7 @@ export const ProgramCard = memo(
         >
           <Surface
             variant="floating"
-            className="group relative h-full w-full overflow-hidden p-4 transition-[border,transform,box-shadow] hover:-translate-y-0.5 hover:border-border/80"
+            className="group relative h-full w-full overflow-hidden p-4 transition-[border,transform,box-shadow] hover:-translate-y-px hover:border-border/80"
           >
             <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
               <BlurGlowBackground
@@ -183,8 +183,13 @@ export const ProgramCard = memo(
                 {isAuthLoading ? (
                   <Skeleton className="h-5 w-24" />
                 ) : canSeePrice ? (
-                  <div className="text-sm font-semibold text-foreground">
+                  <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-semibold text-foreground">
                     {priceText}
+                    {hoursRange && (
+                      <span className="font-normal text-muted-foreground">
+                        {hoursRange}
+                      </span>
+                    )}
                   </div>
                 ) : (
                   <button

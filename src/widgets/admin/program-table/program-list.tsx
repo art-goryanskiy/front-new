@@ -14,6 +14,7 @@ import type {
   CategoryType,
   ProgramEntity,
 } from "@/shared/api/generated/graphql";
+import { pluralPrograms } from "@/shared/lib/helpers/plural";
 import { useProgramModalState } from "@/shared/store/modal-store";
 import { Surface } from "@/shared/ui/surface/surface";
 import { TableActions } from "@/shared/ui/table-actions/table-actions";
@@ -152,7 +153,7 @@ export const ProgramList = memo(function ProgramList({
           <VirtualizedProgramTable
             programs={programs}
             categoryType={categoryType}
-            caption={caption ?? `Показано ${programs.length} программ`}
+            caption={caption ?? `Показано ${programs.length} ${pluralPrograms(programs.length)}`}
           />
         ) : (
         <Surface variant="floating" className={TABLE_CLASSES.wrapper}>
@@ -267,7 +268,7 @@ export const ProgramList = memo(function ProgramList({
             </TableBody>
 
             <TableCaption className={TABLE_CLASSES.caption}>
-              {caption ?? `Показано ${programs.length} программ`}
+              {caption ?? `Показано ${programs.length} ${pluralPrograms(programs.length)}`}
             </TableCaption>
           </Table>
         </Surface>
