@@ -39,7 +39,7 @@ export function ContactsReviews() {
           <div className="mx-auto mt-4 h-px w-16 rounded-full bg-primary/30" />
         </header>
 
-        <div className="mx-auto max-w-4xl">
+        <div className="mx-auto w-full min-w-[300px] max-w-[760px]">
           <div className="overflow-hidden rounded-xl border border-border/50 bg-background shadow-inner ring-1 ring-black/5 dark:ring-white/5">
             <iframe
               title="Отзывы о организации на Яндекс.Картах"
