@@ -12,6 +12,10 @@ import { ListHeader } from "@/shared/ui/list-header/list-header";
 import type { ProgramListProps } from "./types/program-list.types";
 import { PROGRAM_LIST_CLASSES } from "./constants/program-list-constants";
 import { CATEGORY_TYPE_LABELS } from "@/shared/constants/categories";
+import {
+  getCategoryIdsByType,
+  filterProgramsByCategoryIds,
+} from "@/shared/lib/helpers/program-category-helpers";
 import { BookOpen } from "lucide-react";
 
 export const ProgramList = memo(function ProgramList({
@@ -57,13 +61,8 @@ export const ProgramList = memo(function ProgramList({
     }
 
     if (categoryType) {
-      const categoryIds = categories
-        .filter((cat) => cat.type === categoryType)
-        .map((cat) => cat.id);
-      if (categoryIds.length === 0) return [];
-      return allPrograms.filter((program) =>
-        categoryIds.includes(program.category)
-      );
+      const categoryIds = getCategoryIdsByType(categories, categoryType);
+      return filterProgramsByCategoryIds(allPrograms, categoryIds);
     }
 
     return allPrograms;
