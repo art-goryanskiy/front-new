@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { FileCheck, Expand } from "lucide-react";
+import { FileCheck, FileText } from "lucide-react";
 import { BlurGlowBackground } from "@/shared/ui/blur-glow-background/blur-glow-background";
 import { Surface } from "@/shared/ui/surface/surface";
 import {
@@ -15,7 +15,7 @@ import { CONTACT_DOCUMENTS } from "./contacts-data";
 import { cn } from "@/lib/utils";
 
 /**
- * Премиальный блок документов: BlurGlow, Surface, сетка карточек с превью и лайтбоксом.
+ * Блок документов: плитка без превью, по клику — лайтбокс с изображением целиком.
  */
 export function ContactsDocuments() {
   const [lightboxHref, setLightboxHref] = useState<string | null>(null);
@@ -61,48 +61,56 @@ export function ContactsDocuments() {
             <div className="mx-auto mt-5 h-px w-20 rounded-full bg-primary/30" />
           </header>
 
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {CONTACT_DOCUMENTS.map((doc, index) => (
               <motion.div
                 key={doc.href}
-                initial={{ opacity: 0, y: 12 }}
+                initial={{ opacity: 0, y: 8 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-24px" }}
-                transition={{ duration: 0.4, delay: index * 0.05 }}
-                className="group"
+                transition={{ duration: 0.35, delay: index * 0.04 }}
               >
-                <button
+                <motion.button
                   type="button"
                   onClick={() => openLightbox(doc.href, doc.title)}
                   className={cn(
-                    "relative w-full overflow-hidden rounded-2xl border border-border/60 bg-card/60 text-left",
-                    "shadow-md transition-all duration-300",
-                    "hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5",
+                    "group relative flex w-full items-center gap-4 overflow-hidden rounded-2xl border border-border/60 bg-card/60 p-4 text-left",
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                   )}
+                  whileHover={{
+                    y: -6,
+                    scale: 1.02,
+                    transition: {
+                      type: "spring",
+                      stiffness: 400,
+                      damping: 25,
+                    },
+                  }}
+                  whileTap={{ scale: 0.98 }}
+                  initial={false}
                 >
-                  <div className="relative aspect-4/3 w-full overflow-hidden bg-muted/30">
-                    <Image
-                      src={doc.href}
-                      alt=""
-                      fill
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                    <div
-                      className="absolute inset-0 bg-linear-to-t from-black/70 via-transparent to-transparent"
-                      aria-hidden
-                    />
-                    <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
-                      <span className="line-clamp-2 text-sm font-medium text-white drop-shadow-md">
-                        {doc.title}
-                      </span>
-                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/20 text-white backdrop-blur-sm transition-colors group-hover:bg-primary">
-                        <Expand className="h-4 w-4" aria-hidden />
-                      </span>
-                    </div>
-                  </div>
-                </button>
+                  {/* Блик при наведении */}
+                  <span
+                    className="pointer-events-none absolute inset-0 z-0 -translate-x-full bg-linear-to-r from-transparent via-white/15 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-full"
+                    aria-hidden
+                  />
+                  {/* Подсветка по границе */}
+                  <span
+                    className="pointer-events-none absolute inset-0 z-0 rounded-2xl opacity-0 shadow-[0_0_0_1px_hsl(var(--primary)/0.2),0_12px_40px_-8px_hsl(var(--primary)/0.25)] transition-opacity duration-300 group-hover:opacity-100"
+                    aria-hidden
+                  />
+                  <span className="relative z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors duration-300 group-hover:bg-primary/20 group-hover:text-primary">
+                    <motion.span
+                      transition={{ type: "spring", stiffness: 400, damping: 20 }}
+                      whileHover={{ rotate: 5, scale: 1.08 }}
+                    >
+                      <FileText className="h-6 w-6" aria-hidden />
+                    </motion.span>
+                  </span>
+                  <span className="relative z-10 min-w-0 flex-1 text-sm font-medium text-foreground transition-colors duration-300 group-hover:text-foreground sm:text-base">
+                    {doc.title}
+                  </span>
+                </motion.button>
               </motion.div>
             ))}
           </div>
@@ -112,22 +120,22 @@ export function ContactsDocuments() {
       <Dialog open={!!lightboxHref} onOpenChange={(open) => !open && closeLightbox()}>
         <DialogContent
           showClose={true}
-          className="max-w-5xl border-0 bg-transparent p-0 shadow-2xl"
+          className="max-h-[90vh] max-w-[90vw] border-0 bg-black/90 p-0 shadow-2xl"
           aria-describedby={undefined}
         >
           {lightboxHref && (
             <>
               <DialogTitle className="sr-only">{lightboxTitle}</DialogTitle>
-              <div className="relative max-h-[85vh] w-full overflow-hidden rounded-xl bg-muted/20">
+              <div className="flex max-h-[90vh] max-w-[90vw] items-center justify-center p-4">
                 <Image
                   src={lightboxHref}
                   alt={lightboxTitle}
                   width={1200}
                   height={900}
-                  className="h-auto w-full object-contain"
+                  className="max-h-[85vh] max-w-full object-contain"
                 />
               </div>
-              <p className="mt-3 text-center text-sm text-muted-foreground">
+              <p className="border-t border-white/10 px-4 py-3 text-center text-sm text-white/80">
                 {lightboxTitle}
               </p>
             </>
