@@ -30,7 +30,9 @@ export function generateMetadata({
   noindex = false,
   keywords,
 }: GenerateMetadataOptions): Metadata {
-  const fullTitle = title ? `${title} | ${SITE_NAME}` : SITE_NAME;
+  // Короткий title для страницы — суффикс « | ООО ЦОК СТАНДАРТ ПЛЮС» добавляет layout template
+  const pageTitle = title ?? SITE_NAME;
+  const fullTitleForOg = title ? `${title} | ${COMPANY_NAME}` : SITE_NAME;
   const fullUrl = url ? `${SITE_URL}${url}` : SITE_URL;
   const ogImage = image || `${SITE_URL}/og-image.jpg`;
 
@@ -45,7 +47,7 @@ export function generateMetadata({
   ];
 
   return {
-    title: fullTitle,
+    title: pageTitle,
     description,
     keywords: keywords
       ? [...defaultKeywords, ...keywords].join(", ")
@@ -57,7 +59,7 @@ export function generateMetadata({
     openGraph: {
       type,
       url: fullUrl,
-      title: fullTitle,
+      title: fullTitleForOg,
       description,
       siteName: COMPANY_NAME,
       images: [
@@ -72,7 +74,7 @@ export function generateMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      title: fullTitle,
+      title: fullTitleForOg,
       description,
       images: [ogImage],
     },
