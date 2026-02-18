@@ -5,6 +5,7 @@ import {
   Briefcase,
   ShoppingCart,
   Newspaper,
+  MapPin,
   type LucideIcon,
 } from "lucide-react";
 import { CATEGORY_TYPE_LABELS } from "@/shared/constants/categories";
@@ -35,6 +36,11 @@ export const GLOW_MENU_NAV_ITEMS = [
     icon: Newspaper as LucideIcon,
     label: "Новости",
     href: "/news",
+  },
+  {
+    icon: MapPin as LucideIcon,
+    label: "Контакты",
+    href: "/contacts",
   },
   {
     icon: ShoppingCart as LucideIcon,

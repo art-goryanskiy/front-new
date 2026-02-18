@@ -43,6 +43,10 @@ const footerLinks: FooterSection[] = [
     ],
   },
   {
+    label: "О нас",
+    links: [{ title: "Контакты", href: "/contacts" }],
+  },
+  {
     label: "Документы",
     links: [
       { title: "Политика конфиденциальности", href: "/privacy" },
