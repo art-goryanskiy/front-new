@@ -13,7 +13,7 @@ export function PublicPageLayout({
 }: PublicPageLayoutProps) {
   return (
     <div
-      className={`relative flex min-h-screen flex-col overflow-x-hidden bg-background ${className}`}
+      className={`relative flex min-h-screen flex-col bg-background ${className}`}
     >
       <PublicBackdrop />
       <PublicHeader />

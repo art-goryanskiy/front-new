@@ -25,7 +25,10 @@ export interface GlowMenuItem {
 
 export interface GlowMenuProps extends React.HTMLAttributes<HTMLDivElement> {
   items: GlowMenuItem[];
+  /** Подсветка пункта по label (например "О нас", "Обучение") */
   activeItem?: string;
+  /** Текущий pathname — для подсветки родителя при открытой дочерней странице */
+  pathname?: string;
   onItemClick?: (label: string) => void;
 }
 
@@ -83,7 +86,7 @@ const NAV_GLOW_DARK =
 export const MenuBar = React.forwardRef<
   HTMLDivElement,
   GlowMenuProps
->(({ className, items, activeItem, onItemClick }, ref) => {
+>(({ className, items, activeItem, pathname, onItemClick }, ref) => {
   const { theme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
   const isDarkTheme = mounted && theme === "dark";
@@ -131,9 +134,13 @@ export const MenuBar = React.forwardRef<
         {items.map((item) => {
           const Icon = item.icon;
           const isActive =
-            activeItem === item.label ||
-            (item.children?.some((c) => c.href === activeItem) ??
-              false);
+            (activeItem === item.label ||
+              (pathname != null &&
+                item.children?.some(
+                  (c) =>
+                    pathname === c.href || pathname.startsWith(c.href + "/")
+                ))) ??
+            false;
           const hasDropdown =
             item.children && item.children.length > 0;
           const isDropdownOpen = openDropdown === item.label;
@@ -264,12 +271,18 @@ export const MenuBar = React.forwardRef<
                     >
                       {item.children.map((sub) => {
                         const SubIcon = sub.icon;
+                        const isCurrentPage =
+                          pathname != null &&
+                          (pathname === sub.href || pathname.startsWith(sub.href + "/"));
                         return (
                           <Link
                             key={sub.href}
                             href={sub.href}
                             onClick={() => setOpenDropdown(null)}
-                            className="flex items-center gap-3 rounded-xl p-3 transition-colors hover:bg-muted"
+                            className={cn(
+                              "flex items-center gap-3 rounded-xl p-3 transition-colors hover:bg-muted",
+                              isCurrentPage && "bg-primary/10 font-medium text-primary"
+                            )}
                           >
                             {SubIcon ? (
                               <SubIcon className="h-5 w-5 shrink-0 text-primary" />
