@@ -8,8 +8,9 @@ const SITE_URL =
 const COMPANY_NAME = "ООО ЦОК СТАНДАРТ ПЛЮС";
 export const COMPANY_PHONE = "+7 (978) 742-90-42";
 export const COMPANY_EMAIL = "info@standart82.ru";
-/** Адрес для отображения на странице контактов (при необходимости уточните полный адрес) */
-export const COMPANY_ADDRESS = "Республика Крым";
+/** Полный адрес для schema.org и страницы контактов */
+export const COMPANY_ADDRESS =
+  "259022, Республика Крым, г. Симферополь, просп. Победы, 165/1, 3 этаж";
 
 export function generateOrganizationSchema() {
   return {
@@ -25,6 +26,9 @@ export function generateOrganizationSchema() {
       "@type": "PostalAddress",
       addressCountry: "RU",
       addressRegion: "Республика Крым",
+      addressLocality: "Симферополь",
+      streetAddress: "просп. Победы, 165/1, 3 этаж",
+      postalCode: "259022",
     },
     contactPoint: {
       "@type": "ContactPoint",
