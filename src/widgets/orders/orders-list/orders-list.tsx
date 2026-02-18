@@ -7,21 +7,43 @@ import { ErrorState } from "@/shared/ui/error-state/error-state";
 import { OrdersListSkeleton } from "./orders-list-skeleton";
 import { Surface } from "@/shared/ui/surface/surface";
 import { formatPriceWithCurrency } from "@/shared/lib/helpers/format-helpers";
-import { formatProgramsCount, formatLearnersCount } from "@/shared/lib/helpers/plural";
-import { ORDER_STATUS_LABELS, ORDER_STATUS_BADGE_CLASSES } from "@/shared/constants/orders";
+import {
+  formatProgramsCount,
+  formatLearnersCount,
+} from "@/shared/lib/helpers/plural";
+import {
+  ORDER_STATUS_LABELS,
+  ORDER_STATUS_BADGE_CLASSES,
+} from "@/shared/constants/orders";
 import type { OrderFieldsFragment } from "@/shared/api/generated/graphql";
 import { Package, ChevronRight, CreditCard } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-const STATUS_FILTER_OPTIONS: { value: string | undefined; label: string }[] = [
+const STATUS_FILTER_OPTIONS: {
+  value: string | undefined;
+  label: string;
+}[] = [
   { value: undefined, label: "Все" },
-  { value: "AWAITING_PAYMENT", label: ORDER_STATUS_LABELS["AWAITING_PAYMENT"] ?? "Ожидает оплаты" },
+  {
+    value: "AWAITING_PAYMENT",
+    label:
+      ORDER_STATUS_LABELS["AWAITING_PAYMENT"] ?? "Ожидает оплаты",
+  },
   { value: "PAID", label: ORDER_STATUS_LABELS["PAID"] ?? "Оплачен" },
-  { value: "IN_PROGRESS", label: ORDER_STATUS_LABELS["IN_PROGRESS"] ?? "В работе" },
-  { value: "COMPLETED", label: ORDER_STATUS_LABELS["COMPLETED"] ?? "Завершён" },
-  { value: "CANCELLED", label: ORDER_STATUS_LABELS["CANCELLED"] ?? "Отменён" },
+  {
+    value: "IN_PROGRESS",
+    label: ORDER_STATUS_LABELS["IN_PROGRESS"] ?? "В работе",
+  },
+  {
+    value: "COMPLETED",
+    label: ORDER_STATUS_LABELS["COMPLETED"] ?? "Завершён",
+  },
+  {
+    value: "CANCELLED",
+    label: ORDER_STATUS_LABELS["CANCELLED"] ?? "Отменён",
+  },
 ];
 
 function formatOrderDate(date: string | unknown): string {
@@ -46,10 +68,15 @@ function orderSummary(order: OrderFieldsFragment): {
 } {
   const lines = order.lines ?? [];
   const programsCount = lines.length;
-  const learnersCount = lines.reduce((sum, line) => sum + (line.learners?.length ?? 0), 0);
+  const learnersCount = lines.reduce(
+    (sum, line) => sum + (line.learners?.length ?? 0),
+    0
+  );
   const firstLine = lines[0];
   const firstProgramTitle =
-    firstLine?.programTitle?.trim() || firstLine?.subProgramTitle?.trim() || null;
+    firstLine?.programTitle?.trim() ||
+    firstLine?.subProgramTitle?.trim() ||
+    null;
   return {
     programsCount,
     learnersCount,
@@ -62,13 +89,18 @@ const OrderCard = memo(function OrderCard({
 }: {
   order: OrderFieldsFragment;
 }) {
-  const statusLabel = ORDER_STATUS_LABELS[order.status] ?? order.status;
+  const statusLabel =
+    ORDER_STATUS_LABELS[order.status] ?? order.status;
   const statusClass =
     ORDER_STATUS_BADGE_CLASSES[order.status] ??
     "border-border/60 bg-muted/20 text-muted-foreground";
   const isAwaitingPayment = order.status === "AWAITING_PAYMENT";
-  const { programsCount, learnersCount, firstProgramTitle } = orderSummary(order);
-  const summaryLine = [formatProgramsCount(programsCount), formatLearnersCount(learnersCount)].join(" · ");
+  const { programsCount, learnersCount, firstProgramTitle } =
+    orderSummary(order);
+  const summaryLine = [
+    formatProgramsCount(programsCount),
+    formatLearnersCount(learnersCount),
+  ].join(" · ");
 
   return (
     <Link
@@ -100,7 +132,10 @@ const OrderCard = memo(function OrderCard({
             {summaryLine}
           </p>
           {firstProgramTitle && (
-            <p className="line-clamp-1 text-sm text-foreground/90" title={firstProgramTitle}>
+            <p
+              className="line-clamp-1 text-sm text-foreground/90"
+              title={firstProgramTitle}
+            >
               {firstProgramTitle}
             </p>
           )}
@@ -119,11 +154,7 @@ const OrderCard = memo(function OrderCard({
   );
 });
 
-function OrdersEmptyContent({
-  hasFilter,
-}: {
-  hasFilter: boolean;
-}) {
+function OrdersEmptyContent({ hasFilter }: { hasFilter: boolean }) {
   return (
     <div className="flex min-h-[280px] flex-col items-center justify-center gap-6 py-12 text-center">
       <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted/50">
@@ -133,7 +164,7 @@ function OrdersEmptyContent({
         <h3 className="text-lg font-semibold text-foreground">
           Заявок пока нет
         </h3>
-        <p className="text-sm text-muted-foreground max-w-sm">
+        <p className="max-w-sm text-sm text-muted-foreground">
           {hasFilter
             ? "В этой категории заявок не найдено."
             : "Оформленные заявки появятся здесь."}
@@ -149,7 +180,9 @@ function OrdersEmptyContent({
 }
 
 export const OrdersList = memo(function OrdersList() {
-  const [statusFilter, setStatusFilter] = useState<string | undefined>(undefined);
+  const [statusFilter, setStatusFilter] = useState<
+    string | undefined
+  >(undefined);
   const { orders, loading, error } = useMyOrders({
     filter: { limit: 20, status: statusFilter },
   });
@@ -163,28 +196,39 @@ export const OrdersList = memo(function OrdersList() {
   }
 
   return (
-    <Surface variant="floating" className="relative overflow-hidden p-6">
+    <Surface
+      variant="floating"
+      className="relative overflow-hidden p-6"
+    >
       <div className="pointer-events-none absolute -top-20 -right-20 h-64 w-80 rounded-full bg-primary/5 blur-3xl" />
       <div className="relative z-10 space-y-6">
         <Tabs
           value={statusFilter ?? "all"}
-          onValueChange={(v) => setStatusFilter(v === "all" ? undefined : v)}
+          onValueChange={(v) =>
+            setStatusFilter(v === "all" ? undefined : v)
+          }
           className="w-full"
         >
           <TabsList
             className={cn(
               "inline-flex h-10 w-full flex-wrap justify-start gap-1 rounded-2xl p-1 sm:w-auto",
-              "bg-muted/50 border border-border/40"
+              "border border-border/40 bg-muted/50"
             )}
           >
             <TabsTrigger value="all" className="rounded-xl px-4">
               Все
             </TabsTrigger>
-            {STATUS_FILTER_OPTIONS.filter((o) => o.value).map((opt) => (
-              <TabsTrigger key={opt.value} value={opt.value!} className="rounded-xl px-4">
-                {opt.label}
-              </TabsTrigger>
-            ))}
+            {STATUS_FILTER_OPTIONS.filter((o) => o.value).map(
+              (opt) => (
+                <TabsTrigger
+                  key={opt.value}
+                  value={opt.value!}
+                  className="rounded-xl px-4"
+                >
+                  {opt.label}
+                </TabsTrigger>
+              )
+            )}
           </TabsList>
         </Tabs>
 

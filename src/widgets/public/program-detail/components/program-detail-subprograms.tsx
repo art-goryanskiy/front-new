@@ -57,16 +57,17 @@ export const ProgramDetailSubPrograms = memo(
     programPricing,
   }: ProgramDetailSubProgramsProps) {
     const router = useRouter();
-    const [loadingSubProgramIndex, setLoadingSubProgramIndex] = useState<
-      number | null
-    >(null);
+    const [loadingSubProgramIndex, setLoadingSubProgramIndex] =
+      useState<number | null>(null);
 
     const { items: cartItems } = useMyCart();
     const { addToCart } = useAddToCart();
     const { removeFromCart } = useRemoveFromCart();
     const { showToast } = useToastState();
 
-    const firstPricingWithPrice = programPricing.findIndex(isPricingWithPrice);
+    const firstPricingWithPrice = programPricing.findIndex(
+      isPricingWithPrice
+    );
     const canAddToCart =
       firstPricingWithPrice >= 0 && subPrograms.length > 0;
 
@@ -122,12 +123,18 @@ export const ProgramDetailSubPrograms = memo(
           setLoadingSubProgramIndex(null);
         }
       },
-      [firstPricingWithPrice, programId, removeFromCart, router, showToast]
+      [
+        firstPricingWithPrice,
+        programId,
+        removeFromCart,
+        router,
+        showToast,
+      ]
     );
 
     const price =
       firstPricingWithPrice >= 0
-        ? programPricing[firstPricingWithPrice]?.price ?? null
+        ? (programPricing[firstPricingWithPrice]?.price ?? null)
         : null;
 
     return (
@@ -167,7 +174,9 @@ export const ProgramDetailSubPrograms = memo(
                       <Button
                         size="sm"
                         variant="secondary"
-                        onClick={() => handleRemoveSubProgramFromCart(index)}
+                        onClick={() =>
+                          handleRemoveSubProgramFromCart(index)
+                        }
                         disabled={loadingThis}
                       >
                         <Check className="mr-1.5 h-4 w-4" />
@@ -177,7 +186,9 @@ export const ProgramDetailSubPrograms = memo(
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => handleAddSubProgramToCart(index)}
+                        onClick={() =>
+                          handleAddSubProgramToCart(index)
+                        }
                         disabled={loadingThis}
                       >
                         <ShoppingCart className="mr-1.5 h-4 w-4" />

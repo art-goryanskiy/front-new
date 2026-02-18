@@ -19,13 +19,19 @@ type UpdateOrderStatusVariables = {
 };
 
 /** Отмена заявки (только для AWAITING_PAYMENT). */
-export const CANCELLED_STATUS_OPTION: { value: OrderStatus; label: string } = {
+export const CANCELLED_STATUS_OPTION: {
+  value: OrderStatus;
+  label: string;
+} = {
   value: OrderStatus.Cancelled,
   label: "Отменён",
 };
 
 /** Статусы для оплаченных заявок (PAID / IN_PROGRESS → IN_PROGRESS, COMPLETED). */
-export const PROGRESS_ORDER_STATUS_OPTIONS: { value: OrderStatus; label: string }[] = [
+export const PROGRESS_ORDER_STATUS_OPTIONS: {
+  value: OrderStatus;
+  label: string;
+}[] = [
   { value: OrderStatus.InProgress, label: "В работе" },
   { value: OrderStatus.Completed, label: "Завершён" },
 ];
@@ -38,7 +44,9 @@ export function useUpdateOrderStatus() {
     refetchQueries: (result) => {
       const orderId = result.data?.updateOrderStatus?.id;
       if (!orderId) return [];
-      return [{ query: ORDER as DocumentNode, variables: { id: orderId } }];
+      return [
+        { query: ORDER as DocumentNode, variables: { id: orderId } },
+      ];
     },
   });
 

@@ -28,7 +28,10 @@ export const IndividualApplicantSection = memo(
     onChange,
     fromProfile = false,
   }: IndividualApplicantSectionProps) {
-    const set = (field: keyof IndividualApplicantData, value: string) => {
+    const set = (
+      field: keyof IndividualApplicantData,
+      value: string
+    ) => {
       onChange({ ...data, [field]: value });
     };
 

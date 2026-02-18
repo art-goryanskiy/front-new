@@ -107,12 +107,12 @@ export const OrganizationSuggestInput = memo(
     description,
     isDisabled,
     minQueryLength = 3,
-  debounceMs = 350,
-  count = 15,
-  clearAfterSelect = false,
-  onSelect,
-  onApiUnavailableChange,
-}: OrganizationSuggestInputProps) {
+    debounceMs = 350,
+    count = 15,
+    clearAfterSelect = false,
+    onSelect,
+    onApiUnavailableChange,
+  }: OrganizationSuggestInputProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const [isOpen, setIsOpen] = useState(false);
     const [value, setValue] = useState("");

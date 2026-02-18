@@ -15,7 +15,9 @@ export function useRemoveFromCart() {
   });
 
   const removeFromCart = async (input: RemoveFromCartInput) => {
-    const result = await removeFromCartMutation({ variables: { input } });
+    const result = await removeFromCartMutation({
+      variables: { input },
+    });
     return result.data?.removeFromCart;
   };
 

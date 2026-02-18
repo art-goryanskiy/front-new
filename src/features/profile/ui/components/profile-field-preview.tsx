@@ -29,7 +29,7 @@ export const ProfileFieldPreview = memo(function ProfileFieldPreview({
       <div
         className={cn(
           "mt-1 min-h-5 text-sm font-medium text-foreground",
-          !hasValue && "font-normal italic text-muted-foreground/80"
+          !hasValue && "font-normal text-muted-foreground/80 italic"
         )}
       >
         {hasValue ? value : "Не указано"}

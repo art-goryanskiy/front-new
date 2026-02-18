@@ -15,7 +15,14 @@ import { EmptyState } from "@/shared/ui/empty-state/empty-state";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
 import { TopProgramsSectionSkeleton } from "./top-programs-section-skeleton";
 import { BookOpen } from "lucide-react";
-import { memo, useCallback, useEffect, useRef, useMemo, useState } from "react";
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useRef,
+  useMemo,
+  useState,
+} from "react";
 import { ProgramCard } from "../program-card/program-card";
 import {
   TOP_PROGRAMS_CLASSES,
@@ -25,7 +32,6 @@ import {
 import type { TopProgramsSectionProps } from "./types/top-programs.types";
 
 export const TopProgramsSection = memo(function TopProgramsSection({
-  initialTopPrograms,
   initialAllPrograms,
   initialCategories,
 }: TopProgramsSectionProps = {}) {
@@ -33,7 +39,8 @@ export const TopProgramsSection = memo(function TopProgramsSection({
     CategoryType.QualificationUpgrade
   );
 
-  const hasInitialData = !!initialAllPrograms?.length && !!initialCategories?.length;
+  const hasInitialData =
+    !!initialAllPrograms?.length && !!initialCategories?.length;
   const { isAuthenticated } = useAuthStatus();
   const wasAuthenticatedRef = useRef(false);
 
@@ -76,7 +83,9 @@ export const TopProgramsSection = memo(function TopProgramsSection({
 
   const categories = useMemo(
     () =>
-      categoriesClient.length > 0 ? categoriesClient : (initialCategories ?? []),
+      categoriesClient.length > 0
+        ? categoriesClient
+        : (initialCategories ?? []),
     [initialCategories, categoriesClient]
   );
 
@@ -93,7 +102,9 @@ export const TopProgramsSection = memo(function TopProgramsSection({
   // Сортируем по просмотрам
   const sortedPrograms = useMemo(
     () =>
-      [...filteredPrograms].sort((a, b) => (b.views || 0) - (a.views || 0)),
+      [...filteredPrograms].sort(
+        (a, b) => (b.views || 0) - (a.views || 0)
+      ),
     [filteredPrograms]
   );
 

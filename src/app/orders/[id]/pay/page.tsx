@@ -16,7 +16,9 @@ export default function OrderPaymentPage() {
           {id ? (
             <OrderPaymentContent orderId={id} />
           ) : (
-            <p className="text-muted-foreground">Неверный идентификатор заявки.</p>
+            <p className="text-muted-foreground">
+              Неверный идентификатор заявки.
+            </p>
           )}
         </div>
       </PublicPageLayout>

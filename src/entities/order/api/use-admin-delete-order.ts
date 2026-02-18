@@ -14,7 +14,9 @@ export function useAdminDeleteOrder() {
     refetchQueries: [{ query: AdminOrdersDocument }],
   });
 
-  const adminDeleteOrder = async (orderId: string): Promise<boolean> => {
+  const adminDeleteOrder = async (
+    orderId: string
+  ): Promise<boolean> => {
     const result = await mutate({ variables: { orderId } });
     return result.data?.adminDeleteOrder ?? false;
   };

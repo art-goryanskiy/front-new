@@ -16,7 +16,9 @@ export default function OrderPaymentFailPage() {
           {id ? (
             <OrderPaymentReturnContent orderId={id} variant="fail" />
           ) : (
-            <p className="text-muted-foreground">Неверный идентификатор заявки.</p>
+            <p className="text-muted-foreground">
+              Неверный идентификатор заявки.
+            </p>
           )}
         </div>
       </PublicPageLayout>

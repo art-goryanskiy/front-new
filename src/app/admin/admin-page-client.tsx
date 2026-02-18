@@ -181,7 +181,9 @@ export const AdminPageClient = memo(function AdminPageClient() {
                       <span className="inline-flex items-center rounded-full border border-border/60 bg-muted/20 px-2 py-1 text-[11px] text-muted-foreground">
                         {loading
                           ? "…"
-                          : formatProgramsCount(stats?.programsSum ?? 0)}
+                          : formatProgramsCount(
+                              stats?.programsSum ?? 0
+                            )}
                       </span>
                     </div>
                   </div>

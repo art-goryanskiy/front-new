@@ -5,7 +5,10 @@ import {
 } from "@/shared/api/generated/graphql";
 import { ORDER_DOCUMENTS } from "@/shared/api/queries/orders";
 
-export function useOrderDocuments(orderId: string | null, options?: { skip?: boolean }) {
+export function useOrderDocuments(
+  orderId: string | null,
+  options?: { skip?: boolean }
+) {
   const { data, loading, error, refetch } = useQuery<
     OrderDocumentsQuery,
     OrderDocumentsQueryVariables

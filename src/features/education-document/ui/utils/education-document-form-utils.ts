@@ -24,9 +24,11 @@ export function updateEducationDocumentInput(
   };
 }
 
-export function getDefaultValues(editingDocument?: {
-  name?: string | null;
-} | null): EducationDocumentFormData {
+export function getDefaultValues(
+  editingDocument?: {
+    name?: string | null;
+  } | null
+): EducationDocumentFormData {
   return {
     name: editingDocument?.name || "",
     image: null,

@@ -19,7 +19,9 @@ import { cn } from "@/lib/utils";
  * Блок документов: плитка без превью, по клику — лайтбокс с изображением целиком.
  */
 export function ContactsDocuments() {
-  const [lightboxHref, setLightboxHref] = useState<string | null>(null);
+  const [lightboxHref, setLightboxHref] = useState<string | null>(
+    null
+  );
   const [lightboxTitle, setLightboxTitle] = useState<string>("");
 
   const openLightbox = (href: string, title: string) => {
@@ -34,12 +36,19 @@ export function ContactsDocuments() {
 
   return (
     <>
-      <section className="relative" aria-labelledby="documents-heading">
+      <section
+        className="relative"
+        aria-labelledby="documents-heading"
+      >
         <BlurGlowBackground
           spots={[
             { position: "top-left", color: "bg-primary/10" },
             { position: "bottom-right", color: "bg-emerald-500/10" },
-            { position: "top-right", color: "bg-amber-500/5", size: "small" },
+            {
+              position: "top-right",
+              color: "bg-amber-500/5",
+              size: "small",
+            },
           ]}
         />
         <Surface
@@ -85,7 +94,7 @@ export function ContactsDocuments() {
                     onClick={() => openLightbox(doc.href, doc.title)}
                     className={cn(
                       "group/card relative flex w-full items-center gap-5 overflow-hidden p-6 text-left sm:p-7",
-                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-2xl"
+                      "rounded-2xl focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none"
                     )}
                     whileHover={{
                       y: -4,
@@ -104,7 +113,10 @@ export function ContactsDocuments() {
                       aria-hidden
                     />
                     <span className="relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary transition-colors duration-300 group-hover/card:bg-primary/15 sm:h-16 sm:w-16">
-                      <FileText className="h-7 w-7 sm:h-8 sm:w-8" aria-hidden />
+                      <FileText
+                        className="h-7 w-7 sm:h-8 sm:w-8"
+                        aria-hidden
+                      />
                     </span>
                     <span className="relative z-10 min-w-0 flex-1 text-base font-medium text-foreground transition-colors duration-300 group-hover/card:text-foreground sm:text-lg">
                       {doc.title}
@@ -117,7 +129,10 @@ export function ContactsDocuments() {
         </Surface>
       </section>
 
-      <Dialog open={!!lightboxHref} onOpenChange={(open) => !open && closeLightbox()}>
+      <Dialog
+        open={!!lightboxHref}
+        onOpenChange={(open) => !open && closeLightbox()}
+      >
         <DialogContent
           showClose={true}
           className="max-h-[90vh] max-w-[90vw] border-0 bg-black/90 p-0 shadow-2xl"
@@ -125,7 +140,9 @@ export function ContactsDocuments() {
         >
           {lightboxHref && (
             <>
-              <DialogTitle className="sr-only">{lightboxTitle}</DialogTitle>
+              <DialogTitle className="sr-only">
+                {lightboxTitle}
+              </DialogTitle>
               <div className="flex max-h-[90vh] max-w-[90vw] items-center justify-center p-4">
                 <Image
                   src={lightboxHref}

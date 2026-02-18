@@ -13,13 +13,12 @@ export default function Error({
 }) {
   useEffect(() => {
     if (process.env.NODE_ENV === "development") {
-      // eslint-disable-next-line no-console
       console.error("Error boundary caught:", error);
     }
   }, [error]);
 
   return (
-    <div className="min-h-[60vh] flex items-center justify-center p-4">
+    <div className="flex min-h-[60vh] items-center justify-center p-4">
       <Surface
         variant="floating"
         className="mx-auto w-full max-w-md p-6 text-center"
@@ -28,13 +27,17 @@ export default function Error({
           Что-то пошло не так
         </h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          Произошла ошибка. Попробуйте обновить страницу или вернуться позже.
+          Произошла ошибка. Попробуйте обновить страницу или вернуться
+          позже.
         </p>
         <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
           <Button onClick={() => reset()} variant="default">
             Попробовать снова
           </Button>
-          <Button onClick={() => window.history.back()} variant="outline">
+          <Button
+            onClick={() => window.history.back()}
+            variant="outline"
+          >
             Назад
           </Button>
         </div>

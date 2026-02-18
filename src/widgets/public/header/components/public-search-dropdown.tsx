@@ -9,7 +9,9 @@ import type { PublicSearchResult } from "../hooks/use-public-search-results";
 import { usePublicSearchResults } from "../hooks/use-public-search-results";
 import type { UserEntity } from "@/shared/api/generated/graphql";
 
-const CATEGORY_ORDER = Object.values(CATEGORY_TYPE_LABELS) as string[];
+const CATEGORY_ORDER = Object.values(
+  CATEGORY_TYPE_LABELS
+) as string[];
 const OTHER_CATEGORY_LABEL = "Прочее";
 
 interface PublicSearchDropdownProps {
@@ -77,10 +79,15 @@ export const PublicSearchDropdown = memo(
       const programs = results.filter((r) => r.type === "program");
       const orders = results.filter((r) => r.type === "order");
 
-      const programsByCategory = new Map<string, PublicSearchResult[]>();
+      const programsByCategory = new Map<
+        string,
+        PublicSearchResult[]
+      >();
       for (const p of programs) {
-        const key = p.parentCategoryName?.trim() || OTHER_CATEGORY_LABEL;
-        if (!programsByCategory.has(key)) programsByCategory.set(key, []);
+        const key =
+          p.parentCategoryName?.trim() || OTHER_CATEGORY_LABEL;
+        if (!programsByCategory.has(key))
+          programsByCategory.set(key, []);
         programsByCategory.get(key)!.push(p);
       }
       const programEntries: [string, PublicSearchResult[]][] = [];

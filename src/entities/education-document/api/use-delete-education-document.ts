@@ -12,7 +12,9 @@ export function useDeleteEducationDocument() {
   });
 
   const handleDelete = async (id: string) => {
-    const result = await deleteEducationDocument({ variables: { id } });
+    const result = await deleteEducationDocument({
+      variables: { id },
+    });
     return result.data?.deleteEducationDocument;
   };
 

@@ -138,7 +138,8 @@ export const MenuBar = React.forwardRef<
               (pathname != null &&
                 item.children?.some(
                   (c) =>
-                    pathname === c.href || pathname.startsWith(c.href + "/")
+                    pathname === c.href ||
+                    pathname.startsWith(c.href + "/")
                 ))) ??
             false;
           const hasDropdown =
@@ -273,7 +274,8 @@ export const MenuBar = React.forwardRef<
                         const SubIcon = sub.icon;
                         const isCurrentPage =
                           pathname != null &&
-                          (pathname === sub.href || pathname.startsWith(sub.href + "/"));
+                          (pathname === sub.href ||
+                            pathname.startsWith(sub.href + "/"));
                         return (
                           <Link
                             key={sub.href}
@@ -281,7 +283,8 @@ export const MenuBar = React.forwardRef<
                             onClick={() => setOpenDropdown(null)}
                             className={cn(
                               "flex items-center gap-3 rounded-xl p-3 transition-colors hover:bg-muted",
-                              isCurrentPage && "bg-primary/10 font-medium text-primary"
+                              isCurrentPage &&
+                                "bg-primary/10 font-medium text-primary"
                             )}
                           >
                             {SubIcon ? (

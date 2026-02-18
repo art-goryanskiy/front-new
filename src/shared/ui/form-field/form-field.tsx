@@ -98,7 +98,7 @@ export const FormField = memo(function FormField<
                   aria-invalid={fieldState.invalid}
                   aria-label={label}
                   onFocus={() => setIsFocused(true)}
-                  onBlur={(e) => {
+                  onBlur={() => {
                     field.onBlur();
                     setIsFocused(false);
                   }}

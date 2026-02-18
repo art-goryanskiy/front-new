@@ -14,14 +14,20 @@ function OrderCardSkeleton() {
         <div className="min-w-0 flex-1 space-y-2">
           <div className="flex flex-wrap items-center gap-2">
             <Skeleton variant="premium" className="h-4 w-20" />
-            <Skeleton variant="premium" className="h-5 w-24 rounded-full" />
+            <Skeleton
+              variant="premium"
+              className="h-5 w-24 rounded-full"
+            />
           </div>
           <Skeleton variant="premium" className="h-3 w-36" />
           <Skeleton variant="premium" className="h-3 w-44" />
           <Skeleton variant="premium" className="h-3 w-28" />
           <Skeleton variant="premium" className="h-5 w-24" />
         </div>
-        <Skeleton variant="premium" className="h-5 w-5 shrink-0 rounded-full" />
+        <Skeleton
+          variant="premium"
+          className="h-5 w-5 shrink-0 rounded-full"
+        />
       </div>
     </div>
   );
@@ -29,7 +35,10 @@ function OrderCardSkeleton() {
 
 export const OrdersListSkeleton = memo(function OrdersListSkeleton() {
   return (
-    <Surface variant="floating" className="relative overflow-hidden p-6">
+    <Surface
+      variant="floating"
+      className="relative overflow-hidden p-6"
+    >
       <div className="pointer-events-none absolute -top-20 -right-20 h-64 w-80 rounded-full bg-primary/5 blur-3xl" />
       <div className="relative z-10 space-y-6">
         <div className="flex flex-wrap gap-1.5">

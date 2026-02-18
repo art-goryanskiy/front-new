@@ -153,125 +153,134 @@ export const ProgramList = memo(function ProgramList({
           <VirtualizedProgramTable
             programs={programs}
             categoryType={categoryType}
-            caption={caption ?? `Показано ${programs.length} ${pluralPrograms(programs.length)}`}
+            caption={
+              caption ??
+              `Показано ${programs.length} ${pluralPrograms(programs.length)}`
+            }
           />
         ) : (
-        <Surface variant="floating" className={TABLE_CLASSES.wrapper}>
-          <Table id={tableId} aria-label="Таблица программ">
-            <TableHeader className={TABLE_CLASSES.thead}>
-              <TableRow>
-                <TableHead className={`min-w-0 ${TABLE_CLASSES.th}`}>
-                  ПРОГРАММА
-                </TableHead>
-
-                <TableHead
-                  className={`${showAwardedQualification ? "hidden md:table-cell" : "hidden"} text-center ${TABLE_CLASSES.th}`}
-                >
-                  КВАЛИФИКАЦИЯ
-                </TableHead>
-
-                <TableHead
-                  className={`${showAwardedRank ? "hidden md:table-cell" : "hidden"} text-center ${TABLE_CLASSES.th}`}
-                >
-                  РАЗРЯД
-                </TableHead>
-
-                <TableHead
-                  className={`hidden text-start md:table-cell ${TABLE_CLASSES.th}`}
-                >
-                  ЧАСЫ - ЦЕНА
-                </TableHead>
-
-                <TableHead
-                  className={`hidden text-center lg:table-cell ${TABLE_CLASSES.th}`}
-                >
-                  ПРОСМОТРЫ
-                </TableHead>
-
-                <TableHead
-                  className={`${showSubPrograms ? "hidden lg:table-cell" : "hidden"} text-center ${TABLE_CLASSES.th}`}
-                >
-                  ПОДПРОГРАММЫ
-                </TableHead>
-
-                <TableHead
-                  className={`hidden text-center md:table-cell ${TABLE_CLASSES.th}`}
-                >
-                  ДЕЙСТВИЯ
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-
-            <TableBody className="[&_tr:nth-child(even)]:bg-muted/10">
-              {programs.map((program) => (
-                <TableRow
-                  key={program.id}
-                  className={`group cursor-pointer ${TABLE_CLASSES.tr}`}
-                  onClick={(e) => handleRowClick(program, e)}
-                  role="row"
-                  tabIndex={0}
-                  onKeyDown={(e) => handleKeyDown(program, e)}
-                  aria-label={`Программа ${program.title}`}
-                >
-                  <TableCell
-                    className={`min-w-0 ${TABLE_CLASSES.td}`}
+          <Surface
+            variant="floating"
+            className={TABLE_CLASSES.wrapper}
+          >
+            <Table id={tableId} aria-label="Таблица программ">
+              <TableHeader className={TABLE_CLASSES.thead}>
+                <TableRow>
+                  <TableHead
+                    className={`min-w-0 ${TABLE_CLASSES.th}`}
                   >
-                    <ProgramTableTitleContent program={program} />
-                  </TableCell>
+                    ПРОГРАММА
+                  </TableHead>
 
-                  <TableCell
-                    className={`${showAwardedQualification ? "hidden md:table-cell" : "hidden"} ${TABLE_CLASSES.td}`}
+                  <TableHead
+                    className={`${showAwardedQualification ? "hidden md:table-cell" : "hidden"} text-center ${TABLE_CLASSES.th}`}
                   >
-                    <ProgramTableQualificationContent
-                      program={program}
-                    />
-                  </TableCell>
+                    КВАЛИФИКАЦИЯ
+                  </TableHead>
 
-                  <TableCell
-                    className={`${showAwardedRank ? "hidden md:table-cell" : "hidden"} ${TABLE_CLASSES.td}`}
+                  <TableHead
+                    className={`${showAwardedRank ? "hidden md:table-cell" : "hidden"} text-center ${TABLE_CLASSES.th}`}
                   >
-                    <ProgramTableRankContent program={program} />
-                  </TableCell>
+                    РАЗРЯД
+                  </TableHead>
 
-                  <TableCell
-                    className={`hidden md:table-cell ${TABLE_CLASSES.td}`}
+                  <TableHead
+                    className={`hidden text-start md:table-cell ${TABLE_CLASSES.th}`}
                   >
-                    <ProgramTablePricingContent program={program} />
-                  </TableCell>
+                    ЧАСЫ - ЦЕНА
+                  </TableHead>
 
-                  <TableCell
-                    className={`hidden lg:table-cell ${TABLE_CLASSES.td}`}
+                  <TableHead
+                    className={`hidden text-center lg:table-cell ${TABLE_CLASSES.th}`}
                   >
-                    <ProgramTableViewsContent program={program} />
-                  </TableCell>
+                    ПРОСМОТРЫ
+                  </TableHead>
 
-                  <TableCell
-                    className={`${showSubPrograms ? "hidden lg:table-cell" : "hidden"} ${TABLE_CLASSES.td}`}
+                  <TableHead
+                    className={`${showSubPrograms ? "hidden lg:table-cell" : "hidden"} text-center ${TABLE_CLASSES.th}`}
                   >
-                    <ProgramTableSubprogramsContent
-                      program={program}
-                    />
-                  </TableCell>
+                    ПОДПРОГРАММЫ
+                  </TableHead>
 
-                  <TableCell
-                    className={`hidden md:table-cell ${TABLE_CLASSES.td}`}
+                  <TableHead
+                    className={`hidden text-center md:table-cell ${TABLE_CLASSES.th}`}
                   >
-                    <TableActions
-                      onEdit={() => handleEditClick(program)}
-                      onDelete={() => handleDeleteClick(program)}
-                      editLabel="Редактировать программу"
-                      deleteLabel="Удалить программу"
-                    />
-                  </TableCell>
+                    ДЕЙСТВИЯ
+                  </TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
+              </TableHeader>
 
-            <TableCaption className={TABLE_CLASSES.caption}>
-              {caption ?? `Показано ${programs.length} ${pluralPrograms(programs.length)}`}
-            </TableCaption>
-          </Table>
-        </Surface>
+              <TableBody className="[&_tr:nth-child(even)]:bg-muted/10">
+                {programs.map((program) => (
+                  <TableRow
+                    key={program.id}
+                    className={`group cursor-pointer ${TABLE_CLASSES.tr}`}
+                    onClick={(e) => handleRowClick(program, e)}
+                    role="row"
+                    tabIndex={0}
+                    onKeyDown={(e) => handleKeyDown(program, e)}
+                    aria-label={`Программа ${program.title}`}
+                  >
+                    <TableCell
+                      className={`min-w-0 ${TABLE_CLASSES.td}`}
+                    >
+                      <ProgramTableTitleContent program={program} />
+                    </TableCell>
+
+                    <TableCell
+                      className={`${showAwardedQualification ? "hidden md:table-cell" : "hidden"} ${TABLE_CLASSES.td}`}
+                    >
+                      <ProgramTableQualificationContent
+                        program={program}
+                      />
+                    </TableCell>
+
+                    <TableCell
+                      className={`${showAwardedRank ? "hidden md:table-cell" : "hidden"} ${TABLE_CLASSES.td}`}
+                    >
+                      <ProgramTableRankContent program={program} />
+                    </TableCell>
+
+                    <TableCell
+                      className={`hidden md:table-cell ${TABLE_CLASSES.td}`}
+                    >
+                      <ProgramTablePricingContent program={program} />
+                    </TableCell>
+
+                    <TableCell
+                      className={`hidden lg:table-cell ${TABLE_CLASSES.td}`}
+                    >
+                      <ProgramTableViewsContent program={program} />
+                    </TableCell>
+
+                    <TableCell
+                      className={`${showSubPrograms ? "hidden lg:table-cell" : "hidden"} ${TABLE_CLASSES.td}`}
+                    >
+                      <ProgramTableSubprogramsContent
+                        program={program}
+                      />
+                    </TableCell>
+
+                    <TableCell
+                      className={`hidden md:table-cell ${TABLE_CLASSES.td}`}
+                    >
+                      <TableActions
+                        onEdit={() => handleEditClick(program)}
+                        onDelete={() => handleDeleteClick(program)}
+                        editLabel="Редактировать программу"
+                        deleteLabel="Удалить программу"
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+
+              <TableCaption className={TABLE_CLASSES.caption}>
+                {caption ??
+                  `Показано ${programs.length} ${pluralPrograms(programs.length)}`}
+              </TableCaption>
+            </Table>
+          </Surface>
         )}
       </div>
     </>

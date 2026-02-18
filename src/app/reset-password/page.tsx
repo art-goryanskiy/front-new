@@ -52,10 +52,7 @@ export default function ResetPasswordPage() {
               <Suspense
                 fallback={
                   <div className="flex min-h-[200px] flex-col items-center justify-center gap-4 py-8">
-                    <Spinner
-                      className="text-primary"
-                      size={32}
-                    />
+                    <Spinner className="text-primary" size={32} />
                     <span className="text-sm text-muted-foreground">
                       Загрузка формы…
                     </span>

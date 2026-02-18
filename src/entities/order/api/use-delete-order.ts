@@ -20,7 +20,9 @@ export function useDeleteOrder() {
   });
 
   const deleteOrder = async (orderId: string): Promise<boolean> => {
-    const result = await deleteOrderMutation({ variables: { orderId } });
+    const result = await deleteOrderMutation({
+      variables: { orderId },
+    });
     return result.data?.deleteOrder ?? false;
   };
 

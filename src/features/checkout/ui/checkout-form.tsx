@@ -17,7 +17,7 @@ import { useToastState } from "@/shared/store/toast-store";
 import { Surface } from "@/shared/ui/surface/surface";
 import type { OrganizationSuggestion } from "@/shared/ui/form-fields/organization-suggest-input";
 import { CheckoutFormSkeleton } from "./checkout-form-skeleton";
-import { ShoppingBag, UserPlus } from "lucide-react";
+import { ShoppingBag } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
   memo,
@@ -39,8 +39,11 @@ import type { IndividualApplicantData } from "./types/individual-applicant.types
 import { defaultIndividualApplicantData } from "./types/individual-applicant.types";
 import type { LearnerFormData } from "./types/learner-form-data.types";
 import { defaultLearnerFormData } from "./types/learner-form-data.types";
-import type { CheckoutFormData, OrderLevelData } from "./types/checkout-form.types";
-import { defaultOrderLevelData, STEP_TITLES } from "./types/checkout-form.types";
+import type {
+  CheckoutFormData,
+  OrderLevelData,
+} from "./types/checkout-form.types";
+import { defaultOrderLevelData } from "./types/checkout-form.types";
 import { individualApplicantFromProfile } from "./utils/individual-applicant-from-profile";
 import { learnerFromProfile } from "./utils/learner-from-profile";
 import {
@@ -48,7 +51,9 @@ import {
   type LearnerFieldErrors,
 } from "./utils/validate-learner";
 
-function toIsoDateOrUndefined(s: string | undefined): string | undefined {
+function toIsoDateOrUndefined(
+  s: string | undefined
+): string | undefined {
   const t = s?.trim();
   return t ? t : undefined;
 }
@@ -57,7 +62,9 @@ function normalizeDigits(s: string): string {
   return s.replace(/\D/g, "");
 }
 
-function learnerToOrderInput(l: LearnerFormData): OrderLineLearnerInput {
+function learnerToOrderInput(
+  l: LearnerFormData
+): OrderLineLearnerInput {
   return {
     lastName: l.lastName,
     firstName: l.firstName,
@@ -70,11 +77,16 @@ function learnerToOrderInput(l: LearnerFormData): OrderLineLearnerInput {
     passportNumber: l.passportNumber?.trim() || undefined,
     passportIssuedBy: l.passportIssuedBy?.trim() || undefined,
     passportIssuedAt: toIsoDateOrUndefined(l.passportIssuedAt),
-    passportDepartmentCode: l.passportDepartmentCode?.trim() || undefined,
+    passportDepartmentCode:
+      l.passportDepartmentCode?.trim() || undefined,
     snils: l.snils?.trim() || undefined,
-    educationQualification: l.educationQualification?.trim() || undefined,
-    educationDocumentIssuedAt: toIsoDateOrUndefined(l.educationDocumentIssuedAt),
-    passportRegistrationAddress: l.passportRegistrationAddress?.trim() || undefined,
+    educationQualification:
+      l.educationQualification?.trim() || undefined,
+    educationDocumentIssuedAt: toIsoDateOrUndefined(
+      l.educationDocumentIssuedAt
+    ),
+    passportRegistrationAddress:
+      l.passportRegistrationAddress?.trim() || undefined,
     residentialAddress: l.residentialAddress?.trim() || undefined,
     workPlaceName: l.workPlaceName?.trim() || undefined,
     position: l.position?.trim() || undefined,
@@ -98,7 +110,8 @@ export const CheckoutForm = memo(function CheckoutForm({
   const { user: meUser, refetch: refetchMe } = useMe({ skip: false });
   const user = meUser ?? storeUser;
   const { items, totalAmount, loading: cartLoading } = useMyCart();
-  const { updateCartItem, loading: updatingCart } = useUpdateCartItem();
+  const { updateCartItem, loading: updatingCart } =
+    useUpdateCartItem();
 
   useEffect(() => {
     refetchMe({ fetchPolicy: "network-only" });
@@ -124,7 +137,8 @@ export const CheckoutForm = memo(function CheckoutForm({
           bankAccount: wp.organization?.bankAccount ?? undefined,
           bankName: wp.organization?.bankName ?? undefined,
           bik: wp.organization?.bik ?? undefined,
-          correspondentAccount: wp.organization?.correspondentAccount ?? undefined,
+          correspondentAccount:
+            wp.organization?.correspondentAccount ?? undefined,
         })),
     [workPlaces]
   );
@@ -161,16 +175,17 @@ export const CheckoutForm = memo(function CheckoutForm({
   >({});
 
   /** Ошибка валидации поля «Организация» (только при типе заказчика «Организация») */
-  const [organizationError, setOrganizationError] = useState<string | null>(
-    null
-  );
+  const [organizationError, setOrganizationError] = useState<
+    string | null
+  >(null);
 
   /** Организация, выбранная по ИНН/названию через OrganizationSuggestInput (приоритет над organizationId) */
   const [organizationFromSuggest, setOrganizationFromSuggest] =
     useState<OrganizationSuggestion | null>(null);
 
   /** Показывать точки статуса у слушателей только после первой попытки валидации */
-  const [showLearnerStatusDots, setShowLearnerStatusDots] = useState(false);
+  const [showLearnerStatusDots, setShowLearnerStatusDots] =
+    useState(false);
 
   const {
     register,
@@ -236,34 +251,35 @@ export const CheckoutForm = memo(function CheckoutForm({
             }
           );
         } else {
-          const fillLearner =
-          profileLearner
+          const fillLearner = profileLearner
             ? () => ({ ...profileLearner })
             : defaultLearnerFormData;
-        if (currentLen === item.quantity) {
-          next[key] = currentList!;
-        } else if (currentList && item.quantity > currentLen) {
-          next[key] = [
-            ...currentList,
-            ...Array.from(
-              { length: item.quantity - currentLen },
+          if (currentLen === item.quantity) {
+            next[key] = currentList!;
+          } else if (currentList && item.quantity > currentLen) {
+            next[key] = [
+              ...currentList,
+              ...Array.from(
+                { length: item.quantity - currentLen },
+                fillLearner
+              ),
+            ];
+          } else if (currentList && item.quantity < currentLen) {
+            next[key] = currentList.slice(0, item.quantity);
+          } else {
+            next[key] = Array.from(
+              { length: item.quantity },
               fillLearner
-            ),
-          ];
-        } else if (currentList && item.quantity < currentLen) {
-          next[key] = currentList.slice(0, item.quantity);
-        } else {
-          next[key] = Array.from(
-            { length: item.quantity },
-            fillLearner
-          );
-        }
+            );
+          }
         }
       });
       return next;
     });
-    if (!isSelf) setUseMyDataForLearner({});
-  }, [items, customerType, profileLearner]);
+    if (!isSelf && Object.keys(useMyDataForLearner).length > 0) {
+      setUseMyDataForLearner({});
+    }
+  }, [items, customerType, profileLearner, useMyDataForLearner]);
 
   useLayoutEffect(() => {
     if (customerType !== OrderCustomerType.Self || !user?.profile)
@@ -287,10 +303,9 @@ export const CheckoutForm = memo(function CheckoutForm({
         const next = { ...prev };
         items.forEach((item) => {
           const key = lineKey(item);
-          next[key] = Array.from(
-            { length: item.quantity },
-            () => ({ ...profileLearner })
-          );
+          next[key] = Array.from({ length: item.quantity }, () => ({
+            ...profileLearner,
+          }));
         });
         return next;
       });
@@ -301,6 +316,7 @@ export const CheckoutForm = memo(function CheckoutForm({
     user?.email,
     setValue,
     reset,
+    getValues,
     totalLearners,
     items,
     profileLearner,
@@ -321,7 +337,8 @@ export const CheckoutForm = memo(function CheckoutForm({
         next[learnerIndex] = {};
         const hasAny = next.some((e) => Object.keys(e).length > 0);
         if (!hasAny) {
-          const { [key]: _, ...rest } = prev;
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars -- omit key from rest
+          const { [key]: _omit, ...rest } = prev;
           return rest;
         }
         return { ...prev, [key]: next };
@@ -330,7 +347,10 @@ export const CheckoutForm = memo(function CheckoutForm({
     []
   );
 
-  const learnerSlotId = useCallback((key: string, idx: number) => `${key}-${idx}`, []);
+  const learnerSlotId = useCallback(
+    (key: string, idx: number) => `${key}-${idx}`,
+    []
+  );
 
   /** Добавить слот слушателя по линии: обновить корзину (quantity+1) и локально добавить пустую форму */
   const addLearnerToLine = useCallback(
@@ -397,24 +417,24 @@ export const CheckoutForm = memo(function CheckoutForm({
   );
 
   /** Валидирует всех слушателей. Возвращает объект ошибок по ключам линий или null, если ошибок нет. */
-  const validateAllLearners = useCallback(
-    (): Record<string, LearnerFieldErrors[]> | null => {
-      const nextErrors: Record<string, LearnerFieldErrors[]> = {};
-      let hasAny = false;
-      items.forEach((item) => {
-        const key = lineKey(item);
-        const learners = linesLearners[key] ?? [];
-        const errs = learners.map((learner) => {
-          const e = validateLearner(learner);
-          if (Object.keys(e).length > 0) hasAny = true;
-          return e;
-        });
-        nextErrors[key] = errs;
+  const validateAllLearners = useCallback((): Record<
+    string,
+    LearnerFieldErrors[]
+  > | null => {
+    const nextErrors: Record<string, LearnerFieldErrors[]> = {};
+    let hasAny = false;
+    items.forEach((item) => {
+      const key = lineKey(item);
+      const learners = linesLearners[key] ?? [];
+      const errs = learners.map((learner) => {
+        const e = validateLearner(learner);
+        if (Object.keys(e).length > 0) hasAny = true;
+        return e;
       });
-      return hasAny ? nextErrors : null;
-    },
-    [items, linesLearners]
-  );
+      nextErrors[key] = errs;
+    });
+    return hasAny ? nextErrors : null;
+  }, [items, linesLearners]);
 
   const goNext = useCallback(() => {
     if (step < 3) {
@@ -444,7 +464,10 @@ export const CheckoutForm = memo(function CheckoutForm({
         const errors = validateAllLearners();
         if (errors != null) {
           setLearnerErrors(errors);
-          showToast("error", "Заполните все обязательные поля слушателей");
+          showToast(
+            "error",
+            "Заполните все обязательные поля слушателей"
+          );
           return;
         }
         setLearnerErrors({});
@@ -494,7 +517,9 @@ export const CheckoutForm = memo(function CheckoutForm({
       const hasOrgFromSuggest = !!organizationFromSuggest;
       const hasOrgId = !!data.organizationId?.trim();
       if (isOrganization && !hasOrgFromSuggest && !hasOrgId) {
-        setOrganizationError("Укажите организацию: введите ИНН/название или выберите из профиля");
+        setOrganizationError(
+          "Укажите организацию: введите ИНН/название или выберите из профиля"
+        );
         setStep(1);
         onStepChange?.(1);
         showToast("error", "Укажите организацию");
@@ -505,11 +530,14 @@ export const CheckoutForm = memo(function CheckoutForm({
         const hasEmail = !!data.contactEmail?.trim();
         const hasPhone = !!data.contactPhone?.trim();
         const hasTrainingForm = !!orderLevelData.trainingForm?.trim();
-        const hasTrainingLanguage = !!orderLevelData.trainingLanguage?.trim();
+        const hasTrainingLanguage =
+          !!orderLevelData.trainingLanguage?.trim();
         const hasHeadPosition = !!orderLevelData.headPosition?.trim();
         const hasHeadFullName = !!orderLevelData.headFullName?.trim();
-        const hasContactPersonName = !!orderLevelData.contactPersonName?.trim();
-        const hasContactPersonPosition = !!orderLevelData.contactPersonPosition?.trim();
+        const hasContactPersonName =
+          !!orderLevelData.contactPersonName?.trim();
+        const hasContactPersonPosition =
+          !!orderLevelData.contactPersonPosition?.trim();
         if (
           !hasEmail ||
           !hasPhone ||
@@ -522,7 +550,10 @@ export const CheckoutForm = memo(function CheckoutForm({
         ) {
           setStep(1);
           onStepChange?.(1);
-          showToast("error", "Заполните все обязательные поля заявки от организации");
+          showToast(
+            "error",
+            "Заполните все обязательные поля заявки от организации"
+          );
           return;
         }
       }
@@ -533,7 +564,10 @@ export const CheckoutForm = memo(function CheckoutForm({
         setLearnerErrors(learnerValidationErrors);
         setStep(2);
         onStepChange?.(2);
-        showToast("error", "Заполните все обязательные поля слушателей");
+        showToast(
+          "error",
+          "Заполните все обязательные поля слушателей"
+        );
         return;
       }
 
@@ -564,8 +598,11 @@ export const CheckoutForm = memo(function CheckoutForm({
       if (isOrganization) {
         const bankAccountRaw = orderLevelData.bankAccount?.trim();
         const bikRaw = orderLevelData.bik?.trim();
-        const correspondentAccountRaw = orderLevelData.correspondentAccount?.trim();
-        bankAccount = bankAccountRaw ? normalizeDigits(bankAccountRaw) : undefined;
+        const correspondentAccountRaw =
+          orderLevelData.correspondentAccount?.trim();
+        bankAccount = bankAccountRaw
+          ? normalizeDigits(bankAccountRaw)
+          : undefined;
         bik = bikRaw ? normalizeDigits(bikRaw) : undefined;
         correspondentAccount = correspondentAccountRaw
           ? normalizeDigits(correspondentAccountRaw)
@@ -576,7 +613,10 @@ export const CheckoutForm = memo(function CheckoutForm({
         if (bankAccount && bankAccount.length !== 20) {
           setStep(1);
           onStepChange?.(1);
-          showToast("error", "Расчётный счёт (р/с) должен содержать 20 цифр");
+          showToast(
+            "error",
+            "Расчётный счёт (р/с) должен содержать 20 цифр"
+          );
           return;
         }
         if (bik && bik.length !== 9) {
@@ -585,10 +625,16 @@ export const CheckoutForm = memo(function CheckoutForm({
           showToast("error", "БИК должен содержать 9 цифр");
           return;
         }
-        if (correspondentAccount && correspondentAccount.length !== 20) {
+        if (
+          correspondentAccount &&
+          correspondentAccount.length !== 20
+        ) {
           setStep(1);
           onStepChange?.(1);
-          showToast("error", "Корреспондентский счёт (к/с) должен содержать 20 цифр");
+          showToast(
+            "error",
+            "Корреспондентский счёт (к/с) должен содержать 20 цифр"
+          );
           return;
         }
       }
@@ -596,17 +642,29 @@ export const CheckoutForm = memo(function CheckoutForm({
       try {
         const order = await createOrderFromCart({
           customerType: data.customerType,
-          organizationId: isOrganization && !organizationFromSuggest ? data.organizationId : undefined,
-          organizationQuery: isOrganization && organizationFromSuggest ? organizationFromSuggest.inn : undefined,
+          organizationId:
+            isOrganization && !organizationFromSuggest
+              ? data.organizationId
+              : undefined,
+          organizationQuery:
+            isOrganization && organizationFromSuggest
+              ? organizationFromSuggest.inn
+              : undefined,
           contactEmail: contactEmailSubmit,
           contactPhone: contactPhoneSubmit,
           lines,
-          trainingForm: orderLevelData.trainingForm?.trim() || undefined,
-          trainingLanguage: orderLevelData.trainingLanguage?.trim() || undefined,
-          headPosition: orderLevelData.headPosition?.trim() || undefined,
-          headFullName: orderLevelData.headFullName?.trim() || undefined,
-          contactPersonName: orderLevelData.contactPersonName?.trim() || undefined,
-          contactPersonPosition: orderLevelData.contactPersonPosition?.trim() || undefined,
+          trainingForm:
+            orderLevelData.trainingForm?.trim() || undefined,
+          trainingLanguage:
+            orderLevelData.trainingLanguage?.trim() || undefined,
+          headPosition:
+            orderLevelData.headPosition?.trim() || undefined,
+          headFullName:
+            orderLevelData.headFullName?.trim() || undefined,
+          contactPersonName:
+            orderLevelData.contactPersonName?.trim() || undefined,
+          contactPersonPosition:
+            orderLevelData.contactPersonPosition?.trim() || undefined,
           bankAccount: bankAccount || undefined,
           bankName: bankName || undefined,
           bik: bik || undefined,
@@ -620,7 +678,10 @@ export const CheckoutForm = memo(function CheckoutForm({
         }
       } catch (err) {
         const e = err as { message?: string };
-        showToast("error", e?.message ?? "Не удалось оформить заявку");
+        showToast(
+          "error",
+          e?.message ?? "Не удалось оформить заявку"
+        );
       }
     },
     [
@@ -721,7 +782,10 @@ export const CheckoutForm = memo(function CheckoutForm({
         className="sticky bottom-0 z-10 flex flex-col gap-4 border-t p-6 sm:flex-row sm:items-center sm:justify-between"
       >
         <div className="flex items-center gap-2 text-lg font-bold text-foreground">
-          <ShoppingBag className="h-6 w-6 shrink-0 text-primary" aria-hidden />
+          <ShoppingBag
+            className="h-6 w-6 shrink-0 text-primary"
+            aria-hidden
+          />
           <span>Итого: {formatPriceWithCurrency(totalAmount)}</span>
         </div>
         <div className="flex flex-wrap gap-3">

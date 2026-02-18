@@ -81,20 +81,6 @@ const ProfilePageContent = memo(function ProfilePageContent() {
   const storeUser = useAuthUser();
   const user = meUser ?? storeUser;
 
-  if (!user && meLoading) {
-    return (
-      <Surface
-        variant="floating"
-        className="flex min-h-[560px] w-full items-center justify-center"
-      >
-        <div className="text-sm text-muted-foreground">
-          Загрузка данных…
-        </div>
-      </Surface>
-    );
-  }
-
-  if (!user) return null;
   const {
     updateProfile,
     loading: updating,
@@ -199,8 +185,7 @@ const ProfilePageContent = memo(function ProfilePageContent() {
         const workPlaces = data.workPlaces ?? [];
         const pending = workPlaces.filter(
           (wp) =>
-            !wp.organizationId?.trim() &&
-            wp.organization?.inn?.trim()
+            !wp.organizationId?.trim() && wp.organization?.inn?.trim()
         );
         let resolvedWorkPlaces = workPlaces;
 
@@ -295,13 +280,20 @@ const ProfilePageContent = memo(function ProfilePageContent() {
     ]
   );
 
-  if (!user) {
+  if (!user && meLoading) {
     return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <p className="text-muted-foreground">Загрузка...</p>
-      </div>
+      <Surface
+        variant="floating"
+        className="flex min-h-[560px] w-full items-center justify-center"
+      >
+        <div className="text-sm text-muted-foreground">
+          Загрузка данных…
+        </div>
+      </Surface>
     );
   }
+
+  if (!user) return null;
 
   const typedControl = control as unknown as Control<ProfileFormData>;
 
@@ -416,11 +408,14 @@ const ProfilePageContent = memo(function ProfilePageContent() {
           </div>
 
           <nav className="p-3">
-            <ul className="flex flex-row gap-2 overflow-x-auto pb-2 pl-1 pr-1 scroll-px-4 lg:flex-col lg:gap-1 lg:pb-0 lg:pl-0 lg:pr-0">
+            <ul className="flex scroll-px-4 flex-row gap-2 overflow-x-auto pr-1 pb-2 pl-1 lg:flex-col lg:gap-1 lg:pr-0 lg:pb-0 lg:pl-0">
               {SIDEBAR_ITEMS.map((item) => {
                 const active = activeSection === item.key;
                 return (
-                  <li key={item.key} className="relative shrink-0 lg:shrink">
+                  <li
+                    key={item.key}
+                    className="relative shrink-0 lg:shrink"
+                  >
                     <button
                       type="button"
                       onClick={() => handleNavigate(item.key)}

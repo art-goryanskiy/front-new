@@ -1,7 +1,11 @@
 "use client";
 
 import React, { useCallback, useEffect } from "react";
-import { motion, useMotionTemplate, useMotionValue } from "framer-motion";
+import {
+  motion,
+  useMotionTemplate,
+  useMotionValue,
+} from "framer-motion";
 import { cn } from "@/lib/utils";
 
 export interface MagicCardProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -54,9 +58,15 @@ export function MagicCard({
     window.addEventListener("blur", reset);
     document.addEventListener("visibilitychange", handleVisibility);
     return () => {
-      window.removeEventListener("pointerout", handleGlobalPointerOut);
+      window.removeEventListener(
+        "pointerout",
+        handleGlobalPointerOut
+      );
       window.removeEventListener("blur", reset);
-      document.removeEventListener("visibilitychange", handleVisibility);
+      document.removeEventListener(
+        "visibilitychange",
+        handleVisibility
+      );
     };
   }, [reset]);
 
@@ -66,7 +76,10 @@ export function MagicCard({
   return (
     <div
       role="presentation"
-      className={cn("group relative overflow-hidden rounded-2xl", className)}
+      className={cn(
+        "group relative overflow-hidden rounded-2xl",
+        className
+      )}
       onPointerMove={handlePointerMove}
       onPointerLeave={reset}
       onPointerEnter={reset}

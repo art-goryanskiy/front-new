@@ -11,7 +11,7 @@ export function ContactsMap() {
       <iframe
         title="Организация на Яндекс.Картах"
         src={`https://yandex.ru/map-widget/v1/?z=12&ol=biz&oid=${YANDEX_ORG_ID}`}
-        className="absolute left-0 top-0 h-full w-full border-0"
+        className="absolute top-0 left-0 h-full w-full border-0"
         allowFullScreen
       />
     </div>

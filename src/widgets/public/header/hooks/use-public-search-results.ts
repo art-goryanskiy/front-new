@@ -49,7 +49,9 @@ export function usePublicSearchResults(
   const isAuthenticated = options?.isAuthenticated ?? false;
 
   const { categories, loading: categoriesLoading } = useCategories(
-    hasQuery ? { search: debouncedQuery, limit: SEARCH_RESULTS_LIMIT } : undefined,
+    hasQuery
+      ? { search: debouncedQuery, limit: SEARCH_RESULTS_LIMIT }
+      : undefined,
     { skip: !hasQuery }
   );
 
@@ -58,7 +60,9 @@ export function usePublicSearchResults(
   });
 
   const { programs, loading: programsLoading } = usePrograms(
-    hasQuery ? { search: debouncedQuery, limit: SEARCH_RESULTS_LIMIT } : undefined,
+    hasQuery
+      ? { search: debouncedQuery, limit: SEARCH_RESULTS_LIMIT }
+      : undefined,
     { skip: !hasQuery }
   );
 
@@ -125,9 +129,12 @@ export function usePublicSearchResults(
       }) => {
         const orderNumber = order.number ?? order.id;
         if (orderNumber.toLowerCase().includes(q)) return true;
-        if (order.contactEmail?.toLowerCase().includes(q)) return true;
+        if (order.contactEmail?.toLowerCase().includes(q))
+          return true;
         if (
-          order.contactPhone?.replace(/\D/g, "").includes(q.replace(/\D/g, ""))
+          order.contactPhone
+            ?.replace(/\D/g, "")
+            .includes(q.replace(/\D/g, ""))
         )
           return true;
         if (
@@ -143,13 +150,15 @@ export function usePublicSearchResults(
         return false;
       };
 
-      const filteredOrders = orders.filter((order) => matchesOrder(order));
+      const filteredOrders = orders.filter((order) =>
+        matchesOrder(order)
+      );
 
       filteredOrders.slice(0, 5).forEach((order) => {
         const statusLabel =
           order.status && ORDER_STATUS_LABELS[order.status]
             ? ORDER_STATUS_LABELS[order.status]
-            : order.status ?? "";
+            : (order.status ?? "");
         const programTitles =
           order.lines
             ?.map((l) => l.programTitle)
@@ -159,7 +168,10 @@ export function usePublicSearchResults(
         results.push({
           id: `order-${order.id}`,
           type: "order",
-          label: orderNumber.length > 10 ? `Заявка ${orderNumber.slice(0, 10)}…` : `Заявка ${orderNumber}`,
+          label:
+            orderNumber.length > 10
+              ? `Заявка ${orderNumber.slice(0, 10)}…`
+              : `Заявка ${orderNumber}`,
           path: `/orders/${order.id}`,
           icon: "receipt",
           description: programTitles || statusLabel || undefined,
@@ -182,6 +194,8 @@ export function usePublicSearchResults(
   return {
     results: searchResults,
     loading:
-      categoriesLoading || programsLoading || (isAuthenticated && ordersLoading),
+      categoriesLoading ||
+      programsLoading ||
+      (isAuthenticated && ordersLoading),
   };
 }

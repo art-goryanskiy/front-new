@@ -18,7 +18,8 @@ const SECTION_CLASSES = {
   header: "text-center space-y-3 mb-10",
   title:
     "text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-foreground",
-  subtitle: "text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto",
+  subtitle:
+    "text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto",
 } as const;
 
 const TEXTS = {
@@ -45,7 +46,9 @@ function formatNewsDate(iso: string): string {
 }
 
 function getFirstPhotoUrl(news: NewsEntity): string | null {
-  const att = news.attachments?.find((a) => a.type === "photo" && a.url);
+  const att = news.attachments?.find(
+    (a) => a.type === "photo" && a.url
+  );
   return att?.url ?? null;
 }
 
@@ -76,50 +79,56 @@ function newsToOffer(news: NewsEntity): Offer {
   };
 }
 
-export const FreshNewsCarouselSection = memo(function FreshNewsCarouselSection() {
-  const { news, loading } = useNews({
-    limit: CAROUSEL_NEWS_LIMIT,
-    offset: 0,
-  });
+export const FreshNewsCarouselSection = memo(
+  function FreshNewsCarouselSection() {
+    const { news, loading } = useNews({
+      limit: CAROUSEL_NEWS_LIMIT,
+      offset: 0,
+    });
 
-  const offers: Offer[] = news.map(newsToOffer);
+    const offers: Offer[] = news.map(newsToOffer);
 
-  if (loading && offers.length === 0) {
+    if (loading && offers.length === 0) {
+      return (
+        <section id="fresh-news" className={SECTION_CLASSES.section}>
+          <div className={SECTION_CLASSES.container}>
+            <div className={SECTION_CLASSES.header}>
+              <h2 className={SECTION_CLASSES.title}>{TEXTS.title}</h2>
+              <p className={SECTION_CLASSES.subtitle}>
+                {TEXTS.subtitle}
+              </p>
+            </div>
+            <FreshNewsCarouselSkeleton />
+          </div>
+        </section>
+      );
+    }
+
+    if (offers.length === 0) {
+      return null;
+    }
+
     return (
       <section id="fresh-news" className={SECTION_CLASSES.section}>
-        <div className={SECTION_CLASSES.container}>
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute -top-24 -right-24 h-[320px] w-[420px] rounded-full bg-primary/10 blur-3xl" />
+          <div className="absolute -bottom-24 -left-24 h-[280px] w-[380px] rounded-full bg-primary/5 blur-3xl" />
+        </div>
+        <div className={cn("relative", SECTION_CLASSES.container)}>
           <div className={SECTION_CLASSES.header}>
-            <h2 className={SECTION_CLASSES.title}>{TEXTS.title}</h2>
-            <p className={SECTION_CLASSES.subtitle}>{TEXTS.subtitle}</p>
+            <div className="flex items-center justify-center gap-2">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-primary/20 bg-primary/5 text-primary">
+                <Newspaper className="h-5 w-5" aria-hidden />
+              </div>
+              <h2 className={SECTION_CLASSES.title}>{TEXTS.title}</h2>
+            </div>
+            <p className={SECTION_CLASSES.subtitle}>
+              {TEXTS.subtitle}
+            </p>
           </div>
-          <FreshNewsCarouselSkeleton />
+          <OfferCarousel offers={offers} className="mt-8" />
         </div>
       </section>
     );
   }
-
-  if (offers.length === 0) {
-    return null;
-  }
-
-  return (
-    <section id="fresh-news" className={SECTION_CLASSES.section}>
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-24 -right-24 h-[320px] w-[420px] rounded-full bg-primary/10 blur-3xl" />
-        <div className="absolute -bottom-24 -left-24 h-[280px] w-[380px] rounded-full bg-primary/5 blur-3xl" />
-      </div>
-      <div className={cn("relative", SECTION_CLASSES.container)}>
-        <div className={SECTION_CLASSES.header}>
-          <div className="flex items-center justify-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-primary/20 bg-primary/5 text-primary">
-              <Newspaper className="h-5 w-5" aria-hidden />
-            </div>
-            <h2 className={SECTION_CLASSES.title}>{TEXTS.title}</h2>
-          </div>
-          <p className={SECTION_CLASSES.subtitle}>{TEXTS.subtitle}</p>
-        </div>
-        <OfferCarousel offers={offers} className="mt-8" />
-      </div>
-    </section>
-  );
-});
+);

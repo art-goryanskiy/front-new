@@ -53,7 +53,9 @@ export function useAdminGenerateOrderContract(orderId: string) {
     documentDate?: string
   ): Promise<OrderDocument | null> => {
     const result = await mutate({
-      variables: { input: { orderId, documentDate: documentDate ?? undefined } },
+      variables: {
+        input: { orderId, documentDate: documentDate ?? undefined },
+      },
     });
     return result.data?.adminGenerateOrderContract ?? null;
   };
@@ -73,7 +75,9 @@ export function useAdminGenerateOrderAct(orderId: string) {
     documentDate?: string
   ): Promise<OrderDocument | null> => {
     const result = await mutate({
-      variables: { input: { orderId, documentDate: documentDate ?? undefined } },
+      variables: {
+        input: { orderId, documentDate: documentDate ?? undefined },
+      },
     });
     return result.data?.adminGenerateOrderAct ?? null;
   };
@@ -81,7 +85,9 @@ export function useAdminGenerateOrderAct(orderId: string) {
   return { adminGenerateOrderAct, loading, error };
 }
 
-export function useAdminGenerateOrderTrainingApplication(orderId: string) {
+export function useAdminGenerateOrderTrainingApplication(
+  orderId: string
+) {
   const [mutate, { loading, error }] = useMutation<
     AdminGenerateOrderTrainingApplicationMutation,
     AdminGenerateOrderTrainingApplicationMutationVariables
@@ -89,10 +95,13 @@ export function useAdminGenerateOrderTrainingApplication(orderId: string) {
     refetchQueries: () => refetchDoc(orderId),
   });
 
-  const adminGenerateOrderTrainingApplication = async (): Promise<OrderDocument | null> => {
-    const result = await mutate({ variables: { orderId } });
-    return result.data?.adminGenerateOrderTrainingApplication ?? null;
-  };
+  const adminGenerateOrderTrainingApplication =
+    async (): Promise<OrderDocument | null> => {
+      const result = await mutate({ variables: { orderId } });
+      return (
+        result.data?.adminGenerateOrderTrainingApplication ?? null
+      );
+    };
 
   return { adminGenerateOrderTrainingApplication, loading, error };
 }

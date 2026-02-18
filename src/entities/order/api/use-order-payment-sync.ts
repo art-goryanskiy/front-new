@@ -21,7 +21,10 @@ type OrderPaymentSyncVariables = {
   orderId: string;
 };
 
-export function useOrderPaymentSync(orderId: string | null, options?: { skip?: boolean }) {
+export function useOrderPaymentSync(
+  orderId: string | null,
+  options?: { skip?: boolean }
+) {
   const { data, loading, error, refetch } = useQuery<
     OrderPaymentSyncData,
     OrderPaymentSyncVariables

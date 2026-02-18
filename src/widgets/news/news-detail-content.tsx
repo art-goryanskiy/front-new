@@ -4,20 +4,31 @@ import Link from "next/link";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { ArrowLeft, Calendar, ExternalLink, Image as ImageIcon, Link2 } from "lucide-react";
+import {
+  ArrowLeft,
+  Calendar,
+  ExternalLink,
+  Image as ImageIcon,
+  Link2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNewsItem } from "@/entities/news/api/use-news-item";
 import { NewsDetailSkeleton } from "./news-detail-skeleton";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
 import { cn } from "@/lib/utils";
 
-const ALLOWED_IMAGE_HOSTS = ["standart-images.storage.yandexcloud.net"];
+const ALLOWED_IMAGE_HOSTS = [
+  "standart-images.storage.yandexcloud.net",
+];
 
 function isOptimizableImageSrc(src: string): boolean {
   if (src.startsWith("data:")) return false;
   try {
     const u = new URL(src);
-    return u.protocol === "https:" && ALLOWED_IMAGE_HOSTS.some((h) => u.hostname === h);
+    return (
+      u.protocol === "https:" &&
+      ALLOWED_IMAGE_HOSTS.some((h) => u.hostname === h)
+    );
   } catch {
     return false;
   }
@@ -80,7 +91,9 @@ export function NewsDetailContent() {
   if (!newsItem) {
     return (
       <div className="rounded-2xl border border-border/50 bg-muted/10 px-6 py-12 text-center">
-        <p className="font-medium text-foreground">Новость не найдена</p>
+        <p className="font-medium text-foreground">
+          Новость не найдена
+        </p>
         <Button variant="link" className="mt-2" asChild>
           <Link href="/news">К списку новостей</Link>
         </Button>
@@ -89,8 +102,10 @@ export function NewsDetailContent() {
   }
 
   const dateStr = formatNewsDate(newsItem.date);
-  const photos = newsItem.attachments?.filter((a) => a.type === "photo") ?? [];
-  const links = newsItem.attachments?.filter((a) => a.type === "link") ?? [];
+  const photos =
+    newsItem.attachments?.filter((a) => a.type === "photo") ?? [];
+  const links =
+    newsItem.attachments?.filter((a) => a.type === "link") ?? [];
   const firstPhoto = photos[0]?.url ?? null;
   const restPhotos = firstPhoto ? photos.slice(1) : photos;
 
@@ -104,8 +119,7 @@ export function NewsDetailContent() {
       <div className="mb-6 flex flex-wrap items-center gap-3">
         <Button variant="ghost" size="sm" className="gap-2" asChild>
           <Link href="/news">
-            <ArrowLeft className="h-4 w-4" aria-hidden />
-            К новостям
+            <ArrowLeft className="h-4 w-4" aria-hidden />К новостям
           </Link>
         </Button>
       </div>
@@ -123,11 +137,18 @@ export function NewsDetailContent() {
                 className="object-cover object-top"
               />
             ) : (
-              <img src={firstPhoto} alt="" className="h-full w-full object-cover object-top" />
+              <Image
+                src={firstPhoto}
+                alt=""
+                fill
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 1200px"
+                unoptimized
+                className="h-full w-full object-cover object-top"
+              />
             )}
             <div className="absolute inset-0 bg-linear-to-t from-background/80 via-background/20 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8">
-              <p className="flex items-center gap-2 text-sm font-medium uppercase tracking-wider text-white drop-shadow-md">
+            <div className="absolute right-0 bottom-0 left-0 p-6 sm:p-8">
+              <p className="flex items-center gap-2 text-sm font-medium tracking-wider text-white uppercase drop-shadow-md">
                 <Calendar className="h-4 w-4 shrink-0" aria-hidden />
                 {dateStr}
               </p>
@@ -139,21 +160,21 @@ export function NewsDetailContent() {
       {/* Editorial column: prose + media */}
       <div className="mx-auto max-w-prose">
         {!firstPhoto && (
-          <p className="mb-6 flex items-center gap-2 text-sm font-medium uppercase tracking-wider text-muted-foreground">
+          <p className="mb-6 flex items-center gap-2 text-sm font-medium tracking-wider text-muted-foreground uppercase">
             <Calendar className="h-4 w-4 shrink-0" aria-hidden />
             {dateStr}
           </p>
         )}
 
         <div className="prose prose-neutral dark:prose-invert prose-p:leading-relaxed prose-p:text-foreground max-w-none">
-          <div className="whitespace-pre-wrap text-foreground leading-relaxed">
+          <div className="leading-relaxed whitespace-pre-wrap text-foreground">
             {newsItem.text}
           </div>
         </div>
 
         {restPhotos.length > 0 && (
           <div className="mt-10 space-y-4">
-            <h3 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-foreground">
+            <h3 className="flex items-center gap-2 text-sm font-semibold tracking-wider text-foreground uppercase">
               <ImageIcon className="h-4 w-4" aria-hidden />
               Фотографии
             </h3>
@@ -165,7 +186,7 @@ export function NewsDetailContent() {
                       href={att.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block relative aspect-4/3 overflow-hidden rounded-xl border border-border/40 transition hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5"
+                      className="relative block aspect-4/3 overflow-hidden rounded-xl border border-border/40 transition hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5"
                     >
                       {isOptimizableImageSrc(att.url) ? (
                         <Image
@@ -176,10 +197,13 @@ export function NewsDetailContent() {
                           className="object-cover object-top transition-transform duration-300 hover:scale-[1.02]"
                         />
                       ) : (
-                        <img
+                        <Image
                           src={att.url}
                           alt=""
-                          className="aspect-4/3 w-full object-cover object-top transition-transform duration-300 hover:scale-[1.02]"
+                          fill
+                          sizes="(max-width: 640px) 100vw, 50vw"
+                          unoptimized
+                          className="object-cover object-top transition-transform duration-300 hover:scale-[1.02]"
                         />
                       )}
                     </a>
@@ -192,7 +216,7 @@ export function NewsDetailContent() {
 
         {links.length > 0 && (
           <div className="mt-10 space-y-3">
-            <h3 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-foreground">
+            <h3 className="flex items-center gap-2 text-sm font-semibold tracking-wider text-foreground uppercase">
               <Link2 className="h-4 w-4" aria-hidden />
               Ссылки
             </h3>
@@ -207,7 +231,10 @@ export function NewsDetailContent() {
                       className="inline-flex items-center gap-2 text-primary underline decoration-primary/40 underline-offset-2 transition hover:decoration-primary"
                     >
                       {att.title ?? att.url}
-                      <ExternalLink className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                      <ExternalLink
+                        className="h-3.5 w-3.5 shrink-0"
+                        aria-hidden
+                      />
                     </a>
                   </li>
                 ) : null
@@ -217,7 +244,7 @@ export function NewsDetailContent() {
         )}
 
         {newsItem.vkUrl && (
-          <div className="mt-10 pt-6 border-t border-border/40">
+          <div className="mt-10 border-t border-border/40 pt-6">
             <a
               href={newsItem.vkUrl}
               target="_blank"
@@ -227,7 +254,10 @@ export function NewsDetailContent() {
                 "hover:border-primary/30 hover:bg-primary/5 hover:text-primary"
               )}
             >
-              <ExternalLink className="h-4 w-4 shrink-0" aria-hidden />
+              <ExternalLink
+                className="h-4 w-4 shrink-0"
+                aria-hidden
+              />
               Открыть во ВКонтакте
             </a>
           </div>

@@ -208,7 +208,10 @@ export const ProgramForm = memo(function ProgramForm({
             <ProgramFormAwardedQualificationField control={control} />
           )}
           {config.showAwardedRank && (
-            <ProgramFormAwardedRankFields control={control} setValue={setValue} />
+            <ProgramFormAwardedRankFields
+              control={control}
+              setValue={setValue}
+            />
           )}
         </div>
       )}

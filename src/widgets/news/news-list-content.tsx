@@ -14,11 +14,19 @@ import { cn } from "@/lib/utils";
 
 const PAGE_SIZE = 10;
 
-function getBentoSpan(index: number): { colSpan: string; variant: NewsCardVariant } {
-  if (index === 0) return { colSpan: "col-span-1 sm:col-span-2 lg:col-span-3", variant: "featured" };
+function getBentoSpan(index: number): {
+  colSpan: string;
+  variant: NewsCardVariant;
+} {
+  if (index === 0)
+    return {
+      colSpan: "col-span-1 sm:col-span-2 lg:col-span-3",
+      variant: "featured",
+    };
   const i = index - 1;
   const mod = i % 5;
-  if (mod === 0) return { colSpan: "col-span-1 sm:col-span-2", variant: "wide" };
+  if (mod === 0)
+    return { colSpan: "col-span-1 sm:col-span-2", variant: "wide" };
   return { colSpan: "col-span-1", variant: "default" };
 }
 
@@ -33,13 +41,15 @@ export function NewsListContent() {
   useEffect(() => {
     if (loading || !news.length) return;
     if (pageOffset === 0) {
-      setList(news);
+      queueMicrotask(() => setList(news));
     } else {
-      setList((prev) => {
-        const ids = new Set(prev.map((n) => n.id));
-        const toAdd = news.filter((n) => !ids.has(n.id));
-        return toAdd.length ? [...prev, ...toAdd] : prev;
-      });
+      queueMicrotask(() =>
+        setList((prev) => {
+          const ids = new Set(prev.map((n) => n.id));
+          const toAdd = news.filter((n) => !ids.has(n.id));
+          return toAdd.length ? [...prev, ...toAdd] : prev;
+        })
+      );
     }
   }, [loading, news, pageOffset]);
 
@@ -117,7 +127,10 @@ export function NewsListContent() {
           >
             {isLoadingMore ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
+                <Loader2
+                  className="mr-2 h-4 w-4 animate-spin"
+                  aria-hidden
+                />
                 Загрузка…
               </>
             ) : (

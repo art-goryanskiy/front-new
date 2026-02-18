@@ -31,7 +31,8 @@ export const FORM_CLASSES = {
     "flex w-full items-center gap-4 rounded-xl border border-border/60 bg-background/50 p-4",
   imageInput: "flex-1 w-full",
   imageFileName: "text-xs text-muted-foreground mt-2",
-  uploadingText: "text-xs text-primary-600 dark:text-primary-400 font-medium",
+  uploadingText:
+    "text-xs text-primary-600 dark:text-primary-400 font-medium",
   actions:
     "-mx-6 sticky bottom-0 z-10 mt-6 flex w-full flex-wrap items-center justify-end gap-3 border-t border-border/60 bg-background/80 px-6 pt-4 pb-3 backdrop-blur-xl sm:flex-nowrap",
 } as const;

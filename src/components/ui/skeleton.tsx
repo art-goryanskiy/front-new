@@ -4,8 +4,7 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 const variants = {
-  default:
-    "rounded-lg bg-muted overflow-hidden",
+  default: "rounded-lg bg-muted overflow-hidden",
   premium:
     "rounded-xl overflow-hidden bg-gradient-to-br from-muted/90 via-muted/70 to-muted/50 border border-border/40",
 } as const;

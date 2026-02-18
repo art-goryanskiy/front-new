@@ -118,9 +118,7 @@ export const ProgramDetailHeader = memo(function ProgramDetailHeader({
             {program.viewsRating != null && (
               <span className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-muted/20 px-3 py-1 text-xs font-semibold text-muted-foreground backdrop-blur">
                 <RatingStars rating={program.viewsRating} size="sm" />
-                <span>
-                  {program.viewsRating.toFixed(1)} / 5
-                </span>
+                <span>{program.viewsRating.toFixed(1)} / 5</span>
               </span>
             )}
           </div>

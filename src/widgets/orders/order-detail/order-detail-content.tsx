@@ -11,9 +11,21 @@ import { Surface } from "@/shared/ui/surface/surface";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
 import { OrderDetailSkeleton } from "./order-detail-skeleton";
 import { formatPriceWithCurrency } from "@/shared/lib/helpers/format-helpers";
-import { ORDER_STATUS_LABELS, ORDER_STATUS_BADGE_CLASSES, ORDER_CUSTOMER_TYPE_LABELS } from "@/shared/constants/orders";
+import {
+  ORDER_STATUS_LABELS,
+  ORDER_STATUS_BADGE_CLASSES,
+  ORDER_CUSTOMER_TYPE_LABELS,
+} from "@/shared/constants/orders";
 import type { OrderFieldsFragment } from "@/shared/api/generated/graphql";
-import { FileDown, FileText, User, Loader2, Pencil, Trash2, MoreVertical } from "lucide-react";
+import {
+  FileDown,
+  FileText,
+  User,
+  Loader2,
+  Pencil,
+  Trash2,
+  MoreVertical,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -36,7 +48,10 @@ import { Label } from "@/components/ui/label";
 import { OrganizationSuggestInput } from "@/shared/ui/form-fields/organization-suggest-input";
 import type { OrganizationSuggestion } from "@/shared/ui/form-fields/organization-suggest-input";
 import { useRouter } from "next/navigation";
-import { OrderDocumentKind, OrderStatus } from "@/shared/api/generated/graphql";
+import {
+  OrderDocumentKind,
+  OrderStatus,
+} from "@/shared/api/generated/graphql";
 
 function formatOrderDate(date: string | unknown): string {
   if (!date) return "—";
@@ -69,7 +84,9 @@ function formatDocumentDate(date: string | unknown): string {
 
 function documentFileLabel(fileUrl: string): "PDF" | "DOCX" {
   const lower = fileUrl.toLowerCase();
-  return lower.endsWith(".docx") || lower.includes(".docx?") ? "DOCX" : "PDF";
+  return lower.endsWith(".docx") || lower.includes(".docx?")
+    ? "DOCX"
+    : "PDF";
 }
 
 function documentKindLabel(kind: OrderDocumentKind): string {
@@ -105,13 +122,16 @@ function EditOrderDialog({
 }) {
   const [email, setEmail] = useState(order.contactEmail ?? "");
   const [phone, setPhone] = useState(order.contactPhone ?? "");
-  const [selectedOrg, setSelectedOrg] = useState<OrganizationSuggestion | null>(null);
+  const [selectedOrg, setSelectedOrg] =
+    useState<OrganizationSuggestion | null>(null);
 
   useEffect(() => {
     if (open) {
-      setEmail(order.contactEmail ?? "");
-      setPhone(order.contactPhone ?? "");
-      setSelectedOrg(null);
+      queueMicrotask(() => {
+        setEmail(order.contactEmail ?? "");
+        setPhone(order.contactPhone ?? "");
+        setSelectedOrg(null);
+      });
     }
   }, [open, order.contactEmail, order.contactPhone]);
 
@@ -131,9 +151,12 @@ function EditOrderDialog({
     }
   };
 
-  const handleOrgSelect = useCallback((suggestion: OrganizationSuggestion) => {
-    setSelectedOrg(suggestion);
-  }, []);
+  const handleOrgSelect = useCallback(
+    (suggestion: OrganizationSuggestion) => {
+      setSelectedOrg(suggestion);
+    },
+    []
+  );
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -177,11 +200,17 @@ function EditOrderDialog({
             />
           </div>
           <DialogFooter className="gap-2 sm:gap-0">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+            >
               Отмена
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+              {loading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : null}
               Сохранить
             </Button>
           </DialogFooter>
@@ -192,9 +221,16 @@ function EditOrderDialog({
 }
 
 function getGraphQLErrorMessage(error: unknown): string {
-  if (error && typeof error === "object" && "message" in error) return String((error as { message: string }).message);
-  if (error && typeof error === "object" && "graphQLErrors" in error) {
-    const gql = (error as { graphQLErrors?: Array<{ message?: string }> }).graphQLErrors;
+  if (error && typeof error === "object" && "message" in error)
+    return String((error as { message: string }).message);
+  if (
+    error &&
+    typeof error === "object" &&
+    "graphQLErrors" in error
+  ) {
+    const gql = (
+      error as { graphQLErrors?: Array<{ message?: string }> }
+    ).graphQLErrors;
     return gql?.[0]?.message ?? "Ошибка операции";
   }
   return "Ошибка операции";
@@ -210,9 +246,11 @@ export const OrderDetailContent = memo(function OrderDetailContent({
   const [editOpen, setEditOpen] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const { order, loading, error, refetch } = useOrder(orderId);
-  const { documents, loading: documentsLoading } = useOrderDocuments(orderId);
+  const { documents, loading: documentsLoading } =
+    useOrderDocuments(orderId);
   const { deleteOrder, loading: deleteLoading } = useDeleteOrder();
-  const { updateOrder, loading: updateOrderLoading } = useUpdateOrder();
+  const { updateOrder, loading: updateOrderLoading } =
+    useUpdateOrder();
 
   const handleDeleteOrder = useCallback(async () => {
     if (!orderId) return;
@@ -279,19 +317,27 @@ export const OrderDetailContent = memo(function OrderDetailContent({
   }
 
   const statusLabel =
-    ORDER_STATUS_LABELS[order.status as keyof typeof ORDER_STATUS_LABELS] ??
-    order.status;
+    ORDER_STATUS_LABELS[
+      order.status as keyof typeof ORDER_STATUS_LABELS
+    ] ?? order.status;
   const statusBadgeClass =
     ORDER_STATUS_BADGE_CLASSES[order.status] ??
     "border-border/60 bg-muted/20 text-muted-foreground";
   const customerTypeLabel =
-    ORDER_CUSTOMER_TYPE_LABELS[order.customerType] ?? order.customerType;
-  const orderDisplayNumber = (order as OrderFieldsFragment & { number?: string | null }).number ?? order.id;
-  const isAwaitingPayment = order.status === OrderStatus.AwaitingPayment;
+    ORDER_CUSTOMER_TYPE_LABELS[order.customerType] ??
+    order.customerType;
+  const orderDisplayNumber =
+    (order as OrderFieldsFragment & { number?: string | null })
+      .number ?? order.id;
+  const isAwaitingPayment =
+    order.status === OrderStatus.AwaitingPayment;
 
   return (
     <div className="space-y-6">
-      <Surface variant="floating" className="relative overflow-hidden p-6">
+      <Surface
+        variant="floating"
+        className="relative overflow-hidden p-6"
+      >
         <div className="pointer-events-none absolute -top-20 -right-20 h-64 w-80 rounded-full bg-primary/5 blur-3xl" />
         <div className="relative z-10 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-2">
@@ -320,12 +366,23 @@ export const OrderDetailContent = memo(function OrderDetailContent({
               <>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="icon" className="h-9 w-9" aria-label="Действия с заявкой">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-9 w-9"
+                      aria-label="Действия с заявкой"
+                    >
                       <MoreVertical className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="min-w-[180px] rounded-xl">
-                    <DropdownMenuItem onClick={() => setEditOpen(true)} className="gap-2">
+                  <DropdownMenuContent
+                    align="end"
+                    className="min-w-[180px] rounded-xl"
+                  >
+                    <DropdownMenuItem
+                      onClick={() => setEditOpen(true)}
+                      className="gap-2"
+                    >
                       <Pencil className="h-4 w-4" />
                       Редактировать
                     </DropdownMenuItem>
@@ -359,7 +416,12 @@ export const OrderDetailContent = memo(function OrderDetailContent({
                 />
               </>
             )}
-            <Button variant="ghost" size="sm" asChild className="gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              asChild
+              className="gap-2"
+            >
               <Link href="/orders">К списку заявок</Link>
             </Button>
           </div>
@@ -370,19 +432,27 @@ export const OrderDetailContent = memo(function OrderDetailContent({
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="flex items-center gap-2 text-sm">
             <User className="h-4 w-4 text-muted-foreground" />
-            <span className="text-muted-foreground">Тип заказчика:</span>
-            <span className="font-medium text-foreground">{customerTypeLabel}</span>
+            <span className="text-muted-foreground">
+              Тип заказчика:
+            </span>
+            <span className="font-medium text-foreground">
+              {customerTypeLabel}
+            </span>
           </div>
           {order.contactEmail && (
             <div className="text-sm">
               <span className="text-muted-foreground">Email: </span>
-              <span className="font-medium text-foreground">{order.contactEmail}</span>
+              <span className="font-medium text-foreground">
+                {order.contactEmail}
+              </span>
             </div>
           )}
           {order.contactPhone && (
             <div className="text-sm">
               <span className="text-muted-foreground">Телефон: </span>
-              <span className="font-medium text-foreground">{order.contactPhone}</span>
+              <span className="font-medium text-foreground">
+                {order.contactPhone}
+              </span>
             </div>
           )}
         </div>
@@ -434,7 +504,9 @@ export const OrderDetailContent = memo(function OrderDetailContent({
         </div>
 
         <div className="border-t border-border/60 pt-4 text-right">
-          <span className="text-sm text-muted-foreground">Итого: </span>
+          <span className="text-sm text-muted-foreground">
+            Итого:{" "}
+          </span>
           <span className="text-xl font-bold text-primary">
             {formatPriceWithCurrency(order.totalAmount)}
           </span>
@@ -462,7 +534,7 @@ export const OrderDetailContent = memo(function OrderDetailContent({
               return (
                 <li
                   key={doc.id}
-                  className="grid grid-cols-[auto_1fr_auto] items-center gap-3 rounded-xl border border-border/50 bg-muted/5 px-4 py-3 dark:border-white/10 sm:gap-4"
+                  className="grid grid-cols-[auto_1fr_auto] items-center gap-3 rounded-xl border border-border/50 bg-muted/5 px-4 py-3 sm:gap-4 dark:border-white/10"
                 >
                   <span
                     className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted/50"
@@ -471,7 +543,9 @@ export const OrderDetailContent = memo(function OrderDetailContent({
                     <FileText
                       className={cn(
                         "h-4 w-4",
-                        isPdf ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400"
+                        isPdf
+                          ? "text-red-600 dark:text-red-400"
+                          : "text-blue-600 dark:text-blue-400"
                       )}
                     />
                   </span>
@@ -483,14 +557,22 @@ export const OrderDetailContent = memo(function OrderDetailContent({
                       {formatDocumentDate(doc.documentDate)}
                     </span>
                     {doc.fileUrl ? (
-                      <Button variant="outline" size="sm" asChild className="shrink-0 gap-2 rounded-xl">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        asChild
+                        className="shrink-0 gap-2 rounded-xl"
+                      >
                         <a
                           href={doc.fileUrl}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center"
                         >
-                          <FileDown className="h-4 w-4 shrink-0" aria-hidden />
+                          <FileDown
+                            className="h-4 w-4 shrink-0"
+                            aria-hidden
+                          />
                           Скачать {fileLabel}
                         </a>
                       </Button>

@@ -2,10 +2,13 @@ import type { LearnerFormData } from "../types/learner-form-data.types";
 
 const REQUIRED_MESSAGE = "Обязательное поле";
 
-export type LearnerFieldErrors = Partial<Record<keyof LearnerFormData, string>>;
+export type LearnerFieldErrors = Partial<
+  Record<keyof LearnerFormData, string>
+>;
 
 function required(value: string | undefined): string | undefined {
-  if (value == null || String(value).trim() === "") return REQUIRED_MESSAGE;
+  if (value == null || String(value).trim() === "")
+    return REQUIRED_MESSAGE;
   return undefined;
 }
 
@@ -13,7 +16,9 @@ function required(value: string | undefined): string | undefined {
  * Валидирует данные слушателя. Все поля считаются обязательными.
  * residentialAddress обязателен, если не отмечено «Совпадает с адресом регистрации».
  */
-export function validateLearner(data: LearnerFormData): LearnerFieldErrors {
+export function validateLearner(
+  data: LearnerFormData
+): LearnerFieldErrors {
   const errors: LearnerFieldErrors = {};
 
   const lastNameErr = required(data.lastName);
@@ -44,19 +49,25 @@ export function validateLearner(data: LearnerFormData): LearnerFieldErrors {
   if (passportNumberErr) errors.passportNumber = passportNumberErr;
 
   const passportIssuedByErr = required(data.passportIssuedBy);
-  if (passportIssuedByErr) errors.passportIssuedBy = passportIssuedByErr;
+  if (passportIssuedByErr)
+    errors.passportIssuedBy = passportIssuedByErr;
 
   const passportIssuedAtErr = required(data.passportIssuedAt);
-  if (passportIssuedAtErr) errors.passportIssuedAt = passportIssuedAtErr;
+  if (passportIssuedAtErr)
+    errors.passportIssuedAt = passportIssuedAtErr;
 
-  const passportDepartmentCodeErr = required(data.passportDepartmentCode);
+  const passportDepartmentCodeErr = required(
+    data.passportDepartmentCode
+  );
   if (passportDepartmentCodeErr)
     errors.passportDepartmentCode = passportDepartmentCodeErr;
 
   const snilsErr = required(data.snils);
   if (snilsErr) errors.snils = snilsErr;
 
-  const educationQualificationErr = required(data.educationQualification);
+  const educationQualificationErr = required(
+    data.educationQualification
+  );
   if (educationQualificationErr)
     errors.educationQualification = educationQualificationErr;
 
@@ -70,11 +81,13 @@ export function validateLearner(data: LearnerFormData): LearnerFieldErrors {
     data.passportRegistrationAddress
   );
   if (passportRegistrationAddressErr)
-    errors.passportRegistrationAddress = passportRegistrationAddressErr;
+    errors.passportRegistrationAddress =
+      passportRegistrationAddressErr;
 
   if (!data.sameAsRegistration) {
     const residentialAddressErr = required(data.residentialAddress);
-    if (residentialAddressErr) errors.residentialAddress = residentialAddressErr;
+    if (residentialAddressErr)
+      errors.residentialAddress = residentialAddressErr;
   }
 
   const workPlaceNameErr = required(data.workPlaceName);

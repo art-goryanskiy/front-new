@@ -28,11 +28,15 @@ export function useUpdateOrder() {
   >(UPDATE_ORDER as DocumentNode, {
     refetchQueries: (result) => {
       const orderId = result.data?.updateOrder?.id;
-      const queries: Array<{ query: DocumentNode; variables?: { id: string } }> = [
-        { query: MY_ORDERS as DocumentNode },
-      ];
+      const queries: Array<{
+        query: DocumentNode;
+        variables?: { id: string };
+      }> = [{ query: MY_ORDERS as DocumentNode }];
       if (orderId) {
-        queries.push({ query: ORDER as DocumentNode, variables: { id: orderId } });
+        queries.push({
+          query: ORDER as DocumentNode,
+          variables: { id: orderId },
+        });
       }
       return queries;
     },

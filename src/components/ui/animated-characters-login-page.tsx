@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { FormErrorSummary } from "@/shared/ui/form-error-summary/form-error-summary";
 import { Surface } from "@/shared/ui/surface/surface";
 import { Eye, EyeOff, Mail } from "lucide-react";
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -885,7 +886,7 @@ export function LoginFormPage() {
                         htmlFor="email"
                         className={cn(
                           "absolute left-3 z-10 rounded-md bg-background/80 px-1 font-medium backdrop-blur-sm transition-all duration-200",
-                          (field.value?.trim() || isEmailFocused)
+                          field.value?.trim() || isEmailFocused
                             ? "top-2 -translate-y-1/2 text-[11px]"
                             : "top-1/2 -translate-y-1/2 text-sm",
                           fieldState.invalid
@@ -905,7 +906,7 @@ export function LoginFormPage() {
                           setIsTyping(true);
                           setIsEmailFocused(true);
                         }}
-                        onBlur={(e) => {
+                        onBlur={() => {
                           field.onBlur();
                           setIsTyping(false);
                           setIsEmailFocused(false);
@@ -913,7 +914,9 @@ export function LoginFormPage() {
                         aria-invalid={fieldState.invalid}
                         className="h-12 border-border/60 bg-background/60 pr-10"
                         value={field.value}
-                        onChange={(e) => field.onChange(e.target.value)}
+                        onChange={(e) =>
+                          field.onChange(e.target.value)
+                        }
                       />
                     </div>
 
@@ -940,7 +943,8 @@ export function LoginFormPage() {
                         htmlFor="password"
                         className={cn(
                           "absolute left-3 z-10 rounded-md bg-background/80 px-1 font-medium backdrop-blur-sm transition-all duration-200",
-                          (field.value?.trim() || activePasswordField === "password")
+                          field.value?.trim() ||
+                            activePasswordField === "password"
                             ? "top-2 -translate-y-1/2 text-[11px]"
                             : "top-1/2 -translate-y-1/2 text-sm",
                           fieldState.invalid
@@ -983,7 +987,7 @@ export function LoginFormPage() {
                         size="icon"
                         onClick={() => setShowPassword((v) => !v)}
                         disabled={isLoading}
-                        className="absolute right-2 top-1/2 h-9 w-9 -translate-y-1/2 rounded-xl border border-border/60 bg-background/60 text-muted-foreground shadow-sm backdrop-blur hover:bg-muted/20 hover:text-foreground"
+                        className="absolute top-1/2 right-2 h-9 w-9 -translate-y-1/2 rounded-xl border border-border/60 bg-background/60 text-muted-foreground shadow-sm backdrop-blur hover:bg-muted/20 hover:text-foreground"
                         aria-label={
                           showPassword
                             ? "Скрыть пароль"
@@ -1035,7 +1039,9 @@ export function LoginFormPage() {
                           htmlFor="confirmPassword"
                           className={cn(
                             "absolute left-3 z-10 rounded-md bg-background/80 px-1 font-medium backdrop-blur-sm transition-all duration-200",
-                            (field.value?.trim() || activePasswordField === "confirmPassword")
+                            field.value?.trim() ||
+                              activePasswordField ===
+                                "confirmPassword"
                               ? "top-2 -translate-y-1/2 text-[11px]"
                               : "top-1/2 -translate-y-1/2 text-sm",
                             fieldState.invalid
@@ -1057,9 +1063,7 @@ export function LoginFormPage() {
                           onKeyUp={handlePasswordKey}
                           onFocus={() => {
                             setIsTyping(true);
-                            setActivePasswordField(
-                              "confirmPassword"
-                            );
+                            setActivePasswordField("confirmPassword");
                           }}
                           onBlur={() => {
                             setIsTyping(false);
@@ -1071,18 +1075,18 @@ export function LoginFormPage() {
                           className="peer h-12 border-border/60 bg-background/60 pr-11"
                         />
                         <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => setShowPassword((v) => !v)}
-                            disabled={isLoading}
-                            className="absolute top-1/2 right-2 h-9 w-9 -translate-y-1/2 rounded-xl border border-border/60 bg-background/60 text-muted-foreground shadow-sm backdrop-blur hover:bg-muted/20 hover:text-foreground"
-                            aria-label={
-                              showPassword
-                                ? "Скрыть пароль"
-                                : "Показать пароль"
-                            }
-                          >
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => setShowPassword((v) => !v)}
+                          disabled={isLoading}
+                          className="absolute top-1/2 right-2 h-9 w-9 -translate-y-1/2 rounded-xl border border-border/60 bg-background/60 text-muted-foreground shadow-sm backdrop-blur hover:bg-muted/20 hover:text-foreground"
+                          aria-label={
+                            showPassword
+                              ? "Скрыть пароль"
+                              : "Показать пароль"
+                          }
+                        >
                           {showPassword ? (
                             <EyeOff className="h-4 w-4" />
                           ) : (
@@ -1193,16 +1197,12 @@ export function LoginFormPage() {
 
           {/* Back to home */}
           <div className="mt-6 text-center">
-            <a
+            <Link
               href="/"
-              onClick={(e) => {
-                e.preventDefault();
-                router.push("/");
-              }}
-              className="text-sm font-medium text-muted-foreground hover:text-foreground hover:underline transition-colors"
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground hover:underline"
             >
               На главную
-            </a>
+            </Link>
           </div>
         </div>
       </div>

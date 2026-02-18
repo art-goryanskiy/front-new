@@ -2,15 +2,13 @@
 
 import {
   PROFILE_FORM_LABELS,
-  PROFILE_FORM_PLACEHOLDERS,
   PROFILE_FORM_CLASSES,
 } from "../constants/profile-form-constants";
-import type { ProfileFormData, WorkPlaceFormData } from "../types/profile-form.types";
 import type {
-  Control,
-  FieldPath,
-  UseFormSetValue,
-} from "react-hook-form";
+  ProfileFormData,
+  WorkPlaceFormData,
+} from "../types/profile-form.types";
+import type { Control, UseFormSetValue } from "react-hook-form";
 import { memo, useState } from "react";
 import { OrganizationSuggestInput } from "@/shared/ui/form-fields/organization-suggest-input";
 import { useMutation } from "@apollo/client/react";
@@ -45,7 +43,9 @@ import { Building2, Star, Trash2 } from "lucide-react";
 
 const MAX_WORK_PLACES = 5;
 
-interface ProfileAdditionalInfoSectionProps<T extends ProfileFormData> {
+interface ProfileAdditionalInfoSectionProps<
+  T extends ProfileFormData,
+> {
   control: Control<T>;
   mode?: "view" | "edit";
   values?: ProfileFormData;
@@ -56,17 +56,15 @@ export const ProfileAdditionalInfoSection = memo(
   function ProfileAdditionalInfoSection<
     T extends ProfileFormData = ProfileFormData,
   >({
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- required by interface
     control,
     mode = "edit",
     values,
     setValue,
   }: ProfileAdditionalInfoSectionProps<T>) {
-    const fieldName = <K extends keyof ProfileFormData>(
-      name: K
-    ): FieldPath<T> => name as unknown as FieldPath<T>;
-
     const { showToast } = useToastState();
-    const workPlaces = (values?.workPlaces ?? []) as WorkPlaceFormData[];
+    const workPlaces = (values?.workPlaces ??
+      []) as WorkPlaceFormData[];
     const hasReachedMax = workPlaces.length >= MAX_WORK_PLACES;
 
     const [binding, setBinding] = useState(false);
@@ -150,25 +148,6 @@ export const ProfileAdditionalInfoSection = memo(
 
     const normalizeDigits = (s: string) => s.replace(/\D/g, "");
 
-    const buildManualDisplayName = (data: ManualForm) => {
-      const explicit = data.displayName?.trim();
-      if (explicit) return explicit;
-      if (data.type === "INDIVIDUAL") {
-        const fio =
-          data.fioFull?.trim() ||
-          [data.fioLast, data.fioFirst, data.fioMiddle]
-            .map((v) => v?.trim())
-            .filter(Boolean)
-            .join(" ");
-        return fio ? `ИП ${fio}` : "ИП";
-      }
-      const short = data.shortName?.trim();
-      const full = data.fullName?.trim();
-      const opf = data.opfShort?.trim() || data.opfFull?.trim();
-      const base = short || full || "Организация";
-      return opf ? `${opf} ${base}` : base;
-    };
-
     const setWorkPlacePrimary = (index: number) => {
       if (!setValue) return;
       const next = workPlaces.map((wp, i) => ({
@@ -193,10 +172,16 @@ export const ProfileAdditionalInfoSection = memo(
       });
     };
 
-    const updateWorkPlacePosition = (index: number, position: string) => {
+    const updateWorkPlacePosition = (
+      index: number,
+      position: string
+    ) => {
       if (!setValue) return;
       const next = [...workPlaces];
-      next[index] = { ...next[index], position: position || undefined };
+      next[index] = {
+        ...next[index],
+        position: position || undefined,
+      };
       setValue("workPlaces", next, {
         shouldDirty: true,
         shouldValidate: true,
@@ -210,7 +195,7 @@ export const ProfileAdditionalInfoSection = memo(
             Места работы
           </h3>
           <div className={PROFILE_FORM_CLASSES.fieldGrid}>
-            <div className="md:col-span-2 space-y-3">
+            <div className="space-y-3 md:col-span-2">
               {workPlaces.length === 0 ? (
                 <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-muted/20 py-12 text-center">
                   <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
@@ -238,7 +223,8 @@ export const ProfileAdditionalInfoSection = memo(
                             </div>
                             <div className="min-w-0">
                               <p className="truncate text-sm font-medium text-foreground">
-                                {wp.organization?.displayName || "Организация"}
+                                {wp.organization?.displayName ||
+                                  "Организация"}
                               </p>
                               {wp.position && (
                                 <p className="text-xs text-muted-foreground">
@@ -274,7 +260,7 @@ export const ProfileAdditionalInfoSection = memo(
           Места работы
         </h3>
         <div className={PROFILE_FORM_CLASSES.fieldGrid}>
-          <div className="md:col-span-2 space-y-4">
+          <div className="space-y-4 md:col-span-2">
             <div className="flex items-baseline justify-between">
               <Label className="text-sm font-medium">
                 {PROFILE_FORM_LABELS.workPlaces}
@@ -301,7 +287,8 @@ export const ProfileAdditionalInfoSection = memo(
                           <div className="min-w-0 flex-1 space-y-2">
                             <div className="flex flex-wrap items-center gap-2">
                               <span className="truncate text-sm font-medium">
-                                {wp.organization?.displayName || "Организация"}
+                                {wp.organization?.displayName ||
+                                  "Организация"}
                               </span>
                               {wp.isPrimary && (
                                 <Badge
@@ -317,7 +304,10 @@ export const ProfileAdditionalInfoSection = memo(
                               placeholder="Должность"
                               value={wp.position ?? ""}
                               onChange={(e) =>
-                                updateWorkPlacePosition(i, e.target.value)
+                                updateWorkPlacePosition(
+                                  i,
+                                  e.target.value
+                                )
                               }
                               className="h-9 text-sm"
                             />
@@ -357,7 +347,8 @@ export const ProfileAdditionalInfoSection = memo(
               <Card className="overflow-visible border-dashed">
                 <CardContent className="space-y-4 p-4">
                   <p className="text-xs text-muted-foreground">
-                    Добавленные места работы сохранятся при нажатии «Сохранить»
+                    Добавленные места работы сохранятся при нажатии
+                    «Сохранить»
                   </p>
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:gap-4">
                     <div className="min-w-0 flex-1 space-y-2">
@@ -374,7 +365,9 @@ export const ProfileAdditionalInfoSection = memo(
                         debounceMs={350}
                         minQueryLength={3}
                         count={15}
-                        onApiUnavailableChange={(v) => setOrgApiUnavailable(v)}
+                        onApiUnavailableChange={(v) =>
+                          setOrgApiUnavailable(v)
+                        }
                         onSelect={(sug) => {
                           if (!setValue) return;
                           const isFirst = workPlaces.length === 0;
@@ -391,28 +384,37 @@ export const ProfileAdditionalInfoSection = memo(
                           setValue(
                             "workPlaces",
                             [...workPlaces, newEntry],
-                            { shouldDirty: true, shouldValidate: true }
+                            {
+                              shouldDirty: true,
+                              shouldValidate: true,
+                            }
                           );
                           setAddPosition("");
                           setAddIsPrimary(false);
                         }}
-                />
+                      />
                     </div>
                     <div className="flex shrink-0 flex-col gap-2 sm:flex-row sm:items-center">
                       <Input
                         placeholder="Должность (опц.)"
                         value={addPosition}
-                        onChange={(e) => setAddPosition(e.target.value)}
+                        onChange={(e) =>
+                          setAddPosition(e.target.value)
+                        }
                         className="h-9 w-full sm:w-36"
                       />
                       <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm transition-colors hover:bg-muted/50">
                         <input
                           type="checkbox"
                           checked={addIsPrimary}
-                          onChange={(e) => setAddIsPrimary(e.target.checked)}
+                          onChange={(e) =>
+                            setAddIsPrimary(e.target.checked)
+                          }
                           className="rounded border-border"
                         />
-                        <span className="text-muted-foreground">Основное</span>
+                        <span className="text-muted-foreground">
+                          Основное
+                        </span>
                       </label>
                     </div>
                   </div>
@@ -422,7 +424,8 @@ export const ProfileAdditionalInfoSection = memo(
 
             {hasReachedMax && (
               <p className="rounded-lg border border-border bg-muted/50 px-3 py-2 text-sm text-muted-foreground">
-                Максимум {MAX_WORK_PLACES} мест работы. Удалите одно, чтобы добавить новое.
+                Максимум {MAX_WORK_PLACES} мест работы. Удалите одно,
+                чтобы добавить новое.
               </p>
             )}
 
@@ -448,7 +451,8 @@ export const ProfileAdditionalInfoSection = memo(
                   </DialogTitle>
                   <DialogDescription asChild>
                     <p className="text-sm text-muted-foreground">
-                      Заполните данные организации, если она не найдена по ИНН
+                      Заполните данные организации, если она не
+                      найдена по ИНН
                     </p>
                   </DialogDescription>
                 </DialogHeader>
@@ -494,9 +498,12 @@ export const ProfileAdditionalInfoSection = memo(
                       const bikRaw = data.bik?.trim();
                       const correspondentAccountRaw =
                         data.correspondentAccount?.trim();
-                      const bankAccount =
-                        bankAccountRaw ? normalizeDigits(bankAccountRaw) : "";
-                      const bik = bikRaw ? normalizeDigits(bikRaw) : "";
+                      const bankAccount = bankAccountRaw
+                        ? normalizeDigits(bankAccountRaw)
+                        : "";
+                      const bik = bikRaw
+                        ? normalizeDigits(bikRaw)
+                        : "";
                       const correspondentAccount =
                         correspondentAccountRaw
                           ? normalizeDigits(correspondentAccountRaw)
@@ -563,8 +570,7 @@ export const ProfileAdditionalInfoSection = memo(
                           : data.actualAddress?.trim() || undefined,
                         email: data.email?.trim() || undefined,
                         phone: data.phone?.trim() || undefined,
-                        position:
-                          data.position?.trim() || undefined,
+                        position: data.position?.trim() || undefined,
                         isPrimary:
                           data.isPrimary || isFirst
                             ? true
@@ -862,7 +868,9 @@ export const ProfileAdditionalInfoSection = memo(
                                 className="rounded-xl"
                                 onChange={(e) =>
                                   field.onChange(
-                                    e.target.value.replace(/\D/g, "").slice(0, 20)
+                                    e.target.value
+                                      .replace(/\D/g, "")
+                                      .slice(0, 20)
                                   )
                                 }
                               />
@@ -892,7 +900,9 @@ export const ProfileAdditionalInfoSection = memo(
                                 className="rounded-xl"
                                 onChange={(e) =>
                                   field.onChange(
-                                    e.target.value.replace(/\D/g, "").slice(0, 9)
+                                    e.target.value
+                                      .replace(/\D/g, "")
+                                      .slice(0, 9)
                                   )
                                 }
                               />
@@ -913,7 +923,9 @@ export const ProfileAdditionalInfoSection = memo(
                                 className="rounded-xl"
                                 onChange={(e) =>
                                   field.onChange(
-                                    e.target.value.replace(/\D/g, "").slice(0, 20)
+                                    e.target.value
+                                      .replace(/\D/g, "")
+                                      .slice(0, 20)
                                   )
                                 }
                               />

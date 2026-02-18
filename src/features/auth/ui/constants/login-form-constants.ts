@@ -28,7 +28,9 @@ const LOGIN_ERROR_MESSAGE_MAP: Record<string, string> = {
 /**
  * Возвращает пользовательское сообщение об ошибке входа по тексту от API.
  */
-export function getLoginErrorMessage(apiMessage?: string | null): string {
+export function getLoginErrorMessage(
+  apiMessage?: string | null
+): string {
   if (!apiMessage) return LOGIN_FORM_TEXTS.error.default;
   const key = apiMessage.trim().toLowerCase();
   return LOGIN_ERROR_MESSAGE_MAP[key] ?? apiMessage;

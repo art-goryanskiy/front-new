@@ -24,7 +24,7 @@ export const LoadingState = memo(function LoadingState({
         <OrbitalLoader
           message={message || "Загрузка"}
           messagePlacement="bottom"
-          className="w-10 h-10"
+          className="h-10 w-10"
         />
       </CardContent>
     </Card>

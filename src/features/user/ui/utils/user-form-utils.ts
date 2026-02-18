@@ -113,7 +113,8 @@ export function getDefaultValues(
       editingUser?.profile?.residentialAddress || "",
     workPlaces:
       editingUser?.profile?.workPlaces?.map((wp) => ({
-        organizationId: wp.organizationId || wp.organization?.id || "",
+        organizationId:
+          wp.organizationId || wp.organization?.id || "",
         position: wp.position || undefined,
         isPrimary: Boolean(wp.isPrimary),
         organization: wp.organization

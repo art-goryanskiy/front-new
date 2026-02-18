@@ -23,14 +23,16 @@ export const metadata: Metadata = {
   authors: [{ name: "ООО ЦОК СТАНДАРТ ПЛЮС" }],
   creator: "ООО ЦОК СТАНДАРТ ПЛЮС",
   publisher: "ООО ЦОК СТАНДАРТ ПЛЮС",
-    metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL || "https://www.new.standart82.ru"
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ||
+      "https://www.new.standart82.ru"
   ),
   openGraph: {
     type: "website",
     locale: "ru_RU",
     url:
-      process.env.NEXT_PUBLIC_SITE_URL || "https://www.new.standart82.ru",
+      process.env.NEXT_PUBLIC_SITE_URL ||
+      "https://www.new.standart82.ru",
     siteName: "ООО ЦОК СТАНДАРТ ПЛЮС",
     title: "ООО ЦОК СТАНДАРТ ПЛЮС - Профессиональное обучение",
     description:
@@ -40,7 +42,11 @@ export const metadata: Metadata = {
     icon: [
       { url: "/favicon.svg", type: "image/svg+xml" },
       { url: "/favicon.ico", sizes: "any" },
-      { url: "/favicon-96x96.png", sizes: "96x96", type: "image/png" },
+      {
+        url: "/favicon-96x96.png",
+        sizes: "96x96",
+        type: "image/png",
+      },
     ],
     apple: "/apple-touch-icon.png",
   },

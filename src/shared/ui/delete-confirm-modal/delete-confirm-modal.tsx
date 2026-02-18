@@ -34,7 +34,7 @@ export const DeleteConfirmModal = memo(function DeleteConfirmModal({
     } catch {
       // Ошибка отображается через error в модалке
     }
-  }, [onDelete, onClose, entityType]);
+  }, [onDelete, onClose]);
 
   const errorMessage = useMemo(
     () => error?.message || `Ошибка при удалении ${entityType}`,

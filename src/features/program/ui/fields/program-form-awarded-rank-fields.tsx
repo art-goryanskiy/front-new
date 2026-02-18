@@ -1,7 +1,11 @@
 "use client";
 
 import { memo, useCallback } from "react";
-import { Controller, Control, UseFormSetValue } from "react-hook-form";
+import {
+  Controller,
+  Control,
+  UseFormSetValue,
+} from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -81,7 +85,11 @@ export const ProgramFormAwardedRankFields = memo(
                 max={RANK_MAX}
                 step={1}
                 placeholder={FORM_PLACEHOLDERS.awardedRankFrom}
-                value={field.value !== undefined && field.value !== null ? String(field.value) : ""}
+                value={
+                  field.value !== undefined && field.value !== null
+                    ? String(field.value)
+                    : ""
+                }
                 onChange={handleRankFromChange(field.onChange)}
                 aria-label={FORM_LABELS.awardedRankFrom}
                 className="w-full"
@@ -107,7 +115,11 @@ export const ProgramFormAwardedRankFields = memo(
                 max={RANK_MAX}
                 step={1}
                 placeholder={FORM_PLACEHOLDERS.awardedRankTo}
-                value={field.value !== undefined && field.value !== null ? String(field.value) : ""}
+                value={
+                  field.value !== undefined && field.value !== null
+                    ? String(field.value)
+                    : ""
+                }
                 onChange={handleRankToChange(field.onChange)}
                 aria-label={FORM_LABELS.awardedRankTo}
                 className="w-full"

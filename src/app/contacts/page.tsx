@@ -51,10 +51,10 @@ export default function ContactsPage() {
             className="relative z-10 space-y-4 p-6 sm:p-8"
           >
             <div>
-              <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              <h2 className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
                 Наименование
               </h2>
-              <p className="mt-2 text-lg font-medium leading-snug text-foreground">
+              <p className="mt-2 text-lg leading-snug font-medium text-foreground">
                 {COMPANY_FULL_NAME}
               </p>
             </div>
@@ -63,7 +63,7 @@ export default function ContactsPage() {
                 <MapPin className="h-5 w-5" aria-hidden />
               </div>
               <div>
-                <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                <h2 className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
                   Адрес
                 </h2>
                 <p className="mt-2 text-base font-medium text-foreground">
@@ -76,7 +76,7 @@ export default function ContactsPage() {
                 <Clock className="h-5 w-5" aria-hidden />
               </div>
               <div>
-                <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                <h2 className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
                   График работы
                 </h2>
                 <p className="mt-2 text-base font-medium text-foreground">
@@ -105,14 +105,14 @@ export default function ContactsPage() {
                 <div className="flex flex-col gap-3 text-sm">
                   <a
                     href={telHref(dept.phone)}
-                    className="inline-flex items-center gap-2 text-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded"
+                    className="inline-flex items-center gap-2 rounded text-foreground transition-colors hover:text-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
                   >
                     <Phone className="h-4 w-4 shrink-0 text-primary/80" />
                     <span>{dept.phone}</span>
                   </a>
                   <a
                     href={`mailto:${dept.email}`}
-                    className="inline-flex items-center gap-2 break-all text-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded"
+                    className="inline-flex items-center gap-2 rounded break-all text-foreground transition-colors hover:text-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
                   >
                     <Mail className="h-4 w-4 shrink-0 text-primary/80" />
                     <span>{dept.email}</span>

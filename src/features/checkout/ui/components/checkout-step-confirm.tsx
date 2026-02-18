@@ -35,7 +35,8 @@ export const CheckoutStepConfirm = memo(function CheckoutStepConfirm({
       ? ` — ${individualData.lastName} ${individualData.firstName} ${individualData.middleName ?? ""}`.trim()
       : "";
   const contactSuffix =
-    isIndividualOrSelf && (individualData.email || individualData.phone)
+    isIndividualOrSelf &&
+    (individualData.email || individualData.phone)
       ? ` (${[individualData.email, individualData.phone].filter(Boolean).join(", ")})`
       : "";
 
@@ -57,7 +58,8 @@ export const CheckoutStepConfirm = memo(function CheckoutStepConfirm({
         </div>
         <ul className="space-y-2">
           {items.map((item) => {
-            const displayTitle = item.displayTitle ?? item.program.title;
+            const displayTitle =
+              item.displayTitle ?? item.program.title;
             return (
               <li
                 key={`${item.programId}-${item.pricingIndex}-${item.subProgramIndex ?? "p"}`}

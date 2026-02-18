@@ -23,8 +23,10 @@ const LABELS = {
   passportDepartmentCode: PROFILE_FORM_LABELS.passportDepartmentCode,
   snils: PROFILE_FORM_LABELS.snils,
   educationQualification: PROFILE_FORM_LABELS.educationQualification,
-  educationDocumentIssuedAt: PROFILE_FORM_LABELS.educationDocumentIssuedAt,
-  passportRegistrationAddress: PROFILE_FORM_LABELS.passportRegistrationAddress,
+  educationDocumentIssuedAt:
+    PROFILE_FORM_LABELS.educationDocumentIssuedAt,
+  passportRegistrationAddress:
+    PROFILE_FORM_LABELS.passportRegistrationAddress,
   residentialAddress: PROFILE_FORM_LABELS.residentialAddress,
   sameAsRegistration: "Совпадает с адресом регистрации",
   workPlaceName: "Место работы",
@@ -53,7 +55,10 @@ export const LearnerFieldsCard = memo(function LearnerFieldsCard({
   fromProfile = false,
   errors = {},
 }: LearnerFieldsCardProps) {
-  const set = (field: keyof LearnerFormData, value: string | boolean) => {
+  const set = (
+    field: keyof LearnerFormData,
+    value: string | boolean
+  ) => {
     onChange({ ...data, [field]: value });
   };
 
@@ -70,7 +75,10 @@ export const LearnerFieldsCard = memo(function LearnerFieldsCard({
   const id = (name: string) => `${idPrefix}-${name}`;
 
   const fieldClass = (field: keyof LearnerFormData) =>
-    cn(errors[field] && "border-destructive focus-visible:ring-destructive/20");
+    cn(
+      errors[field] &&
+        "border-destructive focus-visible:ring-destructive/20"
+    );
 
   return (
     <div className="space-y-6 rounded-lg border border-border/40 bg-background/60 p-4">
@@ -82,7 +90,10 @@ export const LearnerFieldsCard = memo(function LearnerFieldsCard({
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor={id("lastName")}>{LABELS.lastName}{REQUIRED_SUFFIX}</Label>
+          <Label htmlFor={id("lastName")}>
+            {LABELS.lastName}
+            {REQUIRED_SUFFIX}
+          </Label>
           <Input
             id={id("lastName")}
             value={data.lastName}
@@ -91,11 +102,16 @@ export const LearnerFieldsCard = memo(function LearnerFieldsCard({
             className={fieldClass("lastName")}
           />
           {errors.lastName && (
-            <p className="text-xs text-destructive">{errors.lastName}</p>
+            <p className="text-xs text-destructive">
+              {errors.lastName}
+            </p>
           )}
         </div>
         <div className="space-y-2">
-          <Label htmlFor={id("firstName")}>{LABELS.firstName}{REQUIRED_SUFFIX}</Label>
+          <Label htmlFor={id("firstName")}>
+            {LABELS.firstName}
+            {REQUIRED_SUFFIX}
+          </Label>
           <Input
             id={id("firstName")}
             value={data.firstName}
@@ -104,11 +120,16 @@ export const LearnerFieldsCard = memo(function LearnerFieldsCard({
             className={fieldClass("firstName")}
           />
           {errors.firstName && (
-            <p className="text-xs text-destructive">{errors.firstName}</p>
+            <p className="text-xs text-destructive">
+              {errors.firstName}
+            </p>
           )}
         </div>
         <div className="space-y-2 sm:col-span-2">
-          <Label htmlFor={id("middleName")}>{LABELS.middleName}{REQUIRED_SUFFIX}</Label>
+          <Label htmlFor={id("middleName")}>
+            {LABELS.middleName}
+            {REQUIRED_SUFFIX}
+          </Label>
           <Input
             id={id("middleName")}
             value={data.middleName}
@@ -117,11 +138,16 @@ export const LearnerFieldsCard = memo(function LearnerFieldsCard({
             className={fieldClass("middleName")}
           />
           {errors.middleName && (
-            <p className="text-xs text-destructive">{errors.middleName}</p>
+            <p className="text-xs text-destructive">
+              {errors.middleName}
+            </p>
           )}
         </div>
         <div className="space-y-2">
-          <Label htmlFor={id("dateOfBirth")}>{LABELS.dateOfBirth}{REQUIRED_SUFFIX}</Label>
+          <Label htmlFor={id("dateOfBirth")}>
+            {LABELS.dateOfBirth}
+            {REQUIRED_SUFFIX}
+          </Label>
           <Input
             id={id("dateOfBirth")}
             type="date"
@@ -130,11 +156,16 @@ export const LearnerFieldsCard = memo(function LearnerFieldsCard({
             className={fieldClass("dateOfBirth")}
           />
           {errors.dateOfBirth && (
-            <p className="text-xs text-destructive">{errors.dateOfBirth}</p>
+            <p className="text-xs text-destructive">
+              {errors.dateOfBirth}
+            </p>
           )}
         </div>
         <div className="space-y-2">
-          <Label htmlFor={id("citizenship")}>{LABELS.citizenship}{REQUIRED_SUFFIX}</Label>
+          <Label htmlFor={id("citizenship")}>
+            {LABELS.citizenship}
+            {REQUIRED_SUFFIX}
+          </Label>
           <Input
             id={id("citizenship")}
             value={data.citizenship}
@@ -143,7 +174,9 @@ export const LearnerFieldsCard = memo(function LearnerFieldsCard({
             className={fieldClass("citizenship")}
           />
           {errors.citizenship && (
-            <p className="text-xs text-destructive">{errors.citizenship}</p>
+            <p className="text-xs text-destructive">
+              {errors.citizenship}
+            </p>
           )}
         </div>
       </div>
@@ -154,7 +187,10 @@ export const LearnerFieldsCard = memo(function LearnerFieldsCard({
         </h4>
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor={id("passportSeries")}>{LABELS.passportSeries}{REQUIRED_SUFFIX}</Label>
+            <Label htmlFor={id("passportSeries")}>
+              {LABELS.passportSeries}
+              {REQUIRED_SUFFIX}
+            </Label>
             <Input
               id={id("passportSeries")}
               value={data.passportSeries}
@@ -163,11 +199,16 @@ export const LearnerFieldsCard = memo(function LearnerFieldsCard({
               className={fieldClass("passportSeries")}
             />
             {errors.passportSeries && (
-              <p className="text-xs text-destructive">{errors.passportSeries}</p>
+              <p className="text-xs text-destructive">
+                {errors.passportSeries}
+              </p>
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor={id("passportNumber")}>{LABELS.passportNumber}{REQUIRED_SUFFIX}</Label>
+            <Label htmlFor={id("passportNumber")}>
+              {LABELS.passportNumber}
+              {REQUIRED_SUFFIX}
+            </Label>
             <Input
               id={id("passportNumber")}
               value={data.passportNumber}
@@ -176,55 +217,79 @@ export const LearnerFieldsCard = memo(function LearnerFieldsCard({
               className={fieldClass("passportNumber")}
             />
             {errors.passportNumber && (
-              <p className="text-xs text-destructive">{errors.passportNumber}</p>
+              <p className="text-xs text-destructive">
+                {errors.passportNumber}
+              </p>
             )}
           </div>
           <div className="space-y-2 sm:col-span-2">
-            <Label htmlFor={id("passportIssuedBy")}>{LABELS.passportIssuedBy}{REQUIRED_SUFFIX}</Label>
+            <Label htmlFor={id("passportIssuedBy")}>
+              {LABELS.passportIssuedBy}
+              {REQUIRED_SUFFIX}
+            </Label>
             <Input
               id={id("passportIssuedBy")}
               value={data.passportIssuedBy}
-              onChange={(e) => set("passportIssuedBy", e.target.value)}
+              onChange={(e) =>
+                set("passportIssuedBy", e.target.value)
+              }
               placeholder="Кем выдан"
               className={fieldClass("passportIssuedBy")}
             />
             {errors.passportIssuedBy && (
-              <p className="text-xs text-destructive">{errors.passportIssuedBy}</p>
+              <p className="text-xs text-destructive">
+                {errors.passportIssuedBy}
+              </p>
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor={id("passportIssuedAt")}>{LABELS.passportIssuedAt}{REQUIRED_SUFFIX}</Label>
+            <Label htmlFor={id("passportIssuedAt")}>
+              {LABELS.passportIssuedAt}
+              {REQUIRED_SUFFIX}
+            </Label>
             <Input
               id={id("passportIssuedAt")}
               type="date"
               value={data.passportIssuedAt}
-              onChange={(e) => set("passportIssuedAt", e.target.value)}
+              onChange={(e) =>
+                set("passportIssuedAt", e.target.value)
+              }
               className={fieldClass("passportIssuedAt")}
             />
             {errors.passportIssuedAt && (
-              <p className="text-xs text-destructive">{errors.passportIssuedAt}</p>
+              <p className="text-xs text-destructive">
+                {errors.passportIssuedAt}
+              </p>
             )}
           </div>
           <div className="space-y-2">
             <Label htmlFor={id("passportDepartmentCode")}>
-              {LABELS.passportDepartmentCode}{REQUIRED_SUFFIX}
+              {LABELS.passportDepartmentCode}
+              {REQUIRED_SUFFIX}
             </Label>
             <Input
               id={id("passportDepartmentCode")}
               value={data.passportDepartmentCode}
-              onChange={(e) => set("passportDepartmentCode", e.target.value)}
+              onChange={(e) =>
+                set("passportDepartmentCode", e.target.value)
+              }
               placeholder="000-000"
               className={fieldClass("passportDepartmentCode")}
             />
             {errors.passportDepartmentCode && (
-              <p className="text-xs text-destructive">{errors.passportDepartmentCode}</p>
+              <p className="text-xs text-destructive">
+                {errors.passportDepartmentCode}
+              </p>
             )}
           </div>
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor={id("snils")}>{LABELS.snils}{REQUIRED_SUFFIX}</Label>
+        <Label htmlFor={id("snils")}>
+          {LABELS.snils}
+          {REQUIRED_SUFFIX}
+        </Label>
         <Input
           id={id("snils")}
           value={data.snils}
@@ -244,39 +309,51 @@ export const LearnerFieldsCard = memo(function LearnerFieldsCard({
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor={id("educationQualification")}>
-              {LABELS.educationQualification}{REQUIRED_SUFFIX}
+              {LABELS.educationQualification}
+              {REQUIRED_SUFFIX}
             </Label>
             <Input
               id={id("educationQualification")}
               value={data.educationQualification}
-              onChange={(e) => set("educationQualification", e.target.value)}
+              onChange={(e) =>
+                set("educationQualification", e.target.value)
+              }
               placeholder="Квалификация"
               className={fieldClass("educationQualification")}
             />
             {errors.educationQualification && (
-              <p className="text-xs text-destructive">{errors.educationQualification}</p>
+              <p className="text-xs text-destructive">
+                {errors.educationQualification}
+              </p>
             )}
           </div>
           <div className="space-y-2">
             <Label htmlFor={id("educationDocumentIssuedAt")}>
-              {LABELS.educationDocumentIssuedAt}{REQUIRED_SUFFIX}
+              {LABELS.educationDocumentIssuedAt}
+              {REQUIRED_SUFFIX}
             </Label>
             <Input
               id={id("educationDocumentIssuedAt")}
               type="date"
               value={data.educationDocumentIssuedAt}
-              onChange={(e) => set("educationDocumentIssuedAt", e.target.value)}
+              onChange={(e) =>
+                set("educationDocumentIssuedAt", e.target.value)
+              }
               className={fieldClass("educationDocumentIssuedAt")}
             />
             {errors.educationDocumentIssuedAt && (
-              <p className="text-xs text-destructive">{errors.educationDocumentIssuedAt}</p>
+              <p className="text-xs text-destructive">
+                {errors.educationDocumentIssuedAt}
+              </p>
             )}
           </div>
         </div>
       </div>
 
       <div>
-        <h4 className="mb-2 text-sm font-semibold text-foreground">Адреса</h4>
+        <h4 className="mb-2 text-sm font-semibold text-foreground">
+          Адреса
+        </h4>
         <div className="space-y-4">
           <AddressSuggestInput
             id={id("passportRegistrationAddress")}
@@ -287,7 +364,9 @@ export const LearnerFieldsCard = memo(function LearnerFieldsCard({
               onChange({
                 ...data,
                 passportRegistrationAddress: value,
-                ...(data.sameAsRegistration ? { residentialAddress: value } : {}),
+                ...(data.sameAsRegistration
+                  ? { residentialAddress: value }
+                  : {}),
               })
             }
             isRequired
@@ -301,7 +380,10 @@ export const LearnerFieldsCard = memo(function LearnerFieldsCard({
               checked={data.sameAsRegistration}
               onCheckedChange={setSameAsRegistration}
             />
-            <Label htmlFor={id("sameAsRegistration")} className="cursor-pointer">
+            <Label
+              htmlFor={id("sameAsRegistration")}
+              className="cursor-pointer"
+            >
               {LABELS.sameAsRegistration}
             </Label>
           </div>
@@ -323,7 +405,10 @@ export const LearnerFieldsCard = memo(function LearnerFieldsCard({
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor={id("workPlaceName")}>{LABELS.workPlaceName}{REQUIRED_SUFFIX}</Label>
+          <Label htmlFor={id("workPlaceName")}>
+            {LABELS.workPlaceName}
+            {REQUIRED_SUFFIX}
+          </Label>
           <Input
             id={id("workPlaceName")}
             value={data.workPlaceName}
@@ -332,11 +417,16 @@ export const LearnerFieldsCard = memo(function LearnerFieldsCard({
             className={fieldClass("workPlaceName")}
           />
           {errors.workPlaceName && (
-            <p className="text-xs text-destructive">{errors.workPlaceName}</p>
+            <p className="text-xs text-destructive">
+              {errors.workPlaceName}
+            </p>
           )}
         </div>
         <div className="space-y-2">
-          <Label htmlFor={id("position")}>{LABELS.position}{REQUIRED_SUFFIX}</Label>
+          <Label htmlFor={id("position")}>
+            {LABELS.position}
+            {REQUIRED_SUFFIX}
+          </Label>
           <Input
             id={id("position")}
             value={data.position}
@@ -345,14 +435,19 @@ export const LearnerFieldsCard = memo(function LearnerFieldsCard({
             className={fieldClass("position")}
           />
           {errors.position && (
-            <p className="text-xs text-destructive">{errors.position}</p>
+            <p className="text-xs text-destructive">
+              {errors.position}
+            </p>
           )}
         </div>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor={id("email")}>{LABELS.email}{REQUIRED_SUFFIX}</Label>
+          <Label htmlFor={id("email")}>
+            {LABELS.email}
+            {REQUIRED_SUFFIX}
+          </Label>
           <Input
             id={id("email")}
             type="email"
@@ -366,7 +461,10 @@ export const LearnerFieldsCard = memo(function LearnerFieldsCard({
           )}
         </div>
         <div className="space-y-2">
-          <Label htmlFor={id("phone")}>{LABELS.phone}{REQUIRED_SUFFIX}</Label>
+          <Label htmlFor={id("phone")}>
+            {LABELS.phone}
+            {REQUIRED_SUFFIX}
+          </Label>
           <Input
             id={id("phone")}
             type="tel"

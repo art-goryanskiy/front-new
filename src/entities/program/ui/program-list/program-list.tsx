@@ -61,7 +61,10 @@ export const ProgramList = memo(function ProgramList({
     }
 
     if (categoryType) {
-      const categoryIds = getCategoryIdsByType(categories, categoryType);
+      const categoryIds = getCategoryIdsByType(
+        categories,
+        categoryType
+      );
       return filterProgramsByCategoryIds(allPrograms, categoryIds);
     }
 

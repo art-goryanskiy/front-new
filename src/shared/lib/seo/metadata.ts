@@ -32,7 +32,9 @@ export function generateMetadata({
 }: GenerateMetadataOptions): Metadata {
   // Короткий title для страницы — суффикс « | ООО ЦОК СТАНДАРТ ПЛЮС» добавляет layout template
   const pageTitle = title ?? SITE_NAME;
-  const fullTitleForOg = title ? `${title} | ${COMPANY_NAME}` : SITE_NAME;
+  const fullTitleForOg = title
+    ? `${title} | ${COMPANY_NAME}`
+    : SITE_NAME;
   const fullUrl = url ? `${SITE_URL}${url}` : SITE_URL;
   const ogImage = image || `${SITE_URL}/og-image.jpg`;
 

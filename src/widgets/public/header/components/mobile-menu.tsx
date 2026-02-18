@@ -45,7 +45,8 @@ export const MobileMenu = memo(function MobileMenu({
       if (e.key === "Escape") onClose();
     };
     document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
+    return () =>
+      document.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, onClose]);
 
   return (
@@ -118,7 +119,9 @@ export const MobileMenu = memo(function MobileMenu({
                   >
                     <Icon
                       className={`h-5 w-5 shrink-0 ${
-                        isActive ? "text-primary" : "text-muted-foreground"
+                        isActive
+                          ? "text-primary"
+                          : "text-muted-foreground"
                       }`}
                     />
                     <span>{item.label}</span>
