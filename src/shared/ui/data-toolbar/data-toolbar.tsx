@@ -27,7 +27,7 @@ export function DataToolbar({
     <Surface
       variant="default"
       className={cn(
-        "sticky top-[calc(var(--admin-header-offset)+var(--admin-tabs-offset,0px))] z-30 bg-background/70 shadow-sm backdrop-blur-xl",
+        "sticky top-[calc(var(--admin-header-offset)+var(--admin-tabs-offset,0px))] z-30 bg-background/80 shadow-md ring-1 ring-border/30 backdrop-blur-xl",
         className
       )}
     >

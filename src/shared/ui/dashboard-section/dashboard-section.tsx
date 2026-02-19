@@ -13,9 +13,9 @@ export function DashboardSection({
 }) {
   return (
     <section className="space-y-3 sm:space-y-4">
-      <div className="flex items-end justify-between gap-3">
+      <div className="flex items-end justify-between gap-3 border-b border-border/40 pb-3 sm:pb-4">
         <div className="space-y-1">
-          <h2 className="text-xl font-bold text-foreground sm:text-2xl">
+          <h2 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
             {title}
           </h2>
           {description ? (
