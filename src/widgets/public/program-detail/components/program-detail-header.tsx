@@ -13,13 +13,13 @@ import { PROGRAM_DETAIL_CLASSES } from "../constants/program-detail-constants";
 
 interface ProgramDetailHeaderProps {
   program: ProgramEntity;
-  totalHours: number | null;
+  hoursDisplay: string | null;
   category: CategoryEntity | null;
 }
 
 export const ProgramDetailHeader = memo(function ProgramDetailHeader({
   program,
-  totalHours,
+  hoursDisplay,
   category,
 }: ProgramDetailHeaderProps) {
   const { showToast } = useToastState();
@@ -108,10 +108,10 @@ export const ProgramDetailHeader = memo(function ProgramDetailHeader({
               </Link>
             )}
 
-            {totalHours !== null && (
+            {hoursDisplay && (
               <span className="inline-flex items-center gap-1 rounded-full border border-border/60 bg-muted/20 px-3 py-1 text-xs font-semibold text-muted-foreground backdrop-blur">
                 <Clock className="h-3.5 w-3.5" />
-                {totalHours} ч
+                {hoursDisplay} ч
               </span>
             )}
 

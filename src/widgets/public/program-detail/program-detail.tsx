@@ -21,7 +21,7 @@ export const ProgramDetail = memo(function ProgramDetail({
   category,
   relatedPrograms,
 }: ProgramDetailProps) {
-  const { pricingList, totalHours } = useProgramDetailData(program);
+  const { pricingList, hoursDisplay } = useProgramDetailData(program);
 
   const minPrice = useMemo(() => {
     if (!pricingList || pricingList.length === 0) return null;
@@ -67,7 +67,7 @@ export const ProgramDetail = memo(function ProgramDetail({
     <div className={PROGRAM_DETAIL_CLASSES.container}>
       <ProgramDetailHeader
         program={program}
-        totalHours={totalHours}
+        hoursDisplay={hoursDisplay}
         category={category ?? null}
       />
 
@@ -98,7 +98,7 @@ export const ProgramDetail = memo(function ProgramDetail({
           {program.description && (
             <ProgramDetailDescription
               description={program.description}
-              totalHours={totalHours}
+              hoursDisplay={hoursDisplay}
               minPrice={minPrice}
               awardedQualification={
                 program.awardedQualification ?? null

@@ -58,7 +58,7 @@ function parseDescription(rawText: string): {
 
 interface ProgramDetailDescriptionProps {
   description: string;
-  totalHours?: number | null;
+  hoursDisplay?: string | null;
   minPrice?: number | null;
   awardedQualification?: string | null;
 }
@@ -66,7 +66,7 @@ interface ProgramDetailDescriptionProps {
 export const ProgramDetailDescription = memo(
   function ProgramDetailDescription({
     description,
-    totalHours,
+    hoursDisplay,
     minPrice,
     awardedQualification,
   }: ProgramDetailDescriptionProps) {
@@ -178,9 +178,7 @@ export const ProgramDetailDescription = memo(
                 Длительность
               </div>
               <div className="mt-2 text-sm font-semibold text-foreground">
-                {totalHours !== null && totalHours !== undefined
-                  ? `${totalHours} часов`
-                  : "По программе"}
+                {hoursDisplay ? `${hoursDisplay} часов` : "По программе"}
               </div>
             </div>
 
