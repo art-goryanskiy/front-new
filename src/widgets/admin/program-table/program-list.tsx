@@ -163,54 +163,58 @@ export const ProgramList = memo(function ProgramList({
             variant="floating"
             className={TABLE_CLASSES.wrapper}
           >
-            <Table id={tableId} aria-label="Таблица программ">
+            <Table
+              id={tableId}
+              aria-label="Таблица программ"
+              className="table-fixed"
+            >
               <TableHeader className={TABLE_CLASSES.thead}>
                 <TableRow>
                   <TableHead
-                    className={`min-w-0 ${TABLE_CLASSES.th}`}
+                    className={`w-[min(320px,38%)] min-w-0 ${TABLE_CLASSES.th}`}
                   >
                     ПРОГРАММА
                   </TableHead>
 
                   <TableHead
-                    className={`${showAwardedQualification ? "hidden md:table-cell" : "hidden"} text-center ${TABLE_CLASSES.th}`}
+                    className={`${showAwardedQualification ? "hidden md:table-cell" : "hidden"} w-[14%] min-w-0 text-center ${TABLE_CLASSES.th}`}
                   >
                     КВАЛИФИКАЦИЯ
                   </TableHead>
 
                   <TableHead
-                    className={`${showAwardedRank ? "hidden md:table-cell" : "hidden"} text-center ${TABLE_CLASSES.th}`}
+                    className={`${showAwardedRank ? "hidden md:table-cell" : "hidden"} w-[8%] min-w-0 text-center ${TABLE_CLASSES.th}`}
                   >
                     РАЗРЯД
                   </TableHead>
 
                   <TableHead
-                    className={`hidden text-start md:table-cell ${TABLE_CLASSES.th}`}
+                    className={`hidden w-[18%] min-w-0 text-start md:table-cell ${TABLE_CLASSES.th}`}
                   >
                     ЧАСЫ - ЦЕНА
                   </TableHead>
 
                   <TableHead
-                    className={`hidden text-center lg:table-cell ${TABLE_CLASSES.th}`}
+                    className={`hidden w-[10%] min-w-0 text-center lg:table-cell ${TABLE_CLASSES.th}`}
                   >
                     ПРОСМОТРЫ
                   </TableHead>
 
                   <TableHead
-                    className={`${showSubPrograms ? "hidden lg:table-cell" : "hidden"} text-center ${TABLE_CLASSES.th}`}
+                    className={`${showSubPrograms ? "hidden lg:table-cell" : "hidden"} w-[12%] min-w-0 text-center ${TABLE_CLASSES.th}`}
                   >
                     ПОДПРОГРАММЫ
                   </TableHead>
 
                   <TableHead
-                    className={`hidden text-center md:table-cell ${TABLE_CLASSES.th}`}
+                    className={`hidden w-[10%] min-w-0 text-center md:table-cell ${TABLE_CLASSES.th}`}
                   >
                     ДЕЙСТВИЯ
                   </TableHead>
                 </TableRow>
               </TableHeader>
 
-              <TableBody className="[&_tr:nth-child(even)]:bg-muted/10">
+              <TableBody>
                 {programs.map((program) => (
                   <TableRow
                     key={program.id}

@@ -260,7 +260,7 @@ export const CategoryTable = memo(function CategoryTable({
               </TableRow>
             </TableHeader>
 
-            <TableBody className="[&_tr:nth-child(even)]:bg-muted/10">
+            <TableBody>
               {filtered.map((category) => (
                 <TableRow
                   key={category.id}
