@@ -11,6 +11,7 @@ import {
 import { useAuthUser } from "@/shared/store/auth-store";
 import { useMyChat } from "@/entities/chat/api/use-my-chat";
 import { useChatSocket } from "@/entities/chat/api/use-chat-socket";
+import type { ChatSocketNewMessagePayload } from "@/entities/chat/api/use-chat-socket";
 import { ChatPopoverContent } from "./chat-popover-content";
 import { cn } from "@/lib/utils";
 
@@ -32,10 +33,15 @@ export function PublicChatWidget() {
   const unreadCount = (chat?.unreadCount ?? 0) || 0;
   const showBadge = !open && unreadCount > 0;
 
-  const handleNewMessage = useCallback(() => {
-    refetchChat();
-    refetchMessagesRef.current?.();
-  }, [refetchChat]);
+  const handleNewMessage = useCallback(
+    (payload: ChatSocketNewMessagePayload) => {
+      if (payload.message.isFromAdmin) {
+        refetchChat();
+      }
+      refetchMessagesRef.current?.();
+    },
+    [refetchChat]
+  );
 
   useChatSocket(chat?.id ?? null, handleNewMessage);
 
