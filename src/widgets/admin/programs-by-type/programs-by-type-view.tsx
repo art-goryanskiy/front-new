@@ -7,7 +7,7 @@ import type {
   CategoryType,
 } from "@/shared/api/generated/graphql";
 import { useDebounce } from "@/shared/lib/hooks/use-debounce";
-import { memo, useCallback, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useProgramModalState } from "@/shared/store/modal-store";
+import { useProgramsByTypeHeaderStore } from "@/widgets/admin/programs-by-type/programs-by-type-header-store";
 import { DashboardSection } from "@/shared/ui/dashboard-section/dashboard-section";
 import { DataToolbar } from "@/shared/ui/data-toolbar/data-toolbar";
 import { EmptyState } from "@/shared/ui/empty-state/empty-state";
@@ -88,7 +88,12 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
   sort: Sort;
   setSort: (v: Sort) => void;
 }) {
-  const { openCreateProgramModal } = useProgramModalState();
+  const setHeaderState = useProgramsByTypeHeaderStore(
+    (s) => s.setState
+  );
+  useEffect(() => {
+    setHeaderState(categoryId, type);
+  }, [categoryId, type, setHeaderState]);
 
   // pagination: increase limit, offset always 0
   const [page, setPage] = useState(1);
@@ -158,16 +163,6 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
   const handleLoadMore = useCallback(() => {
     setPage((p) => p + 1);
   }, []);
-
-  const canCreateProgram = useMemo(
-    () => categoryId !== "all",
-    [categoryId]
-  );
-
-  const handleCreate = useCallback(() => {
-    if (categoryId === "all") return;
-    openCreateProgramModal(categoryId, type);
-  }, [openCreateProgramModal, categoryId, type]);
 
   if (loading && page === 1) return <CategoryProgramsViewSkeleton />;
   if (error) return <ErrorState message={error.message} />;
@@ -249,7 +244,7 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
                       <SelectItem value="noPrice">Без цены</SelectItem>
                     </SelectContent>
                   </Select>
-                  <Select
+                    <Select
                     value={sort}
                     onValueChange={(v) => setSort(v as Sort)}
                   >
@@ -269,18 +264,6 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
                     </SelectContent>
                   </Select>
                 </div>
-                <Button
-                  className="shrink-0 font-semibold"
-                  onClick={handleCreate}
-                  disabled={!canCreateProgram}
-                  title={
-                    canCreateProgram
-                      ? "Создать программу"
-                      : "Выберите конкретную категорию, чтобы создать программу"
-                  }
-                >
-                  + Программа
-                </Button>
               </div>
             }
           />

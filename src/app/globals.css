@@ -135,6 +135,11 @@
   --font-serif: "Georgia", serif;
   --foreground: #fafafa;
   --shadow-2xl: 0px 0.25rem 0.5rem 0px rgba(0, 0, 0, 0.8);
+  /* Контур и лёгкое свечение карточек в цвет темы (primary) */
+  --card-outline: 0 0 0 1px rgb(229 9 20 / 0.12);
+  --card-glow: 0 0 24px -4px rgb(229 9 20 / 0.08);
+  --card-outline-hover: 0 0 0 1px rgb(229 9 20 / 0.22);
+  --card-glow-hover: 0 0 28px -2px rgb(229 9 20 / 0.12);
   --destructive: #e50914;
   --card-foreground: #fafafa;
   --muted-foreground: #a3a3a3;

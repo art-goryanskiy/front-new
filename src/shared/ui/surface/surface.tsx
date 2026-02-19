@@ -15,7 +15,8 @@ export function Surface({
     "rounded-2xl border border-border/60 bg-card/60 backdrop-blur supports-[backdrop-filter]:bg-card/50";
   const variants: Record<SurfaceVariant, string> = {
     default: "shadow-sm",
-    floating: "shadow-md",
+    floating:
+      "shadow-md dark:border-primary/20 dark:shadow-[var(--card-outline),var(--card-glow)] dark:hover:border-primary/30 dark:hover:shadow-[var(--card-outline-hover),var(--card-glow-hover)]",
     inset: "bg-muted/20 shadow-none",
     glass: `${GLASS_CLASSES.card} rounded-2xl shadow-sm`,
   };

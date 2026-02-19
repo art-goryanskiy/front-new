@@ -9,6 +9,7 @@ import {
 import { cn } from "@/lib/utils";
 import { CategoryType } from "@/shared/api/generated/graphql";
 import { GLASS_CLASSES } from "@/shared/ui/glass/glass-constants";
+import { AddProgramHeaderButton } from "@/widgets/admin/programs-by-type/add-program-header-button";
 import { ProgramsByTypeView } from "@/widgets/admin/programs-by-type/programs-by-type-view";
 import { Suspense, lazy, useState } from "react";
 import { CategoryPage } from "../category-page/category-page";
@@ -58,10 +59,13 @@ export default function ProfessionalEducationPage() {
               </TabsTrigger>
             </TabsList>
           </div>
-          <div className="flex items-end justify-between gap-3 border-t border-border/40 pt-3">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border/40 pt-3">
             <h2 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
               {sectionTitle}
             </h2>
+            {tab === "programs" ? (
+              <AddProgramHeaderButton />
+            ) : null}
           </div>
         </div>
 
