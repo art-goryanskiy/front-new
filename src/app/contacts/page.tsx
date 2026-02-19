@@ -14,12 +14,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Phone, Mail, MapPin, Clock } from "lucide-react";
+import { generateMetadata as generateSeoMetadata } from "@/shared/lib/seo/metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = generateSeoMetadata({
   title: "Контакты",
   description:
     "Контакты ЦОК Стандарт плюс: отдел продаж, методический отдел, офис-менеджер. Симферополь, просп. Победы. График работы.",
-};
+  url: "/contacts",
+});
 
 function telHref(phone: string) {
   return `tel:${phone.replace(/\s|[()]/g, "")}`;
