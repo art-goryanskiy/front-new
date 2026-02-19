@@ -40,3 +40,35 @@ export const CHAT_MESSAGES = gql`
   }
   ${CHAT_MESSAGE_FIELDS}
 `;
+
+/** Фрагмент чата для админки (с lastMessagePreview, unreadCount) */
+export const ADMIN_CHAT_FIELDS = gql`
+  fragment AdminChatFields on Chat {
+    id
+    userId
+    status
+    assignedToId
+    createdAt
+    updatedAt
+    lastMessagePreview
+    unreadCount
+  }
+`;
+
+export const ADMIN_CHATS = gql`
+  query AdminChats($filter: AdminChatsFilterInput) {
+    adminChats(filter: $filter) {
+      ...AdminChatFields
+    }
+  }
+  ${ADMIN_CHAT_FIELDS}
+`;
+
+export const ADMIN_CHAT_MESSAGES = gql`
+  query AdminChatMessages($chatId: ID!, $filter: ChatMessagesFilterInput) {
+    adminChatMessages(chatId: $chatId, filter: $filter) {
+      ...ChatMessageFields
+    }
+  }
+  ${CHAT_MESSAGE_FIELDS}
+`;

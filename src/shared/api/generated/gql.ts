@@ -31,6 +31,8 @@ type Documents = {
     "\n  mutation UpdateCategory($id: ID!, $input: UpdateCategoryInput!) {\n    updateCategory(id: $id, input: $input) {\n      id\n      name\n      slug\n      description\n      image\n      type\n      parent\n      createdAt\n      updatedAt\n      programsCount\n    }\n  }\n": typeof types.UpdateCategoryDocument,
     "\n  mutation DeleteCategory($id: ID!) {\n    deleteCategory(id: $id) {\n      id\n    }\n  }\n": typeof types.DeleteCategoryDocument,
     "\n  mutation SendMessage($input: SendMessageInput!) {\n    sendMessage(input: $input) {\n      ...ChatMessageFields\n    }\n  }\n  \n": typeof types.SendMessageDocument,
+    "\n  mutation AdminAssignChat($input: AdminAssignChatInput!) {\n    adminAssignChat(input: $input) {\n      ...AdminChatFields\n    }\n  }\n  \n": typeof types.AdminAssignChatDocument,
+    "\n  mutation AdminSetChatStatus($input: AdminSetChatStatusInput!) {\n    adminSetChatStatus(input: $input) {\n      ...AdminChatFields\n    }\n  }\n  \n": typeof types.AdminSetChatStatusDocument,
     "\n  mutation CreateEducationDocument(\n    $input: CreateEducationDocumentInput!\n  ) {\n    createEducationDocument(input: $input) {\n      id\n      name\n      image\n      createdAt\n      updatedAt\n    }\n  }\n": typeof types.CreateEducationDocumentDocument,
     "\n  mutation UpdateEducationDocument(\n    $id: ID!\n    $input: UpdateEducationDocumentInput!\n  ) {\n    updateEducationDocument(id: $id, input: $input) {\n      id\n      name\n      image\n      createdAt\n      updatedAt\n    }\n  }\n": typeof types.UpdateEducationDocumentDocument,
     "\n  mutation DeleteEducationDocument($id: ID!) {\n    deleteEducationDocument(id: $id) {\n      id\n      name\n      image\n    }\n  }\n": typeof types.DeleteEducationDocumentDocument,
@@ -70,6 +72,9 @@ type Documents = {
     "\n  fragment ChatMessageFields on ChatMessage {\n    id\n    chatId\n    senderId\n    isFromAdmin\n    body\n    createdAt\n    readAt\n  }\n": typeof types.ChatMessageFieldsFragmentDoc,
     "\n  query MyChat {\n    myChat {\n      ...ChatFields\n    }\n  }\n  \n": typeof types.MyChatDocument,
     "\n  query ChatMessages($chatId: ID!, $filter: ChatMessagesFilterInput) {\n    chatMessages(chatId: $chatId, filter: $filter) {\n      ...ChatMessageFields\n    }\n  }\n  \n": typeof types.ChatMessagesDocument,
+    "\n  fragment AdminChatFields on Chat {\n    id\n    userId\n    status\n    assignedToId\n    createdAt\n    updatedAt\n    lastMessagePreview\n    unreadCount\n  }\n": typeof types.AdminChatFieldsFragmentDoc,
+    "\n  query AdminChats($filter: AdminChatsFilterInput) {\n    adminChats(filter: $filter) {\n      ...AdminChatFields\n    }\n  }\n  \n": typeof types.AdminChatsDocument,
+    "\n  query AdminChatMessages($chatId: ID!, $filter: ChatMessagesFilterInput) {\n    adminChatMessages(chatId: $chatId, filter: $filter) {\n      ...ChatMessageFields\n    }\n  }\n  \n": typeof types.AdminChatMessagesDocument,
     "\n  query EducationDocuments {\n    educationDocuments {\n      id\n      name\n      image\n      createdAt\n      updatedAt\n    }\n  }\n": typeof types.EducationDocumentsDocument,
     "\n  query EducationDocument($id: ID!) {\n    educationDocument(id: $id) {\n      id\n      name\n      image\n      createdAt\n      updatedAt\n    }\n  }\n": typeof types.EducationDocumentDocument,
     "\n  fragment OrderFields on Order {\n    id\n    number\n    userId\n    customerType\n    customerDisplayName\n    organizationId\n    contactEmail\n    contactPhone\n    status\n    totalAmount\n    createdAt\n    updatedAt\n    statusChangedAt\n    trainingStartDate\n    trainingEndDate\n    trainingForm\n    trainingLanguage\n    headPosition\n    headFullName\n    contactPersonName\n    contactPersonPosition\n    lines {\n      programId\n      programTitle\n      subProgramIndex\n      subProgramTitle\n      hours\n      price\n      quantity\n      lineAmount\n      learners {\n        lastName\n        firstName\n        middleName\n        email\n        phone\n        dateOfBirth\n        citizenship\n        passportSeries\n        passportNumber\n        passportIssuedBy\n        passportIssuedAt\n        passportDepartmentCode\n        snils\n        educationQualification\n        educationDocumentIssuedAt\n        passportRegistrationAddress\n        residentialAddress\n        workPlaceName\n        position\n      }\n    }\n  }\n": typeof types.OrderFieldsFragmentDoc,
@@ -109,6 +114,8 @@ const documents: Documents = {
     "\n  mutation UpdateCategory($id: ID!, $input: UpdateCategoryInput!) {\n    updateCategory(id: $id, input: $input) {\n      id\n      name\n      slug\n      description\n      image\n      type\n      parent\n      createdAt\n      updatedAt\n      programsCount\n    }\n  }\n": types.UpdateCategoryDocument,
     "\n  mutation DeleteCategory($id: ID!) {\n    deleteCategory(id: $id) {\n      id\n    }\n  }\n": types.DeleteCategoryDocument,
     "\n  mutation SendMessage($input: SendMessageInput!) {\n    sendMessage(input: $input) {\n      ...ChatMessageFields\n    }\n  }\n  \n": types.SendMessageDocument,
+    "\n  mutation AdminAssignChat($input: AdminAssignChatInput!) {\n    adminAssignChat(input: $input) {\n      ...AdminChatFields\n    }\n  }\n  \n": types.AdminAssignChatDocument,
+    "\n  mutation AdminSetChatStatus($input: AdminSetChatStatusInput!) {\n    adminSetChatStatus(input: $input) {\n      ...AdminChatFields\n    }\n  }\n  \n": types.AdminSetChatStatusDocument,
     "\n  mutation CreateEducationDocument(\n    $input: CreateEducationDocumentInput!\n  ) {\n    createEducationDocument(input: $input) {\n      id\n      name\n      image\n      createdAt\n      updatedAt\n    }\n  }\n": types.CreateEducationDocumentDocument,
     "\n  mutation UpdateEducationDocument(\n    $id: ID!\n    $input: UpdateEducationDocumentInput!\n  ) {\n    updateEducationDocument(id: $id, input: $input) {\n      id\n      name\n      image\n      createdAt\n      updatedAt\n    }\n  }\n": types.UpdateEducationDocumentDocument,
     "\n  mutation DeleteEducationDocument($id: ID!) {\n    deleteEducationDocument(id: $id) {\n      id\n      name\n      image\n    }\n  }\n": types.DeleteEducationDocumentDocument,
@@ -148,6 +155,9 @@ const documents: Documents = {
     "\n  fragment ChatMessageFields on ChatMessage {\n    id\n    chatId\n    senderId\n    isFromAdmin\n    body\n    createdAt\n    readAt\n  }\n": types.ChatMessageFieldsFragmentDoc,
     "\n  query MyChat {\n    myChat {\n      ...ChatFields\n    }\n  }\n  \n": types.MyChatDocument,
     "\n  query ChatMessages($chatId: ID!, $filter: ChatMessagesFilterInput) {\n    chatMessages(chatId: $chatId, filter: $filter) {\n      ...ChatMessageFields\n    }\n  }\n  \n": types.ChatMessagesDocument,
+    "\n  fragment AdminChatFields on Chat {\n    id\n    userId\n    status\n    assignedToId\n    createdAt\n    updatedAt\n    lastMessagePreview\n    unreadCount\n  }\n": types.AdminChatFieldsFragmentDoc,
+    "\n  query AdminChats($filter: AdminChatsFilterInput) {\n    adminChats(filter: $filter) {\n      ...AdminChatFields\n    }\n  }\n  \n": types.AdminChatsDocument,
+    "\n  query AdminChatMessages($chatId: ID!, $filter: ChatMessagesFilterInput) {\n    adminChatMessages(chatId: $chatId, filter: $filter) {\n      ...ChatMessageFields\n    }\n  }\n  \n": types.AdminChatMessagesDocument,
     "\n  query EducationDocuments {\n    educationDocuments {\n      id\n      name\n      image\n      createdAt\n      updatedAt\n    }\n  }\n": types.EducationDocumentsDocument,
     "\n  query EducationDocument($id: ID!) {\n    educationDocument(id: $id) {\n      id\n      name\n      image\n      createdAt\n      updatedAt\n    }\n  }\n": types.EducationDocumentDocument,
     "\n  fragment OrderFields on Order {\n    id\n    number\n    userId\n    customerType\n    customerDisplayName\n    organizationId\n    contactEmail\n    contactPhone\n    status\n    totalAmount\n    createdAt\n    updatedAt\n    statusChangedAt\n    trainingStartDate\n    trainingEndDate\n    trainingForm\n    trainingLanguage\n    headPosition\n    headFullName\n    contactPersonName\n    contactPersonPosition\n    lines {\n      programId\n      programTitle\n      subProgramIndex\n      subProgramTitle\n      hours\n      price\n      quantity\n      lineAmount\n      learners {\n        lastName\n        firstName\n        middleName\n        email\n        phone\n        dateOfBirth\n        citizenship\n        passportSeries\n        passportNumber\n        passportIssuedBy\n        passportIssuedAt\n        passportDepartmentCode\n        snils\n        educationQualification\n        educationDocumentIssuedAt\n        passportRegistrationAddress\n        residentialAddress\n        workPlaceName\n        position\n      }\n    }\n  }\n": types.OrderFieldsFragmentDoc,
@@ -252,6 +262,14 @@ export function gql(source: "\n  mutation DeleteCategory($id: ID!) {\n    delete
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  mutation SendMessage($input: SendMessageInput!) {\n    sendMessage(input: $input) {\n      ...ChatMessageFields\n    }\n  }\n  \n"): (typeof documents)["\n  mutation SendMessage($input: SendMessageInput!) {\n    sendMessage(input: $input) {\n      ...ChatMessageFields\n    }\n  }\n  \n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation AdminAssignChat($input: AdminAssignChatInput!) {\n    adminAssignChat(input: $input) {\n      ...AdminChatFields\n    }\n  }\n  \n"): (typeof documents)["\n  mutation AdminAssignChat($input: AdminAssignChatInput!) {\n    adminAssignChat(input: $input) {\n      ...AdminChatFields\n    }\n  }\n  \n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation AdminSetChatStatus($input: AdminSetChatStatusInput!) {\n    adminSetChatStatus(input: $input) {\n      ...AdminChatFields\n    }\n  }\n  \n"): (typeof documents)["\n  mutation AdminSetChatStatus($input: AdminSetChatStatusInput!) {\n    adminSetChatStatus(input: $input) {\n      ...AdminChatFields\n    }\n  }\n  \n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -408,6 +426,18 @@ export function gql(source: "\n  query MyChat {\n    myChat {\n      ...ChatFiel
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  query ChatMessages($chatId: ID!, $filter: ChatMessagesFilterInput) {\n    chatMessages(chatId: $chatId, filter: $filter) {\n      ...ChatMessageFields\n    }\n  }\n  \n"): (typeof documents)["\n  query ChatMessages($chatId: ID!, $filter: ChatMessagesFilterInput) {\n    chatMessages(chatId: $chatId, filter: $filter) {\n      ...ChatMessageFields\n    }\n  }\n  \n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  fragment AdminChatFields on Chat {\n    id\n    userId\n    status\n    assignedToId\n    createdAt\n    updatedAt\n    lastMessagePreview\n    unreadCount\n  }\n"): (typeof documents)["\n  fragment AdminChatFields on Chat {\n    id\n    userId\n    status\n    assignedToId\n    createdAt\n    updatedAt\n    lastMessagePreview\n    unreadCount\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  query AdminChats($filter: AdminChatsFilterInput) {\n    adminChats(filter: $filter) {\n      ...AdminChatFields\n    }\n  }\n  \n"): (typeof documents)["\n  query AdminChats($filter: AdminChatsFilterInput) {\n    adminChats(filter: $filter) {\n      ...AdminChatFields\n    }\n  }\n  \n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  query AdminChatMessages($chatId: ID!, $filter: ChatMessagesFilterInput) {\n    adminChatMessages(chatId: $chatId, filter: $filter) {\n      ...ChatMessageFields\n    }\n  }\n  \n"): (typeof documents)["\n  query AdminChatMessages($chatId: ID!, $filter: ChatMessagesFilterInput) {\n    adminChatMessages(chatId: $chatId, filter: $filter) {\n      ...ChatMessageFields\n    }\n  }\n  \n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
