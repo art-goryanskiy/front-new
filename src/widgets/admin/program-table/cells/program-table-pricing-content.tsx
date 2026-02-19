@@ -49,7 +49,7 @@ export const ProgramTablePricingContent = memo(
 
     return (
       <div
-        className="text-start text-sm text-foreground"
+        className="whitespace-nowrap text-start text-sm text-foreground"
         aria-label={display.label}
       >
         {display.hoursStr}

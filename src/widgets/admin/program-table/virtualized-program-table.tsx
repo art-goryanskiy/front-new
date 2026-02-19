@@ -178,22 +178,26 @@ export const VirtualizedProgramTable = memo(
                     onKeyDown={(e) => handleKeyDown(program, e)}
                     aria-label={`Программа ${program.title}`}
                   >
-                    <div className={`min-w-0 ${TABLE_CLASSES.td}`}>
+                    <div
+                      className={`min-w-0 overflow-hidden ${TABLE_CLASSES.td}`}
+                    >
                       <ProgramTableTitleContent program={program} />
                     </div>
                     <div
-                      className={`${showAwardedQualification ? "hidden md:flex md:items-center md:justify-center" : "hidden"} ${TABLE_CLASSES.td}`}
+                      className={`${showAwardedQualification ? "hidden md:flex md:items-center md:justify-center" : "hidden"} min-w-0 overflow-hidden ${TABLE_CLASSES.td}`}
                     >
                       <ProgramTableQualificationContent
                         program={program}
                       />
                     </div>
                     <div
-                      className={`${showAwardedRank ? "hidden md:flex md:items-center md:justify-center" : "hidden"} ${TABLE_CLASSES.td}`}
+                      className={`${showAwardedRank ? "hidden md:flex md:items-center md:justify-center" : "hidden"} min-w-0 overflow-hidden ${TABLE_CLASSES.td}`}
                     >
                       <ProgramTableRankContent program={program} />
                     </div>
-                    <div className={`hidden md:block ${TABLE_CLASSES.td}`}>
+                    <div
+                      className={`hidden min-w-0 overflow-hidden md:block ${TABLE_CLASSES.td}`}
+                    >
                       <ProgramTablePricingContent program={program} />
                     </div>
                     <div

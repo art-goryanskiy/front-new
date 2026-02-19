@@ -234,26 +234,28 @@ export const CategoryTable = memo(function CategoryTable({
       {/* DESKTOP (md+): premium table */}
       <div className="hidden md:block">
         <Surface variant="floating" className={TABLE_CLASSES.wrapper}>
-          <Table id={tableId} aria-label="Таблица категорий">
+          <Table
+            id={tableId}
+            aria-label="Таблица категорий"
+            className="table-fixed"
+          >
             <TableHeader className={TABLE_CLASSES.thead}>
               <TableRow>
-                <TableHead
-                  className={`w-[45%] min-w-0 ${TABLE_CLASSES.th}`}
-                >
+                <TableHead className={`min-w-0 ${TABLE_CLASSES.th}`}>
                   КАТЕГОРИЯ
                 </TableHead>
                 <TableHead
-                  className={`hidden w-[25%] whitespace-nowrap lg:table-cell ${TABLE_CLASSES.th}`}
+                  className={`hidden w-[22%] whitespace-nowrap lg:table-cell ${TABLE_CLASSES.th}`}
                 >
                   ТИП
                 </TableHead>
                 <TableHead
-                  className={`w-[15%] text-center whitespace-nowrap ${TABLE_CLASSES.th}`}
+                  className={`w-[14%] min-w-0 text-center whitespace-nowrap ${TABLE_CLASSES.th}`}
                 >
                   ПРОГРАММЫ
                 </TableHead>
                 <TableHead
-                  className={`w-[15%] text-center whitespace-nowrap ${TABLE_CLASSES.th}`}
+                  className={`w-[12%] min-w-0 text-center whitespace-nowrap ${TABLE_CLASSES.th}`}
                 >
                   ДЕЙСТВИЯ
                 </TableHead>
@@ -272,13 +274,13 @@ export const CategoryTable = memo(function CategoryTable({
                   aria-label={`Категория ${category.name}`}
                 >
                   <TableCell
-                    className={`min-w-0 ${TABLE_CLASSES.td}`}
+                    className={`min-w-0 overflow-hidden ${TABLE_CLASSES.td}`}
                   >
                     <CategoryTableNameContent category={category} />
                   </TableCell>
 
                   <TableCell
-                    className={`hidden whitespace-nowrap lg:table-cell ${TABLE_CLASSES.td}`}
+                    className={`hidden overflow-hidden whitespace-nowrap lg:table-cell ${TABLE_CLASSES.td}`}
                   >
                     <CategoryTableTypeContent category={category} />
                   </TableCell>

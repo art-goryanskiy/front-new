@@ -170,44 +170,42 @@ export const ProgramList = memo(function ProgramList({
             >
               <TableHeader className={TABLE_CLASSES.thead}>
                 <TableRow>
-                  <TableHead
-                    className={`w-[min(320px,38%)] min-w-0 ${TABLE_CLASSES.th}`}
-                  >
+                  <TableHead className={`min-w-0 ${TABLE_CLASSES.th}`}>
                     ПРОГРАММА
                   </TableHead>
 
                   <TableHead
-                    className={`${showAwardedQualification ? "hidden md:table-cell" : "hidden"} w-[14%] min-w-0 text-center ${TABLE_CLASSES.th}`}
+                    className={`${showAwardedQualification ? "hidden md:table-cell" : "hidden"} w-[16%] min-w-[120px] text-center ${TABLE_CLASSES.th}`}
                   >
                     КВАЛИФИКАЦИЯ
                   </TableHead>
 
                   <TableHead
-                    className={`${showAwardedRank ? "hidden md:table-cell" : "hidden"} w-[8%] min-w-0 text-center ${TABLE_CLASSES.th}`}
+                    className={`${showAwardedRank ? "hidden md:table-cell" : "hidden"} w-[7%] min-w-[56px] text-center ${TABLE_CLASSES.th}`}
                   >
                     РАЗРЯД
                   </TableHead>
 
                   <TableHead
-                    className={`hidden w-[18%] min-w-0 text-start md:table-cell ${TABLE_CLASSES.th}`}
+                    className={`hidden w-[16%] min-w-[120px] text-start md:table-cell ${TABLE_CLASSES.th}`}
                   >
                     ЧАСЫ - ЦЕНА
                   </TableHead>
 
                   <TableHead
-                    className={`hidden w-[10%] min-w-0 text-center lg:table-cell ${TABLE_CLASSES.th}`}
+                    className={`hidden w-[8%] min-w-0 text-center lg:table-cell ${TABLE_CLASSES.th}`}
                   >
                     ПРОСМОТРЫ
                   </TableHead>
 
                   <TableHead
-                    className={`${showSubPrograms ? "hidden lg:table-cell" : "hidden"} w-[12%] min-w-0 text-center ${TABLE_CLASSES.th}`}
+                    className={`${showSubPrograms ? "hidden lg:table-cell" : "hidden"} w-[10%] min-w-0 text-center ${TABLE_CLASSES.th}`}
                   >
                     ПОДПРОГРАММЫ
                   </TableHead>
 
                   <TableHead
-                    className={`hidden w-[10%] min-w-0 text-center md:table-cell ${TABLE_CLASSES.th}`}
+                    className={`hidden w-[8%] min-w-0 text-center md:table-cell ${TABLE_CLASSES.th}`}
                   >
                     ДЕЙСТВИЯ
                   </TableHead>
@@ -226,13 +224,13 @@ export const ProgramList = memo(function ProgramList({
                     aria-label={`Программа ${program.title}`}
                   >
                     <TableCell
-                      className={`min-w-0 ${TABLE_CLASSES.td}`}
+                      className={`min-w-0 overflow-hidden ${TABLE_CLASSES.td}`}
                     >
                       <ProgramTableTitleContent program={program} />
                     </TableCell>
 
                     <TableCell
-                      className={`${showAwardedQualification ? "hidden md:table-cell" : "hidden"} ${TABLE_CLASSES.td}`}
+                      className={`${showAwardedQualification ? "hidden md:table-cell" : "hidden"} min-w-0 overflow-hidden ${TABLE_CLASSES.td}`}
                     >
                       <ProgramTableQualificationContent
                         program={program}
@@ -240,25 +238,25 @@ export const ProgramList = memo(function ProgramList({
                     </TableCell>
 
                     <TableCell
-                      className={`${showAwardedRank ? "hidden md:table-cell" : "hidden"} ${TABLE_CLASSES.td}`}
+                      className={`${showAwardedRank ? "hidden md:table-cell" : "hidden"} min-w-0 overflow-hidden ${TABLE_CLASSES.td}`}
                     >
                       <ProgramTableRankContent program={program} />
                     </TableCell>
 
                     <TableCell
-                      className={`hidden md:table-cell ${TABLE_CLASSES.td}`}
+                      className={`hidden md:table-cell min-w-0 overflow-hidden ${TABLE_CLASSES.td}`}
                     >
                       <ProgramTablePricingContent program={program} />
                     </TableCell>
 
                     <TableCell
-                      className={`hidden lg:table-cell ${TABLE_CLASSES.td}`}
+                      className={`hidden min-w-0 overflow-hidden lg:table-cell ${TABLE_CLASSES.td}`}
                     >
                       <ProgramTableViewsContent program={program} />
                     </TableCell>
 
                     <TableCell
-                      className={`${showSubPrograms ? "hidden lg:table-cell" : "hidden"} ${TABLE_CLASSES.td}`}
+                      className={`${showSubPrograms ? "hidden lg:table-cell" : "hidden"} min-w-0 overflow-hidden ${TABLE_CLASSES.td}`}
                     >
                       <ProgramTableSubprogramsContent
                         program={program}
@@ -266,7 +264,7 @@ export const ProgramList = memo(function ProgramList({
                     </TableCell>
 
                     <TableCell
-                      className={`hidden md:table-cell ${TABLE_CLASSES.td}`}
+                      className={`hidden md:table-cell min-w-0 overflow-hidden ${TABLE_CLASSES.td}`}
                     >
                       <TableActions
                         onEdit={() => handleEditClick(program)}

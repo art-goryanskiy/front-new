@@ -16,7 +16,7 @@ export const ProgramTableQualificationContent = memo(
 
     return (
       <span
-        className="max-w-[180px] truncate text-sm text-foreground"
+        className="block min-w-0 truncate text-sm text-foreground"
         title={program.awardedQualification ?? undefined}
         aria-label={ariaLabel}
       >
