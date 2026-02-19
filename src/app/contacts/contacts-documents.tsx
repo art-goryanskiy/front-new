@@ -79,7 +79,7 @@ export function ContactsDocuments() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-24px" }}
                 transition={{ duration: 0.4, delay: index * 0.05 }}
-                className="min-w-0"
+                className="min-w-0 h-full"
               >
                 <MagicCard
                   gradientSize={280}
@@ -87,7 +87,7 @@ export function ContactsDocuments() {
                   gradientTo="hsl(var(--primary) / 0.08)"
                   gradientColor="hsl(var(--primary) / 0.12)"
                   gradientOpacity={0.7}
-                  className="border border-border/60 shadow-md transition-shadow duration-300 hover:shadow-xl"
+                  className="h-full border border-border/60 shadow-md transition-shadow duration-300 hover:shadow-xl"
                 >
                   <motion.button
                     type="button"
