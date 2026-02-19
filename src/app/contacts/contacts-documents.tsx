@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { FileCheck, FileText } from "lucide-react";
+import { FileCheck, FileText, X } from "lucide-react";
 import { BlurGlowBackground } from "@/shared/ui/blur-glow-background/blur-glow-background";
 import { Surface } from "@/shared/ui/surface/surface";
 import { MagicCard } from "@/components/ui/magic-card";
@@ -11,6 +11,7 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { CONTACT_DOCUMENTS } from "./contacts-data";
 import { cn } from "@/lib/utils";
@@ -134,8 +135,9 @@ export function ContactsDocuments() {
         onOpenChange={(open) => !open && closeLightbox()}
       >
         <DialogContent
-          showClose={true}
-          className="max-h-[90vh] max-w-[90vw] border-0 bg-black/90 p-0 shadow-2xl"
+          showClose={false}
+          overlayClassName="bg-background/80 backdrop-blur-xl"
+          className="max-h-[90vh] max-w-[90vw] overflow-hidden border border-border/40 bg-background/95 p-0 shadow-2xl backdrop-blur-sm sm:rounded-2xl"
           aria-describedby={undefined}
         >
           {lightboxHref && (
@@ -143,18 +145,35 @@ export function ContactsDocuments() {
               <DialogTitle className="sr-only">
                 {lightboxTitle}
               </DialogTitle>
-              <div className="flex max-h-[90vh] max-w-[90vw] items-center justify-center p-4">
-                <Image
-                  src={lightboxHref}
-                  alt={lightboxTitle}
-                  width={1200}
-                  height={900}
-                  className="max-h-[85vh] max-w-full object-contain"
-                />
-              </div>
-              <p className="border-t border-white/10 px-4 py-3 text-center text-sm text-white/80">
-                {lightboxTitle}
-              </p>
+              <DialogClose
+                className={cn(
+                  "absolute top-3 right-3 z-10 flex h-10 w-10 items-center justify-center rounded-full",
+                  "bg-black/5 text-foreground transition-colors hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/15",
+                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                )}
+                aria-label="Закрыть"
+              >
+                <X className="h-5 w-5" />
+              </DialogClose>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.96 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                className="flex flex-col"
+              >
+                <div className="flex max-h-[85vh] items-center justify-center p-4 pt-14">
+                  <Image
+                    src={lightboxHref}
+                    alt={lightboxTitle}
+                    width={1200}
+                    height={900}
+                    className="max-h-[80vh] max-w-full object-contain"
+                  />
+                </div>
+                <p className="border-t border-border/60 bg-background/80 px-4 py-3 text-center text-sm text-muted-foreground backdrop-blur-sm">
+                  {lightboxTitle}
+                </p>
+              </motion.div>
             </>
           )}
         </DialogContent>
