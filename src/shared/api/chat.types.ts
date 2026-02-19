@@ -9,6 +9,7 @@ export interface Chat {
   assignedToId?: string | null;
   createdAt: string;
   updatedAt: string;
+  unreadCount?: number | null;
 }
 
 export interface ChatMessage {

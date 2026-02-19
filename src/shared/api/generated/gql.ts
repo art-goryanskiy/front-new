@@ -68,7 +68,7 @@ type Documents = {
     "\n  query MyCart {\n    myCart {\n      items {\n        programId\n        pricingIndex\n        quantity\n        lineAmount\n        subProgramIndex\n        subProgramTitle\n        displayTitle\n        program {\n          id\n          title\n          shortTitle\n          slug\n          image\n          pricing {\n            hours\n            price\n          }\n        }\n      }\n      totalAmount\n    }\n  }\n": typeof types.MyCartDocument,
     "\n  query GetCategories($filter: CategoryFilterInput) {\n    categories(filter: $filter) {\n      id\n      name\n      slug\n      description\n      image\n      type\n      parent\n      createdAt\n      updatedAt\n      programsCount\n    }\n  }\n": typeof types.GetCategoriesDocument,
     "\n  query GetCategory($id: ID!) {\n    category(id: $id) {\n      id\n      name\n      slug\n      description\n      image\n      type\n      parent\n      createdAt\n      updatedAt\n      programsCount\n    }\n  }\n": typeof types.GetCategoryDocument,
-    "\n  fragment ChatFields on Chat {\n    id\n    userId\n    status\n    assignedToId\n    createdAt\n    updatedAt\n  }\n": typeof types.ChatFieldsFragmentDoc,
+    "\n  fragment ChatFields on Chat {\n    id\n    userId\n    status\n    assignedToId\n    createdAt\n    updatedAt\n    unreadCount\n  }\n": typeof types.ChatFieldsFragmentDoc,
     "\n  fragment ChatMessageFields on ChatMessage {\n    id\n    chatId\n    senderId\n    isFromAdmin\n    body\n    createdAt\n    readAt\n  }\n": typeof types.ChatMessageFieldsFragmentDoc,
     "\n  query MyChat {\n    myChat {\n      ...ChatFields\n    }\n  }\n  \n": typeof types.MyChatDocument,
     "\n  query ChatMessages($chatId: ID!, $filter: ChatMessagesFilterInput) {\n    chatMessages(chatId: $chatId, filter: $filter) {\n      ...ChatMessageFields\n    }\n  }\n  \n": typeof types.ChatMessagesDocument,
@@ -151,7 +151,7 @@ const documents: Documents = {
     "\n  query MyCart {\n    myCart {\n      items {\n        programId\n        pricingIndex\n        quantity\n        lineAmount\n        subProgramIndex\n        subProgramTitle\n        displayTitle\n        program {\n          id\n          title\n          shortTitle\n          slug\n          image\n          pricing {\n            hours\n            price\n          }\n        }\n      }\n      totalAmount\n    }\n  }\n": types.MyCartDocument,
     "\n  query GetCategories($filter: CategoryFilterInput) {\n    categories(filter: $filter) {\n      id\n      name\n      slug\n      description\n      image\n      type\n      parent\n      createdAt\n      updatedAt\n      programsCount\n    }\n  }\n": types.GetCategoriesDocument,
     "\n  query GetCategory($id: ID!) {\n    category(id: $id) {\n      id\n      name\n      slug\n      description\n      image\n      type\n      parent\n      createdAt\n      updatedAt\n      programsCount\n    }\n  }\n": types.GetCategoryDocument,
-    "\n  fragment ChatFields on Chat {\n    id\n    userId\n    status\n    assignedToId\n    createdAt\n    updatedAt\n  }\n": types.ChatFieldsFragmentDoc,
+    "\n  fragment ChatFields on Chat {\n    id\n    userId\n    status\n    assignedToId\n    createdAt\n    updatedAt\n    unreadCount\n  }\n": types.ChatFieldsFragmentDoc,
     "\n  fragment ChatMessageFields on ChatMessage {\n    id\n    chatId\n    senderId\n    isFromAdmin\n    body\n    createdAt\n    readAt\n  }\n": types.ChatMessageFieldsFragmentDoc,
     "\n  query MyChat {\n    myChat {\n      ...ChatFields\n    }\n  }\n  \n": types.MyChatDocument,
     "\n  query ChatMessages($chatId: ID!, $filter: ChatMessagesFilterInput) {\n    chatMessages(chatId: $chatId, filter: $filter) {\n      ...ChatMessageFields\n    }\n  }\n  \n": types.ChatMessagesDocument,
@@ -413,7 +413,7 @@ export function gql(source: "\n  query GetCategory($id: ID!) {\n    category(id:
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  fragment ChatFields on Chat {\n    id\n    userId\n    status\n    assignedToId\n    createdAt\n    updatedAt\n  }\n"): (typeof documents)["\n  fragment ChatFields on Chat {\n    id\n    userId\n    status\n    assignedToId\n    createdAt\n    updatedAt\n  }\n"];
+export function gql(source: "\n  fragment ChatFields on Chat {\n    id\n    userId\n    status\n    assignedToId\n    createdAt\n    updatedAt\n    unreadCount\n  }\n"): (typeof documents)["\n  fragment ChatFields on Chat {\n    id\n    userId\n    status\n    assignedToId\n    createdAt\n    updatedAt\n    unreadCount\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

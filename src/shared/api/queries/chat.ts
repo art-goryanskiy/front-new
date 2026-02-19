@@ -8,6 +8,7 @@ export const CHAT_FIELDS = gql`
     assignedToId
     createdAt
     updatedAt
+    unreadCount
   }
 `;
 

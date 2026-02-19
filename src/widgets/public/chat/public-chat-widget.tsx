@@ -8,6 +8,8 @@ import {
   DialogContent,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useAuthUser } from "@/shared/store/auth-store";
+import { useMyChat } from "@/entities/chat/api/use-my-chat";
 import { ChatPopoverContent } from "./chat-popover-content";
 import { cn } from "@/lib/utils";
 
@@ -17,11 +19,16 @@ const ICON_SIZE = 56;
 const DRAG_THRESHOLD_PX = 6;
 
 export function PublicChatWidget() {
+  const user = useAuthUser();
+  const { chat } = useMyChat({ skip: !user });
   const [open, setOpen] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [mounted, setMounted] = useState(false);
   const dragStart = useRef<{ x: number; y: number; startLeft: number; startTop: number } | null>(null);
   const isDrag = useRef(false);
+
+  const unreadCount = (chat?.unreadCount ?? 0) || 0;
+  const showBadge = !open && unreadCount > 0;
 
   useEffect(() => {
     setMounted(true);
@@ -99,9 +106,9 @@ export function PublicChatWidget() {
       >
         <button
           type="button"
-          aria-label={open ? "Закрыть чат" : "Открыть чат"}
+          aria-label={open ? "Закрыть чат" : showBadge ? `Открыть чат (${unreadCount} новых)` : "Открыть чат"}
           className={cn(
-            "flex h-full w-full items-center justify-center rounded-full shadow-lg transition-shadow",
+            "relative flex h-full w-full items-center justify-center rounded-full shadow-lg transition-shadow",
             "bg-primary text-primary-foreground",
             "hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background",
             "cursor-grab active:cursor-grabbing",
@@ -121,6 +128,11 @@ export function PublicChatWidget() {
           }}
         >
           <MessageCircle className="h-7 w-7" strokeWidth={2} />
+          {showBadge && (
+            <span className="absolute -top-0.5 -right-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-bold text-destructive-foreground shadow-sm">
+              {unreadCount > 99 ? "99+" : unreadCount}
+            </span>
+          )}
         </button>
       </motion.div>
 

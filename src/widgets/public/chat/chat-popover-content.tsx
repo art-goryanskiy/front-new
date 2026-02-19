@@ -88,7 +88,8 @@ export function ChatPopoverContent() {
 
   const handleNewMessage = useCallback(() => {
     refetchMessages();
-  }, [refetchMessages]);
+    refetchChat();
+  }, [refetchMessages, refetchChat]);
 
   useChatSocket(chat?.id ?? null, handleNewMessage);
 
