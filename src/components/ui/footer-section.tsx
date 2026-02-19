@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { GLASS_CLASSES } from "@/shared/ui/glass/glass-constants";
 import {
   TelegramIcon,
   VKIcon,
@@ -104,9 +105,10 @@ export function Footer() {
     <footer
       className={cn(
         "relative flex w-full flex-col items-center justify-center",
-        "rounded-t-2xl border-t border-border/60 bg-background md:rounded-t-3xl",
-        "bg-linear-to-b from-foreground/4 to-transparent",
-        "py-12 lg:py-16"
+        "rounded-t-2xl border-t md:rounded-t-3xl",
+        "bg-linear-to-b from-foreground/3 to-transparent",
+        "py-12 lg:py-16",
+        GLASS_CLASSES.panel
       )}
     >
       <div className="absolute top-0 left-1/2 h-px w-1/3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-foreground/20 blur" />

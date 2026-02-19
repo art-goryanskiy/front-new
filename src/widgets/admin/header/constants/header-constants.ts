@@ -1,9 +1,10 @@
+import { GLASS_CLASSES } from "@/shared/ui/glass/glass-constants";
+
 /**
  * Константы для хедера админки
  */
 export const HEADER_CLASSES = {
-  header:
-    "sticky top-0 z-40 border-b border-border/60 bg-background/70 backdrop-blur-xl",
+  header: `sticky top-0 z-40 border-b ${GLASS_CLASSES.strong}`,
   container: "mx-auto w-full max-w-7xl",
   content:
     "flex h-14 items-center justify-between gap-2 px-4 sm:h-16 sm:gap-4 sm:px-6 md:px-8 lg:px-10 xl:px-12",

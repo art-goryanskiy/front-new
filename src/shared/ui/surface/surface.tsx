@@ -1,7 +1,8 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { GLASS_CLASSES } from "@/shared/ui/glass/glass-constants";
 
-type SurfaceVariant = "default" | "floating" | "inset";
+type SurfaceVariant = "default" | "floating" | "inset" | "glass";
 
 export function Surface({
   className,
@@ -16,11 +17,12 @@ export function Surface({
     default: "shadow-sm",
     floating: "shadow-md",
     inset: "bg-muted/20 shadow-none",
+    glass: `${GLASS_CLASSES.card} rounded-2xl shadow-sm`,
   };
 
   return (
     <div
-      className={cn(base, variants[variant], className)}
+      className={cn(variant === "glass" ? variants.glass : cn(base, variants[variant]), className)}
       {...props}
     />
   );

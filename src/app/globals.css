@@ -75,6 +75,15 @@
   --login-character-back: #14b8a6;
   /* Средний персонаж: тёмный в обеих темах, белые глаза читаемы */
   --login-character-middle: #171717;
+
+  /* Стеклянный эффект (glass) — светлая тема */
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-bg-strong: rgba(255, 255, 255, 0.9);
+  --glass-card: rgba(249, 250, 251, 0.65);
+  --glass-border: rgba(0, 0, 0, 0.06);
+  --glass-ring: rgba(255, 255, 255, 0.5);
+  --glass-blur: 12px;
+  --glass-blur-strong: 24px;
 }
 
 .dark {
@@ -148,6 +157,15 @@
   --sidebar-ring: #e50914;
   --login-character-back: #2dd4bf;
   --login-character-middle: #262626;
+
+  /* Стеклянный эффект (glass) — тёмная тема */
+  --glass-bg: rgba(10, 10, 10, 0.75);
+  --glass-bg-strong: rgba(10, 10, 10, 0.92);
+  --glass-card: rgba(10, 10, 10, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-ring: rgba(255, 255, 255, 0.06);
+  --glass-blur: 12px;
+  --glass-blur-strong: 24px;
 }
 
 html {

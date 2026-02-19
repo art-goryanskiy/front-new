@@ -37,6 +37,7 @@ export const CategoryPage = memo(function CategoryPage({
   type,
   title,
   description,
+  suppressHeaderTitle,
 }: CategoryPageProps) {
   const { openCreateCategoryModal } = useCategoryModalState();
 
@@ -55,6 +56,7 @@ export const CategoryPage = memo(function CategoryPage({
         title={title}
         description={description}
         variant="default"
+        hideTitle={suppressHeaderTitle}
         actionButton={{
           label: "+ Создать категорию",
           mobileLabel: "+ Создать",

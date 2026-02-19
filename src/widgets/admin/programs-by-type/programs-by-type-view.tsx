@@ -50,6 +50,7 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
   title,
   categoriesOfType,
   categoryIds,
+  suppressTitle,
 
   q,
   setQ,
@@ -69,6 +70,7 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
   title: string;
   categoriesOfType: CategoryEntity[];
   categoryIds: string[];
+  suppressTitle?: boolean;
 
   q: string;
   setQ: (v: string) => void;
@@ -168,20 +170,24 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
   if (loading && page === 1) return <CategoryProgramsViewSkeleton />;
   if (error) return <ErrorState message={error.message} />;
 
+  const countsBadge = (
+    <span className="hidden rounded-full border border-border/60 bg-muted/20 px-2.5 py-1 text-xs text-muted-foreground sm:inline-flex">
+      {countsText}
+    </span>
+  );
+
   return (
     <DashboardSection
       title={title}
-      actions={
-        <span className="hidden rounded-full border border-border/60 bg-muted/20 px-2.5 py-1 text-xs text-muted-foreground sm:inline-flex">
-          {countsText}
-        </span>
-      }
+      actions={suppressTitle ? undefined : countsBadge}
+      suppressTitle={suppressTitle}
     >
       <div className="space-y-4">
         <DataToolbar
           searchValue={q}
           onSearchValueChange={setQ}
           searchPlaceholder="Поиск по программам…"
+          leftSlot={suppressTitle ? countsBadge : undefined}
           rightSlot={
             <div className="flex items-center gap-2">
               <Select
@@ -299,9 +305,12 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
 export const ProgramsByTypeView = memo(function ProgramsByTypeView({
   type,
   title,
+  suppressTitle,
 }: {
   type: CategoryType;
   title: string;
+  /** Заголовок вынесен в sticky на странице — не дублировать */
+  suppressTitle?: boolean;
 }) {
   const {
     categories,
@@ -354,6 +363,7 @@ export const ProgramsByTypeView = memo(function ProgramsByTypeView({
       title={title}
       categoriesOfType={categoriesOfType}
       categoryIds={categoryIds}
+      suppressTitle={suppressTitle}
       q={q}
       setQ={setQ}
       debouncedQ={debouncedQ}
