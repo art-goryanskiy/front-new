@@ -7,12 +7,17 @@ import { safeAsyncArray } from "@/shared/lib/helpers/error-helpers";
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://www.new.standart82.ru";
 
+/** При сборке в Docker/CI без доступа к API — только статические URL (избегаем падения build) */
+const skipBuildTimeFetch = process.env.SKIP_SITEMAP_FETCH === "1";
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [programs, categories, news] = await Promise.all([
-    safeAsyncArray(getProgramsServer()),
-    safeAsyncArray(getCategoriesServer()),
-    safeAsyncArray(getNewsServer()),
-  ]);
+  const [programs, categories, news] = skipBuildTimeFetch
+    ? [[], [], []]
+    : await Promise.all([
+        safeAsyncArray(getProgramsServer()),
+        safeAsyncArray(getCategoriesServer()),
+        safeAsyncArray(getNewsServer()),
+      ]);
 
   const programUrls: MetadataRoute.Sitemap = programs.map(
     (program) => ({
