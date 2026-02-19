@@ -27,6 +27,11 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_SITE_URL ||
       "https://www.new.standart82.ru"
   ),
+  alternates: {
+    canonical:
+      process.env.NEXT_PUBLIC_SITE_URL ||
+      "https://www.new.standart82.ru",
+  },
   openGraph: {
     type: "website",
     locale: "ru_RU",
