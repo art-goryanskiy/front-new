@@ -126,9 +126,9 @@ export function PublicChatWidget() {
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent
-          className="max-h-[90vh] w-full max-w-md p-0 gap-0"
+          className="max-h-[90vh] w-full max-w-md overflow-hidden rounded-2xl border-border/60 p-0 shadow-2xl shadow-black/10 dark:shadow-black/30"
           showClose={true}
-          overlayClassName="bg-black/40"
+          overlayClassName="bg-black/50 backdrop-blur-sm"
         >
           <DialogTitle className="sr-only">Чат с поддержкой</DialogTitle>
           <ChatPopoverContent />

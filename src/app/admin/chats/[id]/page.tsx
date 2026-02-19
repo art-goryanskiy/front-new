@@ -2,12 +2,13 @@
 
 import { memo, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { useAdminChatMessages } from "@/entities/chat/api/use-admin-chat-messages";
 import { useAdminAssignChat } from "@/entities/chat/api/use-admin-assign-chat";
 import { useAdminSetChatStatus } from "@/entities/chat/api/use-admin-set-chat-status";
 import { useSendMessage } from "@/entities/chat/api/use-send-message";
 import { useChatSocket } from "@/entities/chat/api/use-chat-socket";
+import { useAdminUser } from "@/entities/user/api/use-admin-user";
 import { useAuthUser } from "@/shared/store/auth-store";
 import { Surface } from "@/shared/ui/surface/surface";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
@@ -20,6 +21,17 @@ import {
   type ChatMessageFieldsFragment,
 } from "@/shared/api/generated/graphql";
 import { cn } from "@/lib/utils";
+
+function shortChatId(id: string): string {
+  return id.length > 8 ? "…" + id.slice(-8) : id;
+}
+
+function userDisplayName(user: { email?: string | null; firstName?: string | null; lastName?: string | null } | null): string {
+  if (!user) return "—";
+  const name = [user.firstName, user.lastName].filter(Boolean).join(" ").trim();
+  if (name) return `${name} (${user.email ?? ""})`;
+  return user.email ?? "—";
+}
 
 const MESSAGE_LIMIT = 100;
 
@@ -74,8 +86,11 @@ function MessageBubble({
 
 export default function AdminChatDetailPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const chatId = typeof params.id === "string" ? params.id : null;
-  const user = useAuthUser();
+  const userIdFromQuery = searchParams.get("userId");
+  const currentUser = useAuthUser();
+  const { user: chatUser } = useAdminUser(userIdFromQuery ?? null);
 
   const { messages, loading: messagesLoading, refetch: refetchMessages } =
     useAdminChatMessages(chatId, { limit: MESSAGE_LIMIT }, { skip: !chatId });
@@ -100,9 +115,9 @@ export default function AdminChatDetailPage() {
   }, [messages.length]);
 
   const handleAssignToMe = useCallback(() => {
-    if (!chatId || !user?.id) return;
-    adminAssignChat(chatId, user.id);
-  }, [chatId, user?.id, adminAssignChat]);
+    if (!chatId || !currentUser?.id) return;
+    adminAssignChat(chatId, currentUser.id);
+  }, [chatId, currentUser?.id, adminAssignChat]);
 
   const handleUnassign = useCallback(() => {
     if (!chatId) return;
@@ -159,10 +174,10 @@ export default function AdminChatDetailPage() {
             </Button>
             <div>
               <h1 className="text-xl font-semibold text-foreground">
-                Чат {chatId.slice(0, 12)}…
+                Чат №{shortChatId(chatId)}
               </h1>
               <p className="text-sm text-muted-foreground">
-                user: {chatId}
+                Пользователь: {userDisplayName(chatUser)}
               </p>
             </div>
           </div>

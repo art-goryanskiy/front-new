@@ -52,17 +52,18 @@ function MessageBubble({
     >
       <div
         className={cn(
-          "max-w-[85%] rounded-2xl px-4 py-2 text-sm",
+          "max-w-[85%] rounded-2xl px-4 py-2.5 text-sm shadow-sm",
+          "border border-black/4 dark:border-white/6",
           isOwn
-            ? "bg-primary text-primary-foreground rounded-br-md"
-            : "bg-muted text-muted-foreground rounded-bl-md"
+            ? "rounded-br-md bg-primary text-primary-foreground"
+            : "rounded-bl-md bg-muted/80 text-muted-foreground backdrop-blur-sm"
         )}
       >
-        <p className="whitespace-pre-wrap wrap-break-word">{message.body}</p>
+        <p className="whitespace-pre-wrap wrap-break-word leading-relaxed">{message.body}</p>
         <p
           className={cn(
-            "mt-1 text-xs",
-            isOwn ? "text-primary-foreground/80" : "text-muted-foreground/80"
+            "mt-1.5 text-xs opacity-90",
+            isOwn ? "text-primary-foreground/90" : "text-muted-foreground/90"
           )}
         >
           {formatMessageTime(message.createdAt)}
@@ -121,25 +122,33 @@ export function ChatPopoverContent() {
 
   if (!user) {
     return (
-      <div className="flex h-[320px] flex-col items-center justify-center gap-3 p-4 text-center text-muted-foreground">
-        <p className="text-sm">Войдите в аккаунт, чтобы написать в поддержку.</p>
+      <div className="flex h-[320px] flex-col items-center justify-center gap-4 p-8 text-center">
+        <div className="rounded-full bg-muted/50 p-4">
+          <Send className="h-8 w-8 text-muted-foreground" />
+        </div>
+        <p className="text-sm font-medium text-foreground">Чат с поддержкой</p>
+        <p className="text-sm text-muted-foreground">
+          Войдите в аккаунт, чтобы написать сообщение.
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="flex h-[380px] flex-col">
-      <div className="border-b px-4 py-3">
-        <h3 className="font-semibold text-foreground">Чат с поддержкой</h3>
+    <div className="flex h-[400px] flex-col">
+      <div className="border-b border-border/60 bg-muted/20 px-5 py-4 backdrop-blur-sm">
+        <h3 className="text-base font-semibold tracking-tight text-foreground">
+          Чат с поддержкой
+        </h3>
         {chat && (
-          <p className="text-xs text-muted-foreground">
-            Статус: {chat.status === "OPEN" ? "открыт" : "закрыт"}
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            {chat.status === "OPEN" ? "Открыт · ответим в ближайшее время" : "Чат закрыт"}
           </p>
         )}
       </div>
 
-      <ScrollArea className="flex-1 px-4 py-3">
-        <div className="flex h-full min-h-[200px] flex-col gap-3">
+      <ScrollArea className="flex-1 px-5 py-4">
+        <div className="flex h-full min-h-[200px] flex-col gap-4">
           {chatLoading || (chat && messagesLoading) ? (
             <div className="flex flex-1 items-center justify-center py-8 text-sm text-muted-foreground">
               Загрузка…
@@ -169,17 +178,23 @@ export function ChatPopoverContent() {
 
       <form
         onSubmit={handleSubmit}
-        className="flex gap-2 border-t p-3"
+        className="flex gap-2 border-t border-border/60 bg-muted/10 p-4 backdrop-blur-sm"
       >
         <Input
           ref={inputRef}
           name="body"
-          placeholder="Сообщение…"
-          className="flex-1"
+          placeholder="Напишите сообщение…"
+          className="min-h-11 flex-1 rounded-xl border-border/80 bg-background/80 shadow-sm"
           disabled={sendLoading}
           autoComplete="off"
         />
-        <Button type="submit" size="icon" disabled={sendLoading} aria-label="Отправить">
+        <Button
+          type="submit"
+          size="icon"
+          className="h-11 w-11 shrink-0 rounded-xl shadow-sm"
+          disabled={sendLoading}
+          aria-label="Отправить"
+        >
           <Send className="h-4 w-4" />
         </Button>
       </form>

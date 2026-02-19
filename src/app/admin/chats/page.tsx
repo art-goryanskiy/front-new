@@ -43,11 +43,19 @@ function formatDate(date: string | unknown): string {
   }
 }
 
+function shortUserId(userId: string): string {
+  if (userId.length <= 12) return userId;
+  return "…" + userId.slice(-8);
+}
+
 const ChatRow = memo(function ChatRow({
   chat,
+  index,
 }: {
   chat: AdminChatFieldsFragment;
+  index: number;
 }) {
+  const chatNumber = index + 1;
   const statusLabel = chat.status === ChatStatus.Open ? "Открыт" : "Закрыт";
   const statusClass =
     chat.status === ChatStatus.Open
@@ -55,9 +63,10 @@ const ChatRow = memo(function ChatRow({
       : "border-border/60 bg-muted/20 text-muted-foreground";
   const preview = chat.lastMessagePreview?.trim() || "—";
   const unread = (chat.unreadCount ?? 0) > 0;
+  const chatUrl = `/admin/chats/${chat.id}?userId=${encodeURIComponent(chat.userId)}`;
 
   return (
-    <Link href={`/admin/chats/${chat.id}`}>
+    <Link href={chatUrl}>
       <Surface
         variant="floating"
         className={cn(
@@ -72,15 +81,18 @@ const ChatRow = memo(function ChatRow({
           </div>
           <div className="min-w-0 flex-1 space-y-1">
             <p className="font-semibold text-foreground">
-              Чат {chat.id.slice(0, 8)}… · user {chat.userId.slice(0, 8)}…
+              Чат №{chatNumber}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Пользователь: <span className="font-mono text-foreground/90">{shortUserId(chat.userId)}</span>
             </p>
             <p className="text-sm text-muted-foreground line-clamp-1">
               {preview}
             </p>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               {formatDate(chat.createdAt)}
               {chat.assignedToId && (
-                <> · Назначен: {chat.assignedToId.slice(0, 8)}…</>
+                <> · Назначен: {shortUserId(chat.assignedToId)}</>
               )}
             </p>
           </div>
@@ -207,8 +219,8 @@ export default function AdminChatsPage() {
 
         {!error && !loading && chats.length > 0 && (
           <div className="space-y-3">
-            {chats.map((chat) => (
-              <ChatRow key={chat.id} chat={chat} />
+            {chats.map((chat, index) => (
+              <ChatRow key={chat.id} chat={chat} index={index} />
             ))}
           </div>
         )}
