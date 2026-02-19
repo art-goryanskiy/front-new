@@ -30,6 +30,7 @@ export function PublicChatWidget() {
   const [mounted, setMounted] = useState(false);
   const dragStart = useRef<{ x: number; y: number; startLeft: number; startTop: number } | null>(null);
   const isDrag = useRef(false);
+  const ignoreNextClick = useRef(false);
   const refetchMessagesRef = useRef<(() => void) | null>(null);
 
   const unreadCount = (chat?.unreadCount ?? 0) || 0;
@@ -98,14 +99,22 @@ export function PublicChatWidget() {
     (e: React.PointerEvent) => {
       if (dragStart.current) {
         (e.target as HTMLElement).releasePointerCapture?.(e.pointerId);
-        if (!isDrag.current) {
-          setOpen((prev) => !prev);
+        if (isDrag.current) {
+          ignoreNextClick.current = true;
         }
         dragStart.current = null;
       }
     },
     []
   );
+
+  const handleClick = useCallback((e: React.MouseEvent) => {
+    if (ignoreNextClick.current) {
+      e.preventDefault();
+      e.stopPropagation();
+      ignoreNextClick.current = false;
+    }
+  }, []);
 
   if (!mounted) return null;
 
@@ -125,6 +134,7 @@ export function PublicChatWidget() {
           <button
             type="button"
             aria-label={open ? "Закрыть чат" : showBadge ? `Открыть чат (${unreadCount} новых)` : "Открыть чат"}
+            onClick={handleClick}
             className={cn(
               "relative flex h-full w-full items-center justify-center rounded-full shadow-lg transition-shadow",
               "bg-primary text-primary-foreground",
