@@ -3,6 +3,7 @@
 import { memo, useMemo, useState } from "react";
 import Link from "next/link";
 import { useAdminChats } from "@/entities/chat/api/use-admin-chats";
+import { useAdminUser } from "@/entities/user/api/use-admin-user";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
 import { Surface } from "@/shared/ui/surface/surface";
 import { AdminPageHeader } from "@/shared/ui/admin-page-header/admin-page-header";
@@ -48,6 +49,13 @@ function shortUserId(userId: string): string {
   return "…" + userId.slice(-8);
 }
 
+function userDisplayLabel(user: { email?: string | null; firstName?: string | null; lastName?: string | null } | null, fallbackUserId: string): string {
+  if (!user) return shortUserId(fallbackUserId);
+  const name = [user.firstName, user.lastName].filter(Boolean).join(" ").trim();
+  if (name) return name;
+  return user.email ?? shortUserId(fallbackUserId);
+}
+
 const ChatRow = memo(function ChatRow({
   chat,
   index,
@@ -55,6 +63,7 @@ const ChatRow = memo(function ChatRow({
   chat: AdminChatFieldsFragment;
   index: number;
 }) {
+  const { user: chatUser, loading: userLoading } = useAdminUser(chat.userId);
   const chatNumber = index + 1;
   const statusLabel = chat.status === ChatStatus.Open ? "Открыт" : "Закрыт";
   const statusClass =
@@ -64,6 +73,7 @@ const ChatRow = memo(function ChatRow({
   const preview = chat.lastMessagePreview?.trim() || "—";
   const unread = (chat.unreadCount ?? 0) > 0;
   const chatUrl = `/admin/chats/${chat.id}?userId=${encodeURIComponent(chat.userId)}`;
+  const userLabel = userLoading ? "…" : userDisplayLabel(chatUser, chat.userId);
 
   return (
     <Link href={chatUrl}>
@@ -83,8 +93,8 @@ const ChatRow = memo(function ChatRow({
             <p className="font-semibold text-foreground">
               Чат №{chatNumber}
             </p>
-            <p className="text-sm text-muted-foreground">
-              Пользователь: <span className="font-mono text-foreground/90">{shortUserId(chat.userId)}</span>
+            <p className="text-sm text-muted-foreground wrap-break-word">
+              Пользователь: <span className="text-foreground/90">{userLabel}</span>
             </p>
             <p className="text-sm text-muted-foreground line-clamp-1">
               {preview}
