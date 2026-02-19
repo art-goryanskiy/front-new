@@ -1,7 +1,6 @@
 "use client";
 
 import { memo, useMemo } from "react";
-import { Badge } from "@/components/ui/badge";
 import {
   filterValidPricing,
   formatPrice,
@@ -13,34 +12,53 @@ export const ProgramTablePricingContent = memo(
   function ProgramTablePricingContent({
     program,
   }: ProgramTableCellContentProps) {
-    const validPricing = useMemo(
-      () => filterValidPricing(program.pricing),
-      [program.pricing]
-    );
+    const display = useMemo(() => {
+      const valid = filterValidPricing(program.pricing);
+      if (valid.length === 0) return null;
+      const hours = valid.map((p) => p.hours);
+      const prices = valid.map((p) => p.price!).filter((x) => x > 0);
+      const minH = Math.min(...hours);
+      const maxH = Math.max(...hours);
+      const minP = prices.length ? Math.min(...prices) : 0;
+      const maxP = prices.length ? Math.max(...prices) : 0;
+      const hoursStr =
+        minH === maxH ? `${minH} ч` : `${minH}–${maxH} ч`;
+      const priceStr =
+        minP === maxP || maxP === 0
+          ? minP > 0
+            ? formatPrice(minP) + " ₽"
+            : null
+          : `от ${formatPrice(minP)} ₽`;
+      const label =
+        valid.length === 1
+          ? formatPricingAriaLabel(valid[0].hours, valid[0].price!)
+          : `${hoursStr}, ${priceStr ?? ""}`;
+      return { hoursStr, priceStr, label };
+    }, [program.pricing]);
+
+    if (!display) {
+      return (
+        <span
+          className="text-sm text-muted-foreground"
+          aria-label="Нет данных"
+        >
+          -
+        </span>
+      );
+    }
 
     return (
-      <div className="text-start">
-        <div className="flex flex-wrap gap-1">
-          {validPricing.length > 0 ? (
-            validPricing.map((p, idx) => (
-              <Badge
-                key={`${p.hours}-${p.price}-${idx}`}
-                variant="default"
-                className="font-semibold"
-                aria-label={formatPricingAriaLabel(p.hours, p.price!)}
-              >
-                {p.hours}ч - {formatPrice(p.price!)}₽
-              </Badge>
-            ))
-          ) : (
-            <span
-              className="text-sm text-muted-foreground"
-              aria-label="Нет данных"
-            >
-              -
-            </span>
-          )}
-        </div>
+      <div
+        className="whitespace-nowrap text-start text-sm text-foreground"
+        aria-label={display.label}
+      >
+        {display.hoursStr}
+        {display.priceStr && (
+          <span className="text-muted-foreground">
+            {" · "}
+            {display.priceStr}
+          </span>
+        )}
       </div>
     );
   }

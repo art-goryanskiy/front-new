@@ -100,49 +100,49 @@ export const VirtualizedProgramTable = memo(
             <div
               role="rowgroup"
               className={cn(
-                "sticky top-0 z-10 grid grid-cols-7 bg-background/75 backdrop-blur-xl supports-backdrop-filter:bg-background/55",
+                "sticky top-0 z-10 grid grid-cols-7",
                 TABLE_CLASSES.thead
               )}
             >
               <div
                 role="columnheader"
-                className={`min-w-0 px-4 py-3 ${TABLE_CLASSES.th}`}
+                className={`min-w-0 ${TABLE_CLASSES.th}`}
               >
                 ПРОГРАММА
               </div>
               <div
                 role="columnheader"
-                className={`${showAwardedQualification ? "hidden text-center md:block" : "hidden"} px-4 py-3 ${TABLE_CLASSES.th}`}
+                className={`${showAwardedQualification ? "hidden text-center md:block" : "hidden"} ${TABLE_CLASSES.th}`}
               >
                 КВАЛИФИКАЦИЯ
               </div>
               <div
                 role="columnheader"
-                className={`${showAwardedRank ? "hidden text-center md:block" : "hidden"} px-4 py-3 ${TABLE_CLASSES.th}`}
+                className={`${showAwardedRank ? "hidden text-center md:block" : "hidden"} ${TABLE_CLASSES.th}`}
               >
                 РАЗРЯД
               </div>
               <div
                 role="columnheader"
-                className={`hidden px-4 py-3 text-start md:block ${TABLE_CLASSES.th}`}
+                className={`hidden text-start md:block ${TABLE_CLASSES.th}`}
               >
                 ЧАСЫ - ЦЕНА
               </div>
               <div
                 role="columnheader"
-                className={`hidden px-4 py-3 text-center lg:block ${TABLE_CLASSES.th}`}
+                className={`hidden text-center lg:block ${TABLE_CLASSES.th}`}
               >
                 ПРОСМОТРЫ
               </div>
               <div
                 role="columnheader"
-                className={`${showSubPrograms ? "hidden text-center lg:block" : "hidden"} px-4 py-3 ${TABLE_CLASSES.th}`}
+                className={`${showSubPrograms ? "hidden text-center lg:block" : "hidden"} ${TABLE_CLASSES.th}`}
               >
                 ПОДПРОГРАММЫ
               </div>
               <div
                 role="columnheader"
-                className={`hidden px-4 py-3 text-center md:block ${TABLE_CLASSES.th}`}
+                className={`hidden text-center md:block ${TABLE_CLASSES.th}`}
               >
                 ДЕЙСТВИЯ
               </div>
@@ -163,9 +163,8 @@ export const VirtualizedProgramTable = memo(
                     role="row"
                     tabIndex={0}
                     className={cn(
-                      "group grid w-full cursor-pointer grid-cols-7 border-b border-border/40",
-                      TABLE_CLASSES.tr,
-                      virtualRow.index % 2 === 1 && "bg-muted/10"
+                      "group grid w-full cursor-pointer grid-cols-7 border-b border-border/50",
+                      TABLE_CLASSES.tr
                     )}
                     style={{
                       position: "absolute",
@@ -180,41 +179,41 @@ export const VirtualizedProgramTable = memo(
                     aria-label={`Программа ${program.title}`}
                   >
                     <div
-                      className={`min-w-0 px-4 py-3 ${TABLE_CLASSES.td}`}
+                      className={`min-w-0 overflow-hidden ${TABLE_CLASSES.td}`}
                     >
                       <ProgramTableTitleContent program={program} />
                     </div>
                     <div
-                      className={`${showAwardedQualification ? "hidden md:flex md:items-center md:justify-center" : "hidden"} px-4 py-3 ${TABLE_CLASSES.td}`}
+                      className={`${showAwardedQualification ? "hidden md:flex md:items-center md:justify-center" : "hidden"} min-w-0 overflow-hidden ${TABLE_CLASSES.td}`}
                     >
                       <ProgramTableQualificationContent
                         program={program}
                       />
                     </div>
                     <div
-                      className={`${showAwardedRank ? "hidden md:flex md:items-center md:justify-center" : "hidden"} px-4 py-3 ${TABLE_CLASSES.td}`}
+                      className={`${showAwardedRank ? "hidden md:flex md:items-center md:justify-center" : "hidden"} min-w-0 overflow-hidden ${TABLE_CLASSES.td}`}
                     >
                       <ProgramTableRankContent program={program} />
                     </div>
                     <div
-                      className={`hidden px-4 py-3 md:block ${TABLE_CLASSES.td}`}
+                      className={`hidden min-w-0 overflow-hidden md:block ${TABLE_CLASSES.td}`}
                     >
                       <ProgramTablePricingContent program={program} />
                     </div>
                     <div
-                      className={`hidden px-4 py-3 lg:flex lg:items-center lg:justify-center ${TABLE_CLASSES.td}`}
+                      className={`hidden lg:flex lg:items-center lg:justify-center ${TABLE_CLASSES.td}`}
                     >
                       <ProgramTableViewsContent program={program} />
                     </div>
                     <div
-                      className={`${showSubPrograms ? "hidden lg:flex lg:items-center lg:justify-center" : "hidden"} px-4 py-3 ${TABLE_CLASSES.td}`}
+                      className={`${showSubPrograms ? "hidden lg:flex lg:items-center lg:justify-center" : "hidden"} ${TABLE_CLASSES.td}`}
                     >
                       <ProgramTableSubprogramsContent
                         program={program}
                       />
                     </div>
                     <div
-                      className={`hidden px-4 py-3 md:flex md:items-center md:justify-center ${TABLE_CLASSES.td}`}
+                      className={`hidden md:flex md:items-center md:justify-center ${TABLE_CLASSES.td}`}
                     >
                       <TableActions
                         onEdit={() => handleEditClick(program)}

@@ -2,18 +2,20 @@
 
 import { useCallback, useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, X } from "lucide-react";
 import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-} from "@/components/ui/dialog";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  PopoverClose,
+} from "@/components/ui/popover";
 import { useAuthUser } from "@/shared/store/auth-store";
 import { useMyChat } from "@/entities/chat/api/use-my-chat";
 import { useChatSocket } from "@/entities/chat/api/use-chat-socket";
 import type { ChatSocketNewMessagePayload } from "@/entities/chat/api/use-chat-socket";
 import { ChatPopoverContent } from "./chat-popover-content";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 const DEFAULT_BOTTOM = 24;
 const DEFAULT_RIGHT = 24;
@@ -28,6 +30,7 @@ export function PublicChatWidget() {
   const [mounted, setMounted] = useState(false);
   const dragStart = useRef<{ x: number; y: number; startLeft: number; startTop: number } | null>(null);
   const isDrag = useRef(false);
+  const ignoreNextClick = useRef(false);
   const refetchMessagesRef = useRef<(() => void) | null>(null);
 
   const unreadCount = (chat?.unreadCount ?? 0) || 0;
@@ -96,8 +99,8 @@ export function PublicChatWidget() {
     (e: React.PointerEvent) => {
       if (dragStart.current) {
         (e.target as HTMLElement).releasePointerCapture?.(e.pointerId);
-        if (!isDrag.current) {
-          setOpen((prev) => !prev);
+        if (isDrag.current) {
+          ignoreNextClick.current = true;
         }
         dragStart.current = null;
       }
@@ -105,10 +108,18 @@ export function PublicChatWidget() {
     []
   );
 
+  const handleClick = useCallback((e: React.MouseEvent) => {
+    if (ignoreNextClick.current) {
+      e.preventDefault();
+      e.stopPropagation();
+      ignoreNextClick.current = false;
+    }
+  }, []);
+
   if (!mounted) return null;
 
   return (
-    <>
+    <Popover open={open} onOpenChange={setOpen}>
       <motion.div
         className="fixed z-40"
         style={{
@@ -119,48 +130,74 @@ export function PublicChatWidget() {
         }}
         initial={false}
       >
-        <button
-          type="button"
-          aria-label={open ? "Закрыть чат" : showBadge ? `Открыть чат (${unreadCount} новых)` : "Открыть чат"}
-          className={cn(
-            "relative flex h-full w-full items-center justify-center rounded-full shadow-lg transition-shadow",
-            "bg-primary text-primary-foreground",
-            "hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background",
-            "cursor-grab active:cursor-grabbing",
-            "border border-primary/20"
-          )}
-          style={{
-            boxShadow: "0 4px 20px rgba(var(--primary-rgb, 59 130 246) / 0.4)",
-          }}
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-          onPointerCancel={(e) => {
-            if (dragStart.current) {
-              (e.currentTarget as HTMLElement).releasePointerCapture?.(e.pointerId);
-              dragStart.current = null;
-            }
-          }}
-        >
-          <MessageCircle className="h-7 w-7" strokeWidth={2} />
-          {showBadge && (
-            <span className="absolute -top-0.5 -right-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-bold text-destructive-foreground shadow-sm">
-              {unreadCount > 99 ? "99+" : unreadCount}
-            </span>
-          )}
-        </button>
+        <PopoverTrigger asChild>
+          <button
+            type="button"
+            aria-label={open ? "Закрыть чат" : showBadge ? `Открыть чат (${unreadCount} новых)` : "Открыть чат"}
+            onClick={handleClick}
+            className={cn(
+              "relative flex h-full w-full items-center justify-center rounded-full shadow-lg transition-shadow",
+              "bg-primary text-primary-foreground",
+              "hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background",
+              "cursor-grab active:cursor-grabbing",
+              "border border-primary/20"
+            )}
+            style={{
+              boxShadow:
+                "0 4px 20px rgba(var(--primary-rgb, 59 130 246) / 0.4)",
+            }}
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onPointerCancel={(e) => {
+              if (dragStart.current) {
+                (e.currentTarget as HTMLElement).releasePointerCapture?.(
+                  e.pointerId
+                );
+                dragStart.current = null;
+              }
+            }}
+          >
+            <MessageCircle className="h-7 w-7" strokeWidth={2} />
+            {showBadge && (
+              <span className="absolute -top-0.5 -right-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-bold text-destructive-foreground shadow-sm">
+                {unreadCount > 99 ? "99+" : unreadCount}
+              </span>
+            )}
+          </button>
+        </PopoverTrigger>
       </motion.div>
 
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent
-          className="max-h-[90vh] w-full max-w-md overflow-hidden rounded-2xl border-border/60 p-0 shadow-2xl shadow-black/10 dark:shadow-black/30"
-          showClose={true}
-          overlayClassName="bg-black/50 backdrop-blur-sm"
-        >
-          <DialogTitle className="sr-only">Чат с поддержкой</DialogTitle>
+      <PopoverContent
+        side="top"
+        align="end"
+        sideOffset={12}
+        alignOffset={0}
+        avoidCollisions={true}
+        className={cn(
+          "w-full max-w-md max-h-[85vh] overflow-hidden rounded-2xl p-0",
+          "border border-border/50 bg-background shadow-md",
+          "shadow-black/5 dark:shadow-black/15"
+        )}
+        aria-describedby={undefined}
+      >
+        <div className="relative pr-12 pt-1">
+          <PopoverClose asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute right-2 top-2 z-10 h-8 w-8 rounded-full text-muted-foreground hover:bg-muted/80 hover:text-foreground"
+              aria-label="Закрыть чат"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </PopoverClose>
+          <div id="chat-description" className="sr-only">
+            Окно чата с поддержкой. Напишите сообщение или прочитайте переписку.
+          </div>
           <ChatPopoverContent refetchMessagesRef={refetchMessagesRef} />
-        </DialogContent>
-      </Dialog>
-    </>
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 }

@@ -1,14 +1,13 @@
 "use client";
 
 import { memo, useMemo } from "react";
-import { Badge } from "@/components/ui/badge";
 import type { ProgramTableCellContentProps } from "../types/program-table.types";
 
 export const ProgramTableQualificationContent = memo(
   function ProgramTableQualificationContent({
     program,
   }: ProgramTableCellContentProps) {
-    const qualification = program.awardedQualification || "-";
+    const qualification = program.awardedQualification || "—";
     const ariaLabel = useMemo(
       () =>
         `Квалификация: ${program.awardedQualification || "не указана"}`,
@@ -16,13 +15,13 @@ export const ProgramTableQualificationContent = memo(
     );
 
     return (
-      <Badge
-        variant="success"
-        className="font-semibold"
+      <span
+        className="block min-w-0 truncate text-sm text-foreground"
+        title={program.awardedQualification ?? undefined}
         aria-label={ariaLabel}
       >
         {qualification}
-      </Badge>
+      </span>
     );
   }
 );

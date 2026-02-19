@@ -1,6 +1,7 @@
 import { PublicHeader } from "@/widgets/public/header/public-header";
 import { PublicBackdrop } from "@/widgets/public/background/public-backdrop";
 import { PublicFooter } from "@/widgets/public/footer/public-footer";
+import { PublicChatWidget } from "@/widgets/public/chat/public-chat-widget";
 
 interface DetailPageLayoutProps {
   children: React.ReactNode;
@@ -30,6 +31,7 @@ export function DetailPageLayout({
           {children}
         </main>
         <PublicFooter />
+        <PublicChatWidget />
       </div>
     </>
   );
