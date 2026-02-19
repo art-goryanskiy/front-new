@@ -28,6 +28,13 @@ const ORDERS_MENU_ITEM: MenuItem = {
   color: "default" as const,
 };
 
+const CHATS_MENU_ITEM: MenuItem = {
+  label: "Чаты",
+  icon: "message-circle" as const,
+  path: "/admin/chats",
+  color: "default" as const,
+};
+
 const EDUCATION_DOCUMENTS_MENU_ITEM: MenuItem = {
   label: "Документы",
   icon: "file-text" as const,
@@ -60,6 +67,7 @@ export const MobileSidebar = memo(function MobileSidebar() {
       HOME_MENU_ITEM,
       USERS_MENU_ITEM,
       ORDERS_MENU_ITEM,
+      CHATS_MENU_ITEM,
       EDUCATION_DOCUMENTS_MENU_ITEM,
       ...MENU_ITEMS,
     ],

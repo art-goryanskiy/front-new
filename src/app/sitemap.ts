@@ -10,6 +10,12 @@ const SITE_URL =
 /** При сборке в Docker/CI без доступа к API — только статические URL (избегаем падения build) */
 const skipBuildTimeFetch = process.env.SKIP_SITEMAP_FETCH === "1";
 
+function toValidDate(value: unknown): Date {
+  if (value == null) return new Date();
+  const d = new Date(value as string | number | Date);
+  return Number.isNaN(d.getTime()) ? new Date() : d;
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [programs, categories, news] = skipBuildTimeFetch
     ? [[], [], []]
@@ -22,9 +28,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const programUrls: MetadataRoute.Sitemap = programs.map(
     (program) => ({
       url: `${SITE_URL}/programs/${program.id}`,
-      lastModified: program.updatedAt
-        ? new Date(program.updatedAt)
-        : new Date(),
+      lastModified: toValidDate(program.updatedAt),
       changeFrequency: "weekly",
       priority: 0.8,
     })
@@ -33,9 +37,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const categoryUrls: MetadataRoute.Sitemap = categories.map(
     (category) => ({
       url: `${SITE_URL}/categories/${category.id}`,
-      lastModified: category.updatedAt
-        ? new Date(category.updatedAt)
-        : new Date(),
+      lastModified: toValidDate(category.updatedAt),
       changeFrequency: "weekly",
       priority: 0.7,
     })
@@ -43,7 +45,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const newsUrls: MetadataRoute.Sitemap = news.map((item) => ({
     url: `${SITE_URL}/news/${item.id}`,
-    lastModified: item.date ? new Date(item.date) : new Date(),
+    lastModified: toValidDate(item.date),
     changeFrequency: "monthly" as const,
     priority: 0.6,
   }));
