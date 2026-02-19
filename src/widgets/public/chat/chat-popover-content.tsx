@@ -93,7 +93,7 @@ export function ChatPopoverContent() {
 
   useEffect(() => {
     if (scrollRef.current && messages.length) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      scrollRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages.length]);
 
@@ -138,31 +138,31 @@ export function ChatPopoverContent() {
         )}
       </div>
 
-      <ScrollArea className="flex-1 px-4 py-3" asChild>
-        <div
-          ref={scrollRef}
-          className="flex h-full flex-col gap-3 overflow-y-auto"
-        >
+      <ScrollArea className="flex-1 px-4 py-3">
+        <div className="flex h-full min-h-[200px] flex-col gap-3">
           {chatLoading || (chat && messagesLoading) ? (
-            <div className="flex flex-1 items-center justify-center text-sm text-muted-foreground">
+            <div className="flex flex-1 items-center justify-center py-8 text-sm text-muted-foreground">
               Загрузка…
             </div>
           ) : !chat ? (
-            <div className="flex flex-1 items-center justify-center text-sm text-muted-foreground">
+            <div className="flex flex-1 items-center justify-center py-8 text-sm text-muted-foreground">
               Напишите первое сообщение — мы создадим чат и ответим.
             </div>
           ) : messages.length === 0 ? (
-            <div className="flex flex-1 items-center justify-center text-sm text-muted-foreground">
+            <div className="flex flex-1 items-center justify-center py-8 text-sm text-muted-foreground">
               Пока нет сообщений.
             </div>
           ) : (
-            messages.map((msg) => (
-              <MessageBubble
-                key={msg.id}
-                message={msg}
-                isOwn={msg.senderId === user.id && !msg.isFromAdmin}
-              />
-            ))
+            <>
+              {messages.map((msg) => (
+                <MessageBubble
+                  key={msg.id}
+                  message={msg}
+                  isOwn={msg.senderId === user.id && !msg.isFromAdmin}
+                />
+              ))}
+              <div ref={scrollRef} aria-hidden />
+            </>
           )}
         </div>
       </ScrollArea>

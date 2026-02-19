@@ -6,6 +6,7 @@ import { generateMetadata as generateSeoMetadata } from "@/shared/lib/seo/metada
 import { generateOrganizationSchema } from "@/shared/lib/seo/structured-data";
 import { PublicFooter } from "@/widgets/public/footer/public-footer";
 import { PublicHeader } from "@/widgets/public/header/public-header";
+import { PublicChatWidget } from "@/widgets/public/chat/public-chat-widget";
 import { CategoryTypeTiles } from "@/widgets/public/home/category-type-tiles";
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
@@ -87,6 +88,7 @@ export default async function Home() {
           <FreshNewsCarouselSection />
         </main>
         <PublicFooter />
+        <PublicChatWidget />
       </div>
     </>
   );
