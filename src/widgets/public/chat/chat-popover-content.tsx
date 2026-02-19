@@ -8,7 +8,6 @@ import { useAuthUser } from "@/shared/store/auth-store";
 import { useMyChat } from "@/entities/chat/api/use-my-chat";
 import { useChatMessages } from "@/entities/chat/api/use-chat-messages";
 import { useSendMessage } from "@/entities/chat/api/use-send-message";
-import { useChatSocket } from "@/entities/chat/api/use-chat-socket";
 import type { ChatMessage } from "@/shared/api/chat.types";
 import { Send } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -73,7 +72,11 @@ function MessageBubble({
   );
 }
 
-export function ChatPopoverContent() {
+interface ChatPopoverContentProps {
+  refetchMessagesRef: React.MutableRefObject<(() => void) | null>;
+}
+
+export function ChatPopoverContent({ refetchMessagesRef }: ChatPopoverContentProps) {
   const user = useAuthUser();
   const { chat, loading: chatLoading, refetch: refetchChat } = useMyChat({
     skip: !user,
@@ -86,12 +89,12 @@ export function ChatPopoverContent() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleNewMessage = useCallback(() => {
-    refetchMessages();
-    refetchChat();
-  }, [refetchMessages, refetchChat]);
-
-  useChatSocket(chat?.id ?? null, handleNewMessage);
+  useEffect(() => {
+    refetchMessagesRef.current = refetchMessages;
+    return () => {
+      refetchMessagesRef.current = null;
+    };
+  }, [refetchMessagesRef, refetchMessages]);
 
   useEffect(() => {
     if (scrollRef.current && messages.length) {
