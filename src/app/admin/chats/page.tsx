@@ -143,7 +143,9 @@ function AdminChatsListSkeleton() {
 }
 
 export default function AdminChatsPage() {
-  const [statusFilter, setStatusFilter] = useState<ChatStatus | "all">("all");
+  const [statusFilter, setStatusFilter] = useState<ChatStatus | "all">(
+    ChatStatus.Open
+  );
   const [assignedToMe, setAssignedToMe] = useState<boolean | undefined>(
     undefined
   );

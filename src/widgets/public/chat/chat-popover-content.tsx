@@ -113,10 +113,9 @@ export function ChatPopoverContent({ refetchMessagesRef }: ChatPopoverContentPro
         body,
       });
       form.reset();
+      refetchChat();
       if (chat?.id) {
         refetchMessages();
-      } else {
-        refetchChat();
       }
       inputRef.current?.focus();
     } catch {
