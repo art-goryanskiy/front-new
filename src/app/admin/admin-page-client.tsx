@@ -142,7 +142,7 @@ export const AdminPageClient = memo(function AdminPageClient() {
               <Surface
                 key={t.href}
                 variant="floating"
-                className="p-4 sm:p-5"
+                className="p-4 sm:p-5 shadow-lg shadow-black/[0.04] ring-1 ring-border/30 dark:ring-white/5"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 space-y-2">

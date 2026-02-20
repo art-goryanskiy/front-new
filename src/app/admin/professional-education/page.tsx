@@ -6,9 +6,12 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
 import { CategoryType } from "@/shared/api/generated/graphql";
+import { GLASS_CLASSES } from "@/shared/ui/glass/glass-constants";
+import { AddProgramHeaderButton } from "@/widgets/admin/programs-by-type/add-program-header-button";
 import { ProgramsByTypeView } from "@/widgets/admin/programs-by-type/programs-by-type-view";
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useState } from "react";
 import { CategoryPage } from "../category-page/category-page";
 
 const ProgramModal = lazy(() =>
@@ -25,38 +28,61 @@ const DeleteProgramModal = lazy(() =>
   )
 );
 
+/** Высота липкого блока (табы + заголовок) для расчёта top у DataToolbar */
+const STICKY_BLOCK_OFFSET = "6.5rem";
+
 export default function ProfessionalEducationPage() {
+  const [tab, setTab] = useState<"categories" | "programs">("categories");
+
+  const sectionTitle =
+    tab === "categories"
+      ? "Профессиональное обучение"
+      : "Программы • Проф. обучение";
+
   return (
     <>
       <Tabs
-        defaultValue="categories"
-        className="space-y-4 [--admin-tabs-offset:3rem]"
+        value={tab}
+        onValueChange={(v) => setTab(v as "categories" | "programs")}
+        className="space-y-4 [--admin-tabs-offset:var(--sticky-offset)]"
+        style={{ "--sticky-offset": STICKY_BLOCK_OFFSET } as React.CSSProperties}
       >
-        <div className="sticky top-(--admin-header-offset) z-40 w-full sm:w-fit">
-          <div className="rounded-2xl border border-border/60 bg-background/70 p-1 shadow-sm backdrop-blur-xl">
+        {/* Липкий блок: табы + заголовок — заголовок не уезжает под табы */}
+        <div className={cn("sticky top-(--admin-header-offset) z-40 w-full space-y-3 rounded-2xl p-4 shadow-lg shadow-black/5", GLASS_CLASSES.panelWithRing)}>
+          <div className="rounded-xl border border-border/40 bg-background/60 p-1 shadow-inner backdrop-blur-sm">
             <TabsList className="w-full border-0 bg-transparent p-0 shadow-none sm:w-auto">
-              <TabsTrigger value="categories" className="flex-1">
+              <TabsTrigger value="categories" className="flex-1 font-semibold">
                 Категории
               </TabsTrigger>
-              <TabsTrigger value="programs" className="flex-1">
+              <TabsTrigger value="programs" className="flex-1 font-semibold">
                 Программы
               </TabsTrigger>
             </TabsList>
           </div>
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border/40 pt-3">
+            <h2 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
+              {sectionTitle}
+            </h2>
+            {tab === "programs" ? (
+              <AddProgramHeaderButton />
+            ) : null}
+          </div>
         </div>
 
-        <TabsContent value="categories">
+        <TabsContent value="categories" className="mt-0">
           <CategoryPage
             type={CategoryType.ProfessionalEducation}
             title="Профессиональное обучение"
             description="Управление категориями профессионального обучения"
+            suppressHeaderTitle
           />
         </TabsContent>
 
-        <TabsContent value="programs">
+        <TabsContent value="programs" className="mt-0">
           <ProgramsByTypeView
             type={CategoryType.ProfessionalEducation}
             title="Программы • Проф. обучение"
+            suppressTitle
           />
         </TabsContent>
       </Tabs>

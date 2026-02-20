@@ -44,9 +44,14 @@ export function createAuthErrorLink(): ErrorLink {
       })
     ).pipe(
       switchMap((result) => {
-        const user = result.data?.refreshToken;
-        if (user) {
-          useAuthStore.getState().setUser(user);
+        const refreshed = result.data?.refreshToken;
+        if (refreshed) {
+          const current = useAuthStore.getState().user;
+          // RefreshToken не возвращает profile — не затираем profile/avatar из стора
+          const merged: UserEntity = current?.profile && !refreshed.profile
+            ? { ...refreshed, profile: current.profile }
+            : refreshed;
+          useAuthStore.getState().setUser(merged);
           return forward(operation);
         }
         useAuthStore.getState().logout();

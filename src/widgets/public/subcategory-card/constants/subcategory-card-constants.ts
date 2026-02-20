@@ -1,5 +1,5 @@
 export const SUBCATEGORY_CARD_CLASSES = {
-  card: "group relative h-full overflow-hidden rounded-2xl border border-border/60 bg-background/60 shadow-sm backdrop-blur-xl transition-[border,transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:border-border/80 hover:shadow-lg",
+  card: "group relative h-full overflow-hidden rounded-2xl border border-border/60 bg-background/60 shadow-sm backdrop-blur-xl transition-[border,transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:border-border/80 hover:shadow-lg dark:border-primary/20 dark:shadow-[var(--card-outline),var(--card-glow)] dark:hover:border-primary/30 dark:hover:shadow-[var(--card-outline-hover),var(--card-glow-hover)]",
 
   imageWrapper:
     "relative h-12 w-12 shrink-0 overflow-hidden rounded-xl border border-border/60 bg-background/60 shadow-sm backdrop-blur",

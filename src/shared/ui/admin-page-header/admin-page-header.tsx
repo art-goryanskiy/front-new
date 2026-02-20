@@ -15,6 +15,8 @@ interface AdminPageHeaderProps {
     icon?: IconName;
   };
   variant?: "default" | "gradient";
+  /** Скрыть заголовок (если он вынесен в sticky на странице) */
+  hideTitle?: boolean;
 }
 
 export const AdminPageHeader = memo(function AdminPageHeader({
@@ -22,6 +24,7 @@ export const AdminPageHeader = memo(function AdminPageHeader({
   description,
   actionButton,
   variant = "gradient",
+  hideTitle,
 }: AdminPageHeaderProps) {
   const titleClassName =
     variant === "gradient"
@@ -41,7 +44,7 @@ export const AdminPageHeader = memo(function AdminPageHeader({
 
       <div className="relative z-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
         <div className="min-w-0 flex-1 space-y-2">
-          <h1 className={titleClassName}>{title}</h1>
+          {!hideTitle && <h1 className={titleClassName}>{title}</h1>}
           {description ? (
             <p className="text-sm text-muted-foreground sm:text-base">
               {description}
