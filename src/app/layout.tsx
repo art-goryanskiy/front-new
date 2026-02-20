@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { Providers } from "@/shared/lib/providers";
+import { getViewerServer } from "@/shared/api/server/auth";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -58,15 +60,24 @@ export const metadata: Metadata = {
   manifest: "/site.webmanifest",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const cookie = cookieStore.toString();
+  const viewer = await getViewerServer(cookie);
+  const initialAuth = {
+    user: viewer,
+    isAuthenticated: !!viewer,
+    isLoading: false,
+  } as const;
+
   return (
     <html lang="ru" suppressHydrationWarning>
       <body className="bg-background text-foreground antialiased">
-        <Providers>{children}</Providers>
+        <Providers initialAuth={initialAuth}>{children}</Providers>
       </body>
     </html>
   );

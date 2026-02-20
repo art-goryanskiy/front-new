@@ -4,6 +4,7 @@ import { lazy, Suspense } from "react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { ApolloClientProvider } from "./apollo/provider";
 import { AuthInitializer } from "./auth/auth-initializer";
+import type { InitialAuthState } from "@/shared/store/auth-store";
 
 const Toaster = lazy(() =>
   import("@/widgets/admin/toaster/toaster").then((mod) => ({
@@ -13,8 +14,10 @@ const Toaster = lazy(() =>
 
 export function Providers({
   children,
+  initialAuth,
 }: {
   children: React.ReactNode;
+  initialAuth?: InitialAuthState;
 }) {
   return (
     <NextThemesProvider
@@ -23,7 +26,7 @@ export function Providers({
       enableSystem
     >
       <ApolloClientProvider>
-        <AuthInitializer />
+        <AuthInitializer initialAuth={initialAuth} />
         {children}
         <Suspense fallback={null}>
           <Toaster />
