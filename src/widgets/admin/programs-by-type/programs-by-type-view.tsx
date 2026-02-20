@@ -5,9 +5,11 @@ import { useProgramsPage } from "@/entities/program/api/use-programs-page";
 import type {
   CategoryEntity,
   CategoryType,
+  ProgramEntity,
 } from "@/shared/api/generated/graphql";
 import { useDebounce } from "@/shared/lib/hooks/use-debounce";
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -95,20 +97,21 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
     setHeaderState(categoryId, type);
   }, [categoryId, type, setHeaderState]);
 
-  // pagination: increase limit, offset always 0
   const [page, setPage] = useState(1);
-  const limit = PAGE_SIZE * page;
+  const [accumulated, setAccumulated] = useState<ProgramEntity[]>([]);
+  const prevLoadingRef = useRef(false);
 
   const { sortBy, sortOrder } = useMemo(() => mapSort(sort), [sort]);
 
   const filter = useMemo(() => {
     const search = debouncedQ.trim();
+    const offset = (page - 1) * PAGE_SIZE;
 
     const base = {
       sortBy,
       sortOrder,
-      limit,
-      offset: 0,
+      limit: PAGE_SIZE,
+      offset,
     };
 
     if (categoryId !== "all") {
@@ -122,14 +125,27 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
     return search
       ? { ...base, categoryIds, search }
       : { ...base, categoryIds };
-  }, [categoryId, categoryIds, debouncedQ, sortBy, sortOrder, limit]);
+  }, [categoryId, categoryIds, debouncedQ, sortBy, sortOrder, page]);
 
   const { items, total, loading, error } = useProgramsPage(filter);
+
+  useEffect(() => {
+    if (!loading && page === 1 && items.length > 0 && accumulated.length === 0) {
+      setAccumulated(items);
+    } else if (prevLoadingRef.current && !loading) {
+      if (page === 1) {
+        setAccumulated(items);
+      } else {
+        setAccumulated((prev) => [...prev, ...items]);
+      }
+    }
+    prevLoadingRef.current = loading;
+  }, [loading, page, items, accumulated.length]);
 
   const localQuery = useMemo(() => q.trim().toLowerCase(), [q]);
 
   const filteredItems = useMemo(() => {
-    return items.filter((p) => {
+    return accumulated.filter((p) => {
       if (
         views === "popular" &&
         (p.views || 0) <= POPULAR_VIEWS_THRESHOLD
@@ -142,22 +158,16 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
         if (pricing === "noPrice" && hasPrice) return false;
       }
 
-      // local search (instant), while debouncedQ used for server
       if (!localQuery) return true;
       const haystack =
         `${p.title} ${p.slug} ${p.description || ""}`.toLowerCase();
       return haystack.includes(localQuery);
     });
-  }, [items, views, pricing, localQuery]);
-
-  const countsText = useMemo(
-    () => `${filteredItems.length} / ${total}`,
-    [filteredItems.length, total]
-  );
+  }, [accumulated, views, pricing, localQuery]);
 
   const canLoadMore = useMemo(
-    () => items.length < total,
-    [items.length, total]
+    () => accumulated.length < total,
+    [accumulated.length, total]
   );
 
   const handleLoadMore = useCallback(() => {
@@ -167,16 +177,9 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
   if (loading && page === 1) return <CategoryProgramsViewSkeleton />;
   if (error) return <ErrorState message={error.message} />;
 
-  const countsBadge = (
-    <span className="hidden rounded-full border border-border/60 bg-muted/20 px-2.5 py-1 text-xs text-muted-foreground sm:inline-flex">
-      {countsText}
-    </span>
-  );
-
   return (
     <DashboardSection
       title={title}
-      actions={suppressTitle ? undefined : countsBadge}
       suppressTitle={suppressTitle}
     >
       <div
@@ -190,17 +193,8 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
             searchValue={q}
             onSearchValueChange={setQ}
             searchPlaceholder="Поиск по программам…"
-            leftSlot={
-              <div className="flex items-center gap-2">
-                {suppressTitle ? countsBadge : null}
-              </div>
-            }
             rightSlot={
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="hidden text-[11px] font-medium uppercase tracking-wider text-muted-foreground sm:inline">
-                  Фильтры
-                </span>
-                <div className="flex items-center gap-2 rounded-lg border border-border/40 bg-background/40 px-2 py-1.5">
+              <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border/40 bg-background/50 px-2.5 py-1.5">
                   <Select
                     value={categoryId}
                     onValueChange={setCategoryId}
@@ -263,7 +257,6 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
                       </SelectItem>
                     </SelectContent>
                   </Select>
-                </div>
               </div>
             }
           />
@@ -283,16 +276,26 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
                 caption={`Показано ${filteredItems.length} из ${total}`}
               />
 
-              <div className="mt-4 flex justify-center">
-                <Button
-                  variant="outline"
-                  className="font-semibold"
-                  onClick={handleLoadMore}
-                  disabled={!canLoadMore || loading}
-                >
-                  {loading ? "Загрузка…" : "Показать ещё"}
-                </Button>
-              </div>
+              {canLoadMore && (
+                <div className="mt-6 flex justify-center">
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="min-w-[200px] rounded-xl border-border/60 bg-background/60 font-semibold shadow-sm transition-all hover:bg-background/80 hover:shadow focus-visible:ring-2 focus-visible:ring-primary/20"
+                    onClick={handleLoadMore}
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <span className="flex items-center gap-2">
+                        <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                        Загрузка…
+                      </span>
+                    ) : (
+                      "Показать ещё"
+                    )}
+                  </Button>
+                </div>
+              )}
             </>
           )}
         </div>
@@ -336,10 +339,10 @@ export const ProgramsByTypeView = memo(function ProgramsByTypeView({
     [categoriesOfType]
   );
 
-  const paginationKey = useMemo(
+  const requestKey = useMemo(
     () =>
-      `${type}|${categoryId}|${debouncedQ}|${pricing}|${views}|${sort}`,
-    [type, categoryId, debouncedQ, pricing, views, sort]
+      `${type}|${categoryId}|${debouncedQ}|${sort}|${categoryIds.join(",")}`,
+    [type, categoryId, debouncedQ, sort, categoryIds]
   );
 
   if (categoriesLoading) return <CategoryProgramsViewSkeleton />;
@@ -357,7 +360,7 @@ export const ProgramsByTypeView = memo(function ProgramsByTypeView({
 
   return (
     <ProgramsByTypeResults
-      key={paginationKey}
+      key={requestKey}
       type={type}
       title={title}
       categoriesOfType={categoriesOfType}

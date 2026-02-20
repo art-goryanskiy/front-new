@@ -26,7 +26,7 @@ export function DataToolbar({
   return (
     <div
       className={cn(
-        "sticky top-[calc(var(--admin-header-offset)+var(--admin-tabs-offset,0px))] z-30 rounded-2xl p-3 shadow-md",
+        "sticky top-[calc(var(--admin-header-offset)+var(--admin-tabs-offset,0px))] z-30 rounded-2xl p-4 shadow-md",
         GLASS_CLASSES.panelWithRing,
         className
       )}
@@ -34,12 +34,12 @@ export function DataToolbar({
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
           <div className="relative w-full sm:w-[320px]">
-            <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               value={searchValue}
               onChange={(e) => onSearchValueChange(e.target.value)}
               placeholder={searchPlaceholder}
-              className="h-9 bg-background/60 pr-10 pl-9"
+              className="h-10 rounded-xl bg-background/70 pr-10 pl-10 border-border/60"
             />
             {hasValue ? (
               <Button

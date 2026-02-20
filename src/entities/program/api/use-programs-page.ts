@@ -22,7 +22,7 @@ export function useProgramsPage(
       fetchPolicy: filter?.search
         ? "cache-and-network"
         : "cache-first",
-      notifyOnNetworkStatusChange: false,
+      notifyOnNetworkStatusChange: true,
       skip: options?.skip || false,
     });
 

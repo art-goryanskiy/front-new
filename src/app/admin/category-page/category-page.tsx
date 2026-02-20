@@ -44,7 +44,6 @@ export const CategoryPage = memo(function CategoryPage({
   const [q, setQ] = useState("");
   const [programsFilter, setProgramsFilter] =
     useState<ProgramsFilter>("all");
-  const [counts, setCounts] = useState({ shown: 0, total: 0 });
 
   const handleCreateCategory = useCallback(() => {
     openCreateCategoryModal(type);
@@ -64,14 +63,7 @@ export const CategoryPage = memo(function CategoryPage({
         }}
       />
 
-      <DashboardSection
-        title="Список категорий"
-        actions={
-          <span className="hidden rounded-full border border-border/60 bg-muted/20 px-2.5 py-1 text-xs text-muted-foreground sm:inline-flex">
-            {counts.shown} / {counts.total}
-          </span>
-        }
-      >
+      <DashboardSection title="Список категорий">
         <DataToolbar
           searchValue={q}
           onSearchValueChange={setQ}
@@ -101,7 +93,6 @@ export const CategoryPage = memo(function CategoryPage({
           type={type}
           searchQuery={q}
           programsFilter={programsFilter}
-          onCountsChange={setCounts}
         />
       </DashboardSection>
 

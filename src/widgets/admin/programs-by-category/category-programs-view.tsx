@@ -1,9 +1,13 @@
 "use client";
 
 import { useProgramsPage } from "@/entities/program/api/use-programs-page";
-import type { CategoryType } from "@/shared/api/generated/graphql";
+import type {
+  CategoryType,
+  ProgramEntity,
+} from "@/shared/api/generated/graphql";
 import { useDebounce } from "@/shared/lib/hooks/use-debounce";
-import { memo, useCallback, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -58,30 +62,59 @@ export const CategoryProgramsView = memo(
     const [views, setViews] = useState<ViewsFilter>("all");
     const [sort, setSort] = useState<Sort>("updatedDesc");
 
+    const requestKey = useMemo(
+      () => `${categoryId}|${debouncedQ}|${sort}`,
+      [categoryId, debouncedQ, sort]
+    );
+
+    const requestKeyRef = useRef(requestKey);
+    const keyJustChanged = requestKeyRef.current !== requestKey;
+    if (keyJustChanged) requestKeyRef.current = requestKey;
+
     const [page, setPage] = useState(1);
-    const limit = PAGE_SIZE * page;
+    const [accumulated, setAccumulated] = useState<ProgramEntity[]>([]);
+    const prevLoadingRef = useRef(false);
 
     const { sortBy, sortOrder } = useMemo(
       () => mapSort(sort),
       [sort]
     );
 
+    useEffect(() => {
+      setPage(1);
+      setAccumulated([]);
+    }, [requestKey]);
+
     const filter = useMemo(() => {
       const search = debouncedQ.trim();
+      const offset = keyJustChanged ? 0 : (page - 1) * PAGE_SIZE;
       const base = {
         category: categoryId,
         sortBy,
         sortOrder,
-        limit,
-        offset: 0,
+        limit: PAGE_SIZE,
+        offset,
       };
       return search ? { ...base, search } : base;
-    }, [categoryId, debouncedQ, sortBy, sortOrder, limit]);
+    }, [categoryId, debouncedQ, sortBy, sortOrder, page, keyJustChanged]);
 
     const { items, total, loading, error } = useProgramsPage(filter);
 
+    useEffect(() => {
+      if (!loading && page === 1 && items.length > 0 && accumulated.length === 0) {
+        setAccumulated(items);
+      } else if (prevLoadingRef.current && !loading) {
+        if (page === 1) {
+          setAccumulated(items);
+        } else {
+          setAccumulated((prev) => [...prev, ...items]);
+        }
+      }
+      prevLoadingRef.current = loading;
+    }, [loading, page, items, accumulated.length]);
+
     const filteredItems = useMemo(() => {
-      return items.filter((p) => {
+      return accumulated.filter((p) => {
         if (
           views === "popular" &&
           (p.views || 0) <= POPULAR_VIEWS_THRESHOLD
@@ -96,16 +129,11 @@ export const CategoryProgramsView = memo(
 
         return true;
       });
-    }, [items, pricing, views]);
-
-    const countsText = useMemo(
-      () => `${filteredItems.length} / ${total}`,
-      [filteredItems.length, total]
-    );
+    }, [accumulated, pricing, views]);
 
     const canLoadMore = useMemo(
-      () => items.length < total,
-      [items.length, total]
+      () => accumulated.length < total,
+      [accumulated.length, total]
     );
 
     const handleLoadMore = useCallback(
@@ -122,14 +150,7 @@ export const CategoryProgramsView = memo(
     if (error) return <ErrorState message={error.message} />;
 
     return (
-      <DashboardSection
-        title="Программы"
-        actions={
-          <span className="hidden rounded-full border border-border/60 bg-muted/20 px-2.5 py-1 text-xs text-muted-foreground sm:inline-flex">
-            {countsText}
-          </span>
-        }
-      >
+      <DashboardSection title="Программы">
         <div className="space-y-4">
           <DataToolbar
             searchValue={q}
@@ -221,16 +242,26 @@ export const CategoryProgramsView = memo(
                 caption={`Показано ${filteredItems.length} из ${total}`}
               />
 
-              <div className="flex justify-center">
-                <Button
-                  variant="outline"
-                  className="font-semibold"
-                  onClick={handleLoadMore}
-                  disabled={!canLoadMore || loading}
-                >
-                  {loading ? "Загрузка…" : "Показать ещё"}
-                </Button>
-              </div>
+              {canLoadMore && (
+                <div className="mt-6 flex justify-center">
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="min-w-[200px] rounded-xl border-border/60 bg-background/60 font-semibold shadow-sm transition-all hover:bg-background/80 hover:shadow focus-visible:ring-2 focus-visible:ring-primary/20"
+                    onClick={handleLoadMore}
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <span className="flex items-center gap-2">
+                        <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                        Загрузка…
+                      </span>
+                    ) : (
+                      "Показать ещё"
+                    )}
+                  </Button>
+                </div>
+              )}
             </>
           )}
         </div>
