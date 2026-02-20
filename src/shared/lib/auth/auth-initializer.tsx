@@ -25,10 +25,9 @@ export function AuthInitializer({
     setLoading(false);
   }, [initialAuth, setUser, setLoading]);
 
-  // Me не вызываем при каждой загрузке — сессия уже из Viewer в layout.
-  // Полный профиль (аватар, имя и т.д.) подгружается только там, где нужен: профиль, оформление заказа.
+  // Me запрашиваем, когда есть user (из Viewer), но ещё нет профиля — чтобы подтянуть аватар и имя в хедере.
   useMe({
-    skip: !!user,
+    skip: !!user?.profile,
   });
 
   return null;
