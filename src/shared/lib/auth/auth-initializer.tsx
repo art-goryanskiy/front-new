@@ -25,11 +25,10 @@ export function AuthInitializer({
     setLoading(false);
   }, [initialAuth, setUser, setLoading]);
 
-  // Пропускаем запрос только если уже есть пользователь с профилем.
-  // После логина Login возвращает user без profile; если Me тогда упал — в сторе
-  // остаётся user без profile.avatar, и аватар не показывается до перезагрузки.
+  // Me не вызываем при каждой загрузке — сессия уже из Viewer в layout.
+  // Полный профиль (аватар, имя и т.д.) подгружается только там, где нужен: профиль, оформление заказа.
   useMe({
-    skip: !!user?.profile,
+    skip: !!user,
   });
 
   return null;
