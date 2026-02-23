@@ -30,8 +30,9 @@ import { ProgramTableSubprogramsContent } from "./cells/program-table-subprogram
 import { ProgramTableTitleContent } from "./cells/program-table-title-content";
 import { ProgramTableViewsContent } from "./cells/program-table-views-content";
 import { VirtualizedProgramTable } from "./virtualized-program-table";
+import { ADMIN_VIRTUALIZE_THRESHOLD } from "@/shared/constants/admin";
 
-const VIRTUALIZE_THRESHOLD = 40;
+const VIRTUALIZE_THRESHOLD = ADMIN_VIRTUALIZE_THRESHOLD;
 
 export const ProgramList = memo(function ProgramList({
   programs,

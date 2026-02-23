@@ -40,3 +40,55 @@ export function formatPricingAriaLabel(
   if (!price || price === 0) return `${hours} часов`;
   return `${hours} часов - ${formatPrice(price)} рублей`;
 }
+
+/**
+ * Форматирует дату в длинный формат с временем (для таблиц и карточек)
+ * Пример: «15 января 2025, 14:30»
+ */
+export function formatAdminDate(date: string | Date | null | undefined): string {
+  if (!date) return "—";
+  try {
+    return new Date(String(date)).toLocaleDateString("ru-RU", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  } catch {
+    return String(date);
+  }
+}
+
+/**
+ * Форматирует дату в короткий формат (для диапазонов, дат обучения)
+ * Пример: «15.01.2025»
+ */
+export function formatShortDate(date: string | Date | null | undefined): string {
+  if (!date) return "";
+  try {
+    return new Date(String(date)).toLocaleDateString("ru-RU", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  } catch {
+    return String(date);
+  }
+}
+
+/**
+ * Форматирует диапазон дат (для дат обучения)
+ * Пример: «15.01.2025 – 20.02.2025»
+ */
+export function formatDateRange(
+  start: string | Date | null | undefined,
+  end: string | Date | null | undefined
+): string {
+  const s = formatShortDate(start).trim();
+  const e = formatShortDate(end).trim();
+  if (s && e) return `${s}\u2013${e}`;
+  if (s) return s;
+  if (e) return e;
+  return "—";
+}

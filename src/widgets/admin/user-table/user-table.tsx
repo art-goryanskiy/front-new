@@ -15,6 +15,7 @@ import type {
   UserEntity,
   UserRole,
 } from "@/shared/api/generated/graphql";
+import { useDebounce } from "@/shared/lib/hooks/use-debounce";
 import { useUserModalState } from "@/shared/store/modal-store";
 import { EmptyState } from "@/shared/ui/empty-state/empty-state";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
@@ -43,44 +44,33 @@ export const UserTable = memo(function UserTable({
   statusFilter?: "all" | "active" | "unverified" | "blocked";
   onCountsChange?: (c: { shown: number; total: number }) => void;
 }) {
-  const { users, loading, error } = useUsers();
+  // Дебаунс поискового запроса перед отправкой на сервер
+  const debouncedSearch = useDebounce(searchQuery.trim(), 300);
+
+  // search и isBlocked обрабатываются сервером; role и isEmailVerified — на клиенте
+  const { users, loading, error } = useUsers({
+    search: debouncedSearch || undefined,
+    isBlocked: statusFilter === "blocked" ? true : undefined,
+  });
   const { openEditUserModal, openDeleteUserModal } =
     useUserModalState();
 
-  const normalizedQuery = useMemo(
-    () => searchQuery.trim().toLowerCase(),
-    [searchQuery]
-  );
-
   const filteredUsers = useMemo(() => {
     return users.filter((u) => {
-      // role filter
+      // Роль — только клиентская фильтрация (сервер не поддерживает)
       if (roleFilter !== "all" && u.role !== roleFilter) return false;
 
-      // status filter
-      if (statusFilter !== "all") {
-        const isActive = !u.isBlocked && u.isEmailVerified;
-        const isUnverified = !u.isBlocked && !u.isEmailVerified;
-
-        if (statusFilter === "active" && !isActive) return false;
-        if (statusFilter === "unverified" && !isUnverified)
-          return false;
-        if (statusFilter === "blocked" && !u.isBlocked) return false;
+      // active/unverified фильтры — клиентские (isBlocked=blocked уже на сервере)
+      if (statusFilter === "active") {
+        if (u.isBlocked || !u.isEmailVerified) return false;
+      }
+      if (statusFilter === "unverified") {
+        if (u.isBlocked || u.isEmailVerified) return false;
       }
 
-      // search filter
-      if (!normalizedQuery) return true;
-
-      const firstName = u.firstName || u.profile?.firstName || "";
-      const lastName = u.lastName || u.profile?.lastName || "";
-      const phone = u.phone || u.profile?.phone || "";
-      const email = u.email || "";
-
-      const haystack =
-        `${firstName} ${lastName} ${email} ${phone}`.toLowerCase();
-      return haystack.includes(normalizedQuery);
+      return true;
     });
-  }, [users, normalizedQuery, roleFilter, statusFilter]);
+  }, [users, roleFilter, statusFilter]);
 
   useEffect(() => {
     onCountsChange?.({
@@ -333,7 +323,7 @@ export const UserTable = memo(function UserTable({
 
             <TableCaption className={TABLE_CLASSES.caption}>
               Показано {filteredUsers.length} из {users.length}
-              {normalizedQuery ? ` • фильтр: “${searchQuery}”` : ""}
+              {debouncedSearch ? ` • фильтр: "${debouncedSearch}"` : ""}
               {roleFilter !== "all" ? ` • роль: ${roleFilter}` : ""}
               {statusFilter !== "all"
                 ? ` • статус: ${statusFilter}`

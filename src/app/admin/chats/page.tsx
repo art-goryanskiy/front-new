@@ -3,11 +3,15 @@
 import { memo, useMemo, useState } from "react";
 import Link from "next/link";
 import { useAdminChats } from "@/entities/chat/api/use-admin-chats";
+import { ADMIN_CHATS_LIMIT } from "@/shared/constants/admin";
 import { useAdminUser } from "@/entities/user/api/use-admin-user";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
+import { EmptyState } from "@/shared/ui/empty-state/empty-state";
 import { Surface } from "@/shared/ui/surface/surface";
 import { AdminPageHeader } from "@/shared/ui/admin-page-header/admin-page-header";
 import { DashboardSection } from "@/shared/ui/dashboard-section/dashboard-section";
+import { DataToolbar } from "@/shared/ui/data-toolbar/data-toolbar";
+import { formatAdminDate } from "@/shared/lib/helpers/format-helpers";
 import {
   type AdminChatFieldsFragment,
   ChatStatus,
@@ -29,20 +33,6 @@ const CHAT_STATUS_OPTIONS: { value: ChatStatus | "all"; label: string }[] = [
   { value: ChatStatus.Closed, label: "Закрыт" },
 ];
 
-function formatDate(date: string | unknown): string {
-  if (!date) return "—";
-  try {
-    return new Date(String(date)).toLocaleDateString("ru-RU", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  } catch {
-    return String(date);
-  }
-}
 
 function shortUserId(userId: string): string {
   if (userId.length <= 12) return userId;
@@ -100,7 +90,7 @@ const ChatRow = memo(function ChatRow({
               {preview}
             </p>
             <p className="text-xs text-muted-foreground">
-              {formatDate(chat.createdAt)}
+              {formatAdminDate(chat.createdAt)}
               {chat.assignedToId && (
                 <> · Назначен: {shortUserId(chat.assignedToId)}</>
               )}
@@ -143,6 +133,7 @@ function AdminChatsListSkeleton() {
 }
 
 export default function AdminChatsPage() {
+  const [q, setQ] = useState("");
   const [statusFilter, setStatusFilter] = useState<ChatStatus | "all">(
     ChatStatus.Open
   );
@@ -155,7 +146,7 @@ export default function AdminChatsPage() {
       status: statusFilter === "all" ? undefined : statusFilter,
       assignedToMe:
         assignedToMe === undefined ? undefined : assignedToMe,
-      limit: 50,
+      limit: ADMIN_CHATS_LIMIT,
       offset: 0,
     }),
     [statusFilter, assignedToMe]
@@ -171,46 +162,55 @@ export default function AdminChatsPage() {
       />
 
       <DashboardSection title="Список чатов">
-        <div className="mb-4 flex flex-wrap items-center gap-3">
-          <Select
-            value={statusFilter}
-            onValueChange={(v) => setStatusFilter(v as ChatStatus | "all")}
-          >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Статус" />
-            </SelectTrigger>
-            <SelectContent>
-              {CHAT_STATUS_OPTIONS.map((opt) => (
-                <SelectItem key={opt.value} value={opt.value}>
-                  {opt.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select
-            value={
-              assignedToMe === undefined
-                ? "all"
-                : assignedToMe
-                  ? "me"
-                  : "other"
-            }
-            onValueChange={(v) =>
-              setAssignedToMe(
-                v === "all" ? undefined : v === "me"
-              )
-            }
-          >
-            <SelectTrigger className="w-[200px]">
-              <SelectValue placeholder="Назначение" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Все чаты</SelectItem>
-              <SelectItem value="me">Назначены на меня</SelectItem>
-              <SelectItem value="other">Не назначены / другие</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+        <DataToolbar
+          searchValue={q}
+          onSearchValueChange={setQ}
+          searchPlaceholder="Поиск по чатам…"
+          rightSlot={
+            <div className="flex flex-wrap items-center gap-2">
+              <Select
+                value={statusFilter}
+                onValueChange={(v) =>
+                  setStatusFilter(v as ChatStatus | "all")
+                }
+              >
+                <SelectTrigger className="h-9 w-[160px] bg-background/60">
+                  <SelectValue placeholder="Статус" />
+                </SelectTrigger>
+                <SelectContent>
+                  {CHAT_STATUS_OPTIONS.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select
+                value={
+                  assignedToMe === undefined
+                    ? "all"
+                    : assignedToMe
+                      ? "me"
+                      : "other"
+                }
+                onValueChange={(v) =>
+                  setAssignedToMe(v === "all" ? undefined : v === "me")
+                }
+              >
+                <SelectTrigger className="h-9 w-[200px] bg-background/60">
+                  <SelectValue placeholder="Назначение" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Все чаты</SelectItem>
+                  <SelectItem value="me">Назначены на меня</SelectItem>
+                  <SelectItem value="other">
+                    Не назначены / другие
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          }
+        />
 
         {error && (
           <div className="space-y-3">
@@ -224,9 +224,11 @@ export default function AdminChatsPage() {
         {!error && loading && <AdminChatsListSkeleton />}
 
         {!error && !loading && chats.length === 0 && (
-          <div className="rounded-2xl border border-dashed border-border/60 bg-muted/10 py-12 text-center text-muted-foreground">
-            Чатов пока нет
-          </div>
+          <EmptyState
+            title="Чатов пока нет"
+            description="Обращения пользователей появятся здесь после создания."
+            icon={<MessageCircle className="h-8 w-8 text-muted-foreground" />}
+          />
         )}
 
         {!error && !loading && chats.length > 0 && (
