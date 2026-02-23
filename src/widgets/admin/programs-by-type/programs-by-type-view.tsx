@@ -9,6 +9,11 @@ import type {
 } from "@/shared/api/generated/graphql";
 import { useDebounce } from "@/shared/lib/hooks/use-debounce";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+
+type PagingState = {
+  page: number;
+  accumulated: ProgramEntity[];
+};
 import { Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -47,7 +52,9 @@ function mapSort(sort: Sort): {
   return { sortBy: "updatedAt", sortOrder: "desc" };
 }
 
-const PAGE_SIZE = 30;
+import { ADMIN_PAGE_SIZE } from "@/shared/constants/admin";
+
+const PAGE_SIZE = ADMIN_PAGE_SIZE;
 
 const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
   type,
@@ -97,15 +104,16 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
     setHeaderState(categoryId, type);
   }, [categoryId, type, setHeaderState]);
 
-  const [page, setPage] = useState(1);
-  const [accumulated, setAccumulated] = useState<ProgramEntity[]>([]);
-  const prevLoadingRef = useRef(false);
+  const [paging, setPaging] = useState<PagingState>({
+    page: 1,
+    accumulated: [],
+  });
 
   const { sortBy, sortOrder } = useMemo(() => mapSort(sort), [sort]);
 
   const filter = useMemo(() => {
     const search = debouncedQ.trim();
-    const offset = (page - 1) * PAGE_SIZE;
+    const offset = (paging.page - 1) * PAGE_SIZE;
 
     const base = {
       sortBy,
@@ -125,27 +133,33 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
     return search
       ? { ...base, categoryIds, search }
       : { ...base, categoryIds };
-  }, [categoryId, categoryIds, debouncedQ, sortBy, sortOrder, page]);
+  }, [categoryId, categoryIds, debouncedQ, sortBy, sortOrder, paging.page]);
 
   const { items, total, loading, error } = useProgramsPage(filter);
 
+  const prevLoadingRef = useRef(false);
   useEffect(() => {
-    if (!loading && page === 1 && items.length > 0 && accumulated.length === 0) {
-      setAccumulated(items);
-    } else if (prevLoadingRef.current && !loading) {
-      if (page === 1) {
-        setAccumulated(items);
-      } else {
-        setAccumulated((prev) => [...prev, ...items]);
-      }
-    }
+    const wasLoading = prevLoadingRef.current;
     prevLoadingRef.current = loading;
-  }, [loading, page, items, accumulated.length]);
+
+    if (wasLoading && !loading) {
+      setPaging((prev) => ({
+        ...prev,
+        accumulated:
+          prev.page === 1
+            ? items
+            : [...prev.accumulated, ...items],
+      }));
+    }
+  }, [loading, items]);
+
+  // Компонент ремонтируется через key={requestKey} при смене фильтров,
+  // поэтому явный сброс paging не нужен — fresh state при каждом remount.
 
   const localQuery = useMemo(() => q.trim().toLowerCase(), [q]);
 
   const filteredItems = useMemo(() => {
-    return accumulated.filter((p) => {
+    return paging.accumulated.filter((p) => {
       if (
         views === "popular" &&
         (p.views || 0) <= POPULAR_VIEWS_THRESHOLD
@@ -163,18 +177,15 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
         `${p.title} ${p.slug} ${p.description || ""}`.toLowerCase();
       return haystack.includes(localQuery);
     });
-  }, [accumulated, views, pricing, localQuery]);
+  }, [paging.accumulated, views, pricing, localQuery]);
 
-  const canLoadMore = useMemo(
-    () => accumulated.length < total,
-    [accumulated.length, total]
-  );
+  const canLoadMore = paging.accumulated.length < total;
 
   const handleLoadMore = useCallback(() => {
-    setPage((p) => p + 1);
+    setPaging((prev) => ({ ...prev, page: prev.page + 1 }));
   }, []);
 
-  if (loading && page === 1) return <CategoryProgramsViewSkeleton />;
+  if (loading && paging.page === 1) return <CategoryProgramsViewSkeleton />;
   if (error) return <ErrorState message={error.message} />;
 
   return (

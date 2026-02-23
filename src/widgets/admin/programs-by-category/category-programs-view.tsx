@@ -49,7 +49,9 @@ function mapSort(sort: Sort): {
   return { sortBy: "updatedAt", sortOrder: "desc" };
 }
 
-const PAGE_SIZE = 30;
+import { ADMIN_PAGE_SIZE } from "@/shared/constants/admin";
+
+const PAGE_SIZE = ADMIN_PAGE_SIZE;
 
 export const CategoryProgramsView = memo(
   function CategoryProgramsView({

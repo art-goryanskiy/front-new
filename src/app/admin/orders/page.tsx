@@ -3,9 +3,14 @@
 import { memo, useMemo, useState } from "react";
 import Link from "next/link";
 import { useAdminOrders } from "@/entities/order/api/use-admin-orders";
+import { ADMIN_ORDERS_LIMIT } from "@/shared/constants/admin";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
 import { Surface } from "@/shared/ui/surface/surface";
-import { formatPriceWithCurrency } from "@/shared/lib/helpers/format-helpers";
+import {
+  formatAdminDate,
+  formatDateRange,
+  formatPriceWithCurrency,
+} from "@/shared/lib/helpers/format-helpers";
 import {
   ORDER_STATUS_LABELS,
   ORDER_STATUS_BADGE_CLASSES,
@@ -53,45 +58,6 @@ const STATUS_OPTIONS: {
   },
 ];
 
-function formatOrderDate(date: string | unknown): string {
-  if (!date) return "—";
-  try {
-    return new Date(String(date)).toLocaleDateString("ru-RU", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  } catch {
-    return String(date);
-  }
-}
-
-function formatShortDate(date: string | unknown): string {
-  if (!date) return "";
-  try {
-    return new Date(String(date)).toLocaleDateString("ru-RU", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
-  } catch {
-    return String(date);
-  }
-}
-
-function formatTrainingDates(
-  start: string | unknown,
-  end: string | unknown
-): string {
-  const s = formatShortDate(start).trim();
-  const e = formatShortDate(end).trim();
-  if (s && e) return `${s} – ${e}`;
-  if (s) return s;
-  if (e) return e;
-  return "—";
-}
 
 function orderSummary(order: OrderFieldsFragment) {
   const lines = order.lines ?? [];
@@ -127,12 +93,12 @@ const OrderRow = memo(function OrderRow({
     (order as { number?: string | null }).number ?? order.id;
   const customerDisplayName =
     order.customerDisplayName?.trim() || "—";
-  const trainingDates = formatTrainingDates(
+  const trainingDates = formatDateRange(
     order.trainingStartDate,
     order.trainingEndDate
   );
   const statusChangedAtFormatted = order.statusChangedAt
-    ? formatOrderDate(order.statusChangedAt)
+    ? formatAdminDate(order.statusChangedAt)
     : null;
 
   return (
@@ -160,7 +126,7 @@ const OrderRow = memo(function OrderRow({
               Сроки обучения: {trainingDates}
             </p>
             <p className="text-sm text-muted-foreground">
-              {formatOrderDate(order.createdAt)} · {programsCount}{" "}
+              {formatAdminDate(order.createdAt)} · {programsCount}{" "}
               поз. · {learnersCount} слуш.
               {firstProgramTitle ? ` · ${firstProgramTitle}` : ""}
             </p>
@@ -213,7 +179,7 @@ const AdminOrdersPage = memo(function AdminOrdersPage() {
     () =>
       statusFilter === "all"
         ? undefined
-        : { status: statusFilter, limit: 100, offset: 0 },
+        : { status: statusFilter, limit: ADMIN_ORDERS_LIMIT, offset: 0 },
     [statusFilter]
   );
 
