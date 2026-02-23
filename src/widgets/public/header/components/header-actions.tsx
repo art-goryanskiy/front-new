@@ -33,7 +33,7 @@ export const HeaderActions = memo(function HeaderActions({
   onLogout,
 }: HeaderActionsProps) {
   const { items } = useMyCart({ skip: !user });
-  const cartCount = items.length;
+  const cartCount = items.reduce((sum, i) => sum + i.quantity, 0);
 
   return (
     <div className={PUBLIC_HEADER_CLASSES.actions}>
