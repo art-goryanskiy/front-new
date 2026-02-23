@@ -50,29 +50,29 @@ export function useChatSocket(
     if (!origin) return;
 
     let socket: import("socket.io-client").Socket | null = null;
+    let cancelled = false;
 
-    const connect = () => {
-      import("socket.io-client").then(({ io }) => {
-        socket = io(origin, {
-          path: CHAT_SOCKET_PATH,
-          withCredentials: true,
-        });
+    import("socket.io-client").then(({ io }) => {
+      if (cancelled) return;
 
-        socket.on("connect", () => {
-          socket?.emit(EVENT_JOIN_CHAT, { chatId });
-        });
-
-        socket.on(EVENT_MESSAGE_NEW, (payload: ChatSocketNewMessagePayload) => {
-          if (payload.chatId === chatId) {
-            onNewMessageRef.current(payload);
-          }
-        });
+      socket = io(origin, {
+        path: CHAT_SOCKET_PATH,
+        withCredentials: true,
       });
-    };
 
-    connect();
+      socket.on("connect", () => {
+        socket?.emit(EVENT_JOIN_CHAT, { chatId });
+      });
+
+      socket.on(EVENT_MESSAGE_NEW, (payload: ChatSocketNewMessagePayload) => {
+        if (payload.chatId === chatId) {
+          onNewMessageRef.current(payload);
+        }
+      });
+    });
 
     return () => {
+      cancelled = true;
       if (socket) {
         socket.removeAllListeners();
         socket.disconnect();

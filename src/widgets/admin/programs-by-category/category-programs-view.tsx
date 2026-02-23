@@ -7,6 +7,12 @@ import type {
 } from "@/shared/api/generated/graphql";
 import { useDebounce } from "@/shared/lib/hooks/use-debounce";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+
+type PagingState = {
+  key: string;
+  page: number;
+  accumulated: ProgramEntity[];
+};
 import { Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -67,54 +73,69 @@ export const CategoryProgramsView = memo(
       [categoryId, debouncedQ, sort]
     );
 
-    const requestKeyRef = useRef(requestKey);
-    const keyJustChanged = requestKeyRef.current !== requestKey;
-    if (keyJustChanged) requestKeyRef.current = requestKey;
+    // Объединяем key + page + accumulated в одном объекте, чтобы избежать
+    // рассинхронизации состояния и устранить render-time side effect keyJustChanged.
+    const [paging, setPaging] = useState<PagingState>({
+      key: requestKey,
+      page: 1,
+      accumulated: [],
+    });
 
-    const [page, setPage] = useState(1);
-    const [accumulated, setAccumulated] = useState<ProgramEntity[]>([]);
-    const prevLoadingRef = useRef(false);
+    // Производное состояние: если requestKey изменился, сразу применяем page=1
+    // без дополнительного рендера — нет мутаций в теле рендера.
+    const effectivePaging =
+      paging.key === requestKey
+        ? paging
+        : { key: requestKey, page: 1, accumulated: [] };
+
+    // Фиксируем изменение ключа в state (для корректного handleLoadMore)
+    useEffect(() => {
+      if (paging.key !== requestKey) {
+        setPaging({ key: requestKey, page: 1, accumulated: [] });
+      }
+    }, [requestKey, paging.key]);
 
     const { sortBy, sortOrder } = useMemo(
       () => mapSort(sort),
       [sort]
     );
 
-    useEffect(() => {
-      setPage(1);
-      setAccumulated([]);
-    }, [requestKey]);
-
     const filter = useMemo(() => {
       const search = debouncedQ.trim();
-      const offset = keyJustChanged ? 0 : (page - 1) * PAGE_SIZE;
       const base = {
         category: categoryId,
         sortBy,
         sortOrder,
         limit: PAGE_SIZE,
-        offset,
+        offset: (effectivePaging.page - 1) * PAGE_SIZE,
       };
       return search ? { ...base, search } : base;
-    }, [categoryId, debouncedQ, sortBy, sortOrder, page, keyJustChanged]);
+    }, [categoryId, debouncedQ, sortBy, sortOrder, effectivePaging.page]);
 
     const { items, total, loading, error } = useProgramsPage(filter);
 
+    const prevLoadingRef = useRef(false);
     useEffect(() => {
-      if (!loading && page === 1 && items.length > 0 && accumulated.length === 0) {
-        setAccumulated(items);
-      } else if (prevLoadingRef.current && !loading) {
-        if (page === 1) {
-          setAccumulated(items);
-        } else {
-          setAccumulated((prev) => [...prev, ...items]);
-        }
-      }
+      const wasLoading = prevLoadingRef.current;
       prevLoadingRef.current = loading;
-    }, [loading, page, items, accumulated.length]);
+
+      if (wasLoading && !loading) {
+        setPaging((prev) => {
+          // Игнорируем устаревший ответ, если ключ уже поменялся
+          if (prev.key !== requestKey) return prev;
+          return {
+            ...prev,
+            accumulated:
+              prev.page === 1
+                ? items
+                : [...prev.accumulated, ...items],
+          };
+        });
+      }
+    }, [loading, items, requestKey]);
 
     const filteredItems = useMemo(() => {
-      return accumulated.filter((p) => {
+      return effectivePaging.accumulated.filter((p) => {
         if (
           views === "popular" &&
           (p.views || 0) <= POPULAR_VIEWS_THRESHOLD
@@ -129,23 +150,19 @@ export const CategoryProgramsView = memo(
 
         return true;
       });
-    }, [accumulated, pricing, views]);
+    }, [effectivePaging.accumulated, pricing, views]);
 
-    const canLoadMore = useMemo(
-      () => accumulated.length < total,
-      [accumulated.length, total]
-    );
+    const canLoadMore = effectivePaging.accumulated.length < total;
 
-    const handleLoadMore = useCallback(
-      () => setPage((p) => p + 1),
-      []
-    );
+    const handleLoadMore = useCallback(() => {
+      setPaging((prev) => ({ ...prev, page: prev.page + 1 }));
+    }, []);
 
     const handleCreate = useCallback(() => {
       openCreateProgramModal(categoryId, categoryType);
     }, [openCreateProgramModal, categoryId, categoryType]);
 
-    if (loading && page === 1)
+    if (loading && effectivePaging.page === 1)
       return <CategoryProgramsViewSkeleton />;
     if (error) return <ErrorState message={error.message} />;
 
@@ -154,19 +171,13 @@ export const CategoryProgramsView = memo(
         <div className="space-y-4">
           <DataToolbar
             searchValue={q}
-            onSearchValueChange={(v) => {
-              setQ(v);
-              setPage(1);
-            }}
+            onSearchValueChange={setQ}
             searchPlaceholder="Поиск по программам…"
             rightSlot={
               <div className="flex items-center gap-2">
                 <Select
                   value={views}
-                  onValueChange={(v) => {
-                    setViews(v as ViewsFilter);
-                    setPage(1);
-                  }}
+                  onValueChange={(v) => setViews(v as ViewsFilter)}
                 >
                   <SelectTrigger className="h-9 w-[150px] bg-background/60">
                     <SelectValue placeholder="Просмотры" />
@@ -181,10 +192,7 @@ export const CategoryProgramsView = memo(
 
                 <Select
                   value={pricing}
-                  onValueChange={(v) => {
-                    setPricing(v as PricingFilter);
-                    setPage(1);
-                  }}
+                  onValueChange={(v) => setPricing(v as PricingFilter)}
                 >
                   <SelectTrigger className="h-9 w-[150px] bg-background/60">
                     <SelectValue placeholder="Цена" />
@@ -198,10 +206,7 @@ export const CategoryProgramsView = memo(
 
                 <Select
                   value={sort}
-                  onValueChange={(v) => {
-                    setSort(v as Sort);
-                    setPage(1);
-                  }}
+                  onValueChange={(v) => setSort(v as Sort)}
                 >
                   <SelectTrigger className="h-9 w-[170px] bg-background/60">
                     <SelectValue placeholder="Сортировка" />
