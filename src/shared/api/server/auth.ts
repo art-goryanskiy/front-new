@@ -14,17 +14,6 @@ const VIEWER_QUERY = `
   }
 `;
 
-/** Fallback, если в API пока нет поля viewer */
-const ME_MINIMAL_QUERY = `
-  query Viewer {
-    me {
-      id
-      email
-      role
-    }
-  }
-`;
-
 export type ViewerUser = {
   id: string;
   email: string;
@@ -35,29 +24,19 @@ interface ViewerResponse {
   viewer: ViewerUser | null;
 }
 
-interface MeMinimalResponse {
-  me: ViewerUser | null;
-}
-
 /**
- * Запрашивает текущего пользователя на сервере с cookie запроса.
- * Сначала viewer; при ошибке (нет viewer в API) — me с теми же полями.
- * Для стабильного первого экрана: карточки и цены отрисовываются сразу без ожидания me на клиенте.
+ * Запрашивает текущую сессию на сервере по cookie запроса.
+ * Только Viewer — лёгкий запрос из контекста (id, email, role), без доп. запросов в БД.
+ * Для стабильного первого экрана и гидрации стора при каждой загрузке/перезагрузке.
+ * Полный профиль (Me) запрашивается только на страницах кабинета/профиля/оформления.
  */
 export async function getViewerServer(cookie?: string): Promise<ViewerUser | null> {
-  const headers = getServerHeaders(cookie);
-  const options = { skipCache: true as const };
-
   try {
-    const data = await serverGraphQLRequest<ViewerResponse>(VIEWER_QUERY, undefined, headers, options);
-    if (data.viewer != null) return data.viewer;
-  } catch {
-    // viewer может отсутствовать в схеме — пробуем me
-  }
-
-  try {
-    const data = await serverGraphQLRequest<MeMinimalResponse>(ME_MINIMAL_QUERY, undefined, headers, options);
-    return data.me ?? null;
+    const headers = getServerHeaders(cookie);
+    const data = await serverGraphQLRequest<ViewerResponse>(VIEWER_QUERY, undefined, headers, {
+      skipCache: true,
+    });
+    return data.viewer ?? null;
   } catch {
     return null;
   }
