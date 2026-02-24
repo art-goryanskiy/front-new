@@ -9,6 +9,7 @@ import { PublicHeader } from "@/widgets/public/header/public-header";
 import { PublicChatWidget } from "@/widgets/public/chat/public-chat-widget";
 import { CategoryTypeTiles } from "@/widgets/public/home/category-type-tiles";
 import { ClientsMarqueeSection } from "@/widgets/public/home/clients-marquee-section";
+import { StatsSection } from "@/widgets/public/home/stats-section";
 import type { Metadata } from "next";
 
 const TopProgramsSection = dynamic(
@@ -62,6 +63,9 @@ export default async function Home() {
     getCategoriesServer(),
   ]);
 
+  const programsCount = allPrograms.length;
+  const categoriesCount = categories.length;
+
   const organizationSchema = generateOrganizationSchema();
 
   return (
@@ -78,6 +82,10 @@ export default async function Home() {
         <main id="main-content" className="relative z-10">
           <Component />
           <CategoryTypeTiles categories={categories} />
+          <StatsSection
+            programsCount={programsCount}
+            categoriesCount={categoriesCount}
+          />
           <TopProgramsSection
             initialAllPrograms={allPrograms}
             initialCategories={categories}

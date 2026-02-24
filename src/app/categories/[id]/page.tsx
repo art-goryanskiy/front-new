@@ -15,6 +15,8 @@ import {
   safeAsyncNull,
   safeAsyncArray,
 } from "@/shared/lib/helpers/error-helpers";
+import { CATEGORY_TYPE_LABELS } from "@/shared/constants/categories";
+import { CATEGORY_TYPE_HREFS } from "@/shared/constants/category-hrefs";
 
 export async function generateMetadata({
   params,
@@ -75,6 +77,26 @@ export default async function CategoryDetailPage({
     { name: category.name, url: `/categories/${category.id}` },
   ]);
 
+  const breadcrumbs = [
+    ...(category.type
+      ? [
+          {
+            label: CATEGORY_TYPE_LABELS[category.type],
+            href: CATEGORY_TYPE_HREFS[category.type],
+          },
+        ]
+      : []),
+    ...(parentCategory
+      ? [
+          {
+            label: parentCategory.name,
+            href: `/categories/${parentCategory.id}`,
+          },
+        ]
+      : []),
+    { label: category.name },
+  ];
+
   return (
     <DetailPageLayout
       schemas={[
@@ -87,6 +109,7 @@ export default async function CategoryDetailPage({
         categoryId={category.id}
         title={category.name}
         description={category.description || undefined}
+        breadcrumbs={breadcrumbs}
       />
     </DetailPageLayout>
   );
