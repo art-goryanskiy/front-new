@@ -169,8 +169,8 @@ export default function ContactsPage() {
             </div>
             <div className="flex flex-wrap justify-center gap-3">
               <Button asChild size="lg" className="gap-2">
-                <Link href="/programs">
-                  Все программы
+                <Link href="/qualification-upgrade">
+                  Смотреть программы
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
