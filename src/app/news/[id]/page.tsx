@@ -1,5 +1,3 @@
-"use client";
-
 import { PublicPageLayout } from "@/shared/ui/layouts/public-page-layout";
 import { NewsDetailContent } from "@/widgets/news/news-detail-content";
 
