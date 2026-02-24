@@ -8,6 +8,9 @@ export const ADD_TO_CART = gql`
         pricingIndex
         quantity
         lineAmount
+        subProgramIndex
+        subProgramTitle
+        displayTitle
         program {
           id
           title
@@ -33,6 +36,9 @@ export const UPDATE_CART_ITEM = gql`
         pricingIndex
         quantity
         lineAmount
+        subProgramIndex
+        subProgramTitle
+        displayTitle
         program {
           id
           title
@@ -58,6 +64,9 @@ export const REMOVE_FROM_CART = gql`
         pricingIndex
         quantity
         lineAmount
+        subProgramIndex
+        subProgramTitle
+        displayTitle
         program {
           id
           title

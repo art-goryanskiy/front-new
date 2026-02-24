@@ -11,6 +11,10 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
+# Увеличить лимит памяти для Next.js build (избегаем OOM в Docker)
+ENV NODE_OPTIONS="--max-old-space-size=4096"
+# Sitemap при build не дергает API (для сборки без доступа к бэкенду)
+ENV SKIP_SITEMAP_FETCH=1
 RUN --mount=type=cache,target=/app/.next/cache \
   npm run build
 

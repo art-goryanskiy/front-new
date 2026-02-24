@@ -67,7 +67,10 @@ export const SearchPanel = memo(function SearchPanel({
               className="relative mx-auto max-w-2xl"
             >
               <div className="flex items-center gap-2">
-                <div ref={searchInputWrapperRef} className="min-w-0 flex-1">
+                <div
+                  ref={searchInputWrapperRef}
+                  className="min-w-0 flex-1"
+                >
                   <SearchInputField
                     value={searchValue}
                     onChange={onSearchChange}

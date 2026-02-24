@@ -19,7 +19,8 @@ export function learnerFromProfile(
 
   const registration = p.passportRegistrationAddress ?? "";
   const residential = p.residentialAddress ?? "";
-  const sameAsRegistration = !residential || residential === registration;
+  const sameAsRegistration =
+    !residential || residential === registration;
 
   return {
     ...defaultLearnerFormData(),
@@ -39,7 +40,9 @@ export function learnerFromProfile(
     educationQualification: p.educationQualification ?? "",
     educationDocumentIssuedAt: p.educationDocumentIssuedAt ?? "",
     passportRegistrationAddress: registration,
-    residentialAddress: sameAsRegistration ? registration : residential,
+    residentialAddress: sameAsRegistration
+      ? registration
+      : residential,
     sameAsRegistration,
     workPlaceName,
     position,

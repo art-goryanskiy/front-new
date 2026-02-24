@@ -1,15 +1,21 @@
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
+import { GLASS_CLASSES } from "@/shared/ui/glass/glass-constants";
+
+type CardVariant = "default" | "glass";
 
 const Card = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
+  React.HTMLAttributes<HTMLDivElement> & { variant?: CardVariant }
+>(({ className, variant = "default", ...props }, ref) => (
   <div
     ref={ref}
     className={cn(
-      "rounded-xl border bg-card text-card-foreground shadow",
+      "rounded-xl text-card-foreground shadow",
+      variant === "glass"
+        ? cn(GLASS_CLASSES.card, "rounded-xl")
+        : "border bg-card",
       className
     )}
     {...props}

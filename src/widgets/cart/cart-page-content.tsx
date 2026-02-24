@@ -1,19 +1,29 @@
 "use client";
 
-import { memo, useCallback } from "react";
+import { memo, useCallback, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Surface } from "@/shared/ui/surface/surface";
 import { useMyCart } from "@/entities/cart/api/use-my-cart";
 import { useUpdateCartItem } from "@/entities/cart/api/use-update-cart-item";
 import { useRemoveFromCart } from "@/entities/cart/api/use-remove-from-cart";
+import { useAddToCart } from "@/entities/cart/api/use-add-to-cart";
 import { formatPrice } from "@/shared/lib/helpers/format-helpers";
+import { CartPageSkeleton } from "./cart-page-skeleton";
 import { ShoppingCart, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { saveReturnUrl } from "@/shared/lib/auth/utils/auth-redirect-utils";
 import { AUTH_GUARD_ROUTES } from "@/shared/lib/auth/constants/auth-guard-constants";
 import { useToastState } from "@/shared/store/toast-store";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 function handleCartError(
   err: unknown,
@@ -38,22 +48,68 @@ function handleCartError(
 
 export const CartPageContent = memo(function CartPageContent() {
   const router = useRouter();
+  const [loadingPricingChangeKey, setLoadingPricingChangeKey] =
+    useState<string | null>(null);
+
   const { items, totalAmount, loading, error } = useMyCart();
   const { updateCartItem, loading: updating } = useUpdateCartItem();
   const { removeFromCart, loading: removing } = useRemoveFromCart();
+  const { addToCart } = useAddToCart();
   const { showToast } = useToastState();
+
+  const handlePricingChange = useCallback(
+    async (
+      cartItemKey: string,
+      item: {
+        programId: string;
+        pricingIndex: number;
+        quantity: number;
+        subProgramIndex?: number | null;
+      },
+      newPricingIndex: number
+    ) => {
+      if (newPricingIndex === item.pricingIndex) return;
+      setLoadingPricingChangeKey(cartItemKey);
+      try {
+        await removeFromCart({
+          programId: item.programId,
+          pricingIndex: item.pricingIndex,
+          ...(item.subProgramIndex != null && {
+            subProgramIndex: item.subProgramIndex,
+          }),
+        });
+        await addToCart({
+          programId: item.programId,
+          pricingIndex: newPricingIndex,
+          quantity: item.quantity,
+          ...(item.subProgramIndex != null && {
+            subProgramIndex: item.subProgramIndex,
+          }),
+        });
+        showToast("success", "Тариф изменён");
+      } catch (err) {
+        if (handleCartError(err, router)) return;
+        showToast("error", "Не удалось изменить тариф");
+      } finally {
+        setLoadingPricingChangeKey(null);
+      }
+    },
+    [addToCart, removeFromCart, router, showToast]
+  );
 
   const handleQuantityChange = useCallback(
     async (
       programId: string,
       pricingIndex: number,
-      newQuantity: number
+      newQuantity: number,
+      subProgramIndex?: number | null
     ) => {
       try {
         await updateCartItem({
           programId,
           pricingIndex,
           quantity: newQuantity,
+          ...(subProgramIndex != null && { subProgramIndex }),
         });
       } catch (err) {
         if (handleCartError(err, router)) return;
@@ -64,9 +120,17 @@ export const CartPageContent = memo(function CartPageContent() {
   );
 
   const handleRemove = useCallback(
-    async (programId: string, pricingIndex: number) => {
+    async (
+      programId: string,
+      pricingIndex: number,
+      subProgramIndex?: number | null
+    ) => {
       try {
-        await removeFromCart({ programId, pricingIndex });
+        await removeFromCart({
+          programId,
+          pricingIndex,
+          ...(subProgramIndex != null && { subProgramIndex }),
+        });
         showToast("success", "Удалено из корзины");
       } catch (err) {
         if (handleCartError(err, router)) return;
@@ -77,16 +141,7 @@ export const CartPageContent = memo(function CartPageContent() {
   );
 
   if (loading && items.length === 0) {
-    return (
-      <Surface
-        variant="floating"
-        className="flex min-h-[320px] items-center justify-center"
-      >
-        <div className="text-sm text-muted-foreground">
-          Загрузка корзины…
-        </div>
-      </Surface>
-    );
+    return <CartPageSkeleton />;
   }
 
   if (error && items.length === 0) {
@@ -105,6 +160,10 @@ export const CartPageContent = memo(function CartPageContent() {
     );
   }
 
+  if (items.length === 0 && loadingPricingChangeKey) {
+    return <CartPageSkeleton />;
+  }
+
   if (items.length === 0) {
     return (
       <Surface
@@ -119,7 +178,8 @@ export const CartPageContent = memo(function CartPageContent() {
             Корзина пуста
           </h2>
           <p className="text-sm text-muted-foreground">
-            Добавьте программы со страниц программ, чтобы оформить запись.
+            Добавьте программы со страниц программ, чтобы оформить
+            запись.
           </p>
         </div>
         <Button asChild>
@@ -138,16 +198,19 @@ export const CartPageContent = memo(function CartPageContent() {
         <div className="pointer-events-none absolute -top-20 -right-20 h-64 w-80 rounded-full bg-primary/5 blur-3xl" />
         <div className="relative z-10 space-y-4">
           {items.map((item) => {
-            const pricing = item.program?.pricing?.[item.pricingIndex];
+            const pricing =
+              item.program?.pricing?.[item.pricingIndex];
             const program = item.program;
             if (!program) return null;
 
             const price = pricing?.price ?? 0;
             const hours = pricing?.hours ?? 0;
 
+            const cartItemKey = `${item.programId}-${item.pricingIndex}-${item.subProgramIndex ?? "p"}`;
+
             return (
               <div
-                key={`${item.programId}-${item.pricingIndex}`}
+                key={cartItemKey}
                 className="flex flex-col gap-4 rounded-xl border border-border/60 bg-background/60 p-4 sm:flex-row sm:items-center sm:gap-6"
               >
                 <Link
@@ -156,10 +219,13 @@ export const CartPageContent = memo(function CartPageContent() {
                 >
                   <div className="relative h-20 w-28 shrink-0 overflow-hidden rounded-lg bg-muted">
                     {program.image ? (
-                      <img
+                      <Image
                         src={program.image}
-                        alt={program.title}
-                        className="h-full w-full object-cover"
+                        alt={item.displayTitle}
+                        fill
+                        sizes="112px"
+                        className="object-cover"
+                        unoptimized
                       />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center">
@@ -168,13 +234,46 @@ export const CartPageContent = memo(function CartPageContent() {
                     )}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <h3 className="font-semibold text-foreground line-clamp-2">
-                      {program.shortTitle || program.title}
+                    <h3 className="line-clamp-2 font-semibold text-foreground">
+                      {item.displayTitle}
                     </h3>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      {hours} часов
-                      {price > 0 && ` · ${formatPrice(price)} ₽`}
-                    </p>
+                    {program.pricing && program.pricing.length > 1 ? (
+                      <Select
+                        value={String(item.pricingIndex)}
+                        onValueChange={(v) =>
+                          handlePricingChange(
+                            cartItemKey,
+                            {
+                              programId: item.programId,
+                              pricingIndex: item.pricingIndex,
+                              quantity: item.quantity,
+                              subProgramIndex: item.subProgramIndex,
+                            },
+                            Number(v)
+                          )
+                        }
+                        disabled={
+                          loadingPricingChangeKey === cartItemKey
+                        }
+                      >
+                        <SelectTrigger className="mt-1.5 h-9 w-full max-w-[220px] text-sm">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {program.pricing.map((p, idx) => (
+                            <SelectItem key={idx} value={String(idx)}>
+                              {p.hours} ч —{" "}
+                              {formatPrice(p.price ?? 0)} ₽
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <p className="mt-1 text-sm text-muted-foreground">
+                        {hours} часов
+                        {price > 0 && ` · ${formatPrice(price)} ₽`}
+                      </p>
+                    )}
                   </div>
                 </Link>
 
@@ -186,7 +285,8 @@ export const CartPageContent = memo(function CartPageContent() {
                         handleQuantityChange(
                           item.programId,
                           item.pricingIndex,
-                          Math.max(1, item.quantity - 1)
+                          Math.max(1, item.quantity - 1),
+                          item.subProgramIndex
                         )
                       }
                       disabled={updating || item.quantity <= 1}
@@ -203,7 +303,8 @@ export const CartPageContent = memo(function CartPageContent() {
                         handleQuantityChange(
                           item.programId,
                           item.pricingIndex,
-                          Math.min(100, item.quantity + 1)
+                          Math.min(100, item.quantity + 1),
+                          item.subProgramIndex
                         )
                       }
                       disabled={updating || item.quantity >= 100}
@@ -221,7 +322,11 @@ export const CartPageContent = memo(function CartPageContent() {
                       size="icon"
                       className="text-destructive hover:bg-destructive/10 hover:text-destructive"
                       onClick={() =>
-                        handleRemove(item.programId, item.pricingIndex)
+                        handleRemove(
+                          item.programId,
+                          item.pricingIndex,
+                          item.subProgramIndex
+                        )
                       }
                       disabled={removing}
                       aria-label="Удалить"
@@ -247,7 +352,7 @@ export const CartPageContent = memo(function CartPageContent() {
           Итого: {formatPrice(totalAmount)} ₽
         </div>
         <Button size="lg" className="w-full sm:w-auto" asChild>
-          <Link href="/checkout">Оформить заказ</Link>
+          <Link href="/checkout">Оформить заявку</Link>
         </Button>
       </Surface>
     </div>

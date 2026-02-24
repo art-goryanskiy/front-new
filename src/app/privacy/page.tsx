@@ -1,11 +1,13 @@
 import { PublicPageLayout } from "@/shared/ui/layouts/public-page-layout";
 import type { Metadata } from "next";
+import { generateMetadata as generateSeoMetadata } from "@/shared/lib/seo/metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = generateSeoMetadata({
   title: "Политика конфиденциальности",
   description:
     "Политика конфиденциальности ООО ЦОК СТАНДАРТ ПЛЮС. Обработка персональных данных.",
-};
+  url: "/privacy",
+});
 
 export default function PrivacyPage() {
   return (
@@ -15,9 +17,9 @@ export default function PrivacyPage() {
           Политика конфиденциальности
         </h1>
         <p className="mt-4 text-sm text-muted-foreground sm:text-base">
-          Раздел в разработке. Здесь будет размещена политика конфиденциальности
-          ООО ЦОК «СТАНДАРТ ПЛЮС» в отношении обработки персональных данных
-          пользователей сайта.
+          Раздел в разработке. Здесь будет размещена политика
+          конфиденциальности ООО ЦОК «СТАНДАРТ ПЛЮС» в отношении
+          обработки персональных данных пользователей сайта.
         </p>
       </div>
     </PublicPageLayout>

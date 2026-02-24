@@ -1,6 +1,8 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import { MENU_ITEMS } from "@/shared/constants/categories";
+import { GLASS_CLASSES } from "@/shared/ui/glass/glass-constants";
 import { useAdminNavState } from "@/shared/store/admin-nav-store";
 import { usePathname, useRouter } from "next/navigation";
 import { memo, useCallback, useMemo } from "react";
@@ -18,6 +20,20 @@ const USERS_MENU_ITEM: MenuItem = {
   label: "Пользователи",
   icon: "users" as const,
   path: "/admin/users",
+  color: "default" as const,
+};
+
+const ORDERS_MENU_ITEM: MenuItem = {
+  label: "Заявки",
+  icon: "inbox" as const,
+  path: "/admin/orders",
+  color: "default" as const,
+};
+
+const CHATS_MENU_ITEM: MenuItem = {
+  label: "Чаты",
+  icon: "message-circle" as const,
+  path: "/admin/chats",
   color: "default" as const,
 };
 
@@ -52,6 +68,8 @@ export const MobileSidebar = memo(function MobileSidebar() {
     () => [
       HOME_MENU_ITEM,
       USERS_MENU_ITEM,
+      ORDERS_MENU_ITEM,
+      CHATS_MENU_ITEM,
       EDUCATION_DOCUMENTS_MENU_ITEM,
       ...MENU_ITEMS,
     ],
@@ -61,7 +79,12 @@ export const MobileSidebar = memo(function MobileSidebar() {
   return (
     <aside className="fixed inset-x-0 bottom-0 z-50 lg:hidden">
       <div className="pointer-events-none flex justify-center pb-3">
-        <div className="pointer-events-auto w-fit rounded-2xl border border-border/60 bg-background/80 px-2 py-2 shadow-sm backdrop-blur-md">
+        <div
+          className={cn(
+            "pointer-events-auto w-fit rounded-2xl px-2 py-2 shadow-sm",
+            GLASS_CLASSES.panel
+          )}
+        >
           <nav className="flex items-center gap-1">
             {items.map((item) => (
               <MobileSidebarNavItem

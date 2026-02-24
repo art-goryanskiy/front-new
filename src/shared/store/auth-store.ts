@@ -2,6 +2,13 @@ import { create } from "zustand";
 import { useShallow } from "zustand/react/shallow";
 import type { UserEntity } from "../api/generated/graphql";
 
+/** Начальное состояние auth с SSR для гидрации первого экрана (user, isAuthenticated, isLoading: false) */
+export type InitialAuthState = {
+  user: Pick<UserEntity, "id" | "email" | "role"> | null;
+  isAuthenticated: boolean;
+  isLoading: false;
+};
+
 interface AuthStore {
   user: UserEntity | null;
   isAuthenticated: boolean;

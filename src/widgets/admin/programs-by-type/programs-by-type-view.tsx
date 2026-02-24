@@ -5,9 +5,23 @@ import { useProgramsPage } from "@/entities/program/api/use-programs-page";
 import type {
   CategoryEntity,
   CategoryType,
+  ProgramEntity,
 } from "@/shared/api/generated/graphql";
 import { useDebounce } from "@/shared/lib/hooks/use-debounce";
-import { memo, useCallback, useMemo, useState } from "react";
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+
+type PagingState = {
+  page: number;
+  accumulated: ProgramEntity[];
+};
+import { Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -17,12 +31,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useProgramModalState } from "@/shared/store/modal-store";
+import { useProgramsByTypeHeaderStore } from "@/widgets/admin/programs-by-type/programs-by-type-header-store";
 import { DashboardSection } from "@/shared/ui/dashboard-section/dashboard-section";
 import { DataToolbar } from "@/shared/ui/data-toolbar/data-toolbar";
 import { EmptyState } from "@/shared/ui/empty-state/empty-state";
+import { GLASS_CLASSES } from "@/shared/ui/glass/glass-constants";
+import { cn } from "@/lib/utils";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
-import { LoadingState } from "@/shared/ui/loading-state/loading-state";
+import { CategoryProgramsViewSkeleton } from "@/widgets/admin/programs-by-category/category-programs-view-skeleton";
 
 import { POPULAR_VIEWS_THRESHOLD } from "@/widgets/admin/program-table/constants/program-table-constants";
 import { ProgramList } from "@/widgets/admin/program-table/program-list";
@@ -43,13 +59,16 @@ function mapSort(sort: Sort): {
   return { sortBy: "updatedAt", sortOrder: "desc" };
 }
 
-const PAGE_SIZE = 30;
+import { ADMIN_PAGE_SIZE } from "@/shared/constants/admin";
+
+const PAGE_SIZE = ADMIN_PAGE_SIZE;
 
 const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
   type,
   title,
   categoriesOfType,
   categoryIds,
+  suppressTitle,
 
   q,
   setQ,
@@ -69,6 +88,7 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
   title: string;
   categoriesOfType: CategoryEntity[];
   categoryIds: string[];
+  suppressTitle?: boolean;
 
   q: string;
   setQ: (v: string) => void;
@@ -84,22 +104,29 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
   sort: Sort;
   setSort: (v: Sort) => void;
 }) {
-  const { openCreateProgramModal } = useProgramModalState();
+  const setHeaderState = useProgramsByTypeHeaderStore(
+    (s) => s.setState
+  );
+  useEffect(() => {
+    setHeaderState(categoryId, type);
+  }, [categoryId, type, setHeaderState]);
 
-  // pagination: increase limit, offset always 0
-  const [page, setPage] = useState(1);
-  const limit = PAGE_SIZE * page;
+  const [paging, setPaging] = useState<PagingState>({
+    page: 1,
+    accumulated: [],
+  });
 
   const { sortBy, sortOrder } = useMemo(() => mapSort(sort), [sort]);
 
   const filter = useMemo(() => {
     const search = debouncedQ.trim();
+    const offset = (paging.page - 1) * PAGE_SIZE;
 
     const base = {
       sortBy,
       sortOrder,
-      limit,
-      offset: 0,
+      limit: PAGE_SIZE,
+      offset,
     };
 
     if (categoryId !== "all") {
@@ -113,14 +140,39 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
     return search
       ? { ...base, categoryIds, search }
       : { ...base, categoryIds };
-  }, [categoryId, categoryIds, debouncedQ, sortBy, sortOrder, limit]);
+  }, [
+    categoryId,
+    categoryIds,
+    debouncedQ,
+    sortBy,
+    sortOrder,
+    paging.page,
+  ]);
 
   const { items, total, loading, error } = useProgramsPage(filter);
+
+  const prevLoadingRef = useRef(false);
+  useEffect(() => {
+    const wasLoading = prevLoadingRef.current;
+    prevLoadingRef.current = loading;
+
+    if (wasLoading && !loading) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setPaging((prev) => ({
+        ...prev,
+        accumulated:
+          prev.page === 1 ? items : [...prev.accumulated, ...items],
+      }));
+    }
+  }, [loading, items]);
+
+  // Компонент ремонтируется через key={requestKey} при смене фильтров,
+  // поэтому явный сброс paging не нужен — fresh state при каждом remount.
 
   const localQuery = useMemo(() => q.trim().toLowerCase(), [q]);
 
   const filteredItems = useMemo(() => {
-    return items.filter((p) => {
+    return paging.accumulated.filter((p) => {
       if (
         views === "popular" &&
         (p.views || 0) <= POPULAR_VIEWS_THRESHOLD
@@ -133,165 +185,149 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
         if (pricing === "noPrice" && hasPrice) return false;
       }
 
-      // local search (instant), while debouncedQ used for server
       if (!localQuery) return true;
       const haystack =
         `${p.title} ${p.slug} ${p.description || ""}`.toLowerCase();
       return haystack.includes(localQuery);
     });
-  }, [items, views, pricing, localQuery]);
+  }, [paging.accumulated, views, pricing, localQuery]);
 
-  const countsText = useMemo(
-    () => `${filteredItems.length} / ${total}`,
-    [filteredItems.length, total]
-  );
-
-  const canLoadMore = useMemo(
-    () => items.length < total,
-    [items.length, total]
-  );
+  const canLoadMore = paging.accumulated.length < total;
 
   const handleLoadMore = useCallback(() => {
-    setPage((p) => p + 1);
+    setPaging((prev) => ({ ...prev, page: prev.page + 1 }));
   }, []);
 
-  const canCreateProgram = useMemo(
-    () => categoryId !== "all",
-    [categoryId]
-  );
-
-  const handleCreate = useCallback(() => {
-    if (categoryId === "all") return;
-    openCreateProgramModal(categoryId, type);
-  }, [openCreateProgramModal, categoryId, type]);
-
-  if (loading && page === 1)
-    return <LoadingState message="Загрузка программ…" />;
+  if (loading && paging.page === 1)
+    return <CategoryProgramsViewSkeleton />;
   if (error) return <ErrorState message={error.message} />;
 
   return (
-    <DashboardSection
-      title={title}
-      actions={
-        <span className="hidden rounded-full border border-border/60 bg-muted/20 px-2.5 py-1 text-xs text-muted-foreground sm:inline-flex">
-          {countsText}
-        </span>
-      }
-    >
-      <div className="space-y-4">
-        <DataToolbar
-          searchValue={q}
-          onSearchValueChange={setQ}
-          searchPlaceholder="Поиск по программам…"
-          rightSlot={
-            <div className="flex items-center gap-2">
-              <Select
-                value={categoryId}
-                onValueChange={setCategoryId}
-              >
-                <SelectTrigger className="h-9 w-[220px] bg-background/60">
-                  <SelectValue placeholder="Категория" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">
-                    Все категории типа
-                  </SelectItem>
-                  {categoriesOfType.map((c) => (
-                    <SelectItem key={c.id} value={c.id}>
-                      {c.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <Select
-                value={views}
-                onValueChange={(v) => setViews(v as ViewsFilter)}
-              >
-                <SelectTrigger className="h-9 w-[150px] bg-background/60">
-                  <SelectValue placeholder="Просмотры" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Все</SelectItem>
-                  <SelectItem value="popular">Популярные</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <Select
-                value={pricing}
-                onValueChange={(v) => setPricing(v as PricingFilter)}
-              >
-                <SelectTrigger className="h-9 w-[150px] bg-background/60">
-                  <SelectValue placeholder="Цена" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Любая</SelectItem>
-                  <SelectItem value="withPrice">С ценой</SelectItem>
-                  <SelectItem value="noPrice">Без цены</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <Select
-                value={sort}
-                onValueChange={(v) => setSort(v as Sort)}
-              >
-                <SelectTrigger className="h-9 w-[170px] bg-background/60">
-                  <SelectValue placeholder="Сортировка" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="updatedDesc">
-                    Сначала новые
-                  </SelectItem>
-                  <SelectItem value="viewsDesc">
-                    По просмотрам
-                  </SelectItem>
-                  <SelectItem value="titleAsc">
-                    По названию
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-
-              <Button
-                className="font-semibold"
-                onClick={handleCreate}
-                disabled={!canCreateProgram}
-                title={
-                  canCreateProgram
-                    ? "Создать программу"
-                    : "Выберите конкретную категорию, чтобы создать программу"
-                }
-              >
-                + Программа
-              </Button>
-            </div>
-          }
-        />
-
-        {filteredItems.length === 0 ? (
-          <EmptyState
-            title="Программы не найдены"
-            description="Попробуйте изменить фильтры или выберите другую категорию."
-          />
-        ) : (
-          <>
-            <ProgramList
-              programs={filteredItems}
-              categoryType={type}
-              caption={`Показано ${filteredItems.length} из ${total}`}
-            />
-
-            <div className="flex justify-center">
-              <Button
-                variant="outline"
-                className="font-semibold"
-                onClick={handleLoadMore}
-                disabled={!canLoadMore || loading}
-              >
-                {loading ? "Загрузка…" : "Показать ещё"}
-              </Button>
-            </div>
-          </>
+    <DashboardSection title={title} suppressTitle={suppressTitle}>
+      <div
+        className={cn(
+          "overflow-hidden rounded-2xl border border-border/50",
+          GLASS_CLASSES.card
         )}
+      >
+        <div className="px-4 pt-4 sm:px-5 sm:pt-5">
+          <DataToolbar
+            searchValue={q}
+            onSearchValueChange={setQ}
+            searchPlaceholder="Поиск по программам…"
+            rightSlot={
+              <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border/40 bg-background/50 px-2.5 py-1.5">
+                <Select
+                  value={categoryId}
+                  onValueChange={setCategoryId}
+                >
+                  <SelectTrigger className="h-8 w-[200px] border-0 bg-transparent shadow-none focus:ring-0 sm:w-[220px]">
+                    <SelectValue placeholder="Категория" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">
+                      Все категории типа
+                    </SelectItem>
+                    {categoriesOfType.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>
+                        {c.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select
+                  value={views}
+                  onValueChange={(v) => setViews(v as ViewsFilter)}
+                >
+                  <SelectTrigger className="h-8 w-[120px] border-0 bg-transparent shadow-none focus:ring-0 sm:w-[140px]">
+                    <SelectValue placeholder="Просмотры" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Все</SelectItem>
+                    <SelectItem value="popular">
+                      Популярные
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select
+                  value={pricing}
+                  onValueChange={(v) =>
+                    setPricing(v as PricingFilter)
+                  }
+                >
+                  <SelectTrigger className="h-8 w-[110px] border-0 bg-transparent shadow-none focus:ring-0 sm:w-[130px]">
+                    <SelectValue placeholder="Цена" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Любая</SelectItem>
+                    <SelectItem value="withPrice">С ценой</SelectItem>
+                    <SelectItem value="noPrice">Без цены</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select
+                  value={sort}
+                  onValueChange={(v) => setSort(v as Sort)}
+                >
+                  <SelectTrigger className="h-8 w-[150px] border-0 bg-transparent shadow-none focus:ring-0 sm:w-[170px]">
+                    <SelectValue placeholder="Сортировка" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="updatedDesc">
+                      Сначала новые
+                    </SelectItem>
+                    <SelectItem value="viewsDesc">
+                      По просмотрам
+                    </SelectItem>
+                    <SelectItem value="titleAsc">
+                      По названию
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            }
+          />
+        </div>
+
+        <div className="border-t border-border/40 px-4 pb-4 sm:px-5 sm:pb-5">
+          {filteredItems.length === 0 ? (
+            <EmptyState
+              title="Программы не найдены"
+              description="Попробуйте изменить фильтры или выберите другую категорию."
+            />
+          ) : (
+            <>
+              <ProgramList
+                programs={filteredItems}
+                categoryType={type}
+                caption={`Показано ${filteredItems.length} из ${total}`}
+              />
+
+              {canLoadMore && (
+                <div className="mt-6 flex justify-center">
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="min-w-[200px] rounded-xl border-border/60 bg-background/60 font-semibold shadow-sm transition-all hover:bg-background/80 hover:shadow focus-visible:ring-2 focus-visible:ring-primary/20"
+                    onClick={handleLoadMore}
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <span className="flex items-center gap-2">
+                        <Loader2
+                          className="h-4 w-4 animate-spin"
+                          aria-hidden
+                        />
+                        Загрузка…
+                      </span>
+                    ) : (
+                      "Показать ещё"
+                    )}
+                  </Button>
+                </div>
+              )}
+            </>
+          )}
+        </div>
       </div>
     </DashboardSection>
   );
@@ -300,9 +336,12 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
 export const ProgramsByTypeView = memo(function ProgramsByTypeView({
   type,
   title,
+  suppressTitle,
 }: {
   type: CategoryType;
   title: string;
+  /** Заголовок вынесен в sticky на странице — не дублировать */
+  suppressTitle?: boolean;
 }) {
   const {
     categories,
@@ -329,14 +368,13 @@ export const ProgramsByTypeView = memo(function ProgramsByTypeView({
     [categoriesOfType]
   );
 
-  const paginationKey = useMemo(
+  const requestKey = useMemo(
     () =>
-      `${type}|${categoryId}|${debouncedQ}|${pricing}|${views}|${sort}`,
-    [type, categoryId, debouncedQ, pricing, views, sort]
+      `${type}|${categoryId}|${debouncedQ}|${sort}|${categoryIds.join(",")}`,
+    [type, categoryId, debouncedQ, sort, categoryIds]
   );
 
-  if (categoriesLoading)
-    return <LoadingState message="Загрузка категорий…" />;
+  if (categoriesLoading) return <CategoryProgramsViewSkeleton />;
   if (categoriesError)
     return <ErrorState message={categoriesError.message} />;
 
@@ -351,11 +389,12 @@ export const ProgramsByTypeView = memo(function ProgramsByTypeView({
 
   return (
     <ProgramsByTypeResults
-      key={paginationKey}
+      key={requestKey}
       type={type}
       title={title}
       categoriesOfType={categoriesOfType}
       categoryIds={categoryIds}
+      suppressTitle={suppressTitle}
       q={q}
       setQ={setQ}
       debouncedQ={debouncedQ}

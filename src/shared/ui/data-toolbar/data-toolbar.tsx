@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { Surface } from "@/shared/ui/surface/surface";
+import { GLASS_CLASSES } from "@/shared/ui/glass/glass-constants";
 import { Search, X } from "lucide-react";
 
 export function DataToolbar({
@@ -24,22 +24,22 @@ export function DataToolbar({
   const hasValue = searchValue.trim().length > 0;
 
   return (
-    <Surface
-      variant="default"
+    <div
       className={cn(
-        "sticky top-[calc(var(--admin-header-offset)+var(--admin-tabs-offset,0px))] z-30 bg-background/70 shadow-sm backdrop-blur-xl",
+        "sticky top-[calc(var(--admin-header-offset)+var(--admin-tabs-offset,0px))] z-30 rounded-2xl p-4 shadow-md",
+        GLASS_CLASSES.panelWithRing,
         className
       )}
     >
-      <div className="flex flex-col gap-3 p-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
           <div className="relative w-full sm:w-[320px]">
-            <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               value={searchValue}
               onChange={(e) => onSearchValueChange(e.target.value)}
               placeholder={searchPlaceholder}
-              className="h-9 bg-background/60 pr-10 pl-9"
+              className="h-10 rounded-xl border-border/60 bg-background/70 pr-10 pl-10"
             />
             {hasValue ? (
               <Button
@@ -62,6 +62,6 @@ export function DataToolbar({
           {rightSlot}
         </div>
       </div>
-    </Surface>
+    </div>
   );
 }

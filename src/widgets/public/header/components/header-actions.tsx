@@ -33,7 +33,7 @@ export const HeaderActions = memo(function HeaderActions({
   onLogout,
 }: HeaderActionsProps) {
   const { items } = useMyCart({ skip: !user });
-  const cartCount = items.length;
+  const cartCount = items.reduce((sum, i) => sum + i.quantity, 0);
 
   return (
     <div className={PUBLIC_HEADER_CLASSES.actions}>
@@ -52,7 +52,9 @@ export const HeaderActions = memo(function HeaderActions({
           variant="ghost"
           size="icon"
           asChild
-          aria-label={cartCount > 0 ? `Корзина: ${cartCount}` : "Корзина"}
+          aria-label={
+            cartCount > 0 ? `Корзина: ${cartCount}` : "Корзина"
+          }
           className="relative text-muted-foreground hover:text-foreground"
         >
           <Link href="/cart">
@@ -60,7 +62,7 @@ export const HeaderActions = memo(function HeaderActions({
             {cartCount > 0 && (
               <span
                 className={cn(
-                  "absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground"
+                  "absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground"
                 )}
               >
                 {cartCount > 99 ? "99+" : cartCount}
@@ -77,7 +79,7 @@ export const HeaderActions = memo(function HeaderActions({
           size="icon"
           aria-label="Войти"
           onClick={onLoginClick}
-          className="hidden sm:flex text-muted-foreground hover:text-foreground"
+          className="hidden text-muted-foreground hover:text-foreground sm:flex"
         >
           <LogIn className="h-5 w-5" />
         </Button>
@@ -86,7 +88,9 @@ export const HeaderActions = memo(function HeaderActions({
         id={HEADER_MENU_BUTTON_ID}
         variant="ghost"
         size="icon"
-        aria-label={isMobileMenuOpen ? "Закрыть меню" : "Открыть меню"}
+        aria-label={
+          isMobileMenuOpen ? "Закрыть меню" : "Открыть меню"
+        }
         aria-expanded={isMobileMenuOpen}
         aria-controls={MOBILE_MENU_PANEL_ID}
         onClick={onMobileMenuToggle}

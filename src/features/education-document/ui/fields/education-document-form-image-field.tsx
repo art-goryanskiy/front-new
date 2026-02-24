@@ -9,7 +9,10 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar";
-import { FORM_MESSAGES, FORM_CLASSES } from "../constants/education-document-form-constants";
+import {
+  FORM_MESSAGES,
+  FORM_CLASSES,
+} from "../constants/education-document-form-constants";
 import type { EducationDocumentFormData } from "../types/education-document-form.types";
 
 interface EducationDocumentFormImageFieldProps {

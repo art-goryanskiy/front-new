@@ -10,11 +10,12 @@ import {
 } from "framer-motion";
 import { ArrowRight, Sparkles } from "lucide-react";
 import Link from "next/link";
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { HandWrittenTitle } from "./hand-writing-text";
 
 export const Component = () => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(true);
 
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -31,7 +32,20 @@ export const Component = () => {
   const speedX = 0.5;
   const speedY = 0.5;
 
+  useEffect(() => {
+    const handleVisibility = () =>
+      setIsVisible(document.visibilityState === "visible");
+    handleVisibility();
+    document.addEventListener("visibilitychange", handleVisibility);
+    return () =>
+      document.removeEventListener(
+        "visibilitychange",
+        handleVisibility
+      );
+  }, []);
+
   useAnimationFrame(() => {
+    if (!isVisible) return;
     const currentX = gridOffsetX.get();
     const currentY = gridOffsetY.get();
     gridOffsetX.set((currentX + speedX) % 40);

@@ -24,7 +24,23 @@ export const UPDATE_ORDER_STATUS = gql`
   mutation UpdateOrderStatus($orderId: ID!, $status: OrderStatus!) {
     updateOrderStatus(orderId: $orderId, status: $status) {
       id
+      number
       status
+    }
+  }
+`;
+
+export const DELETE_ORDER = gql`
+  mutation DeleteOrder($orderId: ID!) {
+    deleteOrder(orderId: $orderId)
+  }
+`;
+
+export const UPDATE_ORDER = gql`
+  ${ORDER_FIELDS}
+  mutation UpdateOrder($orderId: ID!, $input: UpdateOrderInput!) {
+    updateOrder(orderId: $orderId, input: $input) {
+      ...OrderFields
     }
   }
 `;
@@ -45,6 +61,105 @@ export const CREATE_ORDER_INVOICE = gql`
       pdfUrl
       invoiceId
       incomingInvoiceUrl
+    }
+  }
+`;
+
+/** Изменить статус заявки (только для админа) */
+export const ADMIN_UPDATE_ORDER_STATUS = gql`
+  ${ORDER_FIELDS}
+  mutation AdminUpdateOrderStatus(
+    $orderId: ID!
+    $status: OrderStatus!
+  ) {
+    adminUpdateOrderStatus(orderId: $orderId, status: $status) {
+      ...OrderFields
+    }
+  }
+`;
+
+/** Удалить заявку (только для админа) */
+export const ADMIN_DELETE_ORDER = gql`
+  mutation AdminDeleteOrder($orderId: ID!) {
+    adminDeleteOrder(orderId: $orderId)
+  }
+`;
+
+/** Изменить дату документа (только для админа) */
+export const ADMIN_UPDATE_ORDER_DOCUMENT_DATE = gql`
+  mutation AdminUpdateOrderDocumentDate(
+    $input: AdminUpdateOrderDocumentDateInput!
+  ) {
+    adminUpdateOrderDocumentDate(input: $input) {
+      id
+      orderId
+      kind
+      fileUrl
+      documentDate
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+/** Сформировать договор по заявке (только для админа) */
+export const ADMIN_GENERATE_ORDER_CONTRACT = gql`
+  mutation AdminGenerateOrderContract(
+    $input: AdminGenerateOrderDocumentInput!
+  ) {
+    adminGenerateOrderContract(input: $input) {
+      id
+      orderId
+      kind
+      fileUrl
+      documentDate
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+/** Сформировать акт оказанных услуг по заявке (только для админа) */
+export const ADMIN_GENERATE_ORDER_ACT = gql`
+  mutation AdminGenerateOrderAct(
+    $input: AdminGenerateOrderDocumentInput!
+  ) {
+    adminGenerateOrderAct(input: $input) {
+      id
+      orderId
+      kind
+      fileUrl
+      documentDate
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+/** Сформировать заявку на обучение (PDF) по заявке (только для админа) */
+export const ADMIN_GENERATE_ORDER_TRAINING_APPLICATION = gql`
+  mutation AdminGenerateOrderTrainingApplication($orderId: ID!) {
+    adminGenerateOrderTrainingApplication(orderId: $orderId) {
+      id
+      orderId
+      kind
+      fileUrl
+      documentDate
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+/** Задать сроки обучения по заявке (только для админа) */
+export const ADMIN_SET_ORDER_TRAINING_DATES = gql`
+  ${ORDER_FIELDS}
+  mutation AdminSetOrderTrainingDates(
+    $orderId: ID!
+    $input: AdminSetOrderTrainingDatesInput!
+  ) {
+    adminSetOrderTrainingDates(orderId: $orderId, input: $input) {
+      ...OrderFields
     }
   }
 `;

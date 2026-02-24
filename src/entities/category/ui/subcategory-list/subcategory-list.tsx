@@ -2,7 +2,7 @@
 
 import { memo, useMemo } from "react";
 import { useCategories } from "../../api/use-categories";
-import { LoadingState } from "@/shared/ui/loading-state/loading-state";
+import { SubcategoryListSkeleton } from "./subcategory-list-skeleton";
 import { EmptyState } from "@/shared/ui/empty-state/empty-state";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
 import { SubcategoryCard } from "@/widgets/public/subcategory-card/subcategory-card";
@@ -18,16 +18,21 @@ export const SubcategoryList = memo(function SubcategoryList({
   description,
   initialCategories,
 }: SubcategoryListProps) {
-  const hasInitialData = !!initialCategories;
+  const hasInitialData = !!initialCategories?.length;
 
+  // Всегда запрашиваем категории на клиенте (с кукой), чтобы при первой загрузке
+  // по URL данные обновились после гидратации
   const {
     categories: clientCategories,
     loading,
     error,
-  } = useCategories(undefined, { skip: hasInitialData });
+  } = useCategories(undefined);
 
   const categories = useMemo(
-    () => initialCategories || clientCategories,
+    () =>
+      clientCategories.length > 0
+        ? clientCategories
+        : (initialCategories ?? []),
     [initialCategories, clientCategories]
   );
 
@@ -52,12 +57,7 @@ export const SubcategoryList = memo(function SubcategoryList({
   );
 
   if (!hasInitialData && loading) {
-    return (
-      <>
-        {backButton}
-        <LoadingState message="Загрузка подкатегорий..." />
-      </>
-    );
+    return <SubcategoryListSkeleton backButton={backButton} />;
   }
 
   if (error) {

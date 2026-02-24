@@ -19,7 +19,10 @@ export function useEducationDocumentImage({
     return userSelectedPreview || initialImage || null;
   }, [userSelectedPreview, initialImage]);
 
-  const imageChanged = useMemo(() => !!userSelectedPreview, [userSelectedPreview]);
+  const imageChanged = useMemo(
+    () => !!userSelectedPreview,
+    [userSelectedPreview]
+  );
 
   const handleImageFile = (file: File | null) => {
     if (!file) {

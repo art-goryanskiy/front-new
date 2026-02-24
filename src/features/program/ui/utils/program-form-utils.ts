@@ -83,12 +83,14 @@ export function createProgramInput(
         awardedQualification: data.awardedQualification.trim(),
       }),
     ...(config.showAwardedRank && {
-      ...(data.awardedRankFrom !== undefined && {
-        awardedRankFrom: data.awardedRankFrom,
-      }),
-      ...(data.awardedRankTo !== undefined && {
-        awardedRankTo: data.awardedRankTo,
-      }),
+      awardedRankFrom:
+        data.awardedRankFrom != null && data.awardedRankFrom > 0
+          ? data.awardedRankFrom
+          : null,
+      awardedRankTo:
+        data.awardedRankTo != null && data.awardedRankTo > 0
+          ? data.awardedRankTo
+          : null,
     }),
     ...(config.showSubPrograms && {
       subPrograms: prepareSubPrograms(data.subPrograms),
@@ -128,12 +130,14 @@ export function updateProgramInput(
         awardedQualification: data.awardedQualification.trim(),
       }),
     ...(config.showAwardedRank && {
-      ...(data.awardedRankFrom !== undefined && {
-        awardedRankFrom: data.awardedRankFrom,
-      }),
-      ...(data.awardedRankTo !== undefined && {
-        awardedRankTo: data.awardedRankTo,
-      }),
+      awardedRankFrom:
+        data.awardedRankFrom != null && data.awardedRankFrom > 0
+          ? data.awardedRankFrom
+          : null,
+      awardedRankTo:
+        data.awardedRankTo != null && data.awardedRankTo > 0
+          ? data.awardedRankTo
+          : null,
     }),
     ...(config.showSubPrograms && {
       subPrograms: prepareSubPrograms(data.subPrograms),

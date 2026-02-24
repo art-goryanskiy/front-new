@@ -45,7 +45,9 @@ export const ProgramFormEducationDocumentField = memo(
               disabled={loading}
             >
               <SelectTrigger className="w-full bg-background/60">
-                <SelectValue placeholder={FORM_PLACEHOLDERS.educationDocument} />
+                <SelectValue
+                  placeholder={FORM_PLACEHOLDERS.educationDocument}
+                />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="none">Без документа</SelectItem>

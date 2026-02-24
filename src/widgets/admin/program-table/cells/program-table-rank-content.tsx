@@ -1,7 +1,6 @@
 "use client";
 
 import { memo, useMemo } from "react";
-import { Badge } from "@/components/ui/badge";
 import { formatRank } from "../utils/program-table-utils";
 import type { ProgramTableCellContentProps } from "../types/program-table.types";
 
@@ -21,13 +20,12 @@ export const ProgramTableRankContent = memo(
     );
 
     return (
-      <Badge
-        variant="warning"
-        className="font-semibold"
+      <span
+        className="text-sm whitespace-nowrap text-foreground"
         aria-label={ariaLabel}
       >
         {rankText}
-      </Badge>
+      </span>
     );
   }
 );

@@ -18,7 +18,7 @@ const nextConfig: NextConfig = {
       },
     ],
     formats: ["image/avif", "image/webp"],
-    minimumCacheTTL: 60,
+    minimumCacheTTL: 86400,
     dangerouslyAllowSVG: true,
   },
   // Оптимизация bundle size
@@ -41,6 +41,20 @@ const nextConfig: NextConfig = {
   // Компрессия
   compress: true,
   // Оптимизация production builds
+  async headers() {
+    return [
+      {
+        source: "/admin/:path*",
+        headers: [
+          { key: "X-Robots-Tag", value: "noindex, nofollow" },
+        ],
+      },
+      {
+        source: "/:path*",
+        headers: [{ key: "X-Robots-Tag", value: "all" }],
+      },
+    ];
+  },
 };
 
 export default nextConfig;

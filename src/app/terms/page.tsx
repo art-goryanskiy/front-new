@@ -1,11 +1,13 @@
 import { PublicPageLayout } from "@/shared/ui/layouts/public-page-layout";
 import type { Metadata } from "next";
+import { generateMetadata as generateSeoMetadata } from "@/shared/lib/seo/metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = generateSeoMetadata({
   title: "Пользовательское соглашение",
   description:
     "Пользовательское соглашение ООО ЦОК СТАНДАРТ ПЛЮС. Условия использования сайта.",
-};
+  url: "/terms",
+});
 
 export default function TermsPage() {
   return (
@@ -15,8 +17,9 @@ export default function TermsPage() {
           Пользовательское соглашение
         </h1>
         <p className="mt-4 text-sm text-muted-foreground sm:text-base">
-          Раздел в разработке. Здесь будут размещены условия использования сайта
-          ООО ЦОК «СТАНДАРТ ПЛЮС» и пользовательское соглашение.
+          Раздел в разработке. Здесь будут размещены условия
+          использования сайта ООО ЦОК «СТАНДАРТ ПЛЮС» и
+          пользовательское соглашение.
         </p>
       </div>
     </PublicPageLayout>

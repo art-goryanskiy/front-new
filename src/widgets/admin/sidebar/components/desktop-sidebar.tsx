@@ -25,6 +25,20 @@ const USERS_MENU_ITEM = {
   color: "default" as const,
 };
 
+const ORDERS_MENU_ITEM = {
+  label: "Заявки",
+  icon: "inbox" as const,
+  path: "/admin/orders",
+  color: "default" as const,
+};
+
+const CHATS_MENU_ITEM = {
+  label: "Чаты",
+  icon: "message-circle" as const,
+  path: "/admin/chats",
+  color: "default" as const,
+};
+
 const EDUCATION_DOCUMENTS_MENU_ITEM = {
   label: "Документы об образовании",
   icon: "file-text" as const,
@@ -84,6 +98,23 @@ export const DesktopSidebar = memo(function DesktopSidebar() {
           <SidebarNavItem
             item={USERS_MENU_ITEM}
             isActive={isNavItemActive(pathname, USERS_MENU_ITEM.path)}
+            isCollapsed={isCollapsed}
+            onNavigate={handleNavigate}
+          />
+
+          <SidebarNavItem
+            item={ORDERS_MENU_ITEM}
+            isActive={isNavItemActive(
+              pathname,
+              ORDERS_MENU_ITEM.path
+            )}
+            isCollapsed={isCollapsed}
+            onNavigate={handleNavigate}
+          />
+
+          <SidebarNavItem
+            item={CHATS_MENU_ITEM}
+            isActive={isNavItemActive(pathname, CHATS_MENU_ITEM.path)}
             isCollapsed={isCollapsed}
             onNavigate={handleNavigate}
           />

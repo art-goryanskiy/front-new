@@ -1,11 +1,11 @@
 import { CATEGORY_TYPE_LABELS } from "@/shared/constants/categories";
+import { GLASS_CLASSES } from "@/shared/ui/glass/glass-constants";
 
 /** id кнопки бургер-меню в хедере (для возврата фокуса при закрытии) */
 export const HEADER_MENU_BUTTON_ID = "header-menu-button";
 
 export const PUBLIC_HEADER_CLASSES = {
-  header:
-    "sticky top-0 z-50 border-b border-border/60 bg-background/70 shadow-sm backdrop-blur-xl supports-[backdrop-filter]:bg-background/50",
+  header: `sticky top-0 z-50 border-b shadow-sm ${GLASS_CLASSES.strong}`,
   container: "mx-auto w-full max-w-7xl",
   content:
     "flex gap-4 justify-between items-center px-4 h-16 sm:px-6 md:px-8 lg:px-10 xl:px-12",
@@ -21,7 +21,7 @@ export const PUBLIC_HEADER_CLASSES = {
 
 export const PUBLIC_HEADER_ANIMATIONS = {
   header: {
-    initial: { y: -100, opacity: 0 },
+    initial: false,
     animate: { y: 0, opacity: 1 },
     transition: { duration: 0.3 },
   },

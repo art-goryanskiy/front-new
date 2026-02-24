@@ -8,8 +8,9 @@ export const FORM_LABELS = {
   studentCategory: "Категория студентов",
   educationDocument: "Документ об образовании",
   awardedQualification: "Присваиваемая квалификация",
-  awardedRankFrom: "Ранг от",
-  awardedRankTo: "Ранг до",
+  awardedRankFrom:
+    "Разряд с (или единственный разряд); необязательно",
+  awardedRankTo: "Разряд по (или единственный разряд); необязательно",
   pricing: "Цены и часы",
   hours: "Часы",
   price: "Цена",
@@ -18,6 +19,10 @@ export const FORM_LABELS = {
   subProgramDescription: "Описание подпрограммы",
 } as const;
 
+/** Разряд: 0 = без разряда, 1–8 = разряд. */
+export const RANK_MIN = 0;
+export const RANK_MAX = 8;
+
 export const FORM_PLACEHOLDERS = {
   title: "Введите название программы",
   shortTitle: "Короткое название для карточек (до 80 символов)",
@@ -25,8 +30,8 @@ export const FORM_PLACEHOLDERS = {
   studentCategory: "Введите категорию студентов",
   educationDocument: "Выберите документ или оставьте пустым",
   awardedQualification: "Введите квалификацию",
-  awardedRankFrom: "0",
-  awardedRankTo: "0",
+  awardedRankFrom: "0 — без разряда, 1–8",
+  awardedRankTo: "0 — без разряда, 1–8",
   hours: "0",
   price: "0.00",
   subProgramTitle: "Введите название подпрограммы",

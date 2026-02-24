@@ -7,7 +7,7 @@ import { useOrder } from "@/entities/order/api/use-order";
 import { useCreateOrderCardPayment } from "@/entities/order/api/use-create-order-card-payment";
 import { useCreateOrderInvoice } from "@/entities/order/api/use-create-order-invoice";
 import { Surface } from "@/shared/ui/surface/surface";
-import { LoadingState } from "@/shared/ui/loading-state/loading-state";
+import { OrderPaymentSkeleton } from "./order-payment-skeleton";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
 import { formatPriceWithCurrency } from "@/shared/lib/helpers/format-helpers";
 import { OrganizationSuggestInput } from "@/shared/ui/form-fields/organization-suggest-input";
@@ -15,7 +15,12 @@ import type { OrganizationSuggestion } from "@/shared/ui/form-fields/organizatio
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 import {
   ArrowLeft,
   CreditCard,
@@ -25,7 +30,10 @@ import {
   Loader2,
   Sparkles,
 } from "lucide-react";
-import { OrderCustomerType } from "@/shared/api/generated/graphql";
+import {
+  OrderCustomerType,
+  OrderStatus,
+} from "@/shared/api/generated/graphql";
 import { cn } from "@/lib/utils";
 
 export const OrderPaymentContent = memo(function OrderPaymentContent({
@@ -34,10 +42,15 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
   orderId: string;
 }) {
   const router = useRouter();
-  const { order, loading: orderLoading, error: orderError, refetch: refetchOrder } =
-    useOrder(orderId);
-  const { createOrderCardPayment, loading: cardCreating } = useCreateOrderCardPayment();
-  const { createOrderInvoice, loading: invoiceCreating } = useCreateOrderInvoice();
+  const {
+    order,
+    loading: orderLoading,
+    error: orderError,
+  } = useOrder(orderId);
+  const { createOrderCardPayment, loading: cardCreating } =
+    useCreateOrderCardPayment();
+  const { createOrderInvoice, loading: invoiceCreating } =
+    useCreateOrderInvoice();
 
   const [invoiceResult, setInvoiceResult] = useState<{
     pdfUrl: string;
@@ -47,8 +60,11 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
   const [payerInn, setPayerInn] = useState("");
   const [payerKpp, setPayerKpp] = useState("");
   const [payerName, setPayerName] = useState("");
-  const [payerOrgApiUnavailable, setPayerOrgApiUnavailable] = useState(false);
-  const [cardPaymentError, setCardPaymentError] = useState<string | null>(null);
+  const [payerOrgApiUnavailable, setPayerOrgApiUnavailable] =
+    useState(false);
+  const [cardPaymentError, setCardPaymentError] = useState<
+    string | null
+  >(null);
 
   const needsPayerInn =
     order?.customerType === OrderCustomerType.Self ||
@@ -62,7 +78,8 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
       return;
     }
     setCardPaymentError(
-      error ?? "Не удалось создать платёж. Попробуйте позже или выберите другой способ оплаты."
+      error ??
+        "Не удалось создать платёж. Попробуйте позже или выберите другой способ оплаты."
     );
   }, [orderId, createOrderCardPayment]);
 
@@ -86,16 +103,26 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
         incomingInvoiceUrl: result.incomingInvoiceUrl,
       });
     }
-  }, [orderId, needsPayerInn, payerInn, payerKpp, payerName, createOrderInvoice]);
+  }, [
+    orderId,
+    needsPayerInn,
+    payerInn,
+    payerKpp,
+    payerName,
+    createOrderInvoice,
+  ]);
 
-  const handlePayerOrgSelect = useCallback((suggestion: OrganizationSuggestion) => {
-    setPayerInn(suggestion.inn);
-    setPayerKpp(suggestion.kpp ?? "");
-    setPayerName(suggestion.displayName ?? "");
-  }, []);
+  const handlePayerOrgSelect = useCallback(
+    (suggestion: OrganizationSuggestion) => {
+      setPayerInn(suggestion.inn);
+      setPayerKpp(suggestion.kpp ?? "");
+      setPayerName(suggestion.displayName ?? "");
+    },
+    []
+  );
 
   if (orderLoading && !order) {
-    return <LoadingState message="Загрузка заказа…" />;
+    return <OrderPaymentSkeleton />;
   }
 
   if (orderError) {
@@ -105,29 +132,34 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
   if (!order) {
     return (
       <Surface variant="floating" className="p-8 text-center">
-        <p className="text-muted-foreground">Заказ не найден.</p>
-        <Button variant="link" className="mt-2" onClick={() => router.push("/orders")}>
-          К списку заказов
+        <p className="text-muted-foreground">Заявка не найдена.</p>
+        <Button
+          variant="link"
+          className="mt-2"
+          onClick={() => router.push("/orders")}
+        >
+          К списку заявок
         </Button>
       </Surface>
     );
   }
 
   const isPaymentPending =
-    order.status === "PAYMENT_PENDING" || (order.status as string) === "AWAITING_PAYMENT";
+    order.status === OrderStatus.AwaitingPayment ||
+    (order.status as string) === "PAYMENT_PENDING";
   const isPaid =
-    order.status === "PAID" ||
-    order.status === "COMPLETED" ||
-    order.status === "DOCUMENTS_GENERATED";
+    order.status === OrderStatus.Paid ||
+    order.status === OrderStatus.Completed ||
+    (order.status as string) === "DOCUMENTS_GENERATED";
 
   if (!isPaymentPending && !isPaid) {
     return (
       <Surface variant="floating" className="p-8 text-center">
         <p className="text-muted-foreground">
-          Оплата для этого заказа недоступна (статус: {order.status}).
+          Оплата для этой заявки недоступна (статус: {order.status}).
         </p>
         <Button asChild variant="outline" className="mt-4">
-          <Link href={`/orders/${orderId}`}>К заказу</Link>
+          <Link href={`/orders/${orderId}`}>К заявке</Link>
         </Button>
       </Surface>
     );
@@ -139,24 +171,28 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
         <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary">
           <Sparkles className="h-7 w-7" />
         </div>
-        <h1 className="mt-4 text-xl font-semibold text-foreground">Оплата получена</h1>
-        <p className="mt-2 text-sm text-muted-foreground">Заказ №{order.id} оплачен.</p>
+        <h1 className="mt-4 text-xl font-semibold text-foreground">
+          Оплата получена
+        </h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Заявка №{order.number ?? order.id} оплачена.
+        </p>
         <Button asChild variant="outline" className="mt-6">
-          <Link href={`/orders/${orderId}`}>К заказу</Link>
+          <Link href={`/orders/${orderId}`}>К заявке</Link>
         </Button>
       </Surface>
     );
   }
 
   return (
-    <div className="mx-auto w-full max-w-2xl space-y-8">
+    <div className="mx-auto w-full max-w-4xl space-y-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Оплата заказа
+          <p className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+            Оплата заявки
           </p>
           <h1 className="mt-1 text-2xl font-bold tracking-tight text-foreground">
-            Заказ №{order.id}
+            Заявка №{order.number ?? order.id}
           </h1>
         </div>
         <Button
@@ -172,7 +208,9 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
 
       <Surface variant="floating" className="overflow-hidden p-0">
         <div className="border-b border-border/60 bg-muted/20 px-6 py-4">
-          <p className="text-sm font-medium text-muted-foreground">Сумма к оплате</p>
+          <p className="text-sm font-medium text-muted-foreground">
+            Сумма к оплате
+          </p>
           <p className="text-3xl font-bold tracking-tight text-primary">
             {formatPriceWithCurrency(order.totalAmount)}
           </p>
@@ -180,9 +218,16 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
         <div className="p-6">
           <ul className="space-y-2 text-sm text-muted-foreground">
             {order.lines.map((line, idx) => (
-              <li key={`${line.programId}-${idx}`} className="flex justify-between">
-                <span className="text-foreground">{line.programTitle}</span>
-                <span>{formatPriceWithCurrency(line.lineAmount)}</span>
+              <li
+                key={`${line.programId}-${idx}`}
+                className="flex justify-between gap-4"
+              >
+                <span className="min-w-0 flex-1 text-foreground">
+                  {line.subProgramTitle ?? line.programTitle}
+                </span>
+                <span className="shrink-0">
+                  {formatPriceWithCurrency(line.lineAmount)}
+                </span>
               </li>
             ))}
           </ul>
@@ -190,19 +235,27 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
       </Surface>
 
       <div className="space-y-4">
-        <h2 className="text-lg font-semibold text-foreground">Способ оплаты</h2>
+        <h2 className="text-lg font-semibold text-foreground">
+          Способ оплаты
+        </h2>
         <Tabs defaultValue="card" className="w-full">
           <TabsList
             className={cn(
               "grid w-full grid-cols-2 rounded-2xl p-1",
-              "bg-muted/50 border border-border/40"
+              "border border-border/40 bg-muted/50"
             )}
           >
-            <TabsTrigger value="card" className="gap-2 rounded-xl transition-colors">
+            <TabsTrigger
+              value="card"
+              className="gap-2 rounded-xl transition-colors"
+            >
               <CreditCard className="h-4 w-4" />
               Картой
             </TabsTrigger>
-            <TabsTrigger value="invoice" className="gap-2 rounded-xl transition-colors">
+            <TabsTrigger
+              value="invoice"
+              className="gap-2 rounded-xl transition-colors"
+            >
               <FileText className="h-4 w-4" />
               По счёту
             </TabsTrigger>
@@ -214,17 +267,21 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
               className="space-y-6 p-6 ring-1 ring-border/20 transition-shadow hover:ring-primary/10"
             >
               <p className="text-sm text-muted-foreground">
-                Оплата банковской картой через защищённую форму Т-Банка. После нажатия кнопки вы
-                будете перенаправлены на страницу оплаты.
+                Оплата банковской картой через защищённую форму
+                Т-Банка. После нажатия кнопки вы будете перенаправлены
+                на страницу оплаты.
               </p>
               {cardPaymentError && (
-                <p className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive" role="alert">
+                <p
+                  className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+                  role="alert"
+                >
                   {cardPaymentError}
                 </p>
               )}
               <Button
                 size="lg"
-                className="w-full gap-2 sm:w-auto min-w-[200px] font-medium"
+                className="w-full min-w-[200px] gap-2 font-medium sm:w-auto"
                 onClick={handlePayByCard}
                 disabled={cardCreating}
               >
@@ -250,25 +307,37 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
                       {payerOrgApiUnavailable ? (
                         <>
                           <div className="space-y-2">
-                            <Label htmlFor="payerInn">ИНН плательщика *</Label>
+                            <Label htmlFor="payerInn">
+                              ИНН плательщика *
+                            </Label>
                             <Input
                               id="payerInn"
                               placeholder="10 или 12 цифр"
                               value={payerInn}
                               onChange={(e) =>
-                                setPayerInn(e.target.value.replace(/\D/g, "").slice(0, 12))
+                                setPayerInn(
+                                  e.target.value
+                                    .replace(/\D/g, "")
+                                    .slice(0, 12)
+                                )
                               }
                               maxLength={12}
                             />
                           </div>
                           <div className="space-y-2">
-                            <Label htmlFor="payerKpp">КПП (необязательно)</Label>
+                            <Label htmlFor="payerKpp">
+                              КПП (необязательно)
+                            </Label>
                             <Input
                               id="payerKpp"
                               placeholder="9 цифр"
                               value={payerKpp}
                               onChange={(e) =>
-                                setPayerKpp(e.target.value.replace(/\D/g, "").slice(0, 9))
+                                setPayerKpp(
+                                  e.target.value
+                                    .replace(/\D/g, "")
+                                    .slice(0, 9)
+                                )
                               }
                               maxLength={9}
                             />
@@ -281,7 +350,9 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
                               id="payerName"
                               placeholder="ФИО или название"
                               value={payerName}
-                              onChange={(e) => setPayerName(e.target.value)}
+                              onChange={(e) =>
+                                setPayerName(e.target.value)
+                              }
                             />
                           </div>
                         </>
@@ -291,7 +362,9 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
                           placeholder="Введите ИНН или название"
                           description="Выберите организацию из списка — подставятся ИНН, КПП и наименование"
                           onSelect={handlePayerOrgSelect}
-                          onApiUnavailableChange={setPayerOrgApiUnavailable}
+                          onApiUnavailableChange={
+                            setPayerOrgApiUnavailable
+                          }
                         />
                       )}
                       {payerInn && (
@@ -305,14 +378,18 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
                   )}
                   {!needsPayerInn && (
                     <p className="text-sm text-muted-foreground">
-                      Для заказа от организации данные плательщика берутся автоматически.
+                      Для заявки от организации данные плательщика
+                      берутся автоматически.
                     </p>
                   )}
                   <Button
                     size="lg"
-                    className="w-full gap-2 sm:w-auto min-w-[200px] font-medium"
+                    className="w-full min-w-[200px] gap-2 font-medium sm:w-auto"
                     onClick={handleCreateInvoice}
-                    disabled={invoiceCreating || (needsPayerInn && !payerInn.trim())}
+                    disabled={
+                      invoiceCreating ||
+                      (needsPayerInn && !payerInn.trim())
+                    }
                   >
                     {invoiceCreating ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
@@ -325,13 +402,16 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
               ) : (
                 <div className="space-y-4">
                   <p className="text-sm text-muted-foreground">
-                    Счёт выставлен. Скачайте PDF и оплатите по реквизитам.
+                    Счёт выставлен. Скачайте PDF и оплатите по
+                    реквизитам.
                   </p>
                   <div className="flex flex-col gap-3 sm:flex-row">
                     <Button
                       size="lg"
                       className="flex-1 gap-2 font-medium"
-                      onClick={() => window.open(invoiceResult.pdfUrl, "_blank")}
+                      onClick={() =>
+                        window.open(invoiceResult.pdfUrl, "_blank")
+                      }
                     >
                       <Download className="h-4 w-4" />
                       Скачать счёт
@@ -342,7 +422,10 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
                         variant="outline"
                         className="flex-1 gap-2"
                         onClick={() =>
-                          window.open(invoiceResult.incomingInvoiceUrl!, "_blank")
+                          window.open(
+                            invoiceResult.incomingInvoiceUrl!,
+                            "_blank"
+                          )
                         }
                       >
                         <ExternalLink className="h-4 w-4" />
@@ -359,7 +442,7 @@ export const OrderPaymentContent = memo(function OrderPaymentContent({
 
       <div className="flex justify-center">
         <Button variant="link" asChild>
-          <Link href={`/orders/${orderId}`}>Перейти к заказу</Link>
+          <Link href={`/orders/${orderId}`}>Перейти к заявке</Link>
         </Button>
       </div>
     </div>

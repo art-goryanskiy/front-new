@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { memo, useCallback, useMemo } from "react";
-import { motion } from "framer-motion";
 import { ArrowRight, Check, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePriceVisibility } from "@/shared/store/auth-store";
@@ -20,8 +19,12 @@ import { useToastState } from "@/shared/store/toast-store";
 import { useRouter } from "next/navigation";
 import { saveReturnUrl } from "@/shared/lib/auth/utils/auth-redirect-utils";
 import { AUTH_GUARD_ROUTES } from "@/shared/lib/auth/constants/auth-guard-constants";
+import { isApolloUnauthenticated } from "@/shared/lib/graphql/error-to-user-message";
+import { BlurGlowBackground } from "@/shared/ui/blur-glow-background/blur-glow-background";
 
-function getFirstPricingIndex(program: { pricing?: Array<{ price?: number | null }> | null }): number | null {
+function getFirstPricingIndex(program: {
+  pricing?: Array<{ price?: number | null }> | null;
+}): number | null {
   if (!program.pricing?.length) return null;
   const idx = program.pricing.findIndex(
     (p) => typeof p?.price === "number" && p.price > 0
@@ -33,9 +36,10 @@ export const ProgramCard = memo(
   function ProgramCard({ program }: ProgramCardProps) {
     const router = useRouter();
     const { canSeePrice, isAuthLoading } = usePriceVisibility();
-    const { minPrice } = useProgramCardPricing(program);
+    const { minPrice, hoursRange } = useProgramCardPricing(program);
     const { addToCart, loading: addLoading } = useAddToCart();
-    const { removeFromCart, loading: removeLoading } = useRemoveFromCart();
+    const { removeFromCart, loading: removeLoading } =
+      useRemoveFromCart();
     const { items: cartItems } = useMyCart({ skip: !canSeePrice });
 
     const cartItem = useMemo(
@@ -61,7 +65,8 @@ export const ProgramCard = memo(
       [program]
     );
 
-    const canAddToCart = minPrice !== null && minPrice > 0 && firstPricingIndex !== null;
+    const canAddToCart =
+      minPrice !== null && minPrice > 0 && firstPricingIndex !== null;
 
     const handleLearnPrice = useCallback(
       (e: React.MouseEvent) => {
@@ -98,16 +103,7 @@ export const ProgramCard = memo(
           });
           showToast("success", "Добавлено в корзину");
         } catch (err) {
-          const e = err as {
-            networkError?: { statusCode?: number };
-            graphQLErrors?: Array<{ extensions?: { code?: string } }>;
-          };
-          const is401 =
-            e?.networkError?.statusCode === 401 ||
-            e?.graphQLErrors?.some(
-              (g) => g?.extensions?.code === "UNAUTHENTICATED"
-            );
-          if (is401) {
+          if (isApolloUnauthenticated(err)) {
             saveReturnUrl(window.location.pathname);
             router.replace(AUTH_GUARD_ROUTES.login);
             return;
@@ -131,29 +127,31 @@ export const ProgramCard = memo(
     const isLoading = addLoading || removeLoading;
 
     return (
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-        className="flex h-full"
-      >
+      <div className="flex h-full">
         <Link
           href={`/programs/${program.id}`}
           className="block h-full w-full"
         >
           <Surface
             variant="floating"
-            className="group relative h-full w-full overflow-hidden p-4 transition-[border,transform,box-shadow] hover:-translate-y-0.5 hover:border-border/80"
+            className="group relative h-full w-full overflow-hidden p-4 transition-[border,transform,box-shadow] hover:-translate-y-px hover:border-border/80"
           >
             <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-              <div className="absolute -top-24 -right-24 h-[260px] w-[360px] rounded-full bg-primary/10 blur-3xl" />
-              <div className="absolute inset-0 bg-linear-to-b from-transparent via-background/10 to-background/60" />
+              <BlurGlowBackground
+                spots={[
+                  {
+                    position: "top-right-card",
+                    color: "bg-primary/10",
+                    size: "small",
+                  },
+                ]}
+              />
             </div>
 
             <div className="relative z-10 flex h-full min-h-[88px] flex-col justify-between gap-3">
               <div className="flex items-start gap-3">
                 <h3
-                  className="line-clamp-2 min-w-0 flex-1 text-sm leading-snug font-semibold break-words hyphens-auto text-foreground"
+                  className="line-clamp-2 min-w-0 flex-1 text-sm leading-snug font-semibold wrap-break-word hyphens-auto text-foreground"
                   title={program.title}
                 >
                   {cardTitle}
@@ -173,7 +171,9 @@ export const ProgramCard = memo(
                         : "border-border/60 bg-background/60 text-muted-foreground hover:bg-muted/20 hover:text-foreground disabled:opacity-50"
                     )}
                     aria-label={
-                      isInCart ? "Удалить из корзины" : "Добавить в корзину"
+                      isInCart
+                        ? "Удалить из корзины"
+                        : "Добавить в корзину"
                     }
                   >
                     {isInCart ? (
@@ -189,14 +189,19 @@ export const ProgramCard = memo(
                 {isAuthLoading ? (
                   <Skeleton className="h-5 w-24" />
                 ) : canSeePrice ? (
-                  <div className="text-sm font-semibold text-foreground">
+                  <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-semibold text-foreground">
                     {priceText}
+                    {hoursRange && (
+                      <span className="font-normal text-muted-foreground">
+                        {hoursRange}
+                      </span>
+                    )}
                   </div>
                 ) : (
                   <button
                     type="button"
                     onClick={handleLearnPrice}
-                    className="group/cta relative inline-flex min-h-5 items-center gap-1.5 rounded-full border border-border/50 bg-muted/10 px-2.5 py-1 text-xs font-medium text-muted-foreground backdrop-blur-sm transition-all duration-300 hover:border-primary/40 hover:bg-primary/5 hover:text-primary hover:shadow-[0_0_12px_color-mix(in_srgb,var(--primary)_12%,transparent)] focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2 focus:ring-offset-background"
+                    className="group/cta relative inline-flex min-h-5 items-center gap-1.5 rounded-full border border-border/50 bg-muted/10 px-2.5 py-1 text-xs font-medium text-muted-foreground backdrop-blur-sm transition-all duration-300 hover:border-primary/40 hover:bg-primary/5 hover:text-primary hover:shadow-[0_0_12px_color-mix(in_srgb,var(--primary)_12%,transparent)] focus:ring-2 focus:ring-primary/30 focus:ring-offset-2 focus:ring-offset-background focus:outline-none"
                     aria-label="Войти, чтобы увидеть стоимость"
                   >
                     <span>Узнать стоимость</span>
@@ -214,7 +219,7 @@ export const ProgramCard = memo(
             </div>
           </Surface>
         </Link>
-      </motion.div>
+      </div>
     );
   },
   (prevProps, nextProps) =>

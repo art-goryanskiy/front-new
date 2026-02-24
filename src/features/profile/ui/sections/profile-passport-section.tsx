@@ -114,13 +114,15 @@ export const ProfilePassportSection = memo(
             rules={{
               validate: (v: unknown) => {
                 if (!v || typeof v !== "string") return true;
-                if (!isSnilsLengthValid(v)) return "СНИЛС должен содержать 11 цифр";
-                if (!isSnilsValid(v)) return "Неверная контрольная сумма СНИЛС";
+                if (!isSnilsLengthValid(v))
+                  return "СНИЛС должен содержать 11 цифр";
+                if (!isSnilsValid(v))
+                  return "Неверная контрольная сумма СНИЛС";
                 return true;
               },
             }}
             render={({ field, fieldState }) => (
-              <div className="space-y-2 w-full">
+              <div className="w-full space-y-2">
                 <div className="group relative pt-2">
                   <Label
                     htmlFor="snils"
@@ -144,7 +146,11 @@ export const ProfilePassportSection = memo(
                     aria-invalid={fieldState.invalid}
                     aria-label={PROFILE_FORM_LABELS.snils}
                     className="peer bg-background/60"
-                    value={typeof field.value === "string" ? field.value : ""}
+                    value={
+                      typeof field.value === "string"
+                        ? field.value
+                        : ""
+                    }
                     onChange={(e) => {
                       const formatted = formatSnils(e.target.value);
                       field.onChange(formatted);
@@ -164,11 +170,11 @@ export const ProfilePassportSection = memo(
               control={control}
               name={fieldName("passportSeries")}
               render={({ field }) => (
-                <div className="space-y-2 w-full">
+                <div className="w-full space-y-2">
                   <div className="group relative pt-2">
                     <Label
                       htmlFor="passportSeries"
-                      className="absolute top-2 left-3 z-10 -translate-y-1/2 rounded-md bg-background/80 px-1 text-[11px] font-medium backdrop-blur-sm transition-colors text-muted-foreground group-focus-within:text-foreground"
+                      className="absolute top-2 left-3 z-10 -translate-y-1/2 rounded-md bg-background/80 px-1 text-[11px] font-medium text-muted-foreground backdrop-blur-sm transition-colors group-focus-within:text-foreground"
                     >
                       {PROFILE_FORM_LABELS.passportSeries}
                     </Label>
@@ -183,7 +189,9 @@ export const ProfilePassportSection = memo(
                       aria-label={PROFILE_FORM_LABELS.passportSeries}
                       className="peer bg-background/60"
                       value={
-                        typeof field.value === "string" ? field.value : ""
+                        typeof field.value === "string"
+                          ? field.value
+                          : ""
                       }
                       onChange={(e) => {
                         field.onChange(
@@ -199,11 +207,11 @@ export const ProfilePassportSection = memo(
               control={control}
               name={fieldName("passportNumber")}
               render={({ field }) => (
-                <div className="space-y-2 w-full">
+                <div className="w-full space-y-2">
                   <div className="group relative pt-2">
                     <Label
                       htmlFor="passportNumber"
-                      className="absolute top-2 left-3 z-10 -translate-y-1/2 rounded-md bg-background/80 px-1 text-[11px] font-medium backdrop-blur-sm transition-colors text-muted-foreground group-focus-within:text-foreground"
+                      className="absolute top-2 left-3 z-10 -translate-y-1/2 rounded-md bg-background/80 px-1 text-[11px] font-medium text-muted-foreground backdrop-blur-sm transition-colors group-focus-within:text-foreground"
                     >
                       {PROFILE_FORM_LABELS.passportNumber}
                     </Label>
@@ -218,7 +226,9 @@ export const ProfilePassportSection = memo(
                       aria-label={PROFILE_FORM_LABELS.passportNumber}
                       className="peer bg-background/60"
                       value={
-                        typeof field.value === "string" ? field.value : ""
+                        typeof field.value === "string"
+                          ? field.value
+                          : ""
                       }
                       onChange={(e) => {
                         field.onChange(
@@ -248,11 +258,11 @@ export const ProfilePassportSection = memo(
             control={control}
             name={fieldName("passportDepartmentCode")}
             render={({ field }) => (
-              <div className="space-y-2 w-full">
+              <div className="w-full space-y-2">
                 <div className="group relative pt-2">
                   <Label
                     htmlFor="passportDepartmentCode"
-                    className="absolute top-2 left-3 z-10 -translate-y-1/2 rounded-md bg-background/80 px-1 text-[11px] font-medium backdrop-blur-sm transition-colors text-muted-foreground group-focus-within:text-foreground"
+                    className="absolute top-2 left-3 z-10 -translate-y-1/2 rounded-md bg-background/80 px-1 text-[11px] font-medium text-muted-foreground backdrop-blur-sm transition-colors group-focus-within:text-foreground"
                   >
                     {PROFILE_FORM_LABELS.passportDepartmentCode}
                   </Label>
@@ -264,10 +274,14 @@ export const ProfilePassportSection = memo(
                     autoComplete="off"
                     placeholder=" "
                     lang="ru"
-                    aria-label={PROFILE_FORM_LABELS.passportDepartmentCode}
+                    aria-label={
+                      PROFILE_FORM_LABELS.passportDepartmentCode
+                    }
                     className="peer bg-background/60"
                     value={
-                      typeof field.value === "string" ? field.value : ""
+                      typeof field.value === "string"
+                        ? field.value
+                        : ""
                     }
                     onChange={(e) => {
                       field.onChange(

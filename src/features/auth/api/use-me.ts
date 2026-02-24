@@ -26,9 +26,13 @@ export function useMe(options?: { skip?: boolean }) {
 
   const meUser = useMemo(() => data?.me || null, [data?.me]);
 
-  const previousUserRef = useRef<UserEntity | null | undefined>(undefined);
+  const previousUserRef = useRef<UserEntity | null | undefined>(
+    undefined
+  );
   const retryCountRef = useRef(0);
-  const nextRetryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const nextRetryTimerRef = useRef<ReturnType<
+    typeof setTimeout
+  > | null>(null);
 
   // Повторные запросы при отсутствии user (холодный старт, me: null при неготовой сессии).
   // Запускаем цепочку retry из callback refetch — иначе второй retry никогда не планируется
@@ -48,7 +52,9 @@ export function useMe(options?: { skip?: boolean }) {
       nextRetryTimerRef.current = setTimeout(async () => {
         nextRetryTimerRef.current = null;
         try {
-          const result = await refetch({ fetchPolicy: "network-only" });
+          const result = await refetch({
+            fetchPolicy: "network-only",
+          });
           const nextUser = result?.data?.me ?? null;
           if (nextUser) {
             setUser(nextUser);
@@ -93,18 +99,13 @@ export function useMe(options?: { skip?: boolean }) {
       setLoading(false);
     }
 
-    // Обновляем user только если значение действительно изменилось
+    // Обновляем user только при успешном ответе me. Не сбрасываем user при ошибке
+    // или пустом data (сеть, таймаут, потеря кэша) — иначе аватар пропадает при
+    // долгой работе/переключении вкладок. Очистка стора только через logout() в
+    // auth-error-link при 401 и неудачном refresh.
     if (meUser && previousUserRef.current !== meUser) {
       setUser(meUser);
       previousUserRef.current = meUser;
-    } else if (
-      !meUser &&
-      !loading &&
-      (error || !data) &&
-      previousUserRef.current !== null
-    ) {
-      setUser(null);
-      previousUserRef.current = null;
     }
     // Убираем setUser из зависимостей, так как он стабилен из Zustand
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -114,5 +115,6 @@ export function useMe(options?: { skip?: boolean }) {
     user: meUser || user,
     loading: skip ? false : loading,
     error,
+    refetch,
   };
 }

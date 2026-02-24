@@ -11,7 +11,8 @@ export function useEducationDocuments(options?: { skip?: boolean }) {
     skip: options?.skip ?? false,
   });
   return {
-    educationDocuments: (data?.educationDocuments ?? []) as EducationDocumentEntity[],
+    educationDocuments: (data?.educationDocuments ??
+      []) as EducationDocumentEntity[],
     loading,
     error,
     refetch,

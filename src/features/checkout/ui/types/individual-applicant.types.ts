@@ -7,10 +7,11 @@ export interface IndividualApplicantData {
   phone: string;
 }
 
-export const defaultIndividualApplicantData = (): IndividualApplicantData => ({
-  lastName: "",
-  firstName: "",
-  middleName: "",
-  email: "",
-  phone: "",
-});
+export const defaultIndividualApplicantData =
+  (): IndividualApplicantData => ({
+    lastName: "",
+    firstName: "",
+    middleName: "",
+    email: "",
+    phone: "",
+  });

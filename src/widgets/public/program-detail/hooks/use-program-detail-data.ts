@@ -9,13 +9,23 @@ export function useProgramDetailData(program: ProgramEntity) {
     );
   }, [program.pricing]);
 
-  const totalHours = useMemo(() => {
+  const hoursDisplay = useMemo(() => {
     if (!program.pricing || program.pricing.length === 0) return null;
-    return program.pricing.reduce((sum, p) => sum + p.hours, 0);
+    const hours = program.pricing
+      .map((p) => p?.hours)
+      .filter(
+        (h): h is number =>
+          typeof h === "number" && !isNaN(h) && h > 0
+      );
+    if (hours.length === 0) return null;
+    const minHours = Math.min(...hours);
+    const maxHours = Math.max(...hours);
+    if (minHours === maxHours) return String(minHours);
+    return `${minHours}–${maxHours}`;
   }, [program.pricing]);
 
   return {
     pricingList,
-    totalHours,
+    hoursDisplay,
   };
 }

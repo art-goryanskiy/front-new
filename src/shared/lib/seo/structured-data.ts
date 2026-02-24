@@ -6,8 +6,11 @@ import type {
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://www.new.standart82.ru";
 const COMPANY_NAME = "ООО ЦОК СТАНДАРТ ПЛЮС";
-const COMPANY_PHONE = "+7 (978) 742-90-42";
-const COMPANY_EMAIL = "info@standart82.ru";
+export const COMPANY_PHONE = "+7 (978) 742-90-42";
+export const COMPANY_EMAIL = "info@standart82.ru";
+/** Полный адрес для schema.org и страницы контактов */
+export const COMPANY_ADDRESS =
+  "259022, Республика Крым, г. Симферополь, просп. Победы, 165/1, 3 этаж";
 
 export function generateOrganizationSchema() {
   return {
@@ -23,6 +26,9 @@ export function generateOrganizationSchema() {
       "@type": "PostalAddress",
       addressCountry: "RU",
       addressRegion: "Республика Крым",
+      addressLocality: "Симферополь",
+      streetAddress: "просп. Победы, 165/1, 3 этаж",
+      postalCode: "259022",
     },
     contactPoint: {
       "@type": "ContactPoint",

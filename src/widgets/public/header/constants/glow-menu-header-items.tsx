@@ -5,6 +5,9 @@ import {
   GraduationCap,
   BookOpen,
   Briefcase,
+  Newspaper,
+  Info,
+  MapPin,
 } from "lucide-react";
 import type { GlowMenuItem } from "@/components/ui/glow-menu";
 import { CATEGORY_TYPE_LABELS } from "@/shared/constants/categories";
@@ -41,6 +44,29 @@ export const GLOW_MENU_HEADER_ITEMS: GlowMenuItem[] = [
         href: "/professional-education",
         icon: Briefcase,
       },
+    ],
+  },
+  {
+    icon: Newspaper,
+    label: "Новости",
+    href: "/news",
+    gradient:
+      "radial-gradient(circle, rgba(229,9,20,0.12) 0%, rgba(196,8,18,0.05) 50%, transparent 100%)",
+    iconColor: "text-primary-600 dark:text-primary-400",
+  },
+  {
+    icon: Info,
+    label: "О нас",
+    gradient:
+      "radial-gradient(circle, rgba(229,9,20,0.12) 0%, rgba(196,8,18,0.05) 50%, transparent 100%)",
+    iconColor: "text-primary-600 dark:text-primary-400",
+    children: [
+      {
+        label: "Контакты",
+        href: "/contacts",
+        icon: MapPin,
+      },
+      // Позже: Преподаватели, Сведения об образовательной организации
     ],
   },
 ];

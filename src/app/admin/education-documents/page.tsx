@@ -14,9 +14,9 @@ const EducationDocumentModal = lazy(() =>
 );
 
 const DeleteEducationDocumentModal = lazy(() =>
-  import(
-    "@/widgets/education-document/delete-education-document-modal/delete-education-document-modal"
-  ).then((mod) => ({ default: mod.DeleteEducationDocumentModal }))
+  import("@/widgets/education-document/delete-education-document-modal/delete-education-document-modal").then(
+    (mod) => ({ default: mod.DeleteEducationDocumentModal })
+  )
 );
 
 const AdminEducationDocumentsPage = memo(

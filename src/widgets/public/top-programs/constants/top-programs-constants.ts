@@ -37,7 +37,7 @@ export const TOP_PROGRAMS_CLASSES = {
   subtitle:
     "text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto",
   tabs: "mx-auto mb-8 flex w-full max-w-3xl flex-wrap justify-center gap-2",
-  tab: "rounded-full px-4 py-2 text-sm font-semibold transition-all duration-200",
+  tab: "rounded-full px-4 py-2 text-sm font-semibold transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]",
   tabActive:
     "bg-primary text-primary-foreground shadow-lg shadow-primary/15",
   tabInactive:

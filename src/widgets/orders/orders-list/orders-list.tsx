@@ -3,21 +3,47 @@
 import { memo, useState } from "react";
 import Link from "next/link";
 import { useMyOrders } from "@/entities/order/api/use-my-orders";
-import { LoadingState } from "@/shared/ui/loading-state/loading-state";
-import { EmptyState } from "@/shared/ui/empty-state/empty-state";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
+import { OrdersListSkeleton } from "./orders-list-skeleton";
+import { Surface } from "@/shared/ui/surface/surface";
 import { formatPriceWithCurrency } from "@/shared/lib/helpers/format-helpers";
-import { ORDER_STATUS_LABELS } from "@/shared/constants/orders";
+import {
+  formatProgramsCount,
+  formatLearnersCount,
+} from "@/shared/lib/helpers/plural";
+import {
+  ORDER_STATUS_LABELS,
+  ORDER_STATUS_BADGE_CLASSES,
+} from "@/shared/constants/orders";
 import type { OrderFieldsFragment } from "@/shared/api/generated/graphql";
-import { Package, ChevronRight } from "lucide-react";
+import { Package, ChevronRight, CreditCard } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-const STATUS_FILTER_OPTIONS: { value: string | undefined; label: string }[] = [
+const STATUS_FILTER_OPTIONS: {
+  value: string | undefined;
+  label: string;
+}[] = [
   { value: undefined, label: "Все" },
-  { value: "PAYMENT_PENDING", label: ORDER_STATUS_LABELS["PAYMENT_PENDING"] ?? "Ожидает оплаты" },
+  {
+    value: "AWAITING_PAYMENT",
+    label:
+      ORDER_STATUS_LABELS["AWAITING_PAYMENT"] ?? "Ожидает оплаты",
+  },
   { value: "PAID", label: ORDER_STATUS_LABELS["PAID"] ?? "Оплачен" },
-  { value: "COMPLETED", label: ORDER_STATUS_LABELS["COMPLETED"] ?? "Завершён" },
+  {
+    value: "IN_PROGRESS",
+    label: ORDER_STATUS_LABELS["IN_PROGRESS"] ?? "В работе",
+  },
+  {
+    value: "COMPLETED",
+    label: ORDER_STATUS_LABELS["COMPLETED"] ?? "Завершён",
+  },
+  {
+    value: "CANCELLED",
+    label: ORDER_STATUS_LABELS["CANCELLED"] ?? "Отменён",
+  },
 ];
 
 function formatOrderDate(date: string | unknown): string {
@@ -35,48 +61,134 @@ function formatOrderDate(date: string | unknown): string {
   }
 }
 
+function orderSummary(order: OrderFieldsFragment): {
+  programsCount: number;
+  learnersCount: number;
+  firstProgramTitle: string | null;
+} {
+  const lines = order.lines ?? [];
+  const programsCount = lines.length;
+  const learnersCount = lines.reduce(
+    (sum, line) => sum + (line.learners?.length ?? 0),
+    0
+  );
+  const firstLine = lines[0];
+  const firstProgramTitle =
+    firstLine?.programTitle?.trim() ||
+    firstLine?.subProgramTitle?.trim() ||
+    null;
+  return {
+    programsCount,
+    learnersCount,
+    firstProgramTitle: firstProgramTitle ?? null,
+  };
+}
+
 const OrderCard = memo(function OrderCard({
   order,
 }: {
   order: OrderFieldsFragment;
 }) {
-  const statusLabel = ORDER_STATUS_LABELS[order.status] ?? order.status;
+  const statusLabel =
+    ORDER_STATUS_LABELS[order.status] ?? order.status;
+  const statusClass =
+    ORDER_STATUS_BADGE_CLASSES[order.status] ??
+    "border-border/60 bg-muted/20 text-muted-foreground";
+  const isAwaitingPayment = order.status === "AWAITING_PAYMENT";
+  const { programsCount, learnersCount, firstProgramTitle } =
+    orderSummary(order);
+  const summaryLine = [
+    formatProgramsCount(programsCount),
+    formatLearnersCount(learnersCount),
+  ].join(" · ");
 
   return (
     <Link
       href={`/orders/${order.id}`}
-      className="block rounded-xl border border-border/60 bg-card/60 p-4 transition-colors hover:border-primary/40 hover:bg-primary/5"
+      className={cn(
+        "group block rounded-xl border border-border/60 bg-background/60 p-4 transition-colors hover:border-primary/40 hover:bg-primary/5",
+        isAwaitingPayment && "ring-1 ring-amber-500/20"
+      )}
     >
       <div className="flex items-start justify-between gap-4">
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-            <span className="text-muted-foreground">№</span>
-            <span className="truncate">{order.id}</span>
+        <div className="min-w-0 flex-1 space-y-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-sm font-semibold text-foreground">
+              № {order.number ?? order.id}
+            </span>
+            <span
+              className={cn(
+                "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold",
+                statusClass
+              )}
+            >
+              {statusLabel}
+            </span>
           </div>
-          <p className="mt-1 text-xs text-muted-foreground">
+          <p className="text-xs text-muted-foreground">
             {formatOrderDate(order.createdAt)}
           </p>
-          <p className="mt-2 text-sm font-medium text-foreground">
+          <p className="text-xs text-muted-foreground">
+            {summaryLine}
+          </p>
+          {firstProgramTitle && (
+            <p
+              className="line-clamp-1 text-sm text-foreground/90"
+              title={firstProgramTitle}
+            >
+              {firstProgramTitle}
+            </p>
+          )}
+          <p className="text-base font-semibold text-foreground">
             {formatPriceWithCurrency(order.totalAmount)}
           </p>
-          <span className="mt-2 inline-block rounded-full border border-border/60 bg-muted/20 px-2 py-0.5 text-xs font-semibold text-muted-foreground">
-            {statusLabel}
-          </span>
         </div>
-        <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground" />
+        <div className="flex shrink-0 items-center gap-1">
+          {isAwaitingPayment && (
+            <CreditCard className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+          )}
+          <ChevronRight className="h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+        </div>
       </div>
     </Link>
   );
 });
 
+function OrdersEmptyContent({ hasFilter }: { hasFilter: boolean }) {
+  return (
+    <div className="flex min-h-[280px] flex-col items-center justify-center gap-6 py-12 text-center">
+      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted/50">
+        <Package className="h-8 w-8 text-muted-foreground" />
+      </div>
+      <div className="space-y-2">
+        <h3 className="text-lg font-semibold text-foreground">
+          Заявок пока нет
+        </h3>
+        <p className="max-w-sm text-sm text-muted-foreground">
+          {hasFilter
+            ? "В этой категории заявок не найдено."
+            : "Оформленные заявки появятся здесь."}
+        </p>
+      </div>
+      {!hasFilter && (
+        <Button asChild variant="outline">
+          <Link href="/qualification-upgrade">Выбрать программу</Link>
+        </Button>
+      )}
+    </div>
+  );
+}
+
 export const OrdersList = memo(function OrdersList() {
-  const [statusFilter, setStatusFilter] = useState<string | undefined>(undefined);
+  const [statusFilter, setStatusFilter] = useState<
+    string | undefined
+  >(undefined);
   const { orders, loading, error } = useMyOrders({
     filter: { limit: 20, status: statusFilter },
   });
 
   if (loading && orders.length === 0) {
-    return <LoadingState message="Загрузка заказов…" />;
+    return <OrdersListSkeleton />;
   }
 
   if (error) {
@@ -84,46 +196,52 @@ export const OrdersList = memo(function OrdersList() {
   }
 
   return (
-    <div className="space-y-6">
-      <Tabs
-        value={statusFilter ?? "all"}
-        onValueChange={(v) => setStatusFilter(v === "all" ? undefined : v)}
-        className="w-full"
-      >
-        <TabsList
-          className={cn(
-            "inline-flex h-10 w-full flex-wrap justify-start gap-1 rounded-2xl p-1 sm:w-auto",
-            "bg-muted/50 border border-border/40"
-          )}
-        >
-          <TabsTrigger value="all" className="rounded-xl px-4">
-            Все
-          </TabsTrigger>
-          {STATUS_FILTER_OPTIONS.filter((o) => o.value).map((opt) => (
-            <TabsTrigger key={opt.value} value={opt.value!} className="rounded-xl px-4">
-              {opt.label}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-      </Tabs>
-
-      {orders.length === 0 ? (
-        <EmptyState
-          title="Заказов пока нет"
-          description={
-            statusFilter
-              ? "В этой категории заказов не найдено."
-              : "Оформленные заказы появятся здесь."
+    <Surface
+      variant="floating"
+      className="relative overflow-hidden p-6"
+    >
+      <div className="pointer-events-none absolute -top-20 -right-20 h-64 w-80 rounded-full bg-primary/5 blur-3xl" />
+      <div className="relative z-10 space-y-6">
+        <Tabs
+          value={statusFilter ?? "all"}
+          onValueChange={(v) =>
+            setStatusFilter(v === "all" ? undefined : v)
           }
-          icon={<Package className="h-10 w-10 text-muted-foreground" />}
-        />
-      ) : (
-        <div className="space-y-3">
-          {orders.map((order) => (
-            <OrderCard key={order.id} order={order} />
-          ))}
-        </div>
-      )}
-    </div>
+          className="w-full"
+        >
+          <TabsList
+            className={cn(
+              "inline-flex h-10 w-full flex-wrap justify-start gap-1 rounded-2xl p-1 sm:w-auto",
+              "border border-border/40 bg-muted/50"
+            )}
+          >
+            <TabsTrigger value="all" className="rounded-xl px-4">
+              Все
+            </TabsTrigger>
+            {STATUS_FILTER_OPTIONS.filter((o) => o.value).map(
+              (opt) => (
+                <TabsTrigger
+                  key={opt.value}
+                  value={opt.value!}
+                  className="rounded-xl px-4"
+                >
+                  {opt.label}
+                </TabsTrigger>
+              )
+            )}
+          </TabsList>
+        </Tabs>
+
+        {orders.length === 0 ? (
+          <OrdersEmptyContent hasFilter={!!statusFilter} />
+        ) : (
+          <div className="space-y-3">
+            {orders.map((order) => (
+              <OrderCard key={order.id} order={order} />
+            ))}
+          </div>
+        )}
+      </div>
+    </Surface>
   );
 });

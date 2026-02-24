@@ -43,9 +43,9 @@ export const EmailInputWithDomains = React.forwardRef<
   const [highlightIndex, setHighlightIndex] = React.useState(0);
   const containerRef = React.useRef<HTMLDivElement>(null);
   const listRef = React.useRef<HTMLUListElement | null>(null);
-  const blurTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(
-    null
-  );
+  const blurTimeoutRef = React.useRef<ReturnType<
+    typeof setTimeout
+  > | null>(null);
 
   const atIndex = value.indexOf("@");
   const localPart = atIndex >= 0 ? value.slice(0, atIndex) : value;
@@ -58,13 +58,18 @@ export const EmailInputWithDomains = React.forwardRef<
     return EMAIL_DOMAINS.filter((d) => d.startsWith(domainPart));
   }, [atIndex, domainPart]);
 
-  const isCompleteDomain = (EMAIL_DOMAINS as readonly string[]).includes(domainPart);
+  const isCompleteDomain = (
+    EMAIL_DOMAINS as readonly string[]
+  ).includes(domainPart);
   const open =
     showSuggestions &&
     atIndex >= 0 &&
     suggestions.length > 0 &&
     !isCompleteDomain;
-  const displaySuggestions = open ? suggestions : [];
+  const displaySuggestions = React.useMemo(
+    () => (open ? suggestions : []),
+    [open, suggestions]
+  );
 
   const selectDomain = React.useCallback(
     (domain: string) => {
@@ -153,7 +158,9 @@ export const EmailInputWithDomains = React.forwardRef<
 
   React.useEffect(() => {
     if (open && listRef.current) {
-      const el = listRef.current.children[highlightIndex] as HTMLElement;
+      const el = listRef.current.children[
+        highlightIndex
+      ] as HTMLElement;
       el?.scrollIntoView({ block: "nearest" });
     }
   }, [highlightIndex, open]);
@@ -164,7 +171,8 @@ export const EmailInputWithDomains = React.forwardRef<
 
   React.useEffect(() => {
     return () => {
-      if (blurTimeoutRef.current) clearTimeout(blurTimeoutRef.current);
+      if (blurTimeoutRef.current)
+        clearTimeout(blurTimeoutRef.current);
     };
   }, []);
 
@@ -191,7 +199,7 @@ export const EmailInputWithDomains = React.forwardRef<
             exit={{ opacity: 0, y: -4 }}
             transition={{ duration: 0.15 }}
             className={cn(
-              "absolute left-0 right-0 top-full z-50 mt-1 max-h-[min(12rem,50vh)] overflow-auto rounded-xl border border-border/80 bg-background/95 py-1 shadow-xl shadow-black/5 backdrop-blur-md",
+              "absolute top-full right-0 left-0 z-50 mt-1 max-h-[min(12rem,50vh)] overflow-auto rounded-xl border border-border/80 bg-background/95 py-1 shadow-xl shadow-black/5 backdrop-blur-md",
               "ring-1 ring-border/40"
             )}
           >

@@ -1,3 +1,4 @@
+import dynamic from "next/dynamic";
 import { Component } from "@/components/ui/the-infinite-grid";
 import { getCategoriesServer } from "@/shared/api/server/categories";
 import { getProgramsServer } from "@/shared/api/server/programs";
@@ -5,10 +6,43 @@ import { generateMetadata as generateSeoMetadata } from "@/shared/lib/seo/metada
 import { generateOrganizationSchema } from "@/shared/lib/seo/structured-data";
 import { PublicFooter } from "@/widgets/public/footer/public-footer";
 import { PublicHeader } from "@/widgets/public/header/public-header";
+import { PublicChatWidget } from "@/widgets/public/chat/public-chat-widget";
 import { CategoryTypeTiles } from "@/widgets/public/home/category-type-tiles";
-import { TopProgramsSection } from "@/widgets/public/top-programs/top-programs-section";
+import { ClientsMarqueeSection } from "@/widgets/public/home/clients-marquee-section";
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
+
+const TopProgramsSection = dynamic(
+  () =>
+    import("@/widgets/public/top-programs/top-programs-section").then(
+      (m) => ({
+        default: m.TopProgramsSection,
+      })
+    ),
+  { ssr: true, loading: () => null }
+);
+
+const FreshNewsCarouselSection = dynamic(
+  () =>
+    import("@/widgets/public/home/fresh-news-carousel-section").then(
+      (m) => ({
+        default: m.FreshNewsCarouselSection,
+      })
+    ),
+  {
+    ssr: true,
+    loading: () => (
+      <section
+        className="relative py-14 sm:py-18 lg:py-22"
+        aria-hidden
+      >
+        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12">
+          <div className="h-10 w-48 animate-pulse rounded-lg bg-muted/40" />
+          <div className="mt-8 h-[380px] w-full max-w-[300px] animate-pulse rounded-2xl bg-muted/30" />
+        </div>
+      </section>
+    ),
+  }
+);
 
 export const metadata: Metadata = generateSeoMetadata({
   title: "Главная",
@@ -23,11 +57,8 @@ export const metadata: Metadata = generateSeoMetadata({
 });
 
 export default async function Home() {
-  const cookieStore = await cookies();
-  const cookie = cookieStore.toString();
-
   const [allPrograms, categories] = await Promise.all([
-    getProgramsServer(undefined, cookie),
+    getProgramsServer(),
     getCategoriesServer(),
   ]);
 
@@ -35,6 +66,7 @@ export default async function Home() {
 
   return (
     <>
+      {/* JSON-LD: данные только из generateOrganizationSchema(), не пользовательский ввод */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -43,18 +75,19 @@ export default async function Home() {
       />
       <div className="min-h-screen bg-background">
         <PublicHeader />
-        <main className="relative z-10">
+        <main id="main-content" className="relative z-10">
           <Component />
           <CategoryTypeTiles categories={categories} />
           <TopProgramsSection
             initialAllPrograms={allPrograms}
             initialCategories={categories}
           />
+          <FreshNewsCarouselSection />
+          <ClientsMarqueeSection />
         </main>
         <PublicFooter />
+        <PublicChatWidget />
       </div>
     </>
   );
 }
-
-//test comment

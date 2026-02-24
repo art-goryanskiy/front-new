@@ -7,19 +7,25 @@ import {
 } from "@/shared/api/generated/graphql";
 import { ORDER } from "@/shared/api/queries/orders";
 
-export function useOrder(id: string | null, options?: { skip?: boolean }) {
-  const { data, loading, error, refetch } = useQuery<OrderQuery>(ORDER, {
-    variables: { id: id ?? "" },
-    fetchPolicy: "cache-and-network",
-    errorPolicy: "all",
-    skip: options?.skip ?? !id,
-  });
+export function useOrder(
+  id: string | null,
+  options?: { skip?: boolean }
+) {
+  const { data, loading, error, refetch } = useQuery<OrderQuery>(
+    ORDER,
+    {
+      variables: { id: id ?? "" },
+      fetchPolicy: "cache-and-network",
+      errorPolicy: "all",
+      skip: options?.skip ?? !id,
+    }
+  );
 
   const rawOrder = data?.order ?? null;
-  const order = useFragment(
-    OrderFieldsFragmentDoc,
-    rawOrder
-  ) as OrderFieldsFragment | null | undefined;
+  const order = useFragment(OrderFieldsFragmentDoc, rawOrder) as
+    | OrderFieldsFragment
+    | null
+    | undefined;
 
   return {
     order: order ?? null,

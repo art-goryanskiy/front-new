@@ -1,27 +1,25 @@
 import { AdminHero } from "@/widgets/admin/admin-hero/admin-hero";
-import { StatsCardsSkeleton } from "@/widgets/admin/stats-cards/stats-cards-skeleton";
-import { LoadingState } from "@/shared/ui/loading-state/loading-state";
+import { AdminDashboardMetricsSkeleton } from "@/widgets/admin/admin-dashboard-metrics/admin-dashboard-metrics-skeleton";
+import { AdminCategoriesSkeleton } from "./admin-categories-skeleton";
 import { lazy, Suspense } from "react";
 import { AdminPageClient } from "./admin-page-client";
 
-const StatsCards = lazy(() =>
-  import("@/widgets/admin/stats-cards/stats-cards").then((mod) => ({
-    default: mod.StatsCards,
-  }))
+const AdminDashboardMetrics = lazy(() =>
+  import("@/widgets/admin/admin-dashboard-metrics/admin-dashboard-metrics").then(
+    (mod) => ({ default: mod.AdminDashboardMetrics })
+  )
 );
 
 export default function AdminPage() {
   return (
-    <div className="space-y-4 sm:space-y-6 lg:space-y-8">
+    <div className="space-y-6 sm:space-y-8 lg:space-y-10">
       <AdminHero />
 
-      <Suspense fallback={<StatsCardsSkeleton />}>
-        <StatsCards />
+      <Suspense fallback={<AdminDashboardMetricsSkeleton />}>
+        <AdminDashboardMetrics />
       </Suspense>
 
-      <Suspense
-        fallback={<LoadingState message="Загрузка категорий…" />}
-      >
+      <Suspense fallback={<AdminCategoriesSkeleton />}>
         <AdminPageClient />
       </Suspense>
     </div>
