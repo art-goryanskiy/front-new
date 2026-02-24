@@ -46,43 +46,49 @@ function FloatingInput({
   const active = focused || value.length > 0;
 
   return (
-    <div className="relative">
-      <div
-        className={cn(
-          "relative flex items-center overflow-hidden rounded-xl border transition-all duration-200",
-          focused
-            ? "border-primary shadow-[0_0_0_3px_color-mix(in_srgb,var(--primary)_12%,transparent)]"
-            : "border-border/60 hover:border-border/90",
-          disabled && "opacity-50 cursor-not-allowed"
-        )}
-      >
-        <span className="pointer-events-none flex h-full w-11 shrink-0 items-center justify-center text-muted-foreground/60 transition-colors duration-200 peer-focus:text-primary">
-          <Icon className={cn("h-4 w-4 transition-colors duration-200", focused && "text-primary")} />
-        </span>
-        <div className="relative flex-1 pr-3">
-          <label
-            htmlFor={id}
-            className={cn(
-              "pointer-events-none absolute left-0 origin-left text-muted-foreground transition-all duration-200",
-              active
-                ? "-translate-y-[0.9rem] scale-[0.75] text-primary/80 font-medium"
-                : "translate-y-[0.85rem] scale-100"
-            )}
-          >
-            {label}
-          </label>
-          <input
-            id={id}
-            type={type}
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            onFocus={() => setFocused(true)}
-            onBlur={() => setFocused(false)}
-            placeholder={focused ? placeholder : ""}
-            disabled={disabled}
-            className="peer block w-full bg-transparent pb-2 pt-6 text-sm text-foreground outline-none placeholder:text-muted-foreground/40"
-          />
-        </div>
+    <div
+      className={cn(
+        "relative flex items-center rounded-xl border bg-background transition-all duration-200",
+        focused
+          ? "border-primary shadow-[0_0_0_3px_color-mix(in_srgb,var(--primary)_12%,transparent)]"
+          : "border-border/60 hover:border-border/90",
+        disabled && "pointer-events-none opacity-50"
+      )}
+    >
+      {/* Иконка */}
+      <span className="flex w-11 shrink-0 items-center justify-center self-stretch text-muted-foreground/60">
+        <Icon
+          className={cn(
+            "h-4 w-4 transition-colors duration-200",
+            focused && "text-primary"
+          )}
+        />
+      </span>
+
+      {/* Поле + лейбл */}
+      <div className="relative flex-1 pr-3">
+        <label
+          htmlFor={id}
+          className={cn(
+            "pointer-events-none absolute left-0 origin-top-left select-none transition-all duration-200",
+            active
+              ? "top-2 text-[10px] font-semibold tracking-wide text-primary/80"
+              : "top-1/2 -translate-y-1/2 text-sm text-muted-foreground"
+          )}
+        >
+          {label}
+        </label>
+        <input
+          id={id}
+          type={type}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          placeholder={active ? (placeholder ?? "") : ""}
+          disabled={disabled}
+          className="block w-full bg-transparent pb-2.5 pt-6 text-sm text-foreground outline-none placeholder:text-muted-foreground/40"
+        />
       </div>
     </div>
   );
