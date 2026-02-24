@@ -79,7 +79,7 @@ export default async function Home() {
       />
       <div className="min-h-screen bg-background">
         <PublicHeader />
-        <main className="relative z-10">
+        <main id="main-content" className="relative z-10">
           <Component />
           <CategoryTypeTiles categories={categories} />
           <TopProgramsSection

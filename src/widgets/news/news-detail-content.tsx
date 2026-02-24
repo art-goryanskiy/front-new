@@ -34,6 +34,12 @@ function isOptimizableImageSrc(src: string): boolean {
   }
 }
 
+function truncateText(text: string, maxLength: number): string {
+  const trimmed = text.trim();
+  if (trimmed.length <= maxLength) return trimmed;
+  return trimmed.slice(0, maxLength).trimEnd() + "…";
+}
+
 function formatNewsDate(iso: string): string {
   try {
     const d = new Date(iso);
@@ -131,7 +137,7 @@ export function NewsDetailContent() {
             {isOptimizableImageSrc(firstPhoto) ? (
               <Image
                 src={firstPhoto}
-                alt=""
+                alt={truncateText(newsItem.text, 80)}
                 fill
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 1200px"
                 className="object-cover object-top"
@@ -139,7 +145,7 @@ export function NewsDetailContent() {
             ) : (
               <Image
                 src={firstPhoto}
-                alt=""
+                alt={truncateText(newsItem.text, 80)}
                 fill
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 1200px"
                 unoptimized
@@ -191,7 +197,7 @@ export function NewsDetailContent() {
                       {isOptimizableImageSrc(att.url) ? (
                         <Image
                           src={att.url}
-                          alt=""
+                          alt={`Фото ${i + 2} к новости`}
                           fill
                           sizes="(max-width: 640px) 100vw, 50vw"
                           className="object-cover object-top transition-transform duration-300 hover:scale-[1.02]"
@@ -199,7 +205,7 @@ export function NewsDetailContent() {
                       ) : (
                         <Image
                           src={att.url}
-                          alt=""
+                          alt={`Фото ${i + 2} к новости`}
                           fill
                           sizes="(max-width: 640px) 100vw, 50vw"
                           unoptimized

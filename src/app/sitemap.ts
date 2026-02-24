@@ -53,49 +53,41 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticUrls: MetadataRoute.Sitemap = [
     {
       url: SITE_URL,
-      lastModified: new Date(),
       changeFrequency: "daily",
       priority: 1,
     },
     {
       url: `${SITE_URL}/qualification-upgrade`,
-      lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.9,
     },
     {
       url: `${SITE_URL}/professional-retraining`,
-      lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.9,
     },
     {
       url: `${SITE_URL}/professional-education`,
-      lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.9,
     },
     {
       url: `${SITE_URL}/contacts`,
-      lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.7,
     },
     {
       url: `${SITE_URL}/news`,
-      lastModified: new Date(),
       changeFrequency: "daily",
       priority: 0.8,
     },
     {
       url: `${SITE_URL}/privacy`,
-      lastModified: new Date(),
       changeFrequency: "yearly",
       priority: 0.4,
     },
     {
       url: `${SITE_URL}/terms`,
-      lastModified: new Date(),
       changeFrequency: "yearly",
       priority: 0.4,
     },

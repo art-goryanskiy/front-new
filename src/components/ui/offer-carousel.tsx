@@ -107,7 +107,7 @@ const OfferCard = React.forwardRef<HTMLAnchorElement, OfferCardProps>(
             isOptimizableImageSrc(offer.brandLogoSrc) ? (
               <Image
                 src={offer.brandLogoSrc}
-                alt=""
+                alt={offer.brandName}
                 width={32}
                 height={32}
                 className="rounded-full bg-muted object-cover"
@@ -115,7 +115,7 @@ const OfferCard = React.forwardRef<HTMLAnchorElement, OfferCardProps>(
             ) : offer.brandLogoSrc ? (
               <Image
                 src={offer.brandLogoSrc}
-                alt=""
+                alt={offer.brandName}
                 width={32}
                 height={32}
                 unoptimized
