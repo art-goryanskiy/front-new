@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Providers } from "@/shared/lib/providers";
+import { WebVitalsReporter } from "./_components/web-vitals-reporter";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -47,6 +48,7 @@ export default function RootLayout({
     <html lang="ru" suppressHydrationWarning>
       <body className="bg-background text-foreground antialiased">
         <Providers>{children}</Providers>
+        <WebVitalsReporter />
       </body>
     </html>
   );
