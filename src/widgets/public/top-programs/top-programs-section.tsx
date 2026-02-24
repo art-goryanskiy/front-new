@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 import { useCategories } from "@/entities/category/api/use-categories";
 import { usePrograms } from "@/entities/program/api/use-programs";
 import { useAuthStatus } from "@/shared/store/auth-store";
@@ -120,10 +121,12 @@ export const TopProgramsSection = memo(function TopProgramsSection({
   }, []);
 
   // Мемоизируем обработчик кнопки "Показать больше"
+  const router = useRouter();
+
   const handleShowMore = useCallback(() => {
     const categoryPath = `/${activeTab.toLowerCase().replace(/_/g, "-")}`;
-    window.location.href = categoryPath;
-  }, [activeTab]);
+    router.push(categoryPath);
+  }, [activeTab, router]);
 
   const loading =
     !hasInitialData && (programsLoading || categoriesLoading);

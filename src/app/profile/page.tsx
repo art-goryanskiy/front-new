@@ -22,6 +22,7 @@ import { useAuthUser } from "@/shared/store/auth-store";
 import { useToastState } from "@/shared/store/toast-store";
 import { PublicPageLayout } from "@/shared/ui/layouts/public-page-layout";
 import { Surface } from "@/shared/ui/surface/surface";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -100,6 +101,10 @@ const ProfilePageContent = memo(function ProfilePageContent() {
   const [activeSection, setActiveSection] =
     useState<ProfileSection>("basic");
   const [isEditing, setIsEditing] = useState(false);
+  const [confirmNav, setConfirmNav] = useState<ProfileSection | null>(
+    null
+  );
+  const [confirmCancel, setConfirmCancel] = useState(false);
 
   const defaultValues = useMemo(
     () => getProfileDefaultValues(user?.profile || null),
@@ -255,30 +260,30 @@ const ProfilePageContent = memo(function ProfilePageContent() {
   const handleNavigate = useCallback(
     (next: ProfileSection) => {
       if (next === activeSection) return;
-
       if (isEditing && isDirty) {
-        const ok = window.confirm(
-          "Есть несохранённые изменения. Перейти без сохранения?"
-        );
-        if (!ok) return;
-        reset(defaultValues);
-        setFilePreview(null);
-        setIsEditing(false);
-      } else {
-        setIsEditing(false);
+        setConfirmNav(next);
+        return;
       }
-
+      setIsEditing(false);
       setActiveSection(next);
     },
-    [
-      activeSection,
-      defaultValues,
-      isDirty,
-      isEditing,
-      reset,
-      setActiveSection,
-    ]
+    [activeSection, isDirty, isEditing]
   );
+
+  const handleConfirmNav = useCallback(() => {
+    if (!confirmNav) return;
+    reset(defaultValues);
+    setFilePreview(null);
+    setIsEditing(false);
+    setActiveSection(confirmNav);
+    setConfirmNav(null);
+  }, [confirmNav, defaultValues, reset]);
+
+  const handleConfirmCancel = useCallback(() => {
+    handleReset();
+    setIsEditing(false);
+    setConfirmCancel(false);
+  }, [handleReset]);
 
   if (!user && meLoading) {
     return (
@@ -489,13 +494,10 @@ const ProfilePageContent = memo(function ProfilePageContent() {
                         disabled={isBusy}
                         onClick={() => {
                           if (isDirty) {
-                            const ok = window.confirm(
-                              "Отменить изменения в разделе?"
-                            );
-                            if (!ok) return;
-                            handleReset();
+                            setConfirmCancel(true);
+                          } else {
+                            setIsEditing(false);
                           }
-                          setIsEditing(false);
                         }}
                         className="rounded-xl"
                       >
@@ -531,6 +533,26 @@ const ProfilePageContent = memo(function ProfilePageContent() {
           </form>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={confirmNav !== null}
+        onOpenChange={(open) => !open && setConfirmNav(null)}
+        title="Несохранённые изменения"
+        description="Есть несохранённые изменения. Перейти без сохранения?"
+        confirmLabel="Перейти"
+        cancelLabel="Остаться"
+        onConfirm={handleConfirmNav}
+      />
+
+      <ConfirmDialog
+        open={confirmCancel}
+        onOpenChange={setConfirmCancel}
+        title="Отменить изменения"
+        description="Все несохранённые изменения в этом разделе будут потеряны."
+        confirmLabel="Отменить изменения"
+        cancelLabel="Продолжить редактирование"
+        onConfirm={handleConfirmCancel}
+      />
     </Surface>
   );
 });

@@ -1,8 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { memo, useCallback, useMemo } from "react";
-import { ArrowRight, Check, ShoppingCart } from "lucide-react";
+import { ArrowRight, BookOpen, Check, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePriceVisibility } from "@/shared/store/auth-store";
 import { useAddToCart } from "@/entities/cart/api/use-add-to-cart";
@@ -134,7 +135,7 @@ export const ProgramCard = memo(
         >
           <Surface
             variant="floating"
-            className="group relative h-full w-full overflow-hidden p-4 transition-[border,transform,box-shadow] hover:-translate-y-px hover:border-border/80"
+            className="group relative h-full w-full overflow-hidden transition-[border,transform,box-shadow] hover:-translate-y-px hover:border-border/80"
           >
             <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
               <BlurGlowBackground
@@ -148,7 +149,28 @@ export const ProgramCard = memo(
               />
             </div>
 
-            <div className="relative z-10 flex h-full min-h-[88px] flex-col justify-between gap-3">
+            {/* Program image */}
+            {program.image && (
+              <div className="relative h-36 w-full overflow-hidden">
+                <Image
+                  src={program.image}
+                  alt={program.shortTitle || program.title}
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  unoptimized
+                />
+                <div className="absolute inset-0 bg-linear-to-t from-card/80 to-transparent" />
+              </div>
+            )}
+
+            {!program.image && (
+              <div className="flex h-24 w-full items-center justify-center bg-muted/20">
+                <BookOpen className="h-8 w-8 text-muted-foreground/30" aria-hidden />
+              </div>
+            )}
+
+            <div className="relative z-10 flex h-full min-h-[88px] flex-col justify-between gap-3 p-4">
               <div className="flex items-start gap-3">
                 <h3
                   className="line-clamp-2 min-w-0 flex-1 text-sm leading-snug font-semibold wrap-break-word hyphens-auto text-foreground"

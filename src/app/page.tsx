@@ -10,6 +10,8 @@ import { PublicChatWidget } from "@/widgets/public/chat/public-chat-widget";
 import { CategoryTypeTiles } from "@/widgets/public/home/category-type-tiles";
 import { ClientsMarqueeSection } from "@/widgets/public/home/clients-marquee-section";
 import { StatsSection } from "@/widgets/public/home/stats-section";
+import { HowItWorksSection } from "@/widgets/public/home/how-it-works-section";
+import { WhyUsSection } from "@/widgets/public/home/why-us-section";
 import type { Metadata } from "next";
 
 const TopProgramsSection = dynamic(
@@ -82,6 +84,8 @@ export default async function Home() {
         <main id="main-content" className="relative z-10">
           <Component />
           <CategoryTypeTiles categories={categories} />
+          <HowItWorksSection />
+          <WhyUsSection />
           <StatsSection
             programsCount={programsCount}
             categoriesCount={categoriesCount}
