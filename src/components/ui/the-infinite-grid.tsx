@@ -8,7 +8,7 @@ import {
   useMotionValue,
   type MotionValue,
 } from "framer-motion";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, MonitorPlay, Sparkles } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 import { HandWrittenTitle } from "./hand-writing-text";
@@ -99,7 +99,7 @@ export const Component = () => {
             стандартам.
           </p>
 
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap">
             <Button
               asChild
               size="lg"
@@ -119,6 +119,21 @@ export const Component = () => {
               <Link href="/qualification-upgrade">
                 Подобрать обучение
               </Link>
+            </Button>
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="h-12 px-6 font-semibold border-primary/40 text-primary hover:bg-primary/10 hover:text-primary hover:border-primary/60"
+            >
+              <a
+                href="https://standart.cdoprof.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <MonitorPlay className="mr-2 h-4 w-4" />
+                Войти в СДО
+              </a>
             </Button>
           </div>
         </div>
