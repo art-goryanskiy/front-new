@@ -171,7 +171,9 @@ export const ProgramList = memo(function ProgramList({
             >
               <TableHeader className={TABLE_CLASSES.thead}>
                 <TableRow>
-                  <TableHead className={`min-w-0 ${TABLE_CLASSES.th}`}>
+                  <TableHead
+                    className={`min-w-0 ${TABLE_CLASSES.th}`}
+                  >
                     ПРОГРАММА
                   </TableHead>
 
@@ -245,7 +247,7 @@ export const ProgramList = memo(function ProgramList({
                     </TableCell>
 
                     <TableCell
-                      className={`hidden md:table-cell min-w-0 overflow-hidden ${TABLE_CLASSES.td}`}
+                      className={`hidden min-w-0 overflow-hidden md:table-cell ${TABLE_CLASSES.td}`}
                     >
                       <ProgramTablePricingContent program={program} />
                     </TableCell>
@@ -265,7 +267,7 @@ export const ProgramList = memo(function ProgramList({
                     </TableCell>
 
                     <TableCell
-                      className={`hidden md:table-cell min-w-0 overflow-hidden ${TABLE_CLASSES.td}`}
+                      className={`hidden min-w-0 overflow-hidden md:table-cell ${TABLE_CLASSES.td}`}
                     >
                       <TableActions
                         onEdit={() => handleEditClick(program)}

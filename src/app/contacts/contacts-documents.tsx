@@ -80,7 +80,7 @@ export function ContactsDocuments() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-24px" }}
                 transition={{ duration: 0.4, delay: index * 0.05 }}
-                className="min-w-0 h-full"
+                className="h-full min-w-0"
               >
                 <MagicCard
                   gradientSize={280}

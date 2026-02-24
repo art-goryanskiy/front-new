@@ -178,7 +178,9 @@ export const ProgramDetailDescription = memo(
                 Длительность
               </div>
               <div className="mt-2 text-sm font-semibold text-foreground">
-                {hoursDisplay ? `${hoursDisplay} часов` : "По программе"}
+                {hoursDisplay
+                  ? `${hoursDisplay} часов`
+                  : "По программе"}
               </div>
             </div>
 

@@ -14,7 +14,8 @@ export function useProgramDetailData(program: ProgramEntity) {
     const hours = program.pricing
       .map((p) => p?.hours)
       .filter(
-        (h): h is number => typeof h === "number" && !isNaN(h) && h > 0
+        (h): h is number =>
+          typeof h === "number" && !isNaN(h) && h > 0
       );
     if (hours.length === 0) return null;
     const minHours = Math.min(...hours);

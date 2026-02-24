@@ -30,12 +30,19 @@ interface ViewerResponse {
  * Для стабильного первого экрана и гидрации стора при каждой загрузке/перезагрузке.
  * Полный профиль (Me) запрашивается только на страницах кабинета/профиля/оформления.
  */
-export async function getViewerServer(cookie?: string): Promise<ViewerUser | null> {
+export async function getViewerServer(
+  cookie?: string
+): Promise<ViewerUser | null> {
   try {
     const headers = getServerHeaders(cookie);
-    const data = await serverGraphQLRequest<ViewerResponse>(VIEWER_QUERY, undefined, headers, {
-      skipCache: true,
-    });
+    const data = await serverGraphQLRequest<ViewerResponse>(
+      VIEWER_QUERY,
+      undefined,
+      headers,
+      {
+        skipCache: true,
+      }
+    );
     return data.viewer ?? null;
   } catch {
     return null;

@@ -15,7 +15,7 @@ export const AdminHero = memo(function AdminHero() {
       gradientTo="hsl(var(--primary) / 0.06)"
       gradientColor="hsl(var(--primary) / 0.25)"
       gradientSize={380}
-      className="relative overflow-hidden border border-border/40 bg-card/70 shadow-2xl shadow-black/[0.07] ring-1 ring-white/20 dark:shadow-black/30 dark:ring-white/5"
+      className="relative overflow-hidden border border-border/40 bg-card/70 shadow-2xl ring-1 shadow-black/[0.07] ring-white/20 dark:shadow-black/30 dark:ring-white/5"
     >
       {/* Тонкая акцентная полоска сверху */}
       <div className="absolute inset-x-0 top-0 z-10 h-px bg-linear-to-r from-transparent via-primary/40 to-transparent" />
@@ -23,7 +23,7 @@ export const AdminHero = memo(function AdminHero() {
         {/* Background glow — усиленный */}
         <div className="pointer-events-none absolute inset-0">
           <div className="bg-[radial-gradient(circle_at_30%_20%,var(--color-primary),transparent_50%)]/[0.18] absolute -top-24 left-0 h-[480px] w-[900px] rounded-full blur-3xl" />
-          <div className="bg-[radial-gradient(circle_at_85%_80%,var(--color-emerald-500),transparent_50%)]/[0.14] absolute -bottom-32 right-0 h-[480px] w-[560px] rounded-full blur-3xl" />
+          <div className="bg-[radial-gradient(circle_at_85%_80%,var(--color-emerald-500),transparent_50%)]/[0.14] absolute right-0 -bottom-32 h-[480px] w-[560px] rounded-full blur-3xl" />
           <div className="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-background/25" />
         </div>
 
@@ -66,7 +66,7 @@ export const AdminHero = memo(function AdminHero() {
           <div className="flex flex-col gap-2 sm:flex-row">
             <Button
               asChild
-              className="font-semibold shadow-lg shadow-primary/20 ring-1 ring-primary/20 transition-shadow hover:shadow-xl hover:shadow-primary/25"
+              className="font-semibold shadow-lg ring-1 shadow-primary/20 ring-primary/20 transition-shadow hover:shadow-xl hover:shadow-primary/25"
             >
               <Link href="/admin/qualification-upgrade">
                 Категории <ArrowRight className="ml-2 h-4 w-4" />
@@ -75,7 +75,7 @@ export const AdminHero = memo(function AdminHero() {
             <Button
               asChild
               variant="outline"
-              className="font-semibold border-border/60 bg-background/50 backdrop-blur-sm"
+              className="border-border/60 bg-background/50 font-semibold backdrop-blur-sm"
             >
               <Link href="/admin/users">Пользователи</Link>
             </Button>

@@ -66,7 +66,10 @@ export const ADMIN_CHATS = gql`
 `;
 
 export const ADMIN_CHAT_MESSAGES = gql`
-  query AdminChatMessages($chatId: ID!, $filter: ChatMessagesFilterInput) {
+  query AdminChatMessages(
+    $chatId: ID!
+    $filter: ChatMessagesFilterInput
+  ) {
     adminChatMessages(chatId: $chatId, filter: $filter) {
       ...ChatMessageFields
     }

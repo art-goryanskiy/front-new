@@ -79,7 +79,12 @@ export const MobileSidebar = memo(function MobileSidebar() {
   return (
     <aside className="fixed inset-x-0 bottom-0 z-50 lg:hidden">
       <div className="pointer-events-none flex justify-center pb-3">
-        <div className={cn("pointer-events-auto w-fit rounded-2xl px-2 py-2 shadow-sm", GLASS_CLASSES.panel)}>
+        <div
+          className={cn(
+            "pointer-events-auto w-fit rounded-2xl px-2 py-2 shadow-sm",
+            GLASS_CLASSES.panel
+          )}
+        >
           <nav className="flex items-center gap-1">
             {items.map((item) => (
               <MobileSidebarNavItem

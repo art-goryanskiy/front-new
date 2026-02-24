@@ -27,21 +27,33 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-const CHAT_STATUS_OPTIONS: { value: ChatStatus | "all"; label: string }[] = [
+const CHAT_STATUS_OPTIONS: {
+  value: ChatStatus | "all";
+  label: string;
+}[] = [
   { value: "all", label: "Все статусы" },
   { value: ChatStatus.Open, label: "Открыт" },
   { value: ChatStatus.Closed, label: "Закрыт" },
 ];
-
 
 function shortUserId(userId: string): string {
   if (userId.length <= 12) return userId;
   return "…" + userId.slice(-8);
 }
 
-function userDisplayLabel(user: { email?: string | null; firstName?: string | null; lastName?: string | null } | null, fallbackUserId: string): string {
+function userDisplayLabel(
+  user: {
+    email?: string | null;
+    firstName?: string | null;
+    lastName?: string | null;
+  } | null,
+  fallbackUserId: string
+): string {
   if (!user) return shortUserId(fallbackUserId);
-  const name = [user.firstName, user.lastName].filter(Boolean).join(" ").trim();
+  const name = [user.firstName, user.lastName]
+    .filter(Boolean)
+    .join(" ")
+    .trim();
   if (name) return name;
   return user.email ?? shortUserId(fallbackUserId);
 }
@@ -53,9 +65,12 @@ const ChatRow = memo(function ChatRow({
   chat: AdminChatFieldsFragment;
   index: number;
 }) {
-  const { user: chatUser, loading: userLoading } = useAdminUser(chat.userId);
+  const { user: chatUser, loading: userLoading } = useAdminUser(
+    chat.userId
+  );
   const chatNumber = index + 1;
-  const statusLabel = chat.status === ChatStatus.Open ? "Открыт" : "Закрыт";
+  const statusLabel =
+    chat.status === ChatStatus.Open ? "Открыт" : "Закрыт";
   const statusClass =
     chat.status === ChatStatus.Open
       ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
@@ -63,7 +78,9 @@ const ChatRow = memo(function ChatRow({
   const preview = chat.lastMessagePreview?.trim() || "—";
   const unread = (chat.unreadCount ?? 0) > 0;
   const chatUrl = `/admin/chats/${chat.id}?userId=${encodeURIComponent(chat.userId)}`;
-  const userLabel = userLoading ? "…" : userDisplayLabel(chatUser, chat.userId);
+  const userLabel = userLoading
+    ? "…"
+    : userDisplayLabel(chatUser, chat.userId);
 
   return (
     <Link href={chatUrl}>
@@ -83,10 +100,11 @@ const ChatRow = memo(function ChatRow({
             <p className="font-semibold text-foreground">
               Чат №{chatNumber}
             </p>
-            <p className="text-sm text-muted-foreground wrap-break-word">
-              Пользователь: <span className="text-foreground/90">{userLabel}</span>
+            <p className="text-sm wrap-break-word text-muted-foreground">
+              Пользователь:{" "}
+              <span className="text-foreground/90">{userLabel}</span>
             </p>
-            <p className="text-sm text-muted-foreground line-clamp-1">
+            <p className="line-clamp-1 text-sm text-muted-foreground">
               {preview}
             </p>
             <p className="text-xs text-muted-foreground">
@@ -134,12 +152,12 @@ function AdminChatsListSkeleton() {
 
 export default function AdminChatsPage() {
   const [q, setQ] = useState("");
-  const [statusFilter, setStatusFilter] = useState<ChatStatus | "all">(
-    ChatStatus.Open
-  );
-  const [assignedToMe, setAssignedToMe] = useState<boolean | undefined>(
-    undefined
-  );
+  const [statusFilter, setStatusFilter] = useState<
+    ChatStatus | "all"
+  >(ChatStatus.Open);
+  const [assignedToMe, setAssignedToMe] = useState<
+    boolean | undefined
+  >(undefined);
 
   const filter = useMemo(
     () => ({
@@ -194,7 +212,9 @@ export default function AdminChatsPage() {
                       : "other"
                 }
                 onValueChange={(v) =>
-                  setAssignedToMe(v === "all" ? undefined : v === "me")
+                  setAssignedToMe(
+                    v === "all" ? undefined : v === "me"
+                  )
                 }
               >
                 <SelectTrigger className="h-9 w-[200px] bg-background/60">
@@ -202,7 +222,9 @@ export default function AdminChatsPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Все чаты</SelectItem>
-                  <SelectItem value="me">Назначены на меня</SelectItem>
+                  <SelectItem value="me">
+                    Назначены на меня
+                  </SelectItem>
                   <SelectItem value="other">
                     Не назначены / другие
                   </SelectItem>
@@ -227,7 +249,9 @@ export default function AdminChatsPage() {
           <EmptyState
             title="Чатов пока нет"
             description="Обращения пользователей появятся здесь после создания."
-            icon={<MessageCircle className="h-8 w-8 text-muted-foreground" />}
+            icon={
+              <MessageCircle className="h-8 w-8 text-muted-foreground" />
+            }
           />
         )}
 

@@ -45,7 +45,9 @@ export function formatPricingAriaLabel(
  * Форматирует дату в длинный формат с временем (для таблиц и карточек)
  * Пример: «15 января 2025, 14:30»
  */
-export function formatAdminDate(date: string | Date | null | undefined): string {
+export function formatAdminDate(
+  date: string | Date | null | undefined
+): string {
   if (!date) return "—";
   try {
     return new Date(String(date)).toLocaleDateString("ru-RU", {
@@ -64,7 +66,9 @@ export function formatAdminDate(date: string | Date | null | undefined): string 
  * Форматирует дату в короткий формат (для диапазонов, дат обучения)
  * Пример: «15.01.2025»
  */
-export function formatShortDate(date: string | Date | null | undefined): string {
+export function formatShortDate(
+  date: string | Date | null | undefined
+): string {
   if (!date) return "";
   try {
     return new Date(String(date)).toLocaleDateString("ru-RU", {

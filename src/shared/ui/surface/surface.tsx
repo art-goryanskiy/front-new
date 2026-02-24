@@ -23,7 +23,12 @@ export function Surface({
 
   return (
     <div
-      className={cn(variant === "glass" ? variants.glass : cn(base, variants[variant]), className)}
+      className={cn(
+        variant === "glass"
+          ? variants.glass
+          : cn(base, variants[variant]),
+        className
+      )}
       {...props}
     />
   );

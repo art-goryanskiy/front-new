@@ -8,8 +8,7 @@ export const TABLE_CLASSES = {
   thead:
     "sticky top-0 z-10 border-b border-border/60 bg-background/95 backdrop-blur-sm",
 
-  th:
-    "px-3 py-2.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground",
+  th: "px-3 py-2.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground",
 
   td: "px-3 py-2.5",
   tr: "hover:bg-muted/20 transition-colors",

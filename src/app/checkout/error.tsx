@@ -32,8 +32,8 @@ export default function CheckoutError({
           Ошибка при оформлении заказа
         </h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          Что-то пошло не так. Ваш заказ не был оформлен — попробуйте ещё раз
-          или вернитесь в корзину.
+          Что-то пошло не так. Ваш заказ не был оформлен — попробуйте
+          ещё раз или вернитесь в корзину.
         </p>
         {process.env.NODE_ENV === "development" && error?.message && (
           <p className="mt-2 rounded bg-muted px-3 py-2 text-left font-mono text-xs text-muted-foreground">

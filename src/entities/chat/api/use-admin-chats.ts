@@ -10,7 +10,9 @@ import {
   type AdminChatFieldsFragment,
 } from "@/shared/api/generated/graphql";
 
-export function useAdminChats(filter?: AdminChatsQueryVariables["filter"]) {
+export function useAdminChats(
+  filter?: AdminChatsQueryVariables["filter"]
+) {
   const { data, loading, error, refetch } = useQuery<
     AdminChatsQuery,
     AdminChatsQueryVariables

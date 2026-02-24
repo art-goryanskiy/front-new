@@ -323,7 +323,9 @@ export const UserTable = memo(function UserTable({
 
             <TableCaption className={TABLE_CLASSES.caption}>
               Показано {filteredUsers.length} из {users.length}
-              {debouncedSearch ? ` • фильтр: "${debouncedSearch}"` : ""}
+              {debouncedSearch
+                ? ` • фильтр: "${debouncedSearch}"`
+                : ""}
               {roleFilter !== "all" ? ` • роль: ${roleFilter}` : ""}
               {statusFilter !== "all"
                 ? ` • статус: ${statusFilter}`
