@@ -178,13 +178,17 @@ export const OrdersList = memo(function OrdersList() {
   // Синхронное обновление во время рендера — ref гарантированно актуален
   // до вычисления isFirstLoad/displayOrders, в отличие от useEffect.
   const staleOrdersRef = useRef<typeof orders>([]);
+  const hasLoadedOnceRef = useRef(false);
   if (!loading) {
     staleOrdersRef.current = orders;
+    hasLoadedOnceRef.current = true;
   }
 
-  const isFirstLoad = loading && staleOrdersRef.current.length === 0;
-  const isRefetching = loading && staleOrdersRef.current.length > 0;
-  const displayOrders = orders.length > 0 ? orders : staleOrdersRef.current;
+  // Скелетон только при самой первой загрузке страницы — никогда при смене фильтра.
+  // При смене фильтра показываем stale данные с opacity пока летит запрос.
+  const isFirstLoad = !hasLoadedOnceRef.current && loading;
+  const isRefetching = hasLoadedOnceRef.current && loading;
+  const displayOrders = loading ? staleOrdersRef.current : orders;
 
   if (isFirstLoad) {
     return <OrdersListSkeleton />;
