@@ -1,7 +1,15 @@
 import type { Metric } from "web-vitals";
 
+const METRIKA_ID = 106976069;
+
+type YmFn = (id: number, action: string, ...args: unknown[]) => void;
+
+function getYm(): YmFn | undefined {
+  return (window as Window & { ym?: YmFn }).ym;
+}
+
 /**
- * Отправляем метрики на /api/vitals (или в любую аналитику).
+ * Отправляем метрики на /api/vitals и в Яндекс.Метрику.
  * В dev-режиме выводим в консоль с цветовой индикацией.
  */
 export function reportWebVitals(metric: Metric): void {
@@ -20,6 +28,19 @@ export function reportWebVitals(metric: Metric): void {
       "color:inherit",
       `color:${color};font-weight:bold`
     );
+  }
+
+  // Отправка в Яндекс.Метрику через параметры визита
+  const ym = getYm();
+  if (typeof ym === "function") {
+    ym(METRIKA_ID, "params", {
+      webVitals: {
+        [metric.name]: {
+          value: Math.round(metric.value),
+          rating: metric.rating,
+        },
+      },
+    });
   }
 
   // Отправка на собственный endpoint
