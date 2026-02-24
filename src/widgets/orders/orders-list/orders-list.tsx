@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useState } from "react";
+import { memo, useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useMyOrders } from "@/entities/order/api/use-my-orders";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
@@ -175,7 +175,20 @@ export const OrdersList = memo(function OrdersList() {
     filter: { limit: 20, status: statusFilter },
   });
 
-  if (loading && orders.length === 0) {
+  // Сохраняем последние успешно загруженные данные, чтобы при смене фильтра
+  // показывать их пока грузятся новые — без полного перемонтирования.
+  const staleOrdersRef = useRef<typeof orders>([]);
+  useEffect(() => {
+    if (!loading) {
+      staleOrdersRef.current = orders;
+    }
+  }, [loading, orders]);
+
+  const isFirstLoad = loading && staleOrdersRef.current.length === 0;
+  const isRefetching = loading && staleOrdersRef.current.length > 0;
+  const displayOrders = orders.length > 0 ? orders : staleOrdersRef.current;
+
+  if (isFirstLoad) {
     return <OrdersListSkeleton />;
   }
 
@@ -225,15 +238,22 @@ export const OrdersList = memo(function OrdersList() {
           </div>
         </Tabs>
 
-        {orders.length === 0 ? (
-          <OrdersEmptyContent hasFilter={!!statusFilter} />
-        ) : (
-          <div className="space-y-3">
-            {orders.map((order) => (
-              <OrderCard key={order.id} order={order} />
-            ))}
-          </div>
-        )}
+        <div
+          className={cn(
+            "transition-opacity duration-200",
+            isRefetching && "pointer-events-none opacity-50"
+          )}
+        >
+          {displayOrders.length === 0 ? (
+            <OrdersEmptyContent hasFilter={!!statusFilter} />
+          ) : (
+            <div className="space-y-3">
+              {displayOrders.map((order) => (
+                <OrderCard key={order.id} order={order} />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </Surface>
   );
