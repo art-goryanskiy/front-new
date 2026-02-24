@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { Providers } from "@/shared/lib/providers";
 import { getViewerServer } from "@/shared/api/server/auth";
+import { WebVitalsReporter } from "./_components/web-vitals-reporter";
+import { YandexMetrika } from "./_components/yandex-metrika";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -84,6 +86,8 @@ export default async function RootLayout({
           Перейти к основному содержимому
         </a>
         <Providers initialAuth={initialAuth}>{children}</Providers>
+        <WebVitalsReporter />
+        <YandexMetrika />
       </body>
     </html>
   );
