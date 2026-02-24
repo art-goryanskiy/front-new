@@ -39,6 +39,7 @@ function FloatingInput({
   icon: Icon,
   disabled,
   error,
+  inputRef,
 }: {
   id: string;
   label: string;
@@ -50,6 +51,7 @@ function FloatingInput({
   icon: React.ElementType;
   disabled?: boolean;
   error?: string;
+  inputRef?: React.RefObject<HTMLInputElement | null>;
 }) {
   const [focused, setFocused] = useState(false);
   const active = focused || value.length > 0;
@@ -97,6 +99,7 @@ function FloatingInput({
             {label}
           </label>
           <input
+            ref={inputRef}
             id={id}
             type={type}
             value={value}
@@ -134,6 +137,7 @@ export function ContactsForm() {
   const uid = useId();
   const ref = useRef<HTMLElement>(null);
   const isInView = useInView(ref, { once: true, margin: "0px 0px -80px 0px" });
+  const phoneRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState<FormState>({ name: "", phone: "+7 (", program: "" });
   const [status, setStatus] = useState<Status>("idle");
@@ -149,7 +153,31 @@ export function ContactsForm() {
     setForm((prev) => ({ ...prev, [field]: v }));
 
   const handlePhoneChange = (v: string) => {
-    setForm((prev) => ({ ...prev, phone: formatPhoneInput(v) }));
+    const input = phoneRef.current;
+    // Запомнить сколько цифр было до курсора ДО форматирования
+    const cursorPos = input?.selectionStart ?? v.length;
+    const digitsBeforeCursor = v.slice(0, cursorPos).replace(/\D/g, "").length;
+
+    const formatted = formatPhoneInput(v);
+    setForm((prev) => ({ ...prev, phone: formatted }));
+
+    // Восстановить курсор после ре-рендера
+    if (input) {
+      requestAnimationFrame(() => {
+        let digitCount = 0;
+        let newCursor = formatted.length;
+        for (let i = 0; i < formatted.length; i++) {
+          if (/\d/.test(formatted[i])) {
+            digitCount++;
+            if (digitCount === digitsBeforeCursor) {
+              newCursor = i + 1;
+              break;
+            }
+          }
+        }
+        input.setSelectionRange(newCursor, newCursor);
+      });
+    }
   };
 
   const handlePhoneKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -308,6 +336,7 @@ export function ContactsForm() {
                     onKeyDown={handlePhoneKeyDown}
                     disabled={isDisabled}
                     error={phoneError}
+                    inputRef={phoneRef}
                   />
                 </div>
 
