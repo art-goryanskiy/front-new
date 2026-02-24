@@ -1,11 +1,9 @@
 "use client";
 
-import { YANDEX_ORG_ID } from "./contacts-data";
+import { YANDEX_ORG_ID, YANDEX_REVIEWS_URL } from "./contacts-data";
 import { BlurGlowBackground } from "@/shared/ui/blur-glow-background/blur-glow-background";
 import { Surface } from "@/shared/ui/surface/surface";
 import { Star } from "lucide-react";
-
-const YANDEX_REVIEWS_URL = `https://yandex.ru/maps/org/uchebny_tsentr_standart/${YANDEX_ORG_ID}/reviews`;
 
 /**
  * Премиальный блок отзывов: BlurGlow, Surface, центрированный виджет без серых полос.

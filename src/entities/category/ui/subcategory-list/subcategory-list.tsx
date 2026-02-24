@@ -6,7 +6,6 @@ import { SubcategoryListSkeleton } from "./subcategory-list-skeleton";
 import { EmptyState } from "@/shared/ui/empty-state/empty-state";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
 import { SubcategoryCard } from "@/widgets/public/subcategory-card/subcategory-card";
-import { BackButton } from "@/shared/ui/back-button/back-button";
 import { ListHeader } from "@/shared/ui/list-header/list-header";
 import { FolderOpen } from "lucide-react";
 import type { SubcategoryListProps } from "./types/subcategory-list.types";
@@ -49,24 +48,12 @@ export const SubcategoryList = memo(function SubcategoryList({
     []
   );
 
-  const backButton = useMemo(
-    () => (
-      <BackButton className={SUBCATEGORY_LIST_CLASSES.backButton} />
-    ),
-    []
-  );
-
   if (!hasInitialData && loading) {
-    return <SubcategoryListSkeleton backButton={backButton} />;
+    return <SubcategoryListSkeleton />;
   }
 
   if (error) {
-    return (
-      <>
-        {backButton}
-        <ErrorState message={error.message} />
-      </>
-    );
+    return <ErrorState message={error.message} />;
   }
 
   return (
@@ -74,7 +61,6 @@ export const SubcategoryList = memo(function SubcategoryList({
       <ListHeader
         title={title}
         description={description}
-        backButton={backButton}
         className={SUBCATEGORY_LIST_CLASSES.header}
         titleClassName={SUBCATEGORY_LIST_CLASSES.title}
         descriptionClassName={SUBCATEGORY_LIST_CLASSES.description}
