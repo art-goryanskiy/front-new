@@ -39,7 +39,7 @@ export function DataToolbar({
               value={searchValue}
               onChange={(e) => onSearchValueChange(e.target.value)}
               placeholder={searchPlaceholder}
-              className="h-10 rounded-xl bg-background/70 pr-10 pl-10 border-border/60"
+              className="h-10 rounded-xl border-border/60 bg-background/70 pr-10 pl-10"
             />
             {hasValue ? (
               <Button

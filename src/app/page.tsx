@@ -10,7 +10,6 @@ import { PublicChatWidget } from "@/widgets/public/chat/public-chat-widget";
 import { CategoryTypeTiles } from "@/widgets/public/home/category-type-tiles";
 import { ClientsMarqueeSection } from "@/widgets/public/home/clients-marquee-section";
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
 
 const TopProgramsSection = dynamic(
   () =>
@@ -58,11 +57,8 @@ export const metadata: Metadata = generateSeoMetadata({
 });
 
 export default async function Home() {
-  const cookieStore = await cookies();
-  const cookie = cookieStore.toString();
-
   const [allPrograms, categories] = await Promise.all([
-    getProgramsServer(undefined, cookie),
+    getProgramsServer(),
     getCategoriesServer(),
   ]);
 
@@ -79,7 +75,7 @@ export default async function Home() {
       />
       <div className="min-h-screen bg-background">
         <PublicHeader />
-        <main className="relative z-10">
+        <main id="main-content" className="relative z-10">
           <Component />
           <CategoryTypeTiles categories={categories} />
           <TopProgramsSection

@@ -64,11 +64,14 @@ export function useChatSocket(
         socket?.emit(EVENT_JOIN_CHAT, { chatId });
       });
 
-      socket.on(EVENT_MESSAGE_NEW, (payload: ChatSocketNewMessagePayload) => {
-        if (payload.chatId === chatId) {
-          onNewMessageRef.current(payload);
+      socket.on(
+        EVENT_MESSAGE_NEW,
+        (payload: ChatSocketNewMessagePayload) => {
+          if (payload.chatId === chatId) {
+            onNewMessageRef.current(payload);
+          }
         }
-      });
+      );
     });
 
     return () => {

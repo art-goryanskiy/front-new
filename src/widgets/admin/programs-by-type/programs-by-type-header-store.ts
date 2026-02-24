@@ -7,10 +7,9 @@ interface ProgramsByTypeHeaderState {
   setState: (categoryId: string, type: CategoryType | null) => void;
 }
 
-export const useProgramsByTypeHeaderStore = create<ProgramsByTypeHeaderState>(
-  (set) => ({
+export const useProgramsByTypeHeaderStore =
+  create<ProgramsByTypeHeaderState>((set) => ({
     categoryId: "all",
     type: null,
     setState: (categoryId, type) => set({ categoryId, type }),
-  })
-);
+  }));

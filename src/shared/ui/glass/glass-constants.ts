@@ -10,8 +10,7 @@ export const GLASS_CLASSES = {
   strong:
     "bg-[var(--glass-bg-strong)] backdrop-blur-xl border-border/50 supports-[backdrop-filter]:bg-[var(--glass-bg-strong)]",
   /** Карточки / Surface-стиль */
-  card:
-    "bg-[var(--glass-card)] backdrop-blur-md border border-[var(--glass-border)] supports-[backdrop-filter]:bg-[var(--glass-card)]",
+  card: "bg-[var(--glass-card)] backdrop-blur-md border border-[var(--glass-border)] supports-[backdrop-filter]:bg-[var(--glass-card)]",
   /** С тонким ring для «премиума» */
   panelWithRing:
     "bg-[var(--glass-bg)] backdrop-blur-xl border border-border/50 ring-1 ring-[var(--glass-ring)] shadow-md",

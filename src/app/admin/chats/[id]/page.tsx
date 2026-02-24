@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { useAdminChatMessages } from "@/entities/chat/api/use-admin-chat-messages";
@@ -26,9 +26,18 @@ function shortChatId(id: string): string {
   return id.length > 8 ? "…" + id.slice(-8) : id;
 }
 
-function userDisplayName(user: { email?: string | null; firstName?: string | null; lastName?: string | null } | null): string {
+function userDisplayName(
+  user: {
+    email?: string | null;
+    firstName?: string | null;
+    lastName?: string | null;
+  } | null
+): string {
   if (!user) return "—";
-  const name = [user.firstName, user.lastName].filter(Boolean).join(" ").trim();
+  const name = [user.firstName, user.lastName]
+    .filter(Boolean)
+    .join(" ")
+    .trim();
   if (name) return `${name} (${user.email ?? ""})`;
   return user.email ?? "—";
 }
@@ -63,11 +72,13 @@ function MessageBubble({
         className={cn(
           "max-w-[85%] rounded-2xl px-4 py-2 text-sm",
           isAdmin
-            ? "bg-primary text-primary-foreground rounded-br-md"
-            : "bg-muted text-muted-foreground rounded-bl-md"
+            ? "rounded-br-md bg-primary text-primary-foreground"
+            : "rounded-bl-md bg-muted text-muted-foreground"
         )}
       >
-        <p className="whitespace-pre-wrap wrap-break-word">{message.body}</p>
+        <p className="wrap-break-word whitespace-pre-wrap">
+          {message.body}
+        </p>
         <p
           className={cn(
             "mt-1 text-xs",
@@ -92,9 +103,17 @@ export default function AdminChatDetailPage() {
   const currentUser = useAuthUser();
   const { user: chatUser } = useAdminUser(userIdFromQuery ?? null);
 
-  const { messages, loading: messagesLoading, refetch: refetchMessages } =
-    useAdminChatMessages(chatId, { limit: MESSAGE_LIMIT }, { skip: !chatId });
-  const { adminAssignChat, loading: assignLoading } = useAdminAssignChat();
+  const {
+    messages,
+    loading: messagesLoading,
+    refetch: refetchMessages,
+  } = useAdminChatMessages(
+    chatId,
+    { limit: MESSAGE_LIMIT },
+    { skip: !chatId }
+  );
+  const { adminAssignChat, loading: assignLoading } =
+    useAdminAssignChat();
   const { adminSetChatStatus, loading: statusLoading } =
     useAdminSetChatStatus();
   const { sendMessage, loading: sendLoading } = useSendMessage();
@@ -117,7 +136,7 @@ export default function AdminChatDetailPage() {
   const handleAssignToMe = useCallback(() => {
     if (!chatId || !currentUser?.id) return;
     adminAssignChat(chatId, currentUser.id);
-  }, [chatId, currentUser?.id, adminAssignChat]);
+  }, [chatId, currentUser, adminAssignChat]);
 
   const handleUnassign = useCallback(() => {
     if (!chatId) return;
@@ -132,7 +151,9 @@ export default function AdminChatDetailPage() {
     [chatId, adminSetChatStatus]
   );
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
     e.preventDefault();
     const form = e.currentTarget;
     const body = (
@@ -167,7 +188,12 @@ export default function AdminChatDetailPage() {
       <Surface variant="floating" className="p-4">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" asChild aria-label="Назад">
+            <Button
+              variant="ghost"
+              size="icon"
+              asChild
+              aria-label="Назад"
+            >
               <Link href="/admin/chats">
                 <ArrowLeft className="h-5 w-5" />
               </Link>
@@ -222,12 +248,15 @@ export default function AdminChatDetailPage() {
         </div>
       </Surface>
 
-      <Surface variant="floating" className="flex flex-col overflow-hidden">
+      <Surface
+        variant="floating"
+        className="flex flex-col overflow-hidden"
+      >
         <div className="border-b px-4 py-3">
           <h2 className="font-semibold text-foreground">Переписка</h2>
         </div>
 
-        <ScrollArea className="flex-1 min-h-[320px] max-h-[60vh] px-4 py-3">
+        <ScrollArea className="max-h-[60vh] min-h-[320px] flex-1 px-4 py-3">
           <div className="flex min-h-[280px] flex-col gap-3">
             {messagesLoading ? (
               <div className="flex flex-1 items-center justify-center py-8 text-sm text-muted-foreground">

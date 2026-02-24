@@ -18,7 +18,10 @@ export function PublicPageLayout({
     >
       <PublicBackdrop />
       <PublicHeader />
-      <main className="relative z-10 mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 md:px-8 lg:px-10 xl:px-12">
+      <main
+        id="main-content"
+        className="relative z-10 mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 md:px-8 lg:px-10 xl:px-12"
+      >
         {children}
       </main>
       <PublicFooter />

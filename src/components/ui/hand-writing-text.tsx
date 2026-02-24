@@ -2,6 +2,7 @@
 
 import type { Variants } from "framer-motion";
 import { motion } from "framer-motion";
+
 interface HandWrittenTitleProps {
   title?: string;
   subtitle?: string;
@@ -33,7 +34,7 @@ function HandWrittenTitle({
 
   return (
     <div className="relative mx-auto w-full max-w-4xl py-24">
-      <div className="absolute inset-0">
+      <div className="absolute inset-0" aria-hidden>
         <motion.svg
           width="100%"
           height="100%"
@@ -42,7 +43,6 @@ function HandWrittenTitle({
           animate="visible"
           className="h-full w-full"
         >
-          <title>KokonutUI</title>
           <motion.path
             d="M 950 90 
                            C 1250 300, 1050 480, 600 520
@@ -60,23 +60,13 @@ function HandWrittenTitle({
         </motion.svg>
       </div>
       <div className="relative z-10 flex flex-col items-center justify-center text-center">
-        <motion.h1
-          className="flex items-center gap-2 text-4xl tracking-tighter text-black md:text-6xl dark:text-white"
-          initial={{ opacity: 1, y: 0 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0 }}
-        >
+        <span className="flex items-center gap-2 text-4xl font-extrabold tracking-tighter text-black md:text-6xl dark:text-white">
           {title}
-        </motion.h1>
+        </span>
         {subtitle && (
-          <motion.p
-            className="text-xl text-black/80 dark:text-white/80"
-            initial={{ opacity: 1 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0 }}
-          >
+          <p className="text-xl text-black/80 dark:text-white/80">
             {subtitle}
-          </motion.p>
+          </p>
         )}
       </div>
     </div>

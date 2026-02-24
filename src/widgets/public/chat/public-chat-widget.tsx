@@ -28,7 +28,12 @@ export function PublicChatWidget() {
   const [open, setOpen] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [mounted, setMounted] = useState(false);
-  const dragStart = useRef<{ x: number; y: number; startLeft: number; startTop: number } | null>(null);
+  const dragStart = useRef<{
+    x: number;
+    y: number;
+    startLeft: number;
+    startTop: number;
+  } | null>(null);
   const isDrag = useRef(false);
   const ignoreNextClick = useRef(false);
   const refetchMessagesRef = useRef<(() => void) | null>(null);
@@ -49,6 +54,7 @@ export function PublicChatWidget() {
   useChatSocket(chat?.id ?? null, handleNewMessage);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 
@@ -56,6 +62,7 @@ export function PublicChatWidget() {
     if (!mounted || typeof window === "undefined") return;
     const right = DEFAULT_RIGHT;
     const bottom = DEFAULT_BOTTOM;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPosition({
       x: window.innerWidth - right - ICON_SIZE,
       y: window.innerHeight - bottom - ICON_SIZE,
@@ -71,42 +78,49 @@ export function PublicChatWidget() {
         startTop: position.y,
       };
       isDrag.current = false;
-      (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
+      (e.currentTarget as HTMLElement).setPointerCapture?.(
+        e.pointerId
+      );
     },
     [position]
   );
 
-  const handlePointerMove = useCallback(
-    (e: React.PointerEvent) => {
-      if (!dragStart.current) return;
-      const dx = e.clientX - dragStart.current.x;
-      const dy = e.clientY - dragStart.current.y;
-      if (!isDrag.current && (Math.abs(dx) > DRAG_THRESHOLD_PX || Math.abs(dy) > DRAG_THRESHOLD_PX)) {
-        isDrag.current = true;
-      }
-      if (isDrag.current) {
-        const w = typeof window !== "undefined" ? window.innerWidth : 0;
-        const h = typeof window !== "undefined" ? window.innerHeight : 0;
-        const nextX = Math.max(0, Math.min(w - ICON_SIZE, dragStart.current.startLeft + dx));
-        const nextY = Math.max(0, Math.min(h - ICON_SIZE, dragStart.current.startTop + dy));
-        setPosition({ x: nextX, y: nextY });
-      }
-    },
-    []
-  );
+  const handlePointerMove = useCallback((e: React.PointerEvent) => {
+    if (!dragStart.current) return;
+    const dx = e.clientX - dragStart.current.x;
+    const dy = e.clientY - dragStart.current.y;
+    if (
+      !isDrag.current &&
+      (Math.abs(dx) > DRAG_THRESHOLD_PX ||
+        Math.abs(dy) > DRAG_THRESHOLD_PX)
+    ) {
+      isDrag.current = true;
+    }
+    if (isDrag.current) {
+      const w = typeof window !== "undefined" ? window.innerWidth : 0;
+      const h =
+        typeof window !== "undefined" ? window.innerHeight : 0;
+      const nextX = Math.max(
+        0,
+        Math.min(w - ICON_SIZE, dragStart.current.startLeft + dx)
+      );
+      const nextY = Math.max(
+        0,
+        Math.min(h - ICON_SIZE, dragStart.current.startTop + dy)
+      );
+      setPosition({ x: nextX, y: nextY });
+    }
+  }, []);
 
-  const handlePointerUp = useCallback(
-    (e: React.PointerEvent) => {
-      if (dragStart.current) {
-        (e.target as HTMLElement).releasePointerCapture?.(e.pointerId);
-        if (isDrag.current) {
-          ignoreNextClick.current = true;
-        }
-        dragStart.current = null;
+  const handlePointerUp = useCallback((e: React.PointerEvent) => {
+    if (dragStart.current) {
+      (e.target as HTMLElement).releasePointerCapture?.(e.pointerId);
+      if (isDrag.current) {
+        ignoreNextClick.current = true;
       }
-    },
-    []
-  );
+      dragStart.current = null;
+    }
+  }, []);
 
   const handleClick = useCallback((e: React.MouseEvent) => {
     if (ignoreNextClick.current) {
@@ -133,12 +147,18 @@ export function PublicChatWidget() {
         <PopoverTrigger asChild>
           <button
             type="button"
-            aria-label={open ? "Закрыть чат" : showBadge ? `Открыть чат (${unreadCount} новых)` : "Открыть чат"}
+            aria-label={
+              open
+                ? "Закрыть чат"
+                : showBadge
+                  ? `Открыть чат (${unreadCount} новых)`
+                  : "Открыть чат"
+            }
             onClick={handleClick}
             className={cn(
               "relative flex h-full w-full items-center justify-center rounded-full shadow-lg transition-shadow",
               "bg-primary text-primary-foreground",
-              "hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background",
+              "hover:shadow-xl focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background focus:outline-none",
               "cursor-grab active:cursor-grabbing",
               "border border-primary/20"
             )}
@@ -151,9 +171,9 @@ export function PublicChatWidget() {
             onPointerUp={handlePointerUp}
             onPointerCancel={(e) => {
               if (dragStart.current) {
-                (e.currentTarget as HTMLElement).releasePointerCapture?.(
-                  e.pointerId
-                );
+                (
+                  e.currentTarget as HTMLElement
+                ).releasePointerCapture?.(e.pointerId);
                 dragStart.current = null;
               }
             }}
@@ -175,27 +195,30 @@ export function PublicChatWidget() {
         alignOffset={0}
         avoidCollisions={true}
         className={cn(
-          "w-full max-w-md max-h-[85vh] overflow-hidden rounded-2xl p-0",
+          "max-h-[85vh] w-full max-w-md overflow-hidden rounded-2xl p-0",
           "border border-border/50 bg-background shadow-md",
           "shadow-black/5 dark:shadow-black/15"
         )}
         aria-describedby={undefined}
       >
-        <div className="relative pr-12 pt-1">
+        <div className="relative pt-1 pr-12">
           <PopoverClose asChild>
             <Button
               variant="ghost"
               size="icon"
-              className="absolute right-2 top-2 z-10 h-8 w-8 rounded-full text-muted-foreground hover:bg-muted/80 hover:text-foreground"
+              className="absolute top-2 right-2 z-10 h-8 w-8 rounded-full text-muted-foreground hover:bg-muted/80 hover:text-foreground"
               aria-label="Закрыть чат"
             >
               <X className="h-4 w-4" />
             </Button>
           </PopoverClose>
           <div id="chat-description" className="sr-only">
-            Окно чата с поддержкой. Напишите сообщение или прочитайте переписку.
+            Окно чата с поддержкой. Напишите сообщение или прочитайте
+            переписку.
           </div>
-          <ChatPopoverContent refetchMessagesRef={refetchMessagesRef} />
+          <ChatPopoverContent
+            refetchMessagesRef={refetchMessagesRef}
+          />
         </div>
       </PopoverContent>
     </Popover>

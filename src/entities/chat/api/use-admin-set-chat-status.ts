@@ -18,7 +18,10 @@ export function useAdminSetChatStatus() {
     awaitRefetchQueries: true,
   });
 
-  const adminSetChatStatus = async (chatId: string, status: ChatStatus) => {
+  const adminSetChatStatus = async (
+    chatId: string,
+    status: ChatStatus
+  ) => {
     const result = await mutate({
       variables: { input: { chatId, status } },
     });

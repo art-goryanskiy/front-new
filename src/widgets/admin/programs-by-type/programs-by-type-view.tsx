@@ -8,7 +8,14 @@ import type {
   ProgramEntity,
 } from "@/shared/api/generated/graphql";
 import { useDebounce } from "@/shared/lib/hooks/use-debounce";
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 type PagingState = {
   page: number;
@@ -133,7 +140,14 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
     return search
       ? { ...base, categoryIds, search }
       : { ...base, categoryIds };
-  }, [categoryId, categoryIds, debouncedQ, sortBy, sortOrder, paging.page]);
+  }, [
+    categoryId,
+    categoryIds,
+    debouncedQ,
+    sortBy,
+    sortOrder,
+    paging.page,
+  ]);
 
   const { items, total, loading, error } = useProgramsPage(filter);
 
@@ -143,12 +157,11 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
     prevLoadingRef.current = loading;
 
     if (wasLoading && !loading) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setPaging((prev) => ({
         ...prev,
         accumulated:
-          prev.page === 1
-            ? items
-            : [...prev.accumulated, ...items],
+          prev.page === 1 ? items : [...prev.accumulated, ...items],
       }));
     }
   }, [loading, items]);
@@ -185,17 +198,15 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
     setPaging((prev) => ({ ...prev, page: prev.page + 1 }));
   }, []);
 
-  if (loading && paging.page === 1) return <CategoryProgramsViewSkeleton />;
+  if (loading && paging.page === 1)
+    return <CategoryProgramsViewSkeleton />;
   if (error) return <ErrorState message={error.message} />;
 
   return (
-    <DashboardSection
-      title={title}
-      suppressTitle={suppressTitle}
-    >
+    <DashboardSection title={title} suppressTitle={suppressTitle}>
       <div
         className={cn(
-          "rounded-2xl border border-border/50 overflow-hidden",
+          "overflow-hidden rounded-2xl border border-border/50",
           GLASS_CLASSES.card
         )}
       >
@@ -206,68 +217,72 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
             searchPlaceholder="Поиск по программам…"
             rightSlot={
               <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border/40 bg-background/50 px-2.5 py-1.5">
-                  <Select
-                    value={categoryId}
-                    onValueChange={setCategoryId}
-                  >
-                    <SelectTrigger className="h-8 w-[200px] border-0 bg-transparent shadow-none focus:ring-0 sm:w-[220px]">
-                      <SelectValue placeholder="Категория" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">
-                        Все категории типа
+                <Select
+                  value={categoryId}
+                  onValueChange={setCategoryId}
+                >
+                  <SelectTrigger className="h-8 w-[200px] border-0 bg-transparent shadow-none focus:ring-0 sm:w-[220px]">
+                    <SelectValue placeholder="Категория" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">
+                      Все категории типа
+                    </SelectItem>
+                    {categoriesOfType.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>
+                        {c.name}
                       </SelectItem>
-                      {categoriesOfType.map((c) => (
-                        <SelectItem key={c.id} value={c.id}>
-                          {c.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Select
-                    value={views}
-                    onValueChange={(v) => setViews(v as ViewsFilter)}
-                  >
-                    <SelectTrigger className="h-8 w-[120px] border-0 bg-transparent shadow-none focus:ring-0 sm:w-[140px]">
-                      <SelectValue placeholder="Просмотры" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Все</SelectItem>
-                      <SelectItem value="popular">Популярные</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Select
-                    value={pricing}
-                    onValueChange={(v) => setPricing(v as PricingFilter)}
-                  >
-                    <SelectTrigger className="h-8 w-[110px] border-0 bg-transparent shadow-none focus:ring-0 sm:w-[130px]">
-                      <SelectValue placeholder="Цена" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Любая</SelectItem>
-                      <SelectItem value="withPrice">С ценой</SelectItem>
-                      <SelectItem value="noPrice">Без цены</SelectItem>
-                    </SelectContent>
-                  </Select>
-                    <Select
-                    value={sort}
-                    onValueChange={(v) => setSort(v as Sort)}
-                  >
-                    <SelectTrigger className="h-8 w-[150px] border-0 bg-transparent shadow-none focus:ring-0 sm:w-[170px]">
-                      <SelectValue placeholder="Сортировка" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="updatedDesc">
-                        Сначала новые
-                      </SelectItem>
-                      <SelectItem value="viewsDesc">
-                        По просмотрам
-                      </SelectItem>
-                      <SelectItem value="titleAsc">
-                        По названию
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select
+                  value={views}
+                  onValueChange={(v) => setViews(v as ViewsFilter)}
+                >
+                  <SelectTrigger className="h-8 w-[120px] border-0 bg-transparent shadow-none focus:ring-0 sm:w-[140px]">
+                    <SelectValue placeholder="Просмотры" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Все</SelectItem>
+                    <SelectItem value="popular">
+                      Популярные
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select
+                  value={pricing}
+                  onValueChange={(v) =>
+                    setPricing(v as PricingFilter)
+                  }
+                >
+                  <SelectTrigger className="h-8 w-[110px] border-0 bg-transparent shadow-none focus:ring-0 sm:w-[130px]">
+                    <SelectValue placeholder="Цена" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Любая</SelectItem>
+                    <SelectItem value="withPrice">С ценой</SelectItem>
+                    <SelectItem value="noPrice">Без цены</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select
+                  value={sort}
+                  onValueChange={(v) => setSort(v as Sort)}
+                >
+                  <SelectTrigger className="h-8 w-[150px] border-0 bg-transparent shadow-none focus:ring-0 sm:w-[170px]">
+                    <SelectValue placeholder="Сортировка" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="updatedDesc">
+                      Сначала новые
+                    </SelectItem>
+                    <SelectItem value="viewsDesc">
+                      По просмотрам
+                    </SelectItem>
+                    <SelectItem value="titleAsc">
+                      По названию
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             }
           />
@@ -298,7 +313,10 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
                   >
                     {loading ? (
                       <span className="flex items-center gap-2">
-                        <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                        <Loader2
+                          className="h-4 w-4 animate-spin"
+                          aria-hidden
+                        />
                         Загрузка…
                       </span>
                     ) : (

@@ -21,7 +21,7 @@ export const ProgramTableRankContent = memo(
 
     return (
       <span
-        className="whitespace-nowrap text-sm text-foreground"
+        className="text-sm whitespace-nowrap text-foreground"
         aria-label={ariaLabel}
       >
         {rankText}

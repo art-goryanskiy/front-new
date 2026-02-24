@@ -10,7 +10,10 @@ import {
   type AdminUserFieldsQueriesFragment,
 } from "@/shared/api/generated/graphql";
 
-export function useAdminUser(userId: string | null, options?: { skip?: boolean }) {
+export function useAdminUser(
+  userId: string | null,
+  options?: { skip?: boolean }
+) {
   const { data, loading, error, refetch } = useQuery<
     AdminUserQuery,
     AdminUserQueryVariables
@@ -21,10 +24,10 @@ export function useAdminUser(userId: string | null, options?: { skip?: boolean }
   });
 
   const raw = data?.adminUser ?? null;
-  const user = useFragment(
-    AdminUserFieldsQueriesFragmentDoc,
-    raw
-  ) as AdminUserFieldsQueriesFragment | null | undefined;
+  const user = useFragment(AdminUserFieldsQueriesFragmentDoc, raw) as
+    | AdminUserFieldsQueriesFragment
+    | null
+    | undefined;
 
   return {
     user: user ?? null,

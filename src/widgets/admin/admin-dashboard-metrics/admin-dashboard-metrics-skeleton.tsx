@@ -11,7 +11,7 @@ export const AdminDashboardMetricsSkeleton = memo(
         {[1, 2, 3, 4].map((i) => (
           <MagicCard
             key={i}
-            className="border border-border/50 bg-card/90 shadow-xl shadow-black/6 ring-1 ring-white/10 dark:ring-white/5"
+            className="border border-border/50 bg-card/90 shadow-xl ring-1 shadow-black/6 ring-white/10 dark:ring-white/5"
           >
             <div className="p-5 sm:p-6">
               <Skeleton className="mb-3 h-3 w-28 rounded" />

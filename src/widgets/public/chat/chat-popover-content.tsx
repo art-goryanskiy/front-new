@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -58,11 +58,15 @@ function MessageBubble({
             : "rounded-bl-md bg-muted/80 text-muted-foreground backdrop-blur-sm"
         )}
       >
-        <p className="whitespace-pre-wrap wrap-break-word leading-relaxed">{message.body}</p>
+        <p className="leading-relaxed wrap-break-word whitespace-pre-wrap">
+          {message.body}
+        </p>
         <p
           className={cn(
             "mt-1.5 text-xs opacity-90",
-            isOwn ? "text-primary-foreground/90" : "text-muted-foreground/90"
+            isOwn
+              ? "text-primary-foreground/90"
+              : "text-muted-foreground/90"
           )}
         >
           {formatMessageTime(message.createdAt)}
@@ -76,15 +80,28 @@ interface ChatPopoverContentProps {
   refetchMessagesRef: React.MutableRefObject<(() => void) | null>;
 }
 
-export function ChatPopoverContent({ refetchMessagesRef }: ChatPopoverContentProps) {
+export function ChatPopoverContent({
+  refetchMessagesRef,
+}: ChatPopoverContentProps) {
   const user = useAuthUser();
-  const { chat, loading: chatLoading, refetch: refetchChat } = useMyChat({
+  const {
+    chat,
+    loading: chatLoading,
+    refetch: refetchChat,
+  } = useMyChat({
     skip: !user,
   });
-  const { messages, loading: messagesLoading, refetch: refetchMessages } =
-    useChatMessages(chat?.id ?? null, { limit: MESSAGE_LIMIT }, {
+  const {
+    messages,
+    loading: messagesLoading,
+    refetch: refetchMessages,
+  } = useChatMessages(
+    chat?.id ?? null,
+    { limit: MESSAGE_LIMIT },
+    {
       skip: !chat?.id,
-    });
+    }
+  );
   const { sendMessage, loading: sendLoading } = useSendMessage();
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -102,10 +119,14 @@ export function ChatPopoverContent({ refetchMessagesRef }: ChatPopoverContentPro
     }
   }, [messages.length]);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
     e.preventDefault();
     const form = e.currentTarget;
-    const body = (form.elements.namedItem("body") as HTMLInputElement)?.value?.trim();
+    const body = (
+      form.elements.namedItem("body") as HTMLInputElement
+    )?.value?.trim();
     if (!body || sendLoading) return;
     try {
       await sendMessage({
@@ -129,7 +150,9 @@ export function ChatPopoverContent({ refetchMessagesRef }: ChatPopoverContentPro
         <div className="rounded-full bg-muted/50 p-4">
           <Send className="h-8 w-8 text-muted-foreground" />
         </div>
-        <p className="text-sm font-medium text-foreground">Чат с поддержкой</p>
+        <p className="text-sm font-medium text-foreground">
+          Чат с поддержкой
+        </p>
         <p className="text-sm text-muted-foreground">
           Войдите в аккаунт, чтобы написать сообщение.
         </p>
@@ -145,7 +168,9 @@ export function ChatPopoverContent({ refetchMessagesRef }: ChatPopoverContentPro
         </h3>
         {chat && (
           <p className="mt-0.5 text-xs text-muted-foreground">
-            {chat.status === "OPEN" ? "Открыт · ответим в ближайшее время" : "Чат закрыт"}
+            {chat.status === "OPEN"
+              ? "Открыт · ответим в ближайшее время"
+              : "Чат закрыт"}
           </p>
         )}
       </div>

@@ -106,7 +106,7 @@ export const NewsCard = memo(function NewsCard({
                 {isOptimizableImageSrc(photoUrl) ? (
                   <Image
                     src={photoUrl}
-                    alt=""
+                    alt={truncateText(news.text, 80)}
                     fill
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 1200px"
                     className="object-cover object-top saturate-[0.88] transition-[transform,filter] duration-700 group-hover:scale-[1.02] group-hover:saturate-100"
@@ -114,7 +114,7 @@ export const NewsCard = memo(function NewsCard({
                 ) : (
                   <Image
                     src={photoUrl}
-                    alt=""
+                    alt={truncateText(news.text, 80)}
                     fill
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 1200px"
                     unoptimized
@@ -163,7 +163,7 @@ export const NewsCard = memo(function NewsCard({
                 {isOptimizableImageSrc(photoUrl) ? (
                   <Image
                     src={photoUrl}
-                    alt=""
+                    alt={truncateText(news.text, 80)}
                     fill
                     sizes="(max-width: 640px) 100vw, 160px"
                     className="object-cover object-top saturate-[0.88] transition-[transform,filter] duration-500 group-hover:scale-105 group-hover:saturate-100"
@@ -171,7 +171,7 @@ export const NewsCard = memo(function NewsCard({
                 ) : (
                   <Image
                     src={photoUrl}
-                    alt=""
+                    alt={truncateText(news.text, 80)}
                     fill
                     sizes="(max-width: 640px) 100vw, 160px"
                     unoptimized

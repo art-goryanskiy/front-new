@@ -58,7 +58,6 @@ const STATUS_OPTIONS: {
   },
 ];
 
-
 function orderSummary(order: OrderFieldsFragment) {
   const lines = order.lines ?? [];
   const programsCount = lines.length;
@@ -179,7 +178,11 @@ const AdminOrdersPage = memo(function AdminOrdersPage() {
     () =>
       statusFilter === "all"
         ? undefined
-        : { status: statusFilter, limit: ADMIN_ORDERS_LIMIT, offset: 0 },
+        : {
+            status: statusFilter,
+            limit: ADMIN_ORDERS_LIMIT,
+            offset: 0,
+          },
     [statusFilter]
   );
 

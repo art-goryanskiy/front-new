@@ -23,7 +23,10 @@ export function useAdminAssignChat() {
   ) => {
     const result = await mutate({
       variables: {
-        input: { chatId, assignToUserId: assignToUserId ?? undefined },
+        input: {
+          chatId,
+          assignToUserId: assignToUserId ?? undefined,
+        },
       },
     });
     return result.data?.adminAssignChat ?? null;

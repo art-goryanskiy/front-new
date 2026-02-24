@@ -21,7 +21,7 @@ export const PUBLIC_HEADER_CLASSES = {
 
 export const PUBLIC_HEADER_ANIMATIONS = {
   header: {
-    initial: { y: -100, opacity: 0 },
+    initial: false,
     animate: { y: 0, opacity: 1 },
     transition: { duration: 0.3 },
   },

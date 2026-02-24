@@ -14,7 +14,7 @@ export const ProgramTableTitleContent = memo(
     );
 
     return (
-      <div className="flex min-w-0 max-w-[320px] items-start gap-2">
+      <div className="flex max-w-[320px] min-w-0 items-start gap-2">
         <div className="min-w-0 flex-1">
           <p
             className="line-clamp-2 text-sm font-semibold text-foreground"

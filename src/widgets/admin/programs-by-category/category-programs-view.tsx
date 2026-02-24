@@ -6,7 +6,14 @@ import type {
   ProgramEntity,
 } from "@/shared/api/generated/graphql";
 import { useDebounce } from "@/shared/lib/hooks/use-debounce";
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 type PagingState = {
   key: string;
@@ -93,6 +100,7 @@ export const CategoryProgramsView = memo(
     // Фиксируем изменение ключа в state (для корректного handleLoadMore)
     useEffect(() => {
       if (paging.key !== requestKey) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setPaging({ key: requestKey, page: 1, accumulated: [] });
       }
     }, [requestKey, paging.key]);
@@ -112,7 +120,13 @@ export const CategoryProgramsView = memo(
         offset: (effectivePaging.page - 1) * PAGE_SIZE,
       };
       return search ? { ...base, search } : base;
-    }, [categoryId, debouncedQ, sortBy, sortOrder, effectivePaging.page]);
+    }, [
+      categoryId,
+      debouncedQ,
+      sortBy,
+      sortOrder,
+      effectivePaging.page,
+    ]);
 
     const { items, total, loading, error } = useProgramsPage(filter);
 
@@ -122,6 +136,7 @@ export const CategoryProgramsView = memo(
       prevLoadingRef.current = loading;
 
       if (wasLoading && !loading) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setPaging((prev) => {
           // Игнорируем устаревший ответ, если ключ уже поменялся
           if (prev.key !== requestKey) return prev;
@@ -194,7 +209,9 @@ export const CategoryProgramsView = memo(
 
                 <Select
                   value={pricing}
-                  onValueChange={(v) => setPricing(v as PricingFilter)}
+                  onValueChange={(v) =>
+                    setPricing(v as PricingFilter)
+                  }
                 >
                   <SelectTrigger className="h-9 w-[150px] bg-background/60">
                     <SelectValue placeholder="Цена" />
@@ -260,7 +277,10 @@ export const CategoryProgramsView = memo(
                   >
                     {loading ? (
                       <span className="flex items-center gap-2">
-                        <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                        <Loader2
+                          className="h-4 w-4 animate-spin"
+                          aria-hidden
+                        />
                         Загрузка…
                       </span>
                     ) : (

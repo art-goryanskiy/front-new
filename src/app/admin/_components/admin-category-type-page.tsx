@@ -15,9 +15,11 @@ import { Suspense, lazy, useState } from "react";
 import { CategoryPage } from "../category-page/category-page";
 
 const ProgramModal = lazy(() =>
-  import("@/widgets/program/program-modal/program-modal").then((mod) => ({
-    default: mod.ProgramModal,
-  }))
+  import("@/widgets/program/program-modal/program-modal").then(
+    (mod) => ({
+      default: mod.ProgramModal,
+    })
+  )
 );
 
 const DeleteProgramModal = lazy(() =>
@@ -44,10 +46,14 @@ export function AdminCategoryTypePage({
 }: {
   config: AdminCategoryTypePageConfig;
 }) {
-  const [tab, setTab] = useState<"categories" | "programs">("categories");
+  const [tab, setTab] = useState<"categories" | "programs">(
+    "categories"
+  );
 
   const sectionTitle =
-    tab === "categories" ? config.categoriesTitle : config.programsTitle;
+    tab === "categories"
+      ? config.categoriesTitle
+      : config.programsTitle;
 
   return (
     <>
@@ -56,7 +62,9 @@ export function AdminCategoryTypePage({
         onValueChange={(v) => setTab(v as "categories" | "programs")}
         className="space-y-4 [--admin-tabs-offset:var(--sticky-offset)]"
         style={
-          { "--sticky-offset": STICKY_BLOCK_OFFSET } as React.CSSProperties
+          {
+            "--sticky-offset": STICKY_BLOCK_OFFSET,
+          } as React.CSSProperties
         }
       >
         <div
