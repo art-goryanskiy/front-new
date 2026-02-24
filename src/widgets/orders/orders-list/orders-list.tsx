@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useState, useRef, useEffect } from "react";
+import { memo, useState, useRef } from "react";
 import Link from "next/link";
 import { useMyOrders } from "@/entities/order/api/use-my-orders";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
@@ -175,14 +175,12 @@ export const OrdersList = memo(function OrdersList() {
     filter: { limit: 20, status: statusFilter },
   });
 
-  // Сохраняем последние успешно загруженные данные, чтобы при смене фильтра
-  // показывать их пока грузятся новые — без полного перемонтирования.
+  // Синхронное обновление во время рендера — ref гарантированно актуален
+  // до вычисления isFirstLoad/displayOrders, в отличие от useEffect.
   const staleOrdersRef = useRef<typeof orders>([]);
-  useEffect(() => {
-    if (!loading) {
-      staleOrdersRef.current = orders;
-    }
-  }, [loading, orders]);
+  if (!loading) {
+    staleOrdersRef.current = orders;
+  }
 
   const isFirstLoad = loading && staleOrdersRef.current.length === 0;
   const isRefetching = loading && staleOrdersRef.current.length > 0;
