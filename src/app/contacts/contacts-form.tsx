@@ -11,14 +11,15 @@ import {
   Loader2,
   AlertCircle,
 } from "lucide-react";
+import { InputMask } from "@react-input/mask";
 import { Button } from "@/components/ui/button";
 import { Surface } from "@/shared/ui/surface/surface";
 import { BlurGlowBackground } from "@/shared/ui/blur-glow-background/blur-glow-background";
 import { cn } from "@/lib/utils";
-import {
-  formatPhoneInput,
-  stripPhone,
-} from "@/features/profile/ui/utils/phone-utils";
+import { stripPhone } from "@/features/profile/ui/utils/phone-utils";
+
+const PHONE_MASK = "+7 (___) ___-__-__";
+const PHONE_REPLACEMENT = { _: /\d/ } as const;
 
 interface FormState {
   name: string;
@@ -33,26 +34,38 @@ function FloatingInput({
   label,
   value,
   onChange,
-  onKeyDown,
   type = "text",
   placeholder,
   icon: Icon,
   disabled,
   error,
+  phoneMode = false,
 }: {
   id: string;
   label: string;
   value: string;
   onChange: (v: string) => void;
-  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   type?: string;
   placeholder?: string;
   icon: React.ElementType;
   disabled?: boolean;
   error?: string;
+  phoneMode?: boolean;
 }) {
   const [focused, setFocused] = useState(false);
   const active = focused || value.length > 0;
+
+  const sharedInputProps = {
+    id,
+    value,
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value),
+    onFocus: () => setFocused(true),
+    onBlur: () => setFocused(false),
+    disabled,
+    placeholder: active ? (placeholder ?? "") : "",
+    className:
+      "block w-full bg-transparent pb-2.5 pt-6 text-sm text-foreground outline-none placeholder:text-muted-foreground/40",
+  };
 
   return (
     <div className="space-y-1">
@@ -96,18 +109,20 @@ function FloatingInput({
           >
             {label}
           </label>
-          <input
-            id={id}
-            type={type}
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            onKeyDown={onKeyDown}
-            onFocus={() => setFocused(true)}
-            onBlur={() => setFocused(false)}
-            placeholder={active ? (placeholder ?? "") : ""}
-            disabled={disabled}
-            className="block w-full bg-transparent pb-2.5 pt-6 text-sm text-foreground outline-none placeholder:text-muted-foreground/40"
-          />
+
+          {phoneMode ? (
+            <InputMask
+              mask={PHONE_MASK}
+              replacement={PHONE_REPLACEMENT}
+              showMask
+              type="tel"
+              inputMode="numeric"
+              autoComplete="tel"
+              {...sharedInputProps}
+            />
+          ) : (
+            <input type={type} {...sharedInputProps} />
+          )}
         </div>
       </div>
 
@@ -135,7 +150,7 @@ export function ContactsForm() {
   const ref = useRef<HTMLElement>(null);
   const isInView = useInView(ref, { once: true, margin: "0px 0px -80px 0px" });
 
-  const [form, setForm] = useState<FormState>({ name: "", phone: "+7 (", program: "" });
+  const [form, setForm] = useState<FormState>({ name: "", phone: "", program: "" });
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const [touched, setTouched] = useState(false);
@@ -147,20 +162,6 @@ export function ContactsForm() {
 
   const set = (field: keyof FormState) => (v: string) =>
     setForm((prev) => ({ ...prev, [field]: v }));
-
-  const handlePhoneChange = (v: string) => {
-    setForm((prev) => ({ ...prev, phone: formatPhoneInput(v) }));
-  };
-
-  const handlePhoneKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    const prefix = "+7 (";
-    if (
-      (e.key === "Backspace" || e.key === "Delete") &&
-      form.phone.length <= prefix.length
-    ) {
-      e.preventDefault();
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -269,7 +270,7 @@ export function ContactsForm() {
                   onClick={() => {
                     setStatus("idle");
                     setTouched(false);
-                    setForm({ name: "", phone: "+7 (", program: "" });
+                    setForm({ name: "", phone: "", program: "" });
                   }}
                   className="mt-2 text-sm font-medium text-primary underline-offset-4 hover:underline"
                 >
@@ -300,14 +301,12 @@ export function ContactsForm() {
                   <FloatingInput
                     id={`${uid}-phone`}
                     label="Телефон *"
-                    placeholder="+7 (900) 000-00-00"
-                    type="tel"
                     icon={Phone}
                     value={form.phone}
-                    onChange={handlePhoneChange}
-                    onKeyDown={handlePhoneKeyDown}
+                    onChange={set("phone")}
                     disabled={isDisabled}
                     error={phoneError}
+                    phoneMode
                   />
                 </div>
 
