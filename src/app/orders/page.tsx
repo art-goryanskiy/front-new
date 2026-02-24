@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { UserAuthGuard } from "@/shared/lib/auth/user-auth-guard";
@@ -8,8 +8,6 @@ import { PublicPageLayout } from "@/shared/ui/layouts/public-page-layout";
 import { OrdersList } from "@/widgets/orders/orders-list/orders-list";
 
 export default function OrdersPage() {
-  const router = useRouter();
-
   return (
     <UserAuthGuard redirectTo="login">
       <PublicPageLayout>
@@ -25,11 +23,13 @@ export default function OrdersPage() {
             </div>
             <Button
               variant="ghost"
-              onClick={() => router.back()}
+              asChild
               className="self-start sm:self-auto"
             >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Назад
+              <Link href="/profile">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                В профиль
+              </Link>
             </Button>
           </div>
           <OrdersList />

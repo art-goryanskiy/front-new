@@ -63,6 +63,32 @@ export function formatAdminDate(
 }
 
 /**
+ * Форматирует дату заявки: только дата без времени.
+ * Безопасно к UTC-смещению (не показывает 03:00).
+ * Пример: «15 января 2025 г.»
+ */
+export function formatOrderDate(
+  date: string | unknown
+): string {
+  if (!date) return "—";
+  try {
+    return new Date(String(date)).toLocaleDateString("ru-RU", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  } catch {
+    return String(date);
+  }
+}
+
+/**
+ * Форматирует дату документа (без времени).
+ * Пример: «15 января 2025 г.»
+ */
+export { formatOrderDate as formatDocumentDate };
+
+/**
  * Форматирует дату в короткий формат (для диапазонов, дат обучения)
  * Пример: «15.01.2025»
  */

@@ -10,7 +10,12 @@ import { useToastState } from "@/shared/store/toast-store";
 import { Surface } from "@/shared/ui/surface/surface";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
 import { OrderDetailSkeleton } from "./order-detail-skeleton";
-import { formatPriceWithCurrency } from "@/shared/lib/helpers/format-helpers";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  formatPriceWithCurrency,
+  formatOrderDate,
+  formatDocumentDate,
+} from "@/shared/lib/helpers/format-helpers";
 import {
   ORDER_STATUS_LABELS,
   ORDER_STATUS_BADGE_CLASSES,
@@ -18,8 +23,10 @@ import {
 } from "@/shared/constants/orders";
 import type { OrderFieldsFragment } from "@/shared/api/generated/graphql";
 import {
+  ChevronRight,
   FileDown,
   FileText,
+  ListOrdered,
   User,
   Loader2,
   Pencil,
@@ -52,35 +59,6 @@ import {
   OrderDocumentKind,
   OrderStatus,
 } from "@/shared/api/generated/graphql";
-
-function formatOrderDate(date: string | unknown): string {
-  if (!date) return "—";
-  try {
-    return new Date(String(date)).toLocaleDateString("ru-RU", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  } catch {
-    return String(date);
-  }
-}
-
-/** Только дата (без времени), чтобы не показывать 03:00 из-за UTC. */
-function formatDocumentDate(date: string | unknown): string {
-  if (!date) return "—";
-  try {
-    return new Date(String(date)).toLocaleDateString("ru-RU", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
-  } catch {
-    return String(date);
-  }
-}
 
 function documentFileLabel(fileUrl: string): "PDF" | "DOCX" {
   const lower = fileUrl.toLowerCase();
@@ -127,11 +105,9 @@ function EditOrderDialog({
 
   useEffect(() => {
     if (open) {
-      queueMicrotask(() => {
-        setEmail(order.contactEmail ?? "");
-        setPhone(order.contactPhone ?? "");
-        setSelectedOrg(null);
-      });
+      setEmail(order.contactEmail ?? "");
+      setPhone(order.contactPhone ?? "");
+      setSelectedOrg(null);
     }
   }, [open, order.contactEmail, order.contactPhone]);
 
@@ -334,6 +310,27 @@ export const OrderDetailContent = memo(function OrderDetailContent({
 
   return (
     <div className="space-y-6">
+      {/* Breadcrumbs */}
+      <nav aria-label="Хлебные крошки">
+        <ol className="flex flex-wrap items-center gap-1 text-sm text-muted-foreground">
+          <li>
+            <Link href="/" className="transition-colors hover:text-foreground">
+              Главная
+            </Link>
+          </li>
+          <li aria-hidden><ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-50" /></li>
+          <li>
+            <Link href="/orders" className="transition-colors hover:text-foreground">
+              Мои заявки
+            </Link>
+          </li>
+          <li aria-hidden><ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-50" /></li>
+          <li className="font-medium text-foreground" aria-current="page">
+            Заявка №{orderDisplayNumber}
+          </li>
+        </ol>
+      </nav>
+
       <Surface
         variant="floating"
         className="relative overflow-hidden p-6"
@@ -416,14 +413,6 @@ export const OrderDetailContent = memo(function OrderDetailContent({
                 />
               </>
             )}
-            <Button
-              variant="ghost"
-              size="sm"
-              asChild
-              className="gap-2"
-            >
-              <Link href="/orders">К списку заявок</Link>
-            </Button>
           </div>
         </div>
       </Surface>
@@ -459,7 +448,7 @@ export const OrderDetailContent = memo(function OrderDetailContent({
 
         <div>
           <h2 className="mb-3 flex items-center gap-2 text-lg font-semibold text-foreground">
-            <FileText className="h-5 w-5" />
+            <ListOrdered className="h-5 w-5" />
             Позиции заявки
           </h2>
           <ul className="space-y-3">
@@ -474,8 +463,7 @@ export const OrderDetailContent = memo(function OrderDetailContent({
                       {line.subProgramTitle ?? line.programTitle}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      {line.hours} ч × {line.quantity} —{" "}
-                      {formatPriceWithCurrency(line.lineAmount)}
+                      {line.hours} ч &times; {line.quantity}
                     </p>
                   </div>
                   <span className="text-sm font-semibold text-primary">
@@ -484,15 +472,27 @@ export const OrderDetailContent = memo(function OrderDetailContent({
                 </div>
                 {line.learners && line.learners.length > 0 && (
                   <div className="mt-3 border-t border-border/60 pt-3">
-                    <p className="text-xs font-semibold text-muted-foreground">
+                    <p className="mb-2 text-xs font-semibold text-muted-foreground">
                       Слушатели:
                     </p>
-                    <ul className="mt-1 space-y-1 text-sm text-foreground">
+                    <ul className="space-y-1.5">
                       {line.learners.map((l, i) => (
-                        <li key={i}>
-                          {l.lastName} {l.firstName}
-                          {l.middleName ? ` ${l.middleName}` : ""}
-                          {l.email ? ` (${l.email})` : ""}
+                        <li
+                          key={i}
+                          className="flex items-center gap-2 text-sm text-foreground"
+                        >
+                          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted/60 text-[11px] font-semibold text-muted-foreground">
+                            {(l.lastName || l.firstName || "?").charAt(0).toUpperCase()}
+                          </span>
+                          <span>
+                            {l.lastName} {l.firstName}
+                            {l.middleName ? ` ${l.middleName}` : ""}
+                            {l.email ? (
+                              <span className="ml-1 text-muted-foreground">
+                                ({l.email})
+                              </span>
+                            ) : null}
+                          </span>
                         </li>
                       ))}
                     </ul>
@@ -519,7 +519,21 @@ export const OrderDetailContent = memo(function OrderDetailContent({
           Документы
         </h2>
         {documentsLoading ? (
-          <p className="text-sm text-muted-foreground">Загрузка…</p>
+          <ul className="space-y-2">
+            {[1, 2].map((i) => (
+              <li
+                key={i}
+                className="grid grid-cols-[auto_1fr_auto] items-center gap-3 rounded-xl border border-border/40 bg-muted/5 px-4 py-3"
+              >
+                <Skeleton variant="premium" className="h-9 w-9 rounded-lg" />
+                <Skeleton variant="premium" className="h-4 w-40" />
+                <div className="flex items-center gap-3">
+                  <Skeleton variant="premium" className="h-4 w-24 hidden sm:block" />
+                  <Skeleton variant="premium" className="h-8 w-28 rounded-xl" />
+                </div>
+              </li>
+            ))}
+          </ul>
         ) : documents.length === 0 ? (
           <p className="text-sm text-muted-foreground">
             Документы по заявке пока не сформированы.
@@ -553,7 +567,7 @@ export const OrderDetailContent = memo(function OrderDetailContent({
                     {documentKindLabel(doc.kind)}
                   </span>
                   <div className="flex min-w-0 items-center gap-3 sm:gap-4">
-                    <span className="shrink-0 text-left text-sm text-muted-foreground tabular-nums">
+                    <span className="shrink-0 text-left text-sm text-muted-foreground tabular-nums hidden sm:block">
                       {formatDocumentDate(doc.documentDate)}
                     </span>
                     {doc.fileUrl ? (

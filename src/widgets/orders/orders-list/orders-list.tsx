@@ -1,12 +1,15 @@
 "use client";
 
-import { memo, useState } from "react";
+import { memo, useState, useRef } from "react";
 import Link from "next/link";
 import { useMyOrders } from "@/entities/order/api/use-my-orders";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
 import { OrdersListSkeleton } from "./orders-list-skeleton";
 import { Surface } from "@/shared/ui/surface/surface";
-import { formatPriceWithCurrency } from "@/shared/lib/helpers/format-helpers";
+import {
+  formatPriceWithCurrency,
+  formatOrderDate,
+} from "@/shared/lib/helpers/format-helpers";
 import {
   formatProgramsCount,
   formatLearnersCount,
@@ -45,21 +48,6 @@ const STATUS_FILTER_OPTIONS: {
     label: ORDER_STATUS_LABELS["CANCELLED"] ?? "Отменён",
   },
 ];
-
-function formatOrderDate(date: string | unknown): string {
-  if (!date) return "—";
-  try {
-    return new Date(String(date)).toLocaleDateString("ru-RU", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  } catch {
-    return String(date);
-  }
-}
 
 function orderSummary(order: OrderFieldsFragment): {
   programsCount: number;
@@ -187,7 +175,22 @@ export const OrdersList = memo(function OrdersList() {
     filter: { limit: 20, status: statusFilter },
   });
 
-  if (loading && orders.length === 0) {
+  // Синхронное обновление во время рендера — ref гарантированно актуален
+  // до вычисления isFirstLoad/displayOrders, в отличие от useEffect.
+  const staleOrdersRef = useRef<typeof orders>([]);
+  const hasLoadedOnceRef = useRef(false);
+  if (!loading) {
+    staleOrdersRef.current = orders;
+    hasLoadedOnceRef.current = true;
+  }
+
+  // Скелетон только при самой первой загрузке страницы — никогда при смене фильтра.
+  // При смене фильтра показываем stale данные с opacity пока летит запрос.
+  const isFirstLoad = !hasLoadedOnceRef.current && loading;
+  const isRefetching = hasLoadedOnceRef.current && loading;
+  const displayOrders = loading ? staleOrdersRef.current : orders;
+
+  if (isFirstLoad) {
     return <OrdersListSkeleton />;
   }
 
@@ -209,38 +212,50 @@ export const OrdersList = memo(function OrdersList() {
           }
           className="w-full"
         >
-          <TabsList
-            className={cn(
-              "inline-flex h-10 w-full flex-wrap justify-start gap-1 rounded-2xl p-1 sm:w-auto",
-              "border border-border/40 bg-muted/50"
-            )}
-          >
-            <TabsTrigger value="all" className="rounded-xl px-4">
-              Все
-            </TabsTrigger>
-            {STATUS_FILTER_OPTIONS.filter((o) => o.value).map(
-              (opt) => (
-                <TabsTrigger
-                  key={opt.value}
-                  value={opt.value!}
-                  className="rounded-xl px-4"
-                >
-                  {opt.label}
+          <div className="relative">
+            <div className="overflow-x-auto pb-0.5 [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              <TabsList
+                className={cn(
+                  "inline-flex h-10 w-max min-w-full gap-1 rounded-2xl p-1",
+                  "border border-border/40 bg-muted/50"
+                )}
+              >
+                <TabsTrigger value="all" className="rounded-xl px-4">
+                  Все
                 </TabsTrigger>
-              )
-            )}
-          </TabsList>
+                {STATUS_FILTER_OPTIONS.filter((o) => o.value).map(
+                  (opt) => (
+                    <TabsTrigger
+                      key={opt.value}
+                      value={opt.value!}
+                      className="rounded-xl px-4 whitespace-nowrap"
+                    >
+                      {opt.label}
+                    </TabsTrigger>
+                  )
+                )}
+              </TabsList>
+            </div>
+            <div className="pointer-events-none absolute top-0 right-0 h-full w-8 bg-linear-to-l from-background/60 to-transparent" />
+          </div>
         </Tabs>
 
-        {orders.length === 0 ? (
-          <OrdersEmptyContent hasFilter={!!statusFilter} />
-        ) : (
-          <div className="space-y-3">
-            {orders.map((order) => (
-              <OrderCard key={order.id} order={order} />
-            ))}
-          </div>
-        )}
+        <div
+          className={cn(
+            "transition-opacity duration-200",
+            isRefetching && "pointer-events-none opacity-50"
+          )}
+        >
+          {displayOrders.length === 0 ? (
+            <OrdersEmptyContent hasFilter={!!statusFilter} />
+          ) : (
+            <div className="space-y-3">
+              {displayOrders.map((order) => (
+                <OrderCard key={order.id} order={order} />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </Surface>
   );
