@@ -9,11 +9,16 @@ import {
   Phone,
   BookOpen,
   Loader2,
+  AlertCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Surface } from "@/shared/ui/surface/surface";
 import { BlurGlowBackground } from "@/shared/ui/blur-glow-background/blur-glow-background";
 import { cn } from "@/lib/utils";
+import {
+  formatPhoneInput,
+  stripPhone,
+} from "@/features/profile/ui/utils/phone-utils";
 
 interface FormState {
   name: string;
@@ -28,45 +33,65 @@ function FloatingInput({
   label,
   value,
   onChange,
+  onKeyDown,
   type = "text",
   placeholder,
   icon: Icon,
   disabled,
+  error,
 }: {
   id: string;
   label: string;
   value: string;
   onChange: (v: string) => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   type?: string;
   placeholder?: string;
   icon: React.ElementType;
   disabled?: boolean;
+  error?: string;
 }) {
   const [focused, setFocused] = useState(false);
   const active = focused || value.length > 0;
 
   return (
-    <div className="relative">
+    <div className="space-y-1">
       <div
         className={cn(
-          "relative flex items-center overflow-hidden rounded-xl border transition-all duration-200",
-          focused
-            ? "border-primary shadow-[0_0_0_3px_color-mix(in_srgb,var(--primary)_12%,transparent)]"
-            : "border-border/60 hover:border-border/90",
-          disabled && "opacity-50 cursor-not-allowed"
+          "relative flex items-center rounded-xl border bg-background transition-all duration-200",
+          error
+            ? "border-destructive shadow-[0_0_0_3px_color-mix(in_srgb,var(--destructive)_10%,transparent)]"
+            : focused
+              ? "border-primary shadow-[0_0_0_3px_color-mix(in_srgb,var(--primary)_12%,transparent)]"
+              : "border-border/60 hover:border-border/90",
+          disabled && "pointer-events-none opacity-50"
         )}
       >
-        <span className="pointer-events-none flex h-full w-11 shrink-0 items-center justify-center text-muted-foreground/60 transition-colors duration-200 peer-focus:text-primary">
-          <Icon className={cn("h-4 w-4 transition-colors duration-200", focused && "text-primary")} />
+        {/* Иконка */}
+        <span className="flex w-11 shrink-0 items-center justify-center self-stretch text-muted-foreground/60">
+          <Icon
+            className={cn(
+              "h-4 w-4 transition-colors duration-200",
+              error ? "text-destructive" : focused && "text-primary"
+            )}
+          />
         </span>
+
+        {/* Поле + лейбл */}
         <div className="relative flex-1 pr-3">
           <label
             htmlFor={id}
             className={cn(
-              "pointer-events-none absolute left-0 origin-left text-muted-foreground transition-all duration-200",
+              "pointer-events-none absolute left-0 origin-top-left select-none transition-all duration-200",
               active
-                ? "-translate-y-[0.9rem] scale-[0.75] text-primary/80 font-medium"
-                : "translate-y-[0.85rem] scale-100"
+                ? cn(
+                    "top-2 text-[10px] font-semibold tracking-wide",
+                    error ? "text-destructive" : "text-primary/80"
+                  )
+                : cn(
+                    "top-1/2 -translate-y-1/2 text-sm",
+                    error ? "text-destructive" : "text-muted-foreground"
+                  )
             )}
           >
             {label}
@@ -76,14 +101,31 @@ function FloatingInput({
             type={type}
             value={value}
             onChange={(e) => onChange(e.target.value)}
+            onKeyDown={onKeyDown}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
-            placeholder={focused ? placeholder : ""}
+            placeholder={active ? (placeholder ?? "") : ""}
             disabled={disabled}
-            className="peer block w-full bg-transparent pb-2 pt-6 text-sm text-foreground outline-none placeholder:text-muted-foreground/40"
+            className="block w-full bg-transparent pb-2.5 pt-6 text-sm text-foreground outline-none placeholder:text-muted-foreground/40"
           />
         </div>
       </div>
+
+      {/* Сообщение об ошибке */}
+      <AnimatePresence>
+        {error && (
+          <motion.p
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.15 }}
+            className="flex items-center gap-1.5 pl-1 text-xs text-destructive"
+          >
+            <AlertCircle className="h-3 w-3 shrink-0" />
+            {error}
+          </motion.p>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -93,16 +135,37 @@ export function ContactsForm() {
   const ref = useRef<HTMLElement>(null);
   const isInView = useInView(ref, { once: true, margin: "0px 0px -80px 0px" });
 
-  const [form, setForm] = useState<FormState>({ name: "", phone: "", program: "" });
+  const [form, setForm] = useState<FormState>({ name: "", phone: "+7 (", program: "" });
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const [touched, setTouched] = useState(false);
+
+  const nameError = touched && !form.name.trim() ? "Введите имя" : undefined;
+  const phoneDigits = stripPhone(form.phone);
+  const phoneError =
+    touched && phoneDigits.length < 10 ? "Введите полный номер телефона" : undefined;
 
   const set = (field: keyof FormState) => (v: string) =>
     setForm((prev) => ({ ...prev, [field]: v }));
 
+  const handlePhoneChange = (v: string) => {
+    setForm((prev) => ({ ...prev, phone: formatPhoneInput(v) }));
+  };
+
+  const handlePhoneKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const prefix = "+7 (";
+    if (
+      (e.key === "Backspace" || e.key === "Delete") &&
+      form.phone.length <= prefix.length
+    ) {
+      e.preventDefault();
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name.trim() || !form.phone.trim()) return;
+    setTouched(true);
+    if (!form.name.trim() || phoneDigits.length < 10) return;
 
     setStatus("loading");
     setErrorMsg("");
@@ -205,7 +268,8 @@ export function ContactsForm() {
                   type="button"
                   onClick={() => {
                     setStatus("idle");
-                    setForm({ name: "", phone: "", program: "" });
+                    setTouched(false);
+                    setForm({ name: "", phone: "+7 (", program: "" });
                   }}
                   className="mt-2 text-sm font-medium text-primary underline-offset-4 hover:underline"
                 >
@@ -225,22 +289,25 @@ export function ContactsForm() {
                 <div className="grid gap-4 sm:grid-cols-2">
                   <FloatingInput
                     id={`${uid}-name`}
-                    label="Ваше имя"
+                    label="Ваше имя *"
                     placeholder="Иван Иванов"
                     icon={User}
                     value={form.name}
                     onChange={set("name")}
                     disabled={isDisabled}
+                    error={nameError}
                   />
                   <FloatingInput
                     id={`${uid}-phone`}
-                    label="Телефон"
+                    label="Телефон *"
                     placeholder="+7 (900) 000-00-00"
                     type="tel"
                     icon={Phone}
                     value={form.phone}
-                    onChange={set("phone")}
+                    onChange={handlePhoneChange}
+                    onKeyDown={handlePhoneKeyDown}
                     disabled={isDisabled}
+                    error={phoneError}
                   />
                 </div>
 
@@ -274,7 +341,7 @@ export function ContactsForm() {
                   <Button
                     type="submit"
                     size="lg"
-                    disabled={isDisabled || !form.name.trim() || !form.phone.trim()}
+                    disabled={isDisabled}
                     className="shrink-0 gap-2"
                   >
                     {status === "loading" ? (
