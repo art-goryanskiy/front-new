@@ -115,10 +115,23 @@ export const StatsSection = memo(function StatsSection({
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
 
+  const currentYear = new Date().getFullYear();
+
+  // Считаем годы с 2015
+  const yearsOnMarket = currentYear - 2015;
+
+  // База: 10 000 выпускников к началу 2025 года, +850 в год
+  const GRADUATES_BASE_YEAR = 2025;
+  const GRADUATES_BASE_COUNT = 10_000;
+  const GRADUATES_PER_YEAR = 850;
+  const graduatesCount =
+    GRADUATES_BASE_COUNT +
+    (currentYear - GRADUATES_BASE_YEAR) * GRADUATES_PER_YEAR;
+
   const stats: StatItem[] = [
     {
       id: "graduates",
-      value: 500,
+      value: graduatesCount,
       suffix: "+",
       label: "Выпускников",
       sublabel: "успешно завершили обучение",
@@ -145,10 +158,10 @@ export const StatsSection = memo(function StatsSection({
     },
     {
       id: "years",
-      value: 8,
-      suffix: "+",
+      value: yearsOnMarket,
+      suffix: "",
       label: "Лет на рынке",
-      sublabel: "профессионального образования",
+      sublabel: "с 2015 года",
       icon: <Users className="h-6 w-6" aria-hidden />,
       color: "text-amber-500",
     },
