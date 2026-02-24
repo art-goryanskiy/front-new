@@ -11,6 +11,7 @@ import { useSendMessage } from "@/entities/chat/api/use-send-message";
 import type { ChatMessage } from "@/shared/api/chat.types";
 import { Send } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { metrikaGoals } from "@/shared/lib/analytics/metrika-goals";
 
 const MESSAGE_LIMIT = 50;
 
@@ -133,6 +134,7 @@ export function ChatPopoverContent({
         chatId: chat?.id ?? undefined,
         body,
       });
+      metrikaGoals.chatMessageSent();
       form.reset();
       refetchChat();
       if (chat?.id) {

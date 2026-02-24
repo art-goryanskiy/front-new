@@ -16,6 +16,7 @@ import type { ChatSocketNewMessagePayload } from "@/entities/chat/api/use-chat-s
 import { ChatPopoverContent } from "./chat-popover-content";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { metrikaGoals } from "@/shared/lib/analytics/metrika-goals";
 
 const DEFAULT_BOTTOM = 24;
 const DEFAULT_RIGHT = 24;
@@ -132,8 +133,18 @@ export function PublicChatWidget() {
 
   if (!mounted) return null;
 
+  const handleOpenChange = useCallback(
+    (next: boolean) => {
+      if (next && !open) {
+        metrikaGoals.chatOpened();
+      }
+      setOpen(next);
+    },
+    [open]
+  );
+
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={handleOpenChange}>
       <motion.div
         className="fixed z-40"
         style={{

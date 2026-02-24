@@ -11,6 +11,7 @@ import { PROGRAM_DETAIL_CLASSES } from "../constants/program-detail-constants";
 import { useRouter } from "next/navigation";
 import { saveReturnUrl } from "@/shared/lib/auth/utils/auth-redirect-utils";
 import { AUTH_GUARD_ROUTES } from "@/shared/lib/auth/constants/auth-guard-constants";
+import { metrikaGoals } from "@/shared/lib/analytics/metrika-goals";
 import { cn } from "@/lib/utils";
 import {
   Select,
@@ -72,6 +73,7 @@ export const ProgramDetailAddToCart = memo(
           pricingIndex: item.index,
           quantity,
         });
+        metrikaGoals.addToCart(programId);
         showToast("success", "Добавлено в корзину");
       } catch (err) {
         const e = err as {
