@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useNews } from "@/entities/news/api/use-news";
@@ -33,6 +33,7 @@ function getBentoSpan(index: number): {
 export function NewsListContent() {
   const [list, setList] = useState<NewsEntity[]>([]);
   const [pageOffset, setPageOffset] = useState(0);
+  const firstNewRef = useRef<HTMLDivElement | null>(null);
   const { news, loading, error, refetch } = useNews({
     limit: PAGE_SIZE,
     offset: pageOffset,
@@ -41,17 +42,21 @@ export function NewsListContent() {
   useEffect(() => {
     if (loading || !news.length) return;
     if (pageOffset === 0) {
-      queueMicrotask(() => setList(news));
+      setList(news);
     } else {
-      queueMicrotask(() =>
-        setList((prev) => {
-          const ids = new Set(prev.map((n) => n.id));
-          const toAdd = news.filter((n) => !ids.has(n.id));
-          return toAdd.length ? [...prev, ...toAdd] : prev;
-        })
-      );
+      setList((prev) => {
+        const ids = new Set(prev.map((n) => n.id));
+        const toAdd = news.filter((n) => !ids.has(n.id));
+        return toAdd.length ? [...prev, ...toAdd] : prev;
+      });
     }
   }, [loading, news, pageOffset]);
+
+  useEffect(() => {
+    if (pageOffset > 0 && !loading && firstNewRef.current) {
+      firstNewRef.current.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+  }, [list, pageOffset, loading]);
 
   const loadMore = useCallback(() => {
     setPageOffset(list.length);
@@ -83,6 +88,8 @@ export function NewsListContent() {
     );
   }
 
+  const prevListLength = pageOffset;
+
   return (
     <div className="space-y-10">
       <AnimatePresence mode="wait">
@@ -106,9 +113,19 @@ export function NewsListContent() {
           >
             {list.map((item, i) => {
               const { colSpan, variant } = getBentoSpan(i);
+              const isFirstNew = i === prevListLength && pageOffset > 0;
               return (
-                <div key={item.id} className={cn("min-w-0", colSpan)}>
-                  <NewsCard news={item} index={i} variant={variant} />
+                <div
+                  key={item.id}
+                  ref={isFirstNew ? firstNewRef : undefined}
+                  className={cn("min-w-0", colSpan)}
+                >
+                  <NewsCard
+                    news={item}
+                    index={i}
+                    variant={variant}
+                    priority={i === 0}
+                  />
                 </div>
               );
             })}

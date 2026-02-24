@@ -7,48 +7,16 @@ import { motion } from "framer-motion";
 import { ArrowRight, Calendar } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { NewsEntity } from "@/entities/news/api/news.types";
-
-const ALLOWED_IMAGE_HOSTS = [
-  "standart-images.storage.yandexcloud.net",
-];
-
-function isOptimizableImageSrc(src: string): boolean {
-  if (src.startsWith("data:")) return false;
-  try {
-    const u = new URL(src);
-    return (
-      u.protocol === "https:" &&
-      ALLOWED_IMAGE_HOSTS.some((h) => u.hostname === h)
-    );
-  } catch {
-    return false;
-  }
-}
-
-function formatNewsDate(iso: string): string {
-  try {
-    const d = new Date(iso);
-    return d.toLocaleDateString("ru-RU", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
-  } catch {
-    return iso;
-  }
-}
+import {
+  isOptimizableImageSrc,
+  truncateText,
+  formatNewsDate,
+  formatRelativeTime,
+} from "@/entities/news/lib/news-utils";
 
 function getFirstPhotoUrl(news: NewsEntity): string | null {
-  const att = news.attachments?.find(
-    (a) => a.type === "photo" && a.url
-  );
+  const att = news.attachments?.find((a) => a.type === "photo" && a.url);
   return att?.url ?? null;
-}
-
-function truncateText(text: string, maxLength: number): string {
-  const trimmed = text.trim();
-  if (trimmed.length <= maxLength) return trimmed;
-  return trimmed.slice(0, maxLength).trimEnd() + "…";
 }
 
 export type NewsCardVariant = "featured" | "default" | "wide";
@@ -57,15 +25,40 @@ interface NewsCardProps {
   news: NewsEntity;
   index?: number;
   variant?: NewsCardVariant;
+  priority?: boolean;
+}
+
+function DateBadge({
+  date,
+  size = "sm",
+}: {
+  date: string;
+  size?: "sm" | "xs";
+}) {
+  const absolute = formatNewsDate(date);
+  const relative = formatRelativeTime(date);
+
+  return (
+    <p
+      className={cn(
+        "flex items-center gap-2 font-medium tracking-wider text-muted-foreground uppercase",
+        size === "xs" ? "text-xs" : "text-xs sm:text-xs"
+      )}
+      title={absolute}
+    >
+      <Calendar className="h-3.5 w-3.5 shrink-0" aria-hidden />
+      {relative ?? absolute}
+    </p>
+  );
 }
 
 export const NewsCard = memo(function NewsCard({
   news,
   index = 0,
   variant = "default",
+  priority = false,
 }: NewsCardProps) {
   const photoUrl = getFirstPhotoUrl(news);
-  const dateStr = formatNewsDate(news.date);
   const excerpt =
     variant === "featured"
       ? truncateText(news.text, 280)
@@ -101,13 +94,14 @@ export const NewsCard = memo(function NewsCard({
 
         {isFeatured ? (
           <div className="relative z-10 flex w-full min-w-0 flex-col">
-            {photoUrl && (
+            {photoUrl ? (
               <div className="relative aspect-video w-full overflow-hidden">
                 {isOptimizableImageSrc(photoUrl) ? (
                   <Image
                     src={photoUrl}
                     alt={truncateText(news.text, 80)}
                     fill
+                    priority={priority}
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 1200px"
                     className="object-cover object-top saturate-[0.88] transition-[transform,filter] duration-700 group-hover:scale-[1.02] group-hover:saturate-100"
                   />
@@ -116,6 +110,7 @@ export const NewsCard = memo(function NewsCard({
                     src={photoUrl}
                     alt={truncateText(news.text, 80)}
                     fill
+                    priority={priority}
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 1200px"
                     unoptimized
                     className="h-full w-full object-cover object-top saturate-[0.88] transition-[transform,filter] duration-700 group-hover:scale-[1.02] group-hover:saturate-100"
@@ -123,15 +118,14 @@ export const NewsCard = memo(function NewsCard({
                 )}
                 <div className="absolute inset-0 bg-linear-to-t from-background/90 via-background/20 to-transparent" />
               </div>
+            ) : (
+              <div className="relative aspect-video w-full overflow-hidden bg-linear-to-br from-primary/8 via-muted/20 to-primary/5">
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_50%,rgba(var(--primary)/0.12),transparent_60%)]" />
+                <div className="absolute right-6 bottom-6 h-24 w-24 rounded-full border border-primary/10 bg-primary/5 blur-2xl" />
+              </div>
             )}
             <div className="flex min-w-0 flex-1 flex-col justify-end gap-4 p-6 sm:p-8">
-              <p className="flex items-center gap-2 text-xs font-medium tracking-wider text-muted-foreground uppercase">
-                <Calendar
-                  className="h-3.5 w-3.5 shrink-0"
-                  aria-hidden
-                />
-                {dateStr}
-              </p>
+              <DateBadge date={news.date} />
               <p className="line-clamp-4 text-base leading-relaxed text-foreground sm:text-lg">
                 {excerpt}
               </p>
@@ -183,13 +177,7 @@ export const NewsCard = memo(function NewsCard({
             )}
             <div className="flex min-w-0 flex-1 flex-col justify-between gap-3 p-4 sm:p-5">
               <div className="space-y-1.5">
-                <p className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                  <Calendar
-                    className="h-3.5 w-3.5 shrink-0"
-                    aria-hidden
-                  />
-                  {dateStr}
-                </p>
+                <DateBadge date={news.date} size="xs" />
                 <p className="line-clamp-3 text-sm leading-relaxed text-foreground">
                   {excerpt}
                 </p>
