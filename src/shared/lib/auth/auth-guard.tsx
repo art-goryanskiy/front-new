@@ -27,14 +27,23 @@ export const AuthGuard = memo(function AuthGuard({
   );
 
   useEffect(() => {
+    if (process.env.NODE_ENV === "development") {
+      console.log("[AuthGuard]", { isChecking, isAuthenticated, isAdmin, user: !!user });
+    }
     if (!isChecking) {
       if (!isAuthenticated) {
+        if (process.env.NODE_ENV === "development") {
+          console.warn("[AuthGuard] → redirect to login (not authenticated)");
+        }
         router.push(AUTH_GUARD_ROUTES.login);
       } else if (!isAdmin) {
+        if (process.env.NODE_ENV === "development") {
+          console.warn("[AuthGuard] → redirect to home (not admin)");
+        }
         router.push(AUTH_GUARD_ROUTES.home);
       }
     }
-  }, [isAuthenticated, isAdmin, isChecking, router]);
+  }, [isAuthenticated, isAdmin, isChecking, router, user]);
 
   if (isChecking) {
     return <AuthGuardLoading />;
