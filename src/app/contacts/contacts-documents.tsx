@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { FileCheck, FileText, X } from "lucide-react";
+import { Download, FileCheck, FileText, X } from "lucide-react";
 import { BlurGlowBackground } from "@/shared/ui/blur-glow-background/blur-glow-background";
 import { Surface } from "@/shared/ui/surface/surface";
 import { MagicCard } from "@/components/ui/magic-card";
@@ -145,16 +145,30 @@ export function ContactsDocuments() {
               <DialogTitle className="sr-only">
                 {lightboxTitle}
               </DialogTitle>
-              <DialogClose
-                className={cn(
-                  "absolute top-3 right-3 z-10 flex h-10 w-10 items-center justify-center rounded-full",
-                  "bg-black/5 text-foreground transition-colors hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/15",
-                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-                )}
-                aria-label="Закрыть"
-              >
-                <X className="h-5 w-5" />
-              </DialogClose>
+              <div className="absolute top-3 right-3 z-10 flex items-center gap-2">
+                <a
+                  href={lightboxHref ?? ""}
+                  download
+                  className={cn(
+                    "flex h-10 w-10 items-center justify-center rounded-full",
+                    "bg-black/5 text-foreground transition-colors hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/15",
+                    "focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                  )}
+                  aria-label="Скачать документ"
+                >
+                  <Download className="h-5 w-5" />
+                </a>
+                <DialogClose
+                  className={cn(
+                    "flex h-10 w-10 items-center justify-center rounded-full",
+                    "bg-black/5 text-foreground transition-colors hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/15",
+                    "focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                  )}
+                  aria-label="Закрыть"
+                >
+                  <X className="h-5 w-5" />
+                </DialogClose>
+              </div>
               <motion.div
                 initial={{ opacity: 0, scale: 0.96 }}
                 animate={{ opacity: 1, scale: 1 }}

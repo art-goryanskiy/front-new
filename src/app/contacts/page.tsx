@@ -10,10 +10,11 @@ import { BlurGlowBackground } from "@/shared/ui/blur-glow-background/blur-glow-b
 import { ContactsMap } from "./contacts-map";
 import { ContactsDocuments } from "./contacts-documents";
 import { ContactsReviews } from "./contacts-reviews";
+import { ContactsForm } from "./contacts-form";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Phone, Mail, MapPin, Clock } from "lucide-react";
+import { Phone, Mail, MapPin, Clock, ArrowRight, BookOpen } from "lucide-react";
 import { generateMetadata as generateSeoMetadata } from "@/shared/lib/seo/metadata";
 
 export const metadata: Metadata = generateSeoMetadata({
@@ -53,9 +54,9 @@ export default function ContactsPage() {
             className="relative z-10 space-y-4 p-6 sm:p-8"
           >
             <div>
-              <h2 className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+              <span className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
                 Наименование
-              </h2>
+              </span>
               <p className="mt-2 text-lg leading-snug font-medium text-foreground">
                 {COMPANY_FULL_NAME}
               </p>
@@ -65,9 +66,9 @@ export default function ContactsPage() {
                 <MapPin className="h-5 w-5" aria-hidden />
               </div>
               <div>
-                <h2 className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+                <span className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
                   Адрес
-                </h2>
+                </span>
                 <p className="mt-2 text-base font-medium text-foreground">
                   {COMPANY_ADDRESS}
                 </p>
@@ -78,9 +79,9 @@ export default function ContactsPage() {
                 <Clock className="h-5 w-5" aria-hidden />
               </div>
               <div>
-                <h2 className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+                <span className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
                   График работы
-                </h2>
+                </span>
                 <p className="mt-2 text-base font-medium text-foreground">
                   {WORKING_HOURS}
                 </p>
@@ -147,11 +148,38 @@ export default function ContactsPage() {
         {/* Отзывы */}
         <ContactsReviews />
 
-        <div className="flex justify-center pb-4">
-          <Button asChild variant="outline" size="lg">
-            <Link href="/">На главную</Link>
-          </Button>
-        </div>
+        {/* Форма заявки */}
+        <ContactsForm />
+
+        {/* CTA-блок */}
+        <section className="relative overflow-hidden rounded-2xl border border-border/60 bg-linear-to-br from-primary/7 via-background to-blue-500/5 p-8 sm:p-10 lg:p-14">
+          <div className="pointer-events-none absolute -top-24 -right-24 h-[360px] w-[460px] rounded-full bg-primary/8 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-16 -left-16 h-[240px] w-[320px] rounded-full bg-blue-500/6 blur-3xl" />
+          <div className="relative z-10 flex flex-col items-center gap-6 text-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-[0_0_28px_color-mix(in_srgb,var(--primary)_16%,transparent)]">
+              <BookOpen className="h-7 w-7" aria-hidden />
+            </div>
+            <div className="space-y-2">
+              <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                Готовы начать обучение?
+              </h2>
+              <p className="mx-auto max-w-md text-sm text-muted-foreground sm:text-base">
+                Выберите подходящую программу или оставьте заявку — мы подберём оптимальный вариант.
+              </p>
+            </div>
+            <div className="flex flex-wrap justify-center gap-3">
+              <Button asChild size="lg" className="gap-2">
+                <Link href="/programs">
+                  Все программы
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+              <Button asChild variant="outline" size="lg">
+                <Link href="/">На главную</Link>
+              </Button>
+            </div>
+          </div>
+        </section>
       </div>
     </PublicPageLayout>
   );

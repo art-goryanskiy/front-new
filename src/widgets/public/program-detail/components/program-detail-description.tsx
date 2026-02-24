@@ -7,6 +7,7 @@ import {
   GraduationCap,
   LayoutGrid,
   Lock,
+  ShieldCheck,
   Sparkles,
   Target,
 } from "lucide-react";
@@ -131,13 +132,21 @@ export const ProgramDetailDescription = memo(
           icon: <Target className="h-4 w-4" />,
         });
       }
+      if (highlights.requirements) {
+        cards.push({
+          key: "requirements",
+          label: "Требования",
+          value: highlights.requirements,
+          icon: <ShieldCheck className="h-4 w-4" />,
+        });
+      }
 
-      // Keep sidebar compact
-      return cards.slice(0, 2);
+      return cards;
     }, [
       highlights.document,
       highlights.format,
       highlights.goal,
+      highlights.requirements,
       highlights.result,
     ]);
 

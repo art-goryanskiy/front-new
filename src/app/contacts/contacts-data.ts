@@ -36,6 +36,9 @@ export const CONTACT_DEPARTMENTS: ContactDepartment[] = [
 /** ID организации в Яндекс.Картах (для карты и виджета отзывов) */
 export const YANDEX_ORG_ID = "96094634625";
 
+/** Ссылка на страницу отзывов организации в Яндекс.Картах */
+export const YANDEX_REVIEWS_URL = `https://yandex.ru/maps/org/uchebny_tsentr_standart/${YANDEX_ORG_ID}/reviews`;
+
 export interface DocumentItem {
   title: string;
   href: string;

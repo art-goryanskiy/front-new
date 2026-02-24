@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { memo, useCallback, useMemo } from "react";
+import { memo, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { BookOpen } from "lucide-react";
 import type { ProgramPricing } from "@/shared/api/generated/graphql";
@@ -10,7 +10,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Surface } from "@/shared/ui/surface/surface";
 import { usePriceVisibility } from "@/shared/store/auth-store";
 import { formatPrice } from "@/shared/lib/helpers/format-helpers";
-import { useToastState } from "@/shared/store/toast-store";
 
 interface ProgramDetailSidebarProps {
   programId: string;
@@ -25,7 +24,6 @@ export const ProgramDetailSidebar = memo(
     pricingList,
   }: ProgramDetailSidebarProps) {
     const { canSeePrice, isAuthLoading } = usePriceVisibility();
-    const { showToast } = useToastState();
 
     const minPrice = useMemo(() => {
       if (!pricingList || pricingList.length === 0) return null;
@@ -42,13 +40,6 @@ export const ProgramDetailSidebar = memo(
         return "Цена по запросу";
       return `от ${formatPrice(minPrice)} ₽`;
     }, [canSeePrice, minPrice]);
-
-    const handleEnroll = useCallback(() => {
-      showToast(
-        "info",
-        "Онлайн-заявка в разработке. Пока свяжитесь с нами через контакты в футере."
-      );
-    }, [showToast]);
 
     return (
       <div className={PROGRAM_DETAIL_CLASSES.sidebar}>
@@ -100,10 +91,12 @@ export const ProgramDetailSidebar = memo(
                   size="lg"
                   variant="outline"
                   className="w-full"
-                  onClick={handleEnroll}
+                  asChild
                 >
-                  <BookOpen className="mr-2 h-5 w-5" />
-                  Записаться на программу
+                  <Link href="/contacts">
+                    <BookOpen className="mr-2 h-5 w-5" />
+                    Записаться на программу
+                  </Link>
                 </Button>
               )}
             </div>
@@ -129,9 +122,11 @@ export const ProgramDetailSidebar = memo(
             {isAuthLoading ? (
               <Skeleton className="h-10 w-28" />
             ) : canSeePrice ? (
-              <Button size="lg" onClick={handleEnroll}>
-                <BookOpen className="mr-2 h-5 w-5" />
-                Записаться
+              <Button size="lg" asChild>
+                <Link href="/contacts">
+                  <BookOpen className="mr-2 h-5 w-5" />
+                  Записаться
+                </Link>
               </Button>
             ) : (
               <Button size="lg" asChild>

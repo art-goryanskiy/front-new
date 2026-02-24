@@ -76,7 +76,7 @@ const StatCard = memo(function StatCard({
     >
       {/* Glow on hover */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl opacity-0 transition-opacity duration-500 group-hover:opacity-100">
-        <div className="absolute -top-12 -right-12 h-32 w-40 rounded-full bg-primary/8 blur-2xl" />
+        <div className="absolute -top-12 -right-12 h-32 w-40 rounded-full bg-primary/[0.08] blur-2xl" />
       </div>
 
       <div

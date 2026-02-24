@@ -1,7 +1,7 @@
 "use client";
 
-import { memo, useMemo } from "react";
-import { motion } from "framer-motion";
+import { memo, useMemo, useRef } from "react";
+import { motion, useInView } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { usePriceVisibility } from "@/shared/store/auth-store";
@@ -19,6 +19,8 @@ export const SubcategoryCard = memo(function SubcategoryCard({
 }: SubcategoryCardProps) {
   const { canSeePrice, isAuthLoading } = usePriceVisibility();
   const priceRange = useSubcategoryPricing(category);
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, margin: "0px 0px -60px 0px" });
 
   const programsLabel = useMemo(
     () => formatProgramsCount(category.programsCount),
@@ -27,9 +29,10 @@ export const SubcategoryCard = memo(function SubcategoryCard({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
+      ref={ref}
+      initial={{ opacity: 0, y: 24 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
       className="h-full"
     >
       <Link

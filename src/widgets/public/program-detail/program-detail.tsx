@@ -52,7 +52,7 @@ export const ProgramDetail = memo(function ProgramDetail({
       items.push({ href: "#related", label: "Похожие" });
     }
     items.push({ href: "#pricing", label: "Стоимость" });
-    items.push({ href: "#faq", label: "FAQ" });
+    items.push({ href: "#faq", label: "Частые вопросы" });
     return items;
   }, [
     program.description,

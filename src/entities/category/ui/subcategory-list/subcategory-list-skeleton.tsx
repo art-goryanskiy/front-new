@@ -1,18 +1,13 @@
 "use client";
 
-import { memo, ReactNode } from "react";
+import { memo } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SUBCATEGORY_LIST_CLASSES } from "./constants/subcategory-list-constants";
 
 export const SubcategoryListSkeleton = memo(
-  function SubcategoryListSkeleton({
-    backButton,
-  }: {
-    backButton?: ReactNode;
-  }) {
+  function SubcategoryListSkeleton() {
     return (
       <div className={SUBCATEGORY_LIST_CLASSES.container}>
-        {backButton}
         <div className={SUBCATEGORY_LIST_CLASSES.header}>
           <Skeleton
             variant="premium"
