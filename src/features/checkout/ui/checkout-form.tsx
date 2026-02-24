@@ -18,6 +18,7 @@ import { Surface } from "@/shared/ui/surface/surface";
 import type { OrganizationSuggestion } from "@/shared/ui/form-fields/organization-suggest-input";
 import { CheckoutFormSkeleton } from "./checkout-form-skeleton";
 import { ShoppingBag } from "lucide-react";
+import { metrikaGoals } from "@/shared/lib/analytics/metrika-goals";
 import { useRouter } from "next/navigation";
 import {
   memo,
@@ -671,6 +672,7 @@ export const CheckoutForm = memo(function CheckoutForm({
           correspondentAccount: correspondentAccount || undefined,
         });
         if (order) {
+          metrikaGoals.orderCreated(order.id, data.customerType);
           showToast("success", "Заявка оформлена");
           router.replace(`/orders/${order.id}/pay`);
         } else {
