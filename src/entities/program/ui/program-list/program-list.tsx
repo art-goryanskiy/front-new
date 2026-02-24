@@ -17,6 +17,7 @@ import {
   filterProgramsByCategoryIds,
 } from "@/shared/lib/helpers/program-category-helpers";
 import { BookOpen } from "lucide-react";
+import { Breadcrumbs } from "@/shared/ui/breadcrumbs/breadcrumbs";
 
 export const ProgramList = memo(function ProgramList({
   programs: serverPrograms,
@@ -24,6 +25,7 @@ export const ProgramList = memo(function ProgramList({
   categoryId,
   title,
   description,
+  breadcrumbs,
 }: ProgramListProps) {
   const hasServerData = !!serverPrograms;
 
@@ -110,6 +112,9 @@ export const ProgramList = memo(function ProgramList({
 
   return (
     <div className={PROGRAM_LIST_CLASSES.container}>
+      {breadcrumbs && breadcrumbs.length > 0 && (
+        <Breadcrumbs items={breadcrumbs} className="mb-6" />
+      )}
       <ListHeader
         title={title}
         description={description}
