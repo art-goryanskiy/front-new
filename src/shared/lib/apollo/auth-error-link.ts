@@ -4,7 +4,7 @@ import { ErrorLink } from "@apollo/client/link/error";
 import { CombinedGraphQLErrors } from "@apollo/client/errors";
 import { useAuthStore } from "@/shared/store/auth-store";
 import type { UserEntity } from "@/shared/api/generated/graphql";
-import { from, throwError } from "rxjs";
+import { from } from "rxjs";
 import { catchError, switchMap } from "rxjs/operators";
 
 const GRAPHQL_URL =
@@ -42,7 +42,11 @@ function is401Like(options: {
   return err?.statusCode === 401;
 }
 
-async function doRefreshToken(): Promise<UserEntity | null> {
+// Дедуплицируем параллельные refresh-запросы: если один уже в полёте —
+// все остальные 401 ждут его результат, а не стартуют новый запрос.
+let pendingRefresh: Promise<UserEntity | null> | null = null;
+
+async function doRefreshRequest(): Promise<UserEntity | null> {
   try {
     const res = await fetch(GRAPHQL_URL, {
       method: "POST",
@@ -59,6 +63,14 @@ async function doRefreshToken(): Promise<UserEntity | null> {
   }
 }
 
+function doRefreshToken(): Promise<UserEntity | null> {
+  if (pendingRefresh) return pendingRefresh;
+  pendingRefresh = doRefreshRequest().finally(() => {
+    pendingRefresh = null;
+  });
+  return pendingRefresh;
+}
+
 export function createAuthErrorLink(): ErrorLink {
   return new ErrorLink(({ error, operation, forward }) => {
     if (!is401Like({ error, operation })) {
@@ -68,6 +80,7 @@ export function createAuthErrorLink(): ErrorLink {
     return from(doRefreshToken()).pipe(
       switchMap((refreshed) => {
         if (refreshed) {
+          // Успешный рефреш — обновляем стор и повторяем запрос
           const current = useAuthStore.getState().user;
           const merged: UserEntity =
             current?.profile && !refreshed.profile
@@ -76,13 +89,12 @@ export function createAuthErrorLink(): ErrorLink {
           useAuthStore.getState().setUser(merged);
           return forward(operation);
         }
-        useAuthStore.getState().logout();
-        return throwError(() => error);
+        // Рефреш не удался — пробрасываем исходную операцию дальше без logout.
+        // Принудительный logout произойдёт при следующей загрузке страницы
+        // через SSR: getViewerServer вернёт null → AuthGuard перенаправит на логин.
+        return forward(operation);
       }),
-      catchError(() => {
-        useAuthStore.getState().logout();
-        return throwError(() => error);
-      })
+      catchError(() => forward(operation)),
     );
   });
 }
