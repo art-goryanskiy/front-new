@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
@@ -36,8 +38,6 @@ function countByType(categories: CategoryEntity[]) {
   }
   return map;
 }
-
-"use client";
 
 export function CategoryTypeTiles({
   categories,
