@@ -23,8 +23,22 @@ import { useToastState } from "@/shared/store/toast-store";
 import { PublicPageLayout } from "@/shared/ui/layouts/public-page-layout";
 import { Surface } from "@/shared/ui/surface/surface";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import {
+  User,
+  CreditCard,
+  MapPin,
+  GraduationCap,
+  Briefcase,
+  Camera,
+} from "lucide-react";
 import {
   memo,
   useCallback,
@@ -34,7 +48,7 @@ import {
   useState,
 } from "react";
 import type { Control } from "react-hook-form";
-import { useForm, useWatch } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 type ProfileSection =
   | "basic"
@@ -48,34 +62,82 @@ const SIDEBAR_ITEMS: Array<{
   key: ProfileSection;
   label: string;
   description: string;
+  icon: React.ElementType;
 }> = [
   {
     key: "basic",
     label: "Основная информация",
     description: "Контакты и дата рождения",
+    icon: User,
   },
   {
     key: "personal",
     label: "Личные данные",
     description: "Паспортные данные",
+    icon: CreditCard,
   },
   {
     key: "addresses",
     label: "Адреса",
     description: "Регистрация и проживание",
+    icon: MapPin,
   },
   {
     key: "education",
     label: "Образование",
     description: "Диплом и квалификация",
+    icon: GraduationCap,
   },
   {
     key: "work",
     label: "Место работы",
     description: "Организации",
+    icon: Briefcase,
   },
-  { key: "avatar", label: "Аватар", description: "Фото" },
+  { key: "avatar", label: "Аватар", description: "Фото", icon: Camera },
 ];
+
+function ProfileLoadingSkeleton() {
+  return (
+    <Surface
+      variant="floating"
+      className="relative flex h-full min-h-[560px] w-full flex-col overflow-hidden"
+    >
+      <div className="relative z-10 flex min-h-0 flex-1 flex-col lg:flex-row">
+        <div className="w-full border-b border-border/60 bg-background/60 backdrop-blur-xl lg:h-full lg:w-72 lg:border-r lg:border-b-0">
+          <div className="border-b border-border/60 bg-muted/5 p-4">
+            <div className="flex items-center gap-3">
+              <Skeleton variant="premium" className="h-10 w-10 rounded-full shrink-0" />
+              <div className="space-y-1.5 flex-1 min-w-0">
+                <Skeleton variant="premium" className="h-4 w-32" />
+                <Skeleton variant="premium" className="h-3 w-44" />
+              </div>
+            </div>
+          </div>
+          <div className="p-3 space-y-1">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <Skeleton key={i} variant="premium" className="h-9 w-full rounded-xl" />
+            ))}
+          </div>
+        </div>
+        <div className="flex min-w-0 flex-1 flex-col">
+          <div className="border-b border-border/60 px-6 py-5 space-y-2">
+            <Skeleton variant="premium" className="h-3 w-24" />
+            <Skeleton variant="premium" className="h-7 w-52" />
+            <Skeleton variant="premium" className="h-4 w-36" />
+          </div>
+          <div className="p-6 lg:p-8 space-y-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              {[1, 2, 3, 4].map((i) => (
+                <Skeleton key={i} variant="premium" className="h-12 w-full rounded-xl" />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </Surface>
+  );
+}
 
 const ProfilePageContent = memo(function ProfilePageContent() {
   const { user: meUser, loading: meLoading } = useMe({ skip: false });
@@ -117,7 +179,6 @@ const ProfilePageContent = memo(function ProfilePageContent() {
       mode: "onChange",
     });
 
-  const values = useWatch({ control });
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const previousProfileHashRef = useRef<string | null>(null);
@@ -286,16 +347,7 @@ const ProfilePageContent = memo(function ProfilePageContent() {
   }, [handleReset]);
 
   if (!user && meLoading) {
-    return (
-      <Surface
-        variant="floating"
-        className="flex min-h-[560px] w-full items-center justify-center"
-      >
-        <div className="text-sm text-muted-foreground">
-          Загрузка данных…
-        </div>
-      </Surface>
-    );
+    return <ProfileLoadingSkeleton />;
   }
 
   if (!user) return null;
@@ -307,18 +359,14 @@ const ProfilePageContent = memo(function ProfilePageContent() {
       case "basic":
         return (
           <div className="space-y-6">
-            <div className="rounded-2xl border border-border/80 bg-muted/10 px-3 py-2.5 shadow-sm backdrop-blur-sm sm:px-4 sm:py-3">
-              <div className="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
-                Email
-              </div>
-              <div className="mt-1 text-sm font-medium text-foreground">
-                {user.email}
-              </div>
+            <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-muted/10 px-4 py-3">
+              <span className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Email</span>
+              <span className="text-sm font-medium text-foreground">{user.email}</span>
             </div>
             <ProfileBasicInfoSection
               control={typedControl}
               mode={mode}
-              values={values}
+              values={defaultValues}
             />
           </div>
         );
@@ -328,7 +376,7 @@ const ProfilePageContent = memo(function ProfilePageContent() {
           <ProfilePassportSection
             control={typedControl}
             mode={mode}
-            values={values}
+            values={defaultValues}
           />
         );
 
@@ -337,7 +385,7 @@ const ProfilePageContent = memo(function ProfilePageContent() {
           <ProfileAddressesSection
             control={typedControl}
             mode={mode}
-            values={values}
+            values={defaultValues}
             setValue={setValue}
           />
         );
@@ -347,7 +395,7 @@ const ProfilePageContent = memo(function ProfilePageContent() {
           <ProfileEducationSection
             control={typedControl}
             mode={mode}
-            values={values}
+            values={defaultValues}
           />
         );
 
@@ -356,7 +404,7 @@ const ProfilePageContent = memo(function ProfilePageContent() {
           <ProfileAdditionalInfoSection
             control={typedControl}
             mode={mode}
-            values={values}
+            values={defaultValues}
             setValue={setValue}
           />
         );
@@ -389,11 +437,19 @@ const ProfilePageContent = memo(function ProfilePageContent() {
 
       <div className="relative z-10 flex min-h-0 flex-1 flex-col lg:flex-row">
         <div className="w-full border-b border-border/60 bg-background/60 backdrop-blur-xl lg:h-full lg:w-72 lg:border-r lg:border-b-0">
-          <div className="border-b border-border/60 bg-muted/5 p-4 pb-4">
-            <div className="flex items-center justify-between gap-3">
-              <div className="min-w-0">
+          <div className="border-b border-border/60 bg-muted/5 p-4">
+            <div className="flex items-center gap-3">
+              <Avatar className="h-10 w-10 shrink-0 ring-2 ring-border/40">
+                <AvatarImage src={filePreview || user.profile?.avatar || undefined} alt={user.email} />
+                <AvatarFallback className="text-sm font-semibold">
+                  {(user.profile?.firstName || user.email).charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <div className="min-w-0 flex-1">
                 <div className="truncate text-sm font-semibold text-foreground">
-                  {user.profile?.firstName || user.email}
+                  {user.profile?.firstName
+                    ? `${user.profile.firstName}${user.profile.lastName ? ` ${user.profile.lastName}` : ""}`
+                    : user.email}
                 </div>
                 <div className="truncate text-xs text-muted-foreground">
                   {user.email}
@@ -404,9 +460,9 @@ const ProfilePageContent = memo(function ProfilePageContent() {
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.2 }}
-                  className="rounded-full border border-primary/40 bg-primary/15 px-3 py-1 text-[11px] font-semibold text-primary"
+                  className="shrink-0 rounded-full border border-primary/40 bg-primary/15 px-2 py-0.5 text-[10px] font-semibold text-primary"
                 >
-                  Есть изменения
+                  Изменено
                 </motion.span>
               )}
             </div>
@@ -416,6 +472,7 @@ const ProfilePageContent = memo(function ProfilePageContent() {
             <ul className="flex scroll-px-4 flex-row gap-2 overflow-x-auto pr-1 pb-2 pl-1 lg:flex-col lg:gap-1 lg:pr-0 lg:pb-0 lg:pl-0">
               {SIDEBAR_ITEMS.map((item) => {
                 const active = activeSection === item.key;
+                const Icon = item.icon;
                 return (
                   <li
                     key={item.key}
@@ -425,13 +482,14 @@ const ProfilePageContent = memo(function ProfilePageContent() {
                       type="button"
                       onClick={() => handleNavigate(item.key)}
                       className={cn(
-                        "w-full rounded-xl border px-4 py-2 text-left text-sm font-semibold transition-colors lg:pl-4",
+                        "flex w-full items-center gap-2.5 rounded-xl border px-3 py-2 text-left text-sm font-semibold transition-colors lg:px-3",
                         active
-                          ? "border-border/80 bg-primary/10 text-foreground lg:border-l-4 lg:border-l-primary lg:pl-3"
+                          ? "border-border/80 bg-primary/10 text-foreground lg:border-l-4 lg:border-l-primary lg:pl-2.5"
                           : "border-transparent text-muted-foreground hover:border-border/60 hover:bg-muted/20 hover:text-foreground"
                       )}
                     >
-                      {item.label}
+                      <Icon className={cn("h-4 w-4 shrink-0", active ? "text-primary" : "text-muted-foreground")} aria-hidden />
+                      <span className="truncate">{item.label}</span>
                     </button>
                   </li>
                 );
