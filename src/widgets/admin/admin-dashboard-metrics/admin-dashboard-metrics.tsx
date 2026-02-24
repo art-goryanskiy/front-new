@@ -16,7 +16,7 @@ import {
   Clock,
   CheckCircle2,
   XCircle,
-  Loader2,
+  Activity,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { memo, useMemo } from "react";
@@ -35,6 +35,48 @@ const item = {
   hidden: { opacity: 0, y: 16 },
   show: { opacity: 1, y: 0 },
 };
+
+const ORDER_STATUS_STATS = [
+  {
+    key: "awaitingPayment",
+    label: "Ожидают оплаты",
+    icon: CreditCard,
+    color: "text-amber-600 dark:text-amber-400",
+    getValue: (m: { orderCounts: { awaitingPayment: number } }) =>
+      m.orderCounts.awaitingPayment,
+  },
+  {
+    key: "paid",
+    label: "Оплачены",
+    icon: CheckCircle2,
+    color: "text-emerald-600 dark:text-emerald-400",
+    getValue: (m: { orderCounts: { paid: number } }) => m.orderCounts.paid,
+  },
+  {
+    key: "inProgress",
+    label: "В работе",
+    icon: Activity,
+    color: "text-blue-600 dark:text-blue-400",
+    getValue: (m: { orderCounts: { inProgress: number } }) =>
+      m.orderCounts.inProgress,
+  },
+  {
+    key: "completed",
+    label: "Выполнены",
+    icon: CheckCircle2,
+    color: "text-emerald-700 dark:text-emerald-300",
+    getValue: (m: { orderCounts: { completed: number } }) =>
+      m.orderCounts.completed,
+  },
+  {
+    key: "cancelled",
+    label: "Отменены",
+    icon: XCircle,
+    color: "text-rose-600 dark:text-rose-400",
+    getValue: (m: { orderCounts: { cancelled: number } }) =>
+      m.orderCounts.cancelled,
+  },
+] as const;
 
 export const AdminDashboardMetrics = memo(
   function AdminDashboardMetrics() {
@@ -201,56 +243,18 @@ export const AdminDashboardMetrics = memo(
                   Заказы по статусам
                 </h3>
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                  {[
-                    {
-                      key: "awaitingPayment",
-                      label: "Ожидают оплаты",
-                      value: metrics.orderCounts.awaitingPayment,
-                      icon: CreditCard,
-                      color: "text-amber-600 dark:text-amber-400",
-                    },
-                    {
-                      key: "paid",
-                      label: "Оплачены",
-                      value: metrics.orderCounts.paid,
-                      icon: CheckCircle2,
-                      color: "text-emerald-600 dark:text-emerald-400",
-                    },
-                    {
-                      key: "inProgress",
-                      label: "В работе",
-                      value: metrics.orderCounts.inProgress,
-                      icon: Loader2,
-                      color: "text-blue-600 dark:text-blue-400",
-                    },
-                    {
-                      key: "completed",
-                      label: "Выполнены",
-                      value: metrics.orderCounts.completed,
-                      icon: CheckCircle2,
-                      color: "text-emerald-700 dark:text-emerald-300",
-                    },
-                    {
-                      key: "cancelled",
-                      label: "Отменены",
-                      value: metrics.orderCounts.cancelled,
-                      icon: XCircle,
-                      color: "text-rose-600 dark:text-rose-400",
-                    },
-                  ].map((s) => (
+                  {ORDER_STATUS_STATS.map((s) => (
                     <div
                       key={s.key}
                       className="flex items-center gap-2 rounded-xl border border-border/30 bg-background/50 px-3 py-2.5 shadow-sm"
                     >
-                      <s.icon
-                        className={cn("h-4 w-4 shrink-0", s.color)}
-                      />
+                      <s.icon className={cn("h-4 w-4 shrink-0", s.color)} />
                       <div className="min-w-0">
                         <p className="truncate text-xs text-muted-foreground">
                           {s.label}
                         </p>
                         <p className="text-sm font-semibold text-foreground tabular-nums">
-                          {s.value}
+                          {s.getValue(metrics)}
                         </p>
                       </div>
                     </div>

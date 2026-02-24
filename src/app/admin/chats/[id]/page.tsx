@@ -1,8 +1,9 @@
 "use client";
 
-import { useRef, useEffect, useCallback } from "react";
+import { memo, useRef, useEffect, useCallback, useState } from "react";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
+import { useApolloClient } from "@apollo/client/react";
 import { useAdminChatMessages } from "@/entities/chat/api/use-admin-chat-messages";
 import { useAdminAssignChat } from "@/entities/chat/api/use-admin-assign-chat";
 import { useAdminSetChatStatus } from "@/entities/chat/api/use-admin-set-chat-status";
@@ -17,7 +18,9 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ArrowLeft, Send, Loader2 } from "lucide-react";
 import {
+  AdminChatFieldsFragmentDoc,
   ChatStatus,
+  type AdminChatFieldsFragment,
   type ChatMessageFieldsFragment,
 } from "@/shared/api/generated/graphql";
 import { cn } from "@/lib/utils";
@@ -44,6 +47,9 @@ function userDisplayName(
 
 const MESSAGE_LIMIT = 100;
 
+/** Порог расстояния от нижней границы контейнера (в пикселях), при котором авто-скролл разрешён */
+const SCROLL_BOTTOM_THRESHOLD = 80;
+
 function formatMessageTime(createdAt: string) {
   const d = new Date(createdAt);
   return d.toLocaleTimeString("ru-RU", {
@@ -54,7 +60,7 @@ function formatMessageTime(createdAt: string) {
   });
 }
 
-function MessageBubble({
+const MessageBubble = memo(function MessageBubble({
   message,
   isAdmin,
 }: {
@@ -76,9 +82,7 @@ function MessageBubble({
             : "rounded-bl-md bg-muted text-muted-foreground"
         )}
       >
-        <p className="wrap-break-word whitespace-pre-wrap">
-          {message.body}
-        </p>
+        <p className="wrap-break-word whitespace-pre-wrap">{message.body}</p>
         <p
           className={cn(
             "mt-1 text-xs",
@@ -93,30 +97,49 @@ function MessageBubble({
       </div>
     </div>
   );
-}
+});
 
 export default function AdminChatDetailPage() {
   const params = useParams();
   const searchParams = useSearchParams();
+  const client = useApolloClient();
   const chatId = typeof params.id === "string" ? params.id : null;
   const userIdFromQuery = searchParams.get("userId");
   const currentUser = useAuthUser();
   const { user: chatUser } = useAdminUser(userIdFromQuery ?? null);
 
+  // Читаем кэшированные данные чата (статус, назначение) и отслеживаем изменения
+  const [chatMeta, setChatMeta] = useState<Pick<
+    AdminChatFieldsFragment,
+    "status" | "assignedToId"
+  > | null>(() => {
+    if (!chatId) return null;
+    return (
+      client.readFragment<AdminChatFieldsFragment>({
+        id: `Chat:${chatId}`,
+        fragment: AdminChatFieldsFragmentDoc,
+      }) ?? null
+    );
+  });
+
   const {
     messages,
     loading: messagesLoading,
     refetch: refetchMessages,
-  } = useAdminChatMessages(
-    chatId,
-    { limit: MESSAGE_LIMIT },
-    { skip: !chatId }
-  );
-  const { adminAssignChat, loading: assignLoading } =
-    useAdminAssignChat();
-  const { adminSetChatStatus, loading: statusLoading } =
-    useAdminSetChatStatus();
+  } = useAdminChatMessages(chatId, { limit: MESSAGE_LIMIT }, { skip: !chatId });
+  const { adminAssignChat, loading: assignLoading } = useAdminAssignChat();
+  const { adminSetChatStatus, loading: statusLoading } = useAdminSetChatStatus();
   const { sendMessage, loading: sendLoading } = useSendMessage();
+
+  // Обновляем локальный мета после мутаций
+  const refreshChatMeta = useCallback(() => {
+    if (!chatId) return;
+    const fresh = client.readFragment<AdminChatFieldsFragment>({
+      id: `Chat:${chatId}`,
+      fragment: AdminChatFieldsFragmentDoc,
+    });
+    if (fresh) setChatMeta(fresh);
+  }, [client, chatId]);
 
   const handleNewMessage = useCallback(() => {
     refetchMessages();
@@ -124,36 +147,50 @@ export default function AdminChatDetailPage() {
 
   useChatSocket(chatId, handleNewMessage);
 
+  // Ref на root ScrollArea — viewport находим через querySelector
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const isNearBottom = useCallback(() => {
+    const viewport = scrollAreaRef.current?.querySelector<HTMLDivElement>(
+      "[data-radix-scroll-area-viewport]"
+    );
+    if (!viewport) return true;
+    return (
+      viewport.scrollHeight - viewport.scrollTop - viewport.clientHeight <
+      SCROLL_BOTTOM_THRESHOLD
+    );
+  }, []);
+
   useEffect(() => {
-    if (scrollRef.current && messages.length) {
+    if (scrollRef.current && messages.length && isNearBottom()) {
       scrollRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages.length]);
+  }, [messages.length, isNearBottom]);
 
-  const handleAssignToMe = useCallback(() => {
+  const handleAssignToMe = useCallback(async () => {
     if (!chatId || !currentUser?.id) return;
-    adminAssignChat(chatId, currentUser.id);
-  }, [chatId, currentUser, adminAssignChat]);
+    await adminAssignChat(chatId, currentUser.id);
+    refreshChatMeta();
+  }, [chatId, currentUser, adminAssignChat, refreshChatMeta]);
 
-  const handleUnassign = useCallback(() => {
+  const handleUnassign = useCallback(async () => {
     if (!chatId) return;
-    adminAssignChat(chatId, null);
-  }, [chatId, adminAssignChat]);
+    await adminAssignChat(chatId, null);
+    refreshChatMeta();
+  }, [chatId, adminAssignChat, refreshChatMeta]);
 
   const handleSetStatus = useCallback(
-    (status: ChatStatus) => {
+    async (status: ChatStatus) => {
       if (!chatId) return;
-      adminSetChatStatus(chatId, status);
+      await adminSetChatStatus(chatId, status);
+      refreshChatMeta();
     },
-    [chatId, adminSetChatStatus]
+    [chatId, adminSetChatStatus, refreshChatMeta]
   );
 
-  const handleSubmit = async (
-    e: React.FormEvent<HTMLFormElement>
-  ) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
     const body = (
@@ -182,6 +219,10 @@ export default function AdminChatDetailPage() {
   }
 
   const assignLoadingAny = assignLoading || statusLoading;
+  const chatStatus = chatMeta?.status ?? null;
+  const assignedToId = chatMeta?.assignedToId ?? null;
+  const isAssignedToMe = !!currentUser?.id && assignedToId === currentUser.id;
+  const isOpen = chatStatus === ChatStatus.Open || chatStatus === null;
 
   return (
     <div className="space-y-6">
@@ -207,56 +248,92 @@ export default function AdminChatDetailPage() {
               </p>
             </div>
           </div>
+
           <div className="flex flex-wrap items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={assignLoadingAny}
-              onClick={handleAssignToMe}
-            >
-              {assignLoading ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                "Назначить на меня"
-              )}
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={assignLoadingAny}
-              onClick={handleUnassign}
-            >
-              Снять назначение
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={assignLoadingAny}
-              onClick={() => handleSetStatus(ChatStatus.Open)}
-            >
-              Открыть
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={assignLoadingAny}
-              onClick={() => handleSetStatus(ChatStatus.Closed)}
-            >
-              Закрыть
-            </Button>
+            {/* Назначение: показываем только актуальное действие */}
+            {!isAssignedToMe ? (
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={assignLoadingAny}
+                onClick={handleAssignToMe}
+              >
+                {assignLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  "Назначить на меня"
+                )}
+              </Button>
+            ) : (
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={assignLoadingAny}
+                onClick={handleUnassign}
+              >
+                {assignLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  "Снять назначение"
+                )}
+              </Button>
+            )}
+
+            {/* Статус: показываем только противоположное действие */}
+            {isOpen ? (
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={assignLoadingAny}
+                onClick={() => handleSetStatus(ChatStatus.Closed)}
+              >
+                {statusLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  "Закрыть чат"
+                )}
+              </Button>
+            ) : (
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={assignLoadingAny}
+                onClick={() => handleSetStatus(ChatStatus.Open)}
+              >
+                {statusLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  "Открыть чат"
+                )}
+              </Button>
+            )}
+
+            {/* Индикатор текущего статуса */}
+            {chatStatus && (
+              <span
+                className={cn(
+                  "inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold",
+                  isOpen
+                    ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
+                    : "border-border/60 bg-muted/20 text-muted-foreground"
+                )}
+              >
+                {isOpen ? "Открыт" : "Закрыт"}
+              </span>
+            )}
           </div>
         </div>
       </Surface>
 
-      <Surface
-        variant="floating"
-        className="flex flex-col overflow-hidden"
-      >
+      <Surface variant="floating" className="flex flex-col overflow-hidden">
         <div className="border-b px-4 py-3">
           <h2 className="font-semibold text-foreground">Переписка</h2>
         </div>
 
-        <ScrollArea className="max-h-[60vh] min-h-[320px] flex-1 px-4 py-3">
+        <ScrollArea
+          ref={scrollAreaRef}
+          className="max-h-[60vh] min-h-[320px] flex-1 px-4 py-3"
+        >
           <div className="flex min-h-[280px] flex-col gap-3">
             {messagesLoading ? (
               <div className="flex flex-1 items-center justify-center py-8 text-sm text-muted-foreground">
@@ -281,10 +358,7 @@ export default function AdminChatDetailPage() {
           </div>
         </ScrollArea>
 
-        <form
-          onSubmit={handleSubmit}
-          className="flex gap-2 border-t p-3"
-        >
+        <form onSubmit={handleSubmit} className="flex gap-2 border-t p-3">
           <Input
             ref={inputRef}
             name="body"

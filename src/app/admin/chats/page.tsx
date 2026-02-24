@@ -3,8 +3,8 @@
 import { memo, useMemo, useState } from "react";
 import Link from "next/link";
 import { useAdminChats } from "@/entities/chat/api/use-admin-chats";
+import { useAdminUsersMap } from "@/entities/user/api/use-admin-users-map";
 import { ADMIN_CHATS_LIMIT } from "@/shared/constants/admin";
-import { useAdminUser } from "@/entities/user/api/use-admin-user";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
 import { EmptyState } from "@/shared/ui/empty-state/empty-state";
 import { Surface } from "@/shared/ui/surface/surface";
@@ -14,6 +14,7 @@ import { DataToolbar } from "@/shared/ui/data-toolbar/data-toolbar";
 import { formatAdminDate } from "@/shared/lib/helpers/format-helpers";
 import {
   type AdminChatFieldsFragment,
+  type AdminUserFieldsQueriesFragment,
   ChatStatus,
 } from "@/shared/api/generated/graphql";
 import { MessageCircle, ChevronRight } from "lucide-react";
@@ -42,11 +43,7 @@ function shortUserId(userId: string): string {
 }
 
 function userDisplayLabel(
-  user: {
-    email?: string | null;
-    firstName?: string | null;
-    lastName?: string | null;
-  } | null,
+  user: AdminUserFieldsQueriesFragment | null | undefined,
   fallbackUserId: string
 ): string {
   if (!user) return shortUserId(fallbackUserId);
@@ -60,14 +57,13 @@ function userDisplayLabel(
 
 const ChatRow = memo(function ChatRow({
   chat,
+  user,
   index,
 }: {
   chat: AdminChatFieldsFragment;
+  user: AdminUserFieldsQueriesFragment | undefined;
   index: number;
 }) {
-  const { user: chatUser, loading: userLoading } = useAdminUser(
-    chat.userId
-  );
   const chatNumber = index + 1;
   const statusLabel =
     chat.status === ChatStatus.Open ? "Открыт" : "Закрыт";
@@ -78,9 +74,7 @@ const ChatRow = memo(function ChatRow({
   const preview = chat.lastMessagePreview?.trim() || "—";
   const unread = (chat.unreadCount ?? 0) > 0;
   const chatUrl = `/admin/chats/${chat.id}?userId=${encodeURIComponent(chat.userId)}`;
-  const userLabel = userLoading
-    ? "…"
-    : userDisplayLabel(chatUser, chat.userId);
+  const userLabel = userDisplayLabel(user, chat.userId);
 
   return (
     <Link href={chatUrl}>
@@ -152,18 +146,17 @@ function AdminChatsListSkeleton() {
 
 export default function AdminChatsPage() {
   const [q, setQ] = useState("");
-  const [statusFilter, setStatusFilter] = useState<
-    ChatStatus | "all"
-  >(ChatStatus.Open);
-  const [assignedToMe, setAssignedToMe] = useState<
-    boolean | undefined
-  >(undefined);
+  const [statusFilter, setStatusFilter] = useState<ChatStatus | "all">(
+    ChatStatus.Open
+  );
+  const [assignedToMe, setAssignedToMe] = useState<boolean | undefined>(
+    undefined
+  );
 
   const filter = useMemo(
     () => ({
       status: statusFilter === "all" ? undefined : statusFilter,
-      assignedToMe:
-        assignedToMe === undefined ? undefined : assignedToMe,
+      assignedToMe: assignedToMe === undefined ? undefined : assignedToMe,
       limit: ADMIN_CHATS_LIMIT,
       offset: 0,
     }),
@@ -172,6 +165,29 @@ export default function AdminChatsPage() {
 
   const { chats, loading, error, refetch } = useAdminChats(filter);
 
+  // Собираем уникальные userId из всех чатов и батч-загружаем — 1 запрос на кэш
+  const userIds = useMemo(
+    () => [...new Set(chats.map((c) => c.userId))],
+    [chats]
+  );
+  const usersMap = useAdminUsersMap(userIds);
+
+  // Клиентский поиск по имени пользователя, email и превью последнего сообщения
+  const filteredChats = useMemo(() => {
+    if (!q.trim()) return chats;
+    const lq = q.toLowerCase();
+    return chats.filter((chat) => {
+      const user = usersMap.get(chat.userId);
+      const name = [user?.firstName, user?.lastName]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+      const email = (user?.email ?? "").toLowerCase();
+      const preview = (chat.lastMessagePreview ?? "").toLowerCase();
+      return name.includes(lq) || email.includes(lq) || preview.includes(lq);
+    });
+  }, [chats, q, usersMap]);
+
   return (
     <div className="space-y-6">
       <AdminPageHeader
@@ -179,11 +195,18 @@ export default function AdminChatsPage() {
         description="Чаты пользователей с поддержкой"
       />
 
-      <DashboardSection title="Список чатов">
+      <DashboardSection
+        title="Список чатов"
+        actions={
+          <span className="hidden rounded-full border border-border/60 bg-muted/20 px-2.5 py-1 text-xs text-muted-foreground sm:inline-flex">
+            {filteredChats.length} / {chats.length}
+          </span>
+        }
+      >
         <DataToolbar
           searchValue={q}
           onSearchValueChange={setQ}
-          searchPlaceholder="Поиск по чатам…"
+          searchPlaceholder="Поиск по имени, email или тексту…"
           rightSlot={
             <div className="flex flex-wrap items-center gap-2">
               <Select
@@ -212,9 +235,7 @@ export default function AdminChatsPage() {
                       : "other"
                 }
                 onValueChange={(v) =>
-                  setAssignedToMe(
-                    v === "all" ? undefined : v === "me"
-                  )
+                  setAssignedToMe(v === "all" ? undefined : v === "me")
                 }
               >
                 <SelectTrigger className="h-9 w-[200px] bg-background/60">
@@ -222,9 +243,7 @@ export default function AdminChatsPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Все чаты</SelectItem>
-                  <SelectItem value="me">
-                    Назначены на меня
-                  </SelectItem>
+                  <SelectItem value="me">Назначены на меня</SelectItem>
                   <SelectItem value="other">
                     Не назначены / другие
                   </SelectItem>
@@ -245,20 +264,29 @@ export default function AdminChatsPage() {
 
         {!error && loading && <AdminChatsListSkeleton />}
 
-        {!error && !loading && chats.length === 0 && (
+        {!error && !loading && filteredChats.length === 0 && (
           <EmptyState
-            title="Чатов пока нет"
-            description="Обращения пользователей появятся здесь после создания."
+            title={q ? "Ничего не найдено" : "Чатов пока нет"}
+            description={
+              q
+                ? "Попробуйте изменить запрос или сбросить фильтры."
+                : "Обращения пользователей появятся здесь после создания."
+            }
             icon={
               <MessageCircle className="h-8 w-8 text-muted-foreground" />
             }
           />
         )}
 
-        {!error && !loading && chats.length > 0 && (
+        {!error && filteredChats.length > 0 && (
           <div className="space-y-3">
-            {chats.map((chat, index) => (
-              <ChatRow key={chat.id} chat={chat} index={index} />
+            {filteredChats.map((chat, index) => (
+              <ChatRow
+                key={chat.id}
+                chat={chat}
+                user={usersMap.get(chat.userId)}
+                index={index}
+              />
             ))}
           </div>
         )}
