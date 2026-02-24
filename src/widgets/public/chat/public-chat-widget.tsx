@@ -131,8 +131,6 @@ export function PublicChatWidget() {
     }
   }, []);
 
-  if (!mounted) return null;
-
   const handleOpenChange = useCallback(
     (next: boolean) => {
       if (next && !open) {
@@ -142,6 +140,8 @@ export function PublicChatWidget() {
     },
     [open]
   );
+
+  if (!mounted) return null;
 
   return (
     <Popover open={open} onOpenChange={handleOpenChange}>
