@@ -10,7 +10,6 @@ import { Surface } from "@/shared/ui/surface/surface";
 import { DataToolbar } from "@/shared/ui/data-toolbar/data-toolbar";
 import {
   formatAdminDate,
-  formatDateRange,
   formatPriceWithCurrency,
 } from "@/shared/lib/helpers/format-helpers";
 import {
@@ -92,15 +91,7 @@ const OrderRow = memo(function OrderRow({
     orderSummary(order);
   const displayNumber =
     (order as { number?: string | null }).number ?? order.id;
-  const customerDisplayName =
-    order.customerDisplayName?.trim() || "—";
-  const trainingDates = formatDateRange(
-    order.trainingStartDate,
-    order.trainingEndDate
-  );
-  const statusChangedAtFormatted = order.statusChangedAt
-    ? formatAdminDate(order.statusChangedAt)
-    : null;
+  const customerDisplayName = order.contactEmail?.trim() || "—";
 
   return (
     <Link href={`/admin/orders/${order.id}`}>
@@ -124,18 +115,10 @@ const OrderRow = memo(function OrderRow({
               {customerTypeLabel} · {customerDisplayName}
             </p>
             <p className="text-sm text-muted-foreground">
-              Сроки обучения: {trainingDates}
-            </p>
-            <p className="text-sm text-muted-foreground">
               {formatAdminDate(order.createdAt)} · {programsCount}{" "}
               поз. · {learnersCount} слуш.
               {firstProgramTitle ? ` · ${firstProgramTitle}` : ""}
             </p>
-            {statusChangedAtFormatted && (
-              <p className="text-xs text-muted-foreground/80">
-                Статус изменён: {statusChangedAtFormatted}
-              </p>
-            )}
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-3">
@@ -199,9 +182,7 @@ const AdminOrdersPage = memo(function AdminOrdersPage() {
       const num = (
         (order as { number?: string | null }).number ?? order.id
       ).toLowerCase();
-      const customer = (
-        order.customerDisplayName ?? ""
-      ).toLowerCase();
+      const customer = (order.contactEmail ?? "").toLowerCase();
       const programs = (order.lines ?? [])
         .map(
           (l) => `${l.programTitle ?? ""} ${l.subProgramTitle ?? ""}`

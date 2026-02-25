@@ -1,22 +1,33 @@
 import { useQuery } from "@apollo/client/react";
 import { useFragment } from "@/shared/api/generated/fragment-masking";
 import {
-  AdminOrdersDocument,
   OrderFieldsFragmentDoc,
-  type AdminOrdersQuery,
-  type AdminOrdersQueryVariables,
   type OrderFieldsFragment,
 } from "@/shared/api/generated/graphql";
+import { ADMIN_ORDERS } from "@/shared/api/queries/orders";
+
+type AdminOrdersCompatData = {
+  adminOrders: Array<{
+    " $fragmentRefs"?: {
+      OrderFieldsFragment: OrderFieldsFragment;
+    };
+  }>;
+};
+
+type AdminOrdersCompatVariables = {
+  filter?: { status?: string; limit?: number; offset?: number };
+};
 
 export function useAdminOrders(
-  filter?: AdminOrdersQueryVariables["filter"]
+  filter?: { status?: string; limit?: number; offset?: number }
 ) {
   const { data, loading, error, refetch } = useQuery<
-    AdminOrdersQuery,
-    AdminOrdersQueryVariables
-  >(AdminOrdersDocument, {
+    AdminOrdersCompatData,
+    AdminOrdersCompatVariables
+  >(ADMIN_ORDERS, {
     variables: { filter: filter ?? undefined },
     fetchPolicy: "cache-and-network",
+    errorPolicy: "all",
   });
 
   const rawOrders = data?.adminOrders ?? [];
