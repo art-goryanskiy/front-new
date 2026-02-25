@@ -28,6 +28,7 @@ type PagingState = {
 import { Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
   SelectContent,
@@ -40,7 +41,6 @@ import { DashboardSection } from "@/shared/ui/dashboard-section/dashboard-sectio
 import { DataToolbar } from "@/shared/ui/data-toolbar/data-toolbar";
 import { EmptyState } from "@/shared/ui/empty-state/empty-state";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
-import { CategoryProgramsViewSkeleton } from "./category-programs-view-skeleton";
 
 import { POPULAR_VIEWS_THRESHOLD } from "@/widgets/admin/program-table/constants/program-table-constants";
 import { ProgramList } from "@/widgets/admin/program-table/program-list";
@@ -116,7 +116,7 @@ export const CategoryProgramsView = memo(
 
     useEffect(() => {
       const next = new URLSearchParams(searchParams.toString());
-      const normalizedSearch = q.trim();
+      const normalizedSearch = debouncedQ.trim();
 
       if (normalizedSearch) next.set(QUERY_KEYS.q, normalizedSearch);
       else next.delete(QUERY_KEYS.q);
@@ -139,7 +139,15 @@ export const CategoryProgramsView = memo(
           { scroll: false }
         );
       }
-    }, [q, pricing, views, sort, pathname, router, searchParams]);
+    }, [
+      debouncedQ,
+      pricing,
+      views,
+      sort,
+      pathname,
+      router,
+      searchParams,
+    ]);
 
     const requestKey = useMemo(
       () => `${categoryId}|${debouncedQ}|${sort}`,
@@ -238,6 +246,10 @@ export const CategoryProgramsView = memo(
     }, [effectivePaging.accumulated, pricing, views]);
 
     const canLoadMore = effectivePaging.accumulated.length < total;
+    const isInitialLoading =
+      loading &&
+      effectivePaging.page === 1 &&
+      effectivePaging.accumulated.length === 0;
     const isRefreshing =
       loading &&
       effectivePaging.page === 1 &&
@@ -250,14 +262,6 @@ export const CategoryProgramsView = memo(
     const handleCreate = useCallback(() => {
       openCreateProgramModal(categoryId, categoryType);
     }, [openCreateProgramModal, categoryId, categoryType]);
-
-    if (
-      loading &&
-      effectivePaging.page === 1 &&
-      effectivePaging.accumulated.length === 0
-    )
-      return <CategoryProgramsViewSkeleton />;
-    if (error) return <ErrorState message={error.message} />;
 
     return (
       <DashboardSection title="Программы">
@@ -339,7 +343,19 @@ export const CategoryProgramsView = memo(
             </div>
           ) : null}
 
-          {filteredItems.length === 0 ? (
+          {isInitialLoading ? (
+            <div className="space-y-2 py-2">
+              {Array.from({ length: 6 }, (_, i) => (
+                <Skeleton
+                  key={i}
+                  variant="premium"
+                  className="h-14 w-full rounded-xl"
+                />
+              ))}
+            </div>
+          ) : error ? (
+            <ErrorState message={error.message} />
+          ) : filteredItems.length === 0 ? (
             <EmptyState
               title="Программы не найдены"
               description="Попробуйте изменить фильтры или запрос."

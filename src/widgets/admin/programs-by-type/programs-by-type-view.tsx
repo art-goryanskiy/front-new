@@ -30,6 +30,7 @@ type PagingState = {
 import { Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
   SelectContent,
@@ -220,7 +221,10 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
     }
   }, [loading, items, requestKey]);
 
-  const localQuery = useMemo(() => q.trim().toLowerCase(), [q]);
+  const localQuery = useMemo(
+    () => debouncedQ.trim().toLowerCase(),
+    [debouncedQ]
+  );
 
   const filteredItems = useMemo(() => {
     return effectivePaging.accumulated.filter((p) => {
@@ -244,6 +248,10 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
   }, [effectivePaging.accumulated, views, pricing, localQuery]);
 
   const canLoadMore = effectivePaging.accumulated.length < total;
+  const isInitialLoading =
+    loading &&
+    effectivePaging.page === 1 &&
+    effectivePaging.accumulated.length === 0;
   const isRefreshing =
     loading &&
     effectivePaging.page === 1 &&
@@ -252,14 +260,6 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
   const handleLoadMore = useCallback(() => {
     setPaging((prev) => ({ ...prev, page: prev.page + 1 }));
   }, []);
-
-  if (
-    loading &&
-    effectivePaging.page === 1 &&
-    effectivePaging.accumulated.length === 0
-  )
-    return <CategoryProgramsViewSkeleton />;
-  if (error) return <ErrorState message={error.message} />;
 
   return (
     <DashboardSection title={title} suppressTitle={suppressTitle}>
@@ -357,7 +357,19 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
               Обновляем список…
             </div>
           ) : null}
-          {filteredItems.length === 0 ? (
+          {isInitialLoading ? (
+            <div className="space-y-2 py-2">
+              {Array.from({ length: 6 }, (_, i) => (
+                <Skeleton
+                  key={i}
+                  variant="premium"
+                  className="h-14 w-full rounded-xl"
+                />
+              ))}
+            </div>
+          ) : error ? (
+            <ErrorState message={error.message} />
+          ) : filteredItems.length === 0 ? (
             <EmptyState
               title="Программы не найдены"
               description="Попробуйте изменить фильтры или выберите другую категорию."
@@ -462,7 +474,7 @@ export const ProgramsByTypeView = memo(function ProgramsByTypeView({
 
   useEffect(() => {
     const next = new URLSearchParams(searchParams.toString());
-    const normalizedSearch = q.trim();
+    const normalizedSearch = debouncedQ.trim();
 
     if (normalizedSearch) next.set(QUERY_KEYS.q, normalizedSearch);
     else next.delete(QUERY_KEYS.q);
@@ -489,7 +501,7 @@ export const ProgramsByTypeView = memo(function ProgramsByTypeView({
       });
     }
   }, [
-    q,
+    debouncedQ,
     effectiveCategoryId,
     pricing,
     views,

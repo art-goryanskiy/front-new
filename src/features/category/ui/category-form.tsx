@@ -34,6 +34,7 @@ export const CategoryForm = memo(function CategoryForm({
   editingCategory,
   onDirtyChange,
   onBusyChange,
+  onRequestClose,
 }: CategoryFormProps) {
   const isEditMode = !!editingCategory;
   const {
@@ -206,7 +207,7 @@ export const CategoryForm = memo(function CategoryForm({
         <Button
           type="button"
           variant="ghost"
-          onClick={closeModal}
+          onClick={onRequestClose ?? closeModal}
           disabled={loading || uploadingImage}
           className="min-w-24"
         >

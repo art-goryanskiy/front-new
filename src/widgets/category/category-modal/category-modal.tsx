@@ -125,6 +125,7 @@ export const CategoryModal = memo(function CategoryModal() {
               editingCategory={editingCategory || undefined}
               onDirtyChange={setIsDirty}
               onBusyChange={setIsBusy}
+              onRequestClose={handleRequestClose}
             />
           </div>
         </DialogContent>
