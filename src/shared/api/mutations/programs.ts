@@ -67,3 +67,17 @@ export const DELETE_PROGRAM = gql`
     }
   }
 `;
+
+export const UPDATE_PROGRAMS_BULK = gql`
+  mutation UpdateProgramsBulk($input: UpdateProgramsBulkInput!) {
+    updateProgramsBulk(input: $input) {
+      total
+      updated
+      failed {
+        id
+        code
+        message
+      }
+    }
+  }
+`;

@@ -18,7 +18,13 @@ import { pluralPrograms } from "@/shared/lib/helpers/plural";
 import { useProgramModalState } from "@/shared/store/modal-store";
 import { Surface } from "@/shared/ui/surface/surface";
 import { TableActions } from "@/shared/ui/table-actions/table-actions";
-import { memo, useCallback, useMemo } from "react";
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 import { TABLE_CLASSES } from "./constants/program-table-constants";
 import { useProgramTableConfig } from "./hooks/use-program-table-config";
@@ -38,10 +44,20 @@ export const ProgramList = memo(function ProgramList({
   programs,
   categoryType,
   caption,
+  selectedProgramIds,
+  onSelectProgram,
+  onSelectAllPrograms,
+  onOpenBulkUpdate,
+  onClearSelection,
 }: {
   programs: ProgramEntity[];
   categoryType?: CategoryType | null;
   caption?: string;
+  selectedProgramIds?: Set<string>;
+  onSelectProgram?: (id: string, selected: boolean) => void;
+  onSelectAllPrograms?: (ids: string[], selected: boolean) => void;
+  onOpenBulkUpdate?: () => void;
+  onClearSelection?: () => void;
 }) {
   const { openEditProgramModal, openDeleteProgramModal } =
     useProgramModalState();
@@ -51,12 +67,41 @@ export const ProgramList = memo(function ProgramList({
     showAwardedRank,
     showSubPrograms,
   } = useProgramTableConfig(categoryType);
+  const bulkEnabled = !!selectedProgramIds && !!onSelectProgram;
+  const allSelected =
+    bulkEnabled &&
+    programs.length > 0 &&
+    programs.every((program) => selectedProgramIds.has(program.id));
+  const someSelected =
+    bulkEnabled &&
+    programs.some((program) => selectedProgramIds.has(program.id)) &&
+    !allSelected;
+  const [contextMenu, setContextMenu] = useState<{
+    x: number;
+    y: number;
+    programId: string;
+  } | null>(null);
+  const visibleProgramIds = useMemo(
+    () => programs.map((program) => program.id),
+    [programs]
+  );
+  const selectedCount = useMemo(
+    () =>
+      bulkEnabled
+        ? programs.filter((program) =>
+            selectedProgramIds.has(program.id)
+          ).length
+        : 0,
+    [bulkEnabled, programs, selectedProgramIds]
+  );
 
   const handleRowClick = useCallback(
     (program: ProgramEntity, e: React.MouseEvent) => {
       const target = e.target as HTMLElement;
       if (
         target.closest("button") ||
+        target.closest("input") ||
+        target.closest("label") ||
         target.closest('[role="button"]') ||
         target.closest("svg")
       ) {
@@ -87,8 +132,40 @@ export const ProgramList = memo(function ProgramList({
     (program: ProgramEntity) => openDeleteProgramModal(program),
     [openDeleteProgramModal]
   );
+  const handleContextMenu = useCallback(
+    (programId: string, e: React.MouseEvent) => {
+      if (!bulkEnabled) return;
+      e.preventDefault();
+      setContextMenu({
+        x: e.clientX,
+        y: e.clientY,
+        programId,
+      });
+    },
+    [bulkEnabled]
+  );
+  useEffect(() => {
+    if (!contextMenu) return;
+
+    const handlePointerDown = () => setContextMenu(null);
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setContextMenu(null);
+    };
+
+    window.addEventListener("pointerdown", handlePointerDown);
+    window.addEventListener("keydown", handleEscape);
+    window.addEventListener("scroll", handlePointerDown, true);
+
+    return () => {
+      window.removeEventListener("pointerdown", handlePointerDown);
+      window.removeEventListener("keydown", handleEscape);
+      window.removeEventListener("scroll", handlePointerDown, true);
+    };
+  }, [contextMenu]);
 
   const tableId = useMemo(() => `program-list`, []);
+  const canUseVirtualized =
+    programs.length > VIRTUALIZE_THRESHOLD && !bulkEnabled;
 
   return (
     <>
@@ -108,7 +185,22 @@ export const ProgramList = memo(function ProgramList({
             }
             onKeyDown={(e) => handleKeyDown(program, e)}
             aria-label={`Открыть программу ${program.title}`}
+            onContextMenu={(e) => handleContextMenu(program.id, e)}
           >
+            {bulkEnabled ? (
+              <div className="absolute top-3 right-3 z-10">
+                <input
+                  type="checkbox"
+                  className="h-4 w-4 cursor-pointer accent-primary"
+                  checked={selectedProgramIds.has(program.id)}
+                  onChange={(e) =>
+                    onSelectProgram(program.id, e.target.checked)
+                  }
+                  onClick={(e) => e.stopPropagation()}
+                  aria-label={`Выбрать программу ${program.title}`}
+                />
+              </div>
+            ) : null}
             <div className={TABLE_CLASSES.cardHeader}>
               <div className={TABLE_CLASSES.cardMain}>
                 <ProgramTableTitleContent program={program} />
@@ -150,7 +242,7 @@ export const ProgramList = memo(function ProgramList({
 
       {/* DESKTOP (md+): table or virtualized table for large lists */}
       <div className="hidden md:block">
-        {programs.length > VIRTUALIZE_THRESHOLD ? (
+        {canUseVirtualized ? (
           <VirtualizedProgramTable
             programs={programs}
             categoryType={categoryType}
@@ -171,6 +263,28 @@ export const ProgramList = memo(function ProgramList({
             >
               <TableHeader className={TABLE_CLASSES.thead}>
                 <TableRow>
+                  {bulkEnabled ? (
+                    <TableHead
+                      className={`w-[4%] min-w-[44px] text-center ${TABLE_CLASSES.th}`}
+                    >
+                      <input
+                        type="checkbox"
+                        className="h-4 w-4 cursor-pointer accent-primary"
+                        checked={allSelected}
+                        ref={(node) => {
+                          if (node)
+                            node.indeterminate = !!someSelected;
+                        }}
+                        onChange={(e) =>
+                          onSelectAllPrograms?.(
+                            programs.map((program) => program.id),
+                            e.target.checked
+                          )
+                        }
+                        aria-label="Выбрать все программы на странице"
+                      />
+                    </TableHead>
+                  ) : null}
                   <TableHead
                     className={`min-w-0 ${TABLE_CLASSES.th}`}
                   >
@@ -221,11 +335,33 @@ export const ProgramList = memo(function ProgramList({
                     key={program.id}
                     className={`group cursor-pointer ${TABLE_CLASSES.tr}`}
                     onClick={(e) => handleRowClick(program, e)}
+                    onContextMenu={(e) =>
+                      handleContextMenu(program.id, e)
+                    }
                     role="row"
                     tabIndex={0}
                     onKeyDown={(e) => handleKeyDown(program, e)}
                     aria-label={`Программа ${program.title}`}
                   >
+                    {bulkEnabled ? (
+                      <TableCell
+                        className={`text-center ${TABLE_CLASSES.td}`}
+                      >
+                        <input
+                          type="checkbox"
+                          className="h-4 w-4 cursor-pointer accent-primary"
+                          checked={selectedProgramIds.has(program.id)}
+                          onChange={(e) =>
+                            onSelectProgram(
+                              program.id,
+                              e.target.checked
+                            )
+                          }
+                          onClick={(e) => e.stopPropagation()}
+                          aria-label={`Выбрать программу ${program.title}`}
+                        />
+                      </TableCell>
+                    ) : null}
                     <TableCell
                       className={`min-w-0 overflow-hidden ${TABLE_CLASSES.td}`}
                     >
@@ -288,6 +424,59 @@ export const ProgramList = memo(function ProgramList({
           </Surface>
         )}
       </div>
+      {bulkEnabled && contextMenu ? (
+        <div
+          className="fixed z-50 min-w-56 rounded-lg border border-border/60 bg-background/95 p-1.5 shadow-xl backdrop-blur"
+          style={{ left: contextMenu.x, top: contextMenu.y }}
+          onPointerDown={(e) => e.stopPropagation()}
+        >
+          <button
+            type="button"
+            className="w-full rounded-md px-3 py-2 text-left text-sm hover:bg-muted"
+            onClick={() => {
+              onSelectProgram(
+                contextMenu.programId,
+                !selectedProgramIds.has(contextMenu.programId)
+              );
+              setContextMenu(null);
+            }}
+          >
+            {selectedProgramIds.has(contextMenu.programId)
+              ? "Убрать из выбора"
+              : "Добавить в выбор"}
+          </button>
+          <button
+            type="button"
+            className="w-full rounded-md px-3 py-2 text-left text-sm hover:bg-muted"
+            onClick={() => {
+              onSelectAllPrograms?.(visibleProgramIds, true);
+              setContextMenu(null);
+            }}
+          >
+            Выбрать все по текущему фильтру
+          </button>
+          <button
+            type="button"
+            className="w-full rounded-md px-3 py-2 text-left text-sm hover:bg-muted"
+            onClick={() => {
+              onOpenBulkUpdate?.();
+              setContextMenu(null);
+            }}
+          >
+            Открыть массовое обновление ({selectedCount})
+          </button>
+          <button
+            type="button"
+            className="w-full rounded-md px-3 py-2 text-left text-sm text-muted-foreground hover:bg-muted"
+            onClick={() => {
+              onClearSelection?.();
+              setContextMenu(null);
+            }}
+          >
+            Очистить выбор
+          </button>
+        </div>
+      ) : null}
     </>
   );
 });

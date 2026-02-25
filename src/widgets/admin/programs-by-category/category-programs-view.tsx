@@ -43,6 +43,7 @@ import { EmptyState } from "@/shared/ui/empty-state/empty-state";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
 
 import { POPULAR_VIEWS_THRESHOLD } from "@/widgets/admin/program-table/constants/program-table-constants";
+import { BulkUpdateProgramsDialog } from "@/widgets/admin/program-table/bulk-update-programs-dialog";
 import { ProgramList } from "@/widgets/admin/program-table/program-list";
 import { hasValidPricing } from "@/widgets/admin/program-table/utils/program-table-utils";
 
@@ -113,6 +114,8 @@ export const CategoryProgramsView = memo(
     const [sort, setSort] = useState<Sort>(() =>
       parseSort(searchParams.get(QUERY_KEYS.sort))
     );
+    const [selectedIds, setSelectedIds] = useState<string[]>([]);
+    const [isBulkDialogOpen, setBulkDialogOpen] = useState(false);
 
     useEffect(() => {
       const next = new URLSearchParams(searchParams.toString());
@@ -210,6 +213,7 @@ export const CategoryProgramsView = memo(
 
     useEffect(() => {
       // Keep accumulated rows in sync even when Apollo serves cache without loading transition.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setPaging((prev) => {
         if (prev.key !== requestKey) return prev;
         if (effectivePaging.page === 1) {
@@ -247,18 +251,26 @@ export const CategoryProgramsView = memo(
         return true;
       });
     }, [effectivePaging.accumulated, pricing, views]);
+    const selectedIdsSet = useMemo(
+      () => new Set(selectedIds),
+      [selectedIds]
+    );
+    const selectedVisibleCount = useMemo(
+      () =>
+        filteredItems.filter((program) =>
+          selectedIdsSet.has(program.id)
+        ).length,
+      [filteredItems, selectedIdsSet]
+    );
 
     const canLoadMore = effectivePaging.accumulated.length < total;
-    const hasClientFilters =
-      views !== "all" || pricing !== "all";
+    const hasClientFilters = views !== "all" || pricing !== "all";
     const hiddenByClientFilters = Math.max(
       0,
       effectivePaging.accumulated.length - filteredItems.length
     );
     const displayTotal =
-      hasClientFilters && !canLoadMore
-        ? filteredItems.length
-        : total;
+      hasClientFilters && !canLoadMore ? filteredItems.length : total;
     const isInitialLoading =
       loading &&
       effectivePaging.page === 1 &&
@@ -275,6 +287,30 @@ export const CategoryProgramsView = memo(
     const handleCreate = useCallback(() => {
       openCreateProgramModal(categoryId, categoryType);
     }, [openCreateProgramModal, categoryId, categoryType]);
+    const handleSelectProgram = useCallback(
+      (id: string, selected: boolean) => {
+        setSelectedIds((prev) => {
+          const next = new Set(prev);
+          if (selected) next.add(id);
+          else next.delete(id);
+          return Array.from(next);
+        });
+      },
+      []
+    );
+    const handleSelectAllVisible = useCallback(
+      (ids: string[], selected: boolean) => {
+        setSelectedIds((prev) => {
+          const next = new Set(prev);
+          ids.forEach((id) => {
+            if (selected) next.add(id);
+            else next.delete(id);
+          });
+          return Array.from(next);
+        });
+      },
+      []
+    );
 
     useEffect(() => {
       const node = loadMoreRef.current;
@@ -292,6 +328,11 @@ export const CategoryProgramsView = memo(
       observer.observe(node);
       return () => observer.disconnect();
     }, [canLoadMore, loading, handleLoadMore, effectivePaging.page]);
+    useEffect(() => {
+      const allowed = new Set(filteredItems.map((item) => item.id));
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setSelectedIds((prev) => prev.filter((id) => allowed.has(id)));
+    }, [filteredItems]);
 
     return (
       <DashboardSection title="Программы">
@@ -359,9 +400,51 @@ export const CategoryProgramsView = memo(
                 >
                   + Программа
                 </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setBulkDialogOpen(true)}
+                  disabled={selectedVisibleCount === 0}
+                >
+                  Массово ({selectedVisibleCount})
+                </Button>
               </div>
             }
           />
+          {selectedVisibleCount > 0 ? (
+            <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border/50 bg-background/40 px-3 py-2">
+              <span className="text-sm text-muted-foreground">
+                Выбрано: {selectedVisibleCount}
+              </span>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() =>
+                  handleSelectAllVisible(
+                    filteredItems.map((program) => program.id),
+                    true
+                  )
+                }
+              >
+                Выбрать все видимые
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => setSelectedIds([])}
+              >
+                Сбросить выбор
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => setBulkDialogOpen(true)}
+              >
+                Открыть массовое обновление
+              </Button>
+            </div>
+          ) : null}
 
           {isRefreshing ? (
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -395,6 +478,11 @@ export const CategoryProgramsView = memo(
               <ProgramList
                 programs={filteredItems}
                 categoryType={categoryType}
+                selectedProgramIds={selectedIdsSet}
+                onSelectProgram={handleSelectProgram}
+                onSelectAllPrograms={handleSelectAllVisible}
+                onOpenBulkUpdate={() => setBulkDialogOpen(true)}
+                onClearSelection={() => setSelectedIds([])}
                 caption={`Показано ${filteredItems.length} из ${displayTotal}${
                   hasClientFilters &&
                   !canLoadMore &&
@@ -423,6 +511,12 @@ export const CategoryProgramsView = memo(
             </>
           )}
         </div>
+        <BulkUpdateProgramsDialog
+          open={isBulkDialogOpen}
+          onOpenChange={setBulkDialogOpen}
+          selectedIds={selectedIds}
+          onApplied={() => setSelectedIds([])}
+        />
       </DashboardSection>
     );
   }

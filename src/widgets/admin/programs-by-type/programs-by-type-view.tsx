@@ -29,6 +29,7 @@ type PagingState = {
 };
 import { Loader2 } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
@@ -46,6 +47,7 @@ import { cn } from "@/lib/utils";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
 import { CategoryProgramsViewSkeleton } from "@/widgets/admin/programs-by-category/category-programs-view-skeleton";
 
+import { BulkUpdateProgramsDialog } from "@/widgets/admin/program-table/bulk-update-programs-dialog";
 import { POPULAR_VIEWS_THRESHOLD } from "@/widgets/admin/program-table/constants/program-table-constants";
 import { ProgramList } from "@/widgets/admin/program-table/program-list";
 import { hasValidPricing } from "@/widgets/admin/program-table/utils/program-table-utils";
@@ -150,6 +152,8 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
     page: 1,
     accumulated: [],
   });
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [isBulkDialogOpen, setBulkDialogOpen] = useState(false);
 
   const effectivePaging =
     paging.key === requestKey
@@ -207,6 +211,7 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
   useEffect(() => {
     // Sync accumulated rows from current page payload.
     // Do not rely on loading transitions because cache-first may skip them.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPaging((prev) => {
       if (prev.key !== requestKey) return prev;
 
@@ -253,18 +258,26 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
       return haystack.includes(localQuery);
     });
   }, [effectivePaging.accumulated, views, pricing, localQuery]);
+  const selectedIdsSet = useMemo(
+    () => new Set(selectedIds),
+    [selectedIds]
+  );
+  const selectedVisibleCount = useMemo(
+    () =>
+      filteredItems.filter((program) =>
+        selectedIdsSet.has(program.id)
+      ).length,
+    [filteredItems, selectedIdsSet]
+  );
 
   const canLoadMore = effectivePaging.accumulated.length < total;
-  const hasClientFilters =
-    views !== "all" || pricing !== "all";
+  const hasClientFilters = views !== "all" || pricing !== "all";
   const hiddenByClientFilters = Math.max(
     0,
     effectivePaging.accumulated.length - filteredItems.length
   );
   const displayTotal =
-    hasClientFilters && !canLoadMore
-      ? filteredItems.length
-      : total;
+    hasClientFilters && !canLoadMore ? filteredItems.length : total;
   const isInitialLoading =
     loading &&
     effectivePaging.page === 1 &&
@@ -277,6 +290,30 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
   const handleLoadMore = useCallback(() => {
     setPaging((prev) => ({ ...prev, page: prev.page + 1 }));
   }, []);
+  const handleSelectProgram = useCallback(
+    (id: string, selected: boolean) => {
+      setSelectedIds((prev) => {
+        const next = new Set(prev);
+        if (selected) next.add(id);
+        else next.delete(id);
+        return Array.from(next);
+      });
+    },
+    []
+  );
+  const handleSelectAllVisible = useCallback(
+    (ids: string[], selected: boolean) => {
+      setSelectedIds((prev) => {
+        const next = new Set(prev);
+        ids.forEach((id) => {
+          if (selected) next.add(id);
+          else next.delete(id);
+        });
+        return Array.from(next);
+      });
+    },
+    []
+  );
 
   useEffect(() => {
     const node = loadMoreRef.current;
@@ -294,6 +331,11 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
     observer.observe(node);
     return () => observer.disconnect();
   }, [canLoadMore, loading, handleLoadMore, effectivePaging.page]);
+  useEffect(() => {
+    const allowed = new Set(filteredItems.map((item) => item.id));
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setSelectedIds((prev) => prev.filter((id) => allowed.has(id)));
+  }, [filteredItems]);
 
   return (
     <DashboardSection title={title} suppressTitle={suppressTitle}>
@@ -376,10 +418,52 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
                     </SelectItem>
                   </SelectContent>
                 </Select>
+                <Button
+                  variant="outline"
+                  onClick={() => setBulkDialogOpen(true)}
+                  disabled={selectedVisibleCount === 0}
+                >
+                  Массово ({selectedVisibleCount})
+                </Button>
               </div>
             }
           />
         </div>
+        {selectedVisibleCount > 0 ? (
+          <div className="mx-4 mb-3 flex flex-wrap items-center gap-2 rounded-xl border border-border/50 bg-background/40 px-3 py-2 sm:mx-5">
+            <span className="text-sm text-muted-foreground">
+              Выбрано: {selectedVisibleCount}
+            </span>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={() =>
+                handleSelectAllVisible(
+                  filteredItems.map((program) => program.id),
+                  true
+                )
+              }
+            >
+              Выбрать все видимые
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={() => setSelectedIds([])}
+            >
+              Сбросить выбор
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              onClick={() => setBulkDialogOpen(true)}
+            >
+              Открыть массовое обновление
+            </Button>
+          </div>
+        ) : null}
 
         <div className="border-t border-border/40 px-4 pb-4 sm:px-5 sm:pb-5">
           {isRefreshing ? (
@@ -413,6 +497,11 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
               <ProgramList
                 programs={filteredItems}
                 categoryType={type}
+                selectedProgramIds={selectedIdsSet}
+                onSelectProgram={handleSelectProgram}
+                onSelectAllPrograms={handleSelectAllVisible}
+                onOpenBulkUpdate={() => setBulkDialogOpen(true)}
+                onClearSelection={() => setSelectedIds([])}
                 caption={`Показано ${filteredItems.length} из ${displayTotal}${
                   hasClientFilters &&
                   !canLoadMore &&
@@ -442,6 +531,12 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
           )}
         </div>
       </div>
+      <BulkUpdateProgramsDialog
+        open={isBulkDialogOpen}
+        onOpenChange={setBulkDialogOpen}
+        selectedIds={selectedIds}
+        onApplied={() => setSelectedIds([])}
+      />
     </DashboardSection>
   );
 });
