@@ -20,6 +20,7 @@ import { BookOpen } from "lucide-react";
 import { Breadcrumbs } from "@/shared/ui/breadcrumbs/breadcrumbs";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { CONTACTS_FORM_HREF } from "@/shared/constants/routes";
 
 export const ProgramList = memo(function ProgramList({
   programs: serverPrograms,
@@ -103,7 +104,9 @@ export const ProgramList = memo(function ProgramList({
     () => (
       <>
         <Button asChild className="rounded-xl font-semibold">
-          <Link href="/contacts">Помогите мне с выбором</Link>
+          <Link href={CONTACTS_FORM_HREF}>
+            Помогите мне с выбором
+          </Link>
         </Button>
         <Button asChild variant="outline" className="rounded-xl">
           <Link href="/">Посмотреть все направления</Link>
@@ -148,15 +151,25 @@ export const ProgramList = memo(function ProgramList({
           actions={emptyStateActions}
         />
       ) : (
-        <div className={PROGRAM_LIST_CLASSES.grid}>
-          {sortedPrograms.map((program) => (
-            <ProgramCard
-              key={program.id}
-              program={program}
-              categoryType={categoryTypeLabel}
+        <>
+          <div className={PROGRAM_LIST_CLASSES.grid}>
+            {sortedPrograms.map((program) => (
+              <ProgramCard
+                key={program.id}
+                program={program}
+                categoryType={categoryTypeLabel}
+              />
+            ))}
+          </div>
+          {categoryId && (
+            <EmptyState
+              className="mt-8"
+              title="Не нашли программу, которая вам откликается?"
+              description="Мы рядом и с заботой поможем выбрать обучение под вашу задачу, сроки и бюджет."
+              actions={emptyStateActions}
             />
-          ))}
-        </div>
+          )}
+        </>
       )}
     </div>
   );

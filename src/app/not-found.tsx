@@ -5,6 +5,7 @@ import { PublicHeader } from "@/widgets/public/header/public-header";
 import { PublicFooter } from "@/widgets/public/footer/public-footer";
 import { PublicChatWidget } from "@/widgets/public/chat/public-chat-widget";
 import { Home, Search, BookOpen } from "lucide-react";
+import { CONTACTS_PAGE_HREF } from "@/shared/constants/routes";
 
 const QUICK_LINKS = [
   {
@@ -20,7 +21,7 @@ const QUICK_LINKS = [
     label: "Профессиональное обучение",
   },
   { href: "/news", label: "Новости" },
-  { href: "/contacts", label: "Контакты" },
+  { href: CONTACTS_PAGE_HREF, label: "Контакты" },
 ] as const;
 
 export default function NotFound() {

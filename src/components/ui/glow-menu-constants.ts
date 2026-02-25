@@ -9,6 +9,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { CATEGORY_TYPE_LABELS } from "@/shared/constants/categories";
+import { CONTACTS_PAGE_HREF } from "@/shared/constants/routes";
 
 /** Пункты для мобильного меню (иконка + label + href) */
 export const GLOW_MENU_NAV_ITEMS = [
@@ -40,7 +41,7 @@ export const GLOW_MENU_NAV_ITEMS = [
   {
     icon: MapPin as LucideIcon,
     label: "Контакты",
-    href: "/contacts",
+    href: CONTACTS_PAGE_HREF,
   },
   {
     icon: ShoppingCart as LucideIcon,

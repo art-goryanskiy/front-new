@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import type { GlowMenuItem } from "@/components/ui/glow-menu";
 import { CATEGORY_TYPE_LABELS } from "@/shared/constants/categories";
+import { CONTACTS_PAGE_HREF } from "@/shared/constants/routes";
 
 /* Градиенты и цвета из палитры primary (#e50914) */
 export const GLOW_MENU_HEADER_ITEMS: GlowMenuItem[] = [
@@ -63,7 +64,7 @@ export const GLOW_MENU_HEADER_ITEMS: GlowMenuItem[] = [
     children: [
       {
         label: "Контакты",
-        href: "/contacts",
+        href: CONTACTS_PAGE_HREF,
         icon: MapPin,
       },
       // Позже: Преподаватели, Сведения об образовательной организации

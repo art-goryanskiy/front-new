@@ -10,6 +10,7 @@ import { usePublicSearchResults } from "../hooks/use-public-search-results";
 import type { UserEntity } from "@/shared/api/generated/graphql";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { CONTACTS_FORM_HREF } from "@/shared/constants/routes";
 
 const CATEGORY_ORDER = Object.values(
   CATEGORY_TYPE_LABELS
@@ -131,7 +132,9 @@ export const PublicSearchDropdown = memo(
                 </p>
                 <div className="flex flex-wrap items-center justify-center gap-2">
                   <Button asChild size="sm" className="rounded-xl">
-                    <Link href="/contacts">Подобрать с поддержкой</Link>
+                    <Link href={CONTACTS_FORM_HREF}>
+                      Подобрать с поддержкой
+                    </Link>
                   </Button>
                   <Button
                     asChild

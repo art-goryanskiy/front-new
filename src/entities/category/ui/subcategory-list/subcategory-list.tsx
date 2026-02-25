@@ -12,6 +12,7 @@ import type { SubcategoryListProps } from "./types/subcategory-list.types";
 import { SUBCATEGORY_LIST_CLASSES } from "./constants/subcategory-list-constants";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { CONTACTS_FORM_HREF } from "@/shared/constants/routes";
 
 export const SubcategoryList = memo(function SubcategoryList({
   categoryType,
@@ -54,7 +55,9 @@ export const SubcategoryList = memo(function SubcategoryList({
     () => (
       <>
         <Button asChild className="rounded-xl font-semibold">
-          <Link href="/contacts">Помогите мне с выбором</Link>
+          <Link href={CONTACTS_FORM_HREF}>
+            Помогите мне с выбором
+          </Link>
         </Button>
         <Button asChild variant="outline" className="rounded-xl">
           <Link href="/">Посмотреть все направления</Link>

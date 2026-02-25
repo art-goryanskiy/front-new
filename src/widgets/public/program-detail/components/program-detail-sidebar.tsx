@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Surface } from "@/shared/ui/surface/surface";
 import { usePriceVisibility } from "@/shared/store/auth-store";
 import { formatPrice } from "@/shared/lib/helpers/format-helpers";
+import { CONTACTS_FORM_HREF } from "@/shared/constants/routes";
 
 interface ProgramDetailSidebarProps {
   programId: string;
@@ -93,7 +94,7 @@ export const ProgramDetailSidebar = memo(
                   className="w-full"
                   asChild
                 >
-                  <Link href="/contacts">
+                  <Link href={CONTACTS_FORM_HREF}>
                     <BookOpen className="mr-2 h-5 w-5" />
                     Записаться на программу
                   </Link>
@@ -123,7 +124,7 @@ export const ProgramDetailSidebar = memo(
               <Skeleton className="h-10 w-28" />
             ) : canSeePrice ? (
               <Button size="lg" asChild>
-                <Link href="/contacts">
+                <Link href={CONTACTS_FORM_HREF}>
                   <BookOpen className="mr-2 h-5 w-5" />
                   Записаться
                 </Link>

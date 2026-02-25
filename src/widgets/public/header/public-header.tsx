@@ -14,6 +14,7 @@ import { usePublicHeaderState } from "./hooks/use-public-header-state";
 import { MenuBar } from "@/components/ui/glow-menu";
 import { GLOW_MENU_HEADER_ITEMS } from "./constants/glow-menu-header-items";
 import { usePathname } from "next/navigation";
+import { CONTACTS_PAGE_HREF } from "@/shared/constants/routes";
 
 function getActiveMenuLabel(pathname: string): string | undefined {
   if (pathname === "/") return "Главная";
@@ -25,7 +26,7 @@ function getActiveMenuLabel(pathname: string): string | undefined {
   ) {
     return "Обучение";
   }
-  if (pathname.startsWith("/contacts")) return "О нас";
+  if (pathname.startsWith(CONTACTS_PAGE_HREF)) return "О нас";
   return undefined;
 }
 
