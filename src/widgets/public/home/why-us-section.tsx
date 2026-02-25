@@ -103,8 +103,8 @@ export const WhyUsSection = memo(function WhyUsSection() {
             Почему выбирают нас
           </h2>
           <p className="mx-auto max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-            ЦОК Стандарт Плюс — это надёжный партнёр в профессиональном
-            развитии с 2015 года
+            ЦОК Стандарт Плюс — это надёжный партнёр в
+            профессиональном развитии с 2015 года
           </p>
         </motion.div>
 
@@ -148,7 +148,7 @@ export const WhyUsSection = memo(function WhyUsSection() {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <h3 className="text-sm font-bold leading-snug text-foreground sm:text-base">
+                    <h3 className="text-sm leading-snug font-bold text-foreground sm:text-base">
                       {item.title}
                     </h3>
                     <p className="text-sm leading-relaxed text-muted-foreground">

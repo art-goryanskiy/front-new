@@ -14,7 +14,14 @@ import { ContactsForm } from "./contacts-form";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Phone, Mail, MapPin, Clock, ArrowRight, BookOpen } from "lucide-react";
+import {
+  Phone,
+  Mail,
+  MapPin,
+  Clock,
+  ArrowRight,
+  BookOpen,
+} from "lucide-react";
 import { generateMetadata as generateSeoMetadata } from "@/shared/lib/seo/metadata";
 
 export const metadata: Metadata = generateSeoMetadata({
@@ -164,7 +171,8 @@ export default function ContactsPage() {
                 Готовы начать обучение?
               </h2>
               <p className="mx-auto max-w-md text-sm text-muted-foreground sm:text-base">
-                Выберите подходящую программу или оставьте заявку — мы подберём оптимальный вариант.
+                Выберите подходящую программу или оставьте заявку — мы
+                подберём оптимальный вариант.
               </p>
             </div>
             <div className="flex flex-wrap justify-center gap-3">

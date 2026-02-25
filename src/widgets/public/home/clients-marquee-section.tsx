@@ -100,28 +100,28 @@ const CLIENTS: Client[] = [
   {
     id: "noname1",
     name: "Клиент 9",
-    src: "/clients/Без названия.png",
+    src: "/clients/bez-nazvaniya.png",
     width: 120,
     height: 48,
   },
   {
     id: "noname2",
     name: "Клиент 10",
-    src: "/clients/Без названия.svg",
+    src: "/clients/bez-nazvaniya.svg",
     width: 120,
     height: 48,
   },
   {
     id: "noname3",
     name: "Клиент 11",
-    src: "/clients/Без названия.jpeg",
+    src: "/clients/bez-nazvaniya.jpeg",
     width: 120,
     height: 48,
   },
   {
     id: "noname4",
     name: "Клиент 12",
-    src: "/clients/Без названия (1).jpeg",
+    src: "/clients/bez-nazvaniya-1.jpeg",
     width: 120,
     height: 48,
   },
@@ -143,8 +143,8 @@ const ClientLogo = memo(function ClientLogo({
         alt={client.name}
         width={client.width}
         height={client.height}
+        sizes="130px"
         className="h-full w-full object-contain grayscale transition-all duration-300 group-hover:grayscale-0"
-        unoptimized
         loading="lazy"
       />
     </div>

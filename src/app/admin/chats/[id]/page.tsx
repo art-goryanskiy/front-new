@@ -1,6 +1,12 @@
 "use client";
 
-import { memo, useRef, useEffect, useCallback, useState } from "react";
+import {
+  memo,
+  useRef,
+  useEffect,
+  useCallback,
+  useState,
+} from "react";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { useApolloClient } from "@apollo/client/react";
@@ -82,7 +88,9 @@ const MessageBubble = memo(function MessageBubble({
             : "rounded-bl-md bg-muted text-muted-foreground"
         )}
       >
-        <p className="wrap-break-word whitespace-pre-wrap">{message.body}</p>
+        <p className="wrap-break-word whitespace-pre-wrap">
+          {message.body}
+        </p>
         <p
           className={cn(
             "mt-1 text-xs",
@@ -126,9 +134,15 @@ export default function AdminChatDetailPage() {
     messages,
     loading: messagesLoading,
     refetch: refetchMessages,
-  } = useAdminChatMessages(chatId, { limit: MESSAGE_LIMIT }, { skip: !chatId });
-  const { adminAssignChat, loading: assignLoading } = useAdminAssignChat();
-  const { adminSetChatStatus, loading: statusLoading } = useAdminSetChatStatus();
+  } = useAdminChatMessages(
+    chatId,
+    { limit: MESSAGE_LIMIT },
+    { skip: !chatId }
+  );
+  const { adminAssignChat, loading: assignLoading } =
+    useAdminAssignChat();
+  const { adminSetChatStatus, loading: statusLoading } =
+    useAdminSetChatStatus();
   const { sendMessage, loading: sendLoading } = useSendMessage();
 
   // Обновляем локальный мета после мутаций
@@ -153,12 +167,15 @@ export default function AdminChatDetailPage() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const isNearBottom = useCallback(() => {
-    const viewport = scrollAreaRef.current?.querySelector<HTMLDivElement>(
-      "[data-radix-scroll-area-viewport]"
-    );
+    const viewport =
+      scrollAreaRef.current?.querySelector<HTMLDivElement>(
+        "[data-radix-scroll-area-viewport]"
+      );
     if (!viewport) return true;
     return (
-      viewport.scrollHeight - viewport.scrollTop - viewport.clientHeight <
+      viewport.scrollHeight -
+        viewport.scrollTop -
+        viewport.clientHeight <
       SCROLL_BOTTOM_THRESHOLD
     );
   }, []);
@@ -190,7 +207,9 @@ export default function AdminChatDetailPage() {
     [chatId, adminSetChatStatus, refreshChatMeta]
   );
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
     e.preventDefault();
     const form = e.currentTarget;
     const body = (
@@ -221,8 +240,10 @@ export default function AdminChatDetailPage() {
   const assignLoadingAny = assignLoading || statusLoading;
   const chatStatus = chatMeta?.status ?? null;
   const assignedToId = chatMeta?.assignedToId ?? null;
-  const isAssignedToMe = !!currentUser?.id && assignedToId === currentUser.id;
-  const isOpen = chatStatus === ChatStatus.Open || chatStatus === null;
+  const isAssignedToMe =
+    !!currentUser?.id && assignedToId === currentUser.id;
+  const isOpen =
+    chatStatus === ChatStatus.Open || chatStatus === null;
 
   return (
     <div className="space-y-6">
@@ -325,7 +346,10 @@ export default function AdminChatDetailPage() {
         </div>
       </Surface>
 
-      <Surface variant="floating" className="flex flex-col overflow-hidden">
+      <Surface
+        variant="floating"
+        className="flex flex-col overflow-hidden"
+      >
         <div className="border-b px-4 py-3">
           <h2 className="font-semibold text-foreground">Переписка</h2>
         </div>
@@ -358,7 +382,10 @@ export default function AdminChatDetailPage() {
           </div>
         </ScrollArea>
 
-        <form onSubmit={handleSubmit} className="flex gap-2 border-t p-3">
+        <form
+          onSubmit={handleSubmit}
+          className="flex gap-2 border-t p-3"
+        >
           <Input
             ref={inputRef}
             name="body"

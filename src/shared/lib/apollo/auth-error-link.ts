@@ -94,7 +94,7 @@ export function createAuthErrorLink(): ErrorLink {
         // через SSR: getViewerServer вернёт null → AuthGuard перенаправит на логин.
         return forward(operation);
       }),
-      catchError(() => forward(operation)),
+      catchError(() => forward(operation))
     );
   });
 }

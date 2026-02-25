@@ -163,14 +163,14 @@ function Lightbox({ photos, initialIndex, onClose }: LightboxProps) {
           <>
             <button
               onClick={prev}
-              className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-2 text-white transition hover:bg-white/20"
+              className="absolute top-1/2 left-3 -translate-y-1/2 rounded-full bg-white/10 p-2 text-white transition hover:bg-white/20"
               aria-label="Предыдущее фото"
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
             <button
               onClick={next}
-              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-2 text-white transition hover:bg-white/20"
+              className="absolute top-1/2 right-3 -translate-y-1/2 rounded-full bg-white/10 p-2 text-white transition hover:bg-white/20"
               aria-label="Следующее фото"
             >
               <ChevronRight className="h-5 w-5" />
@@ -189,7 +189,9 @@ export function NewsDetailContent() {
   const params = useParams();
   const id = typeof params?.id === "string" ? params.id : null;
   const { newsItem, loading, error, refetch } = useNewsItem(id);
-  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(
+    null
+  );
 
   if (!id) {
     return (
@@ -230,7 +232,9 @@ export function NewsDetailContent() {
   if (!newsItem) {
     return (
       <div className="rounded-2xl border border-border/50 bg-muted/10 px-6 py-12 text-center">
-        <p className="font-medium text-foreground">Новость не найдена</p>
+        <p className="font-medium text-foreground">
+          Новость не найдена
+        </p>
         <Button variant="link" className="mt-2" asChild>
           <Link href="/news">К списку новостей</Link>
         </Button>
@@ -239,7 +243,9 @@ export function NewsDetailContent() {
   }
 
   const photos =
-    newsItem.attachments?.filter((a) => a.type === "photo" && a.url) ?? [];
+    newsItem.attachments?.filter(
+      (a) => a.type === "photo" && a.url
+    ) ?? [];
   const links =
     newsItem.attachments?.filter((a) => a.type === "link") ?? [];
   const firstPhoto = photos[0]?.url ?? null;
@@ -256,7 +262,12 @@ export function NewsDetailContent() {
     >
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <Breadcrumbs title={breadcrumbTitle} />
-        <Button variant="ghost" size="sm" className="gap-1.5 text-muted-foreground hover:text-foreground" asChild>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="gap-1.5 text-muted-foreground hover:text-foreground"
+          asChild
+        >
           <Link href="/news">
             <ArrowLeft className="h-4 w-4" aria-hidden />
             Назад

@@ -20,7 +20,10 @@ export const SubcategoryCard = memo(function SubcategoryCard({
   const { canSeePrice, isAuthLoading } = usePriceVisibility();
   const priceRange = useSubcategoryPricing(category);
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "0px 0px -60px 0px" });
+  const isInView = useInView(ref, {
+    once: true,
+    margin: "0px 0px -60px 0px",
+  });
 
   const programsLabel = useMemo(
     () => formatProgramsCount(category.programsCount),
@@ -31,7 +34,9 @@ export const SubcategoryCard = memo(function SubcategoryCard({
     <motion.div
       ref={ref}
       initial={{ opacity: 0, y: 24 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+      animate={
+        isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }
+      }
       transition={{ duration: 0.4, ease: "easeOut" }}
       className="h-full"
     >

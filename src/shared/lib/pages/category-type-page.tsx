@@ -19,10 +19,7 @@ export function CategoryTypePage({
 }: CategoryTypePageProps) {
   return (
     <PublicPageLayout>
-      <Breadcrumbs
-        items={[{ label: title }]}
-        className="mb-6"
-      />
+      <Breadcrumbs items={[{ label: title }]} className="mb-6" />
       <SubcategoryList
         categoryType={categoryType}
         title={title}

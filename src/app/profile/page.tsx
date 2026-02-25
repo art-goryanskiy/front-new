@@ -94,7 +94,12 @@ const SIDEBAR_ITEMS: Array<{
     description: "Организации",
     icon: Briefcase,
   },
-  { key: "avatar", label: "Аватар", description: "Фото", icon: Camera },
+  {
+    key: "avatar",
+    label: "Аватар",
+    description: "Фото",
+    icon: Camera,
+  },
 ];
 
 function ProfileLoadingSkeleton() {
@@ -107,29 +112,40 @@ function ProfileLoadingSkeleton() {
         <div className="w-full border-b border-border/60 bg-background/60 backdrop-blur-xl lg:h-full lg:w-72 lg:border-r lg:border-b-0">
           <div className="border-b border-border/60 bg-muted/5 p-4">
             <div className="flex items-center gap-3">
-              <Skeleton variant="premium" className="h-10 w-10 rounded-full shrink-0" />
-              <div className="space-y-1.5 flex-1 min-w-0">
+              <Skeleton
+                variant="premium"
+                className="h-10 w-10 shrink-0 rounded-full"
+              />
+              <div className="min-w-0 flex-1 space-y-1.5">
                 <Skeleton variant="premium" className="h-4 w-32" />
                 <Skeleton variant="premium" className="h-3 w-44" />
               </div>
             </div>
           </div>
-          <div className="p-3 space-y-1">
+          <div className="space-y-1 p-3">
             {[1, 2, 3, 4, 5, 6].map((i) => (
-              <Skeleton key={i} variant="premium" className="h-9 w-full rounded-xl" />
+              <Skeleton
+                key={i}
+                variant="premium"
+                className="h-9 w-full rounded-xl"
+              />
             ))}
           </div>
         </div>
         <div className="flex min-w-0 flex-1 flex-col">
-          <div className="border-b border-border/60 px-6 py-5 space-y-2">
+          <div className="space-y-2 border-b border-border/60 px-6 py-5">
             <Skeleton variant="premium" className="h-3 w-24" />
             <Skeleton variant="premium" className="h-7 w-52" />
             <Skeleton variant="premium" className="h-4 w-36" />
           </div>
-          <div className="p-6 lg:p-8 space-y-4">
+          <div className="space-y-4 p-6 lg:p-8">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               {[1, 2, 3, 4].map((i) => (
-                <Skeleton key={i} variant="premium" className="h-12 w-full rounded-xl" />
+                <Skeleton
+                  key={i}
+                  variant="premium"
+                  className="h-12 w-full rounded-xl"
+                />
               ))}
             </div>
           </div>
@@ -360,8 +376,12 @@ const ProfilePageContent = memo(function ProfilePageContent() {
         return (
           <div className="space-y-6">
             <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-muted/10 px-4 py-3">
-              <span className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Email</span>
-              <span className="text-sm font-medium text-foreground">{user.email}</span>
+              <span className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+                Email
+              </span>
+              <span className="text-sm font-medium text-foreground">
+                {user.email}
+              </span>
             </div>
             <ProfileBasicInfoSection
               control={typedControl}
@@ -440,9 +460,16 @@ const ProfilePageContent = memo(function ProfilePageContent() {
           <div className="border-b border-border/60 bg-muted/5 p-4">
             <div className="flex items-center gap-3">
               <Avatar className="h-10 w-10 shrink-0 ring-2 ring-border/40">
-                <AvatarImage src={filePreview || user.profile?.avatar || undefined} alt={user.email} />
+                <AvatarImage
+                  src={
+                    filePreview || user.profile?.avatar || undefined
+                  }
+                  alt={user.email}
+                />
                 <AvatarFallback className="text-sm font-semibold">
-                  {(user.profile?.firstName || user.email).charAt(0).toUpperCase()}
+                  {(user.profile?.firstName || user.email)
+                    .charAt(0)
+                    .toUpperCase()}
                 </AvatarFallback>
               </Avatar>
               <div className="min-w-0 flex-1">
@@ -488,7 +515,15 @@ const ProfilePageContent = memo(function ProfilePageContent() {
                           : "border-transparent text-muted-foreground hover:border-border/60 hover:bg-muted/20 hover:text-foreground"
                       )}
                     >
-                      <Icon className={cn("h-4 w-4 shrink-0", active ? "text-primary" : "text-muted-foreground")} aria-hidden />
+                      <Icon
+                        className={cn(
+                          "h-4 w-4 shrink-0",
+                          active
+                            ? "text-primary"
+                            : "text-muted-foreground"
+                        )}
+                        aria-hidden
+                      />
                       <span className="truncate">{item.label}</span>
                     </button>
                   </li>

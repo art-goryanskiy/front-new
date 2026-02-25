@@ -3,7 +3,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { memo, useCallback, useMemo } from "react";
-import { ArrowRight, BookOpen, Check, ShoppingCart } from "lucide-react";
+import {
+  ArrowRight,
+  BookOpen,
+  Check,
+  ShoppingCart,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePriceVisibility } from "@/shared/store/auth-store";
 import { useAddToCart } from "@/entities/cart/api/use-add-to-cart";
@@ -164,7 +169,10 @@ export const ProgramCard = memo(
               </div>
             ) : (
               <div className="flex h-20 w-full shrink-0 items-center justify-center bg-muted/20">
-                <BookOpen className="h-7 w-7 text-muted-foreground/30" aria-hidden />
+                <BookOpen
+                  className="h-7 w-7 text-muted-foreground/30"
+                  aria-hidden
+                />
               </div>
             )}
 

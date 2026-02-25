@@ -16,8 +16,14 @@ import {
   useRef,
   useState,
 } from "react";
+import {
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 
 type PagingState = {
+  key: string;
   page: number;
   accumulated: ProgramEntity[];
 };
@@ -47,6 +53,28 @@ import { hasValidPricing } from "@/widgets/admin/program-table/utils/program-tab
 type PricingFilter = "all" | "withPrice" | "noPrice";
 type ViewsFilter = "all" | "popular";
 type Sort = "updatedDesc" | "viewsDesc" | "titleAsc";
+
+function parsePricing(value: string | null): PricingFilter {
+  return value === "withPrice" || value === "noPrice" ? value : "all";
+}
+
+function parseViews(value: string | null): ViewsFilter {
+  return value === "popular" ? "popular" : "all";
+}
+
+function parseSort(value: string | null): Sort {
+  return value === "viewsDesc" || value === "titleAsc"
+    ? value
+    : "updatedDesc";
+}
+
+const QUERY_KEYS = {
+  q: "p_q",
+  category: "p_category",
+  pricing: "p_pricing",
+  views: "p_views",
+  sort: "p_sort",
+} as const;
 
 function mapSort(sort: Sort): {
   sortBy: string;
@@ -111,16 +139,39 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
     setHeaderState(categoryId, type);
   }, [categoryId, type, setHeaderState]);
 
+  const requestKey = useMemo(
+    () =>
+      `${type}|${categoryId}|${debouncedQ}|${sort}|${categoryIds.join(",")}`,
+    [type, categoryId, debouncedQ, sort, categoryIds]
+  );
+
   const [paging, setPaging] = useState<PagingState>({
+    key: requestKey,
     page: 1,
     accumulated: [],
   });
+
+  const effectivePaging =
+    paging.key === requestKey
+      ? paging
+      : { ...paging, key: requestKey, page: 1 };
+
+  useEffect(() => {
+    if (paging.key !== requestKey) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setPaging((prev) => ({
+        ...prev,
+        key: requestKey,
+        page: 1,
+      }));
+    }
+  }, [requestKey, paging.key]);
 
   const { sortBy, sortOrder } = useMemo(() => mapSort(sort), [sort]);
 
   const filter = useMemo(() => {
     const search = debouncedQ.trim();
-    const offset = (paging.page - 1) * PAGE_SIZE;
+    const offset = (effectivePaging.page - 1) * PAGE_SIZE;
 
     const base = {
       sortBy,
@@ -146,7 +197,7 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
     debouncedQ,
     sortBy,
     sortOrder,
-    paging.page,
+    effectivePaging.page,
   ]);
 
   const { items, total, loading, error } = useProgramsPage(filter);
@@ -158,21 +209,21 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
 
     if (wasLoading && !loading) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setPaging((prev) => ({
-        ...prev,
-        accumulated:
-          prev.page === 1 ? items : [...prev.accumulated, ...items],
-      }));
+      setPaging((prev) => {
+        if (prev.key !== requestKey) return prev;
+        return {
+          ...prev,
+          accumulated:
+            prev.page === 1 ? items : [...prev.accumulated, ...items],
+        };
+      });
     }
-  }, [loading, items]);
-
-  // Компонент ремонтируется через key={requestKey} при смене фильтров,
-  // поэтому явный сброс paging не нужен — fresh state при каждом remount.
+  }, [loading, items, requestKey]);
 
   const localQuery = useMemo(() => q.trim().toLowerCase(), [q]);
 
   const filteredItems = useMemo(() => {
-    return paging.accumulated.filter((p) => {
+    return effectivePaging.accumulated.filter((p) => {
       if (
         views === "popular" &&
         (p.views || 0) <= POPULAR_VIEWS_THRESHOLD
@@ -190,15 +241,23 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
         `${p.title} ${p.slug} ${p.description || ""}`.toLowerCase();
       return haystack.includes(localQuery);
     });
-  }, [paging.accumulated, views, pricing, localQuery]);
+  }, [effectivePaging.accumulated, views, pricing, localQuery]);
 
-  const canLoadMore = paging.accumulated.length < total;
+  const canLoadMore = effectivePaging.accumulated.length < total;
+  const isRefreshing =
+    loading &&
+    effectivePaging.page === 1 &&
+    effectivePaging.accumulated.length > 0;
 
   const handleLoadMore = useCallback(() => {
     setPaging((prev) => ({ ...prev, page: prev.page + 1 }));
   }, []);
 
-  if (loading && paging.page === 1)
+  if (
+    loading &&
+    effectivePaging.page === 1 &&
+    effectivePaging.accumulated.length === 0
+  )
     return <CategoryProgramsViewSkeleton />;
   if (error) return <ErrorState message={error.message} />;
 
@@ -289,6 +348,15 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
         </div>
 
         <div className="border-t border-border/40 px-4 pb-4 sm:px-5 sm:pb-5">
+          {isRefreshing ? (
+            <div className="mb-3 flex items-center gap-2 text-xs text-muted-foreground">
+              <Loader2
+                className="h-3.5 w-3.5 animate-spin"
+                aria-hidden
+              />
+              Обновляем список…
+            </div>
+          ) : null}
           {filteredItems.length === 0 ? (
             <EmptyState
               title="Программы не найдены"
@@ -348,14 +416,27 @@ export const ProgramsByTypeView = memo(function ProgramsByTypeView({
     loading: categoriesLoading,
     error: categoriesError,
   } = useCategories();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-  const [q, setQ] = useState("");
+  const [q, setQ] = useState(
+    () => searchParams.get(QUERY_KEYS.q) ?? ""
+  );
   const debouncedQ = useDebounce(q, 250);
 
-  const [categoryId, setCategoryId] = useState<string>("all");
-  const [pricing, setPricing] = useState<PricingFilter>("all");
-  const [views, setViews] = useState<ViewsFilter>("all");
-  const [sort, setSort] = useState<Sort>("updatedDesc");
+  const [categoryId, setCategoryId] = useState<string>(
+    () => searchParams.get(QUERY_KEYS.category) ?? "all"
+  );
+  const [pricing, setPricing] = useState<PricingFilter>(() =>
+    parsePricing(searchParams.get(QUERY_KEYS.pricing))
+  );
+  const [views, setViews] = useState<ViewsFilter>(() =>
+    parseViews(searchParams.get(QUERY_KEYS.views))
+  );
+  const [sort, setSort] = useState<Sort>(() =>
+    parseSort(searchParams.get(QUERY_KEYS.sort))
+  );
 
   const categoriesOfType = useMemo(() => {
     return categories.filter(
@@ -368,11 +449,55 @@ export const ProgramsByTypeView = memo(function ProgramsByTypeView({
     [categoriesOfType]
   );
 
-  const requestKey = useMemo(
-    () =>
-      `${type}|${categoryId}|${debouncedQ}|${sort}|${categoryIds.join(",")}`,
-    [type, categoryId, debouncedQ, sort, categoryIds]
-  );
+  const effectiveCategoryId = useMemo(() => {
+    if (
+      categoryId !== "all" &&
+      categoryIds.length > 0 &&
+      !categoryIds.includes(categoryId)
+    ) {
+      return "all";
+    }
+    return categoryId;
+  }, [categoryId, categoryIds]);
+
+  useEffect(() => {
+    const next = new URLSearchParams(searchParams.toString());
+    const normalizedSearch = q.trim();
+
+    if (normalizedSearch) next.set(QUERY_KEYS.q, normalizedSearch);
+    else next.delete(QUERY_KEYS.q);
+
+    if (effectiveCategoryId !== "all")
+      next.set(QUERY_KEYS.category, effectiveCategoryId);
+    else next.delete(QUERY_KEYS.category);
+
+    if (pricing !== "all") next.set(QUERY_KEYS.pricing, pricing);
+    else next.delete(QUERY_KEYS.pricing);
+
+    if (views !== "all") next.set(QUERY_KEYS.views, views);
+    else next.delete(QUERY_KEYS.views);
+
+    if (sort !== "updatedDesc") next.set(QUERY_KEYS.sort, sort);
+    else next.delete(QUERY_KEYS.sort);
+
+    const current = searchParams.toString();
+    const updated = next.toString();
+
+    if (updated !== current) {
+      router.replace(updated ? `${pathname}?${updated}` : pathname, {
+        scroll: false,
+      });
+    }
+  }, [
+    q,
+    effectiveCategoryId,
+    pricing,
+    views,
+    sort,
+    pathname,
+    router,
+    searchParams,
+  ]);
 
   if (categoriesLoading) return <CategoryProgramsViewSkeleton />;
   if (categoriesError)
@@ -389,7 +514,6 @@ export const ProgramsByTypeView = memo(function ProgramsByTypeView({
 
   return (
     <ProgramsByTypeResults
-      key={requestKey}
       type={type}
       title={title}
       categoriesOfType={categoriesOfType}
@@ -398,7 +522,7 @@ export const ProgramsByTypeView = memo(function ProgramsByTypeView({
       q={q}
       setQ={setQ}
       debouncedQ={debouncedQ}
-      categoryId={categoryId}
+      categoryId={effectiveCategoryId}
       setCategoryId={setCategoryId}
       pricing={pricing}
       setPricing={setPricing}

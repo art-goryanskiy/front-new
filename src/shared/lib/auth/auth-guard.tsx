@@ -18,7 +18,9 @@ export const AuthGuard = memo(function AuthGuard({
   const { isAuthenticated, isAdmin, isLoading } = useAuthStatus();
   const user = useAuthUser();
   const router = useRouter();
-  const redirectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const redirectTimeoutRef = useRef<ReturnType<
+    typeof setTimeout
+  > | null>(null);
 
   const { loading } = useMe({ skip: !!user });
 
@@ -29,7 +31,12 @@ export const AuthGuard = memo(function AuthGuard({
 
   useEffect(() => {
     if (process.env.NODE_ENV === "development") {
-      console.log("[AuthGuard]", { isChecking, isAuthenticated, isAdmin, user: !!user });
+      console.log("[AuthGuard]", {
+        isChecking,
+        isAuthenticated,
+        isAdmin,
+        user: !!user,
+      });
     }
     if (redirectTimeoutRef.current) {
       clearTimeout(redirectTimeoutRef.current);
@@ -38,7 +45,9 @@ export const AuthGuard = memo(function AuthGuard({
 
     if (!isChecking && !isAuthenticated) {
       if (process.env.NODE_ENV === "development") {
-        console.warn("[AuthGuard] → redirect to login (not authenticated)");
+        console.warn(
+          "[AuthGuard] → redirect to login (not authenticated)"
+        );
       }
       redirectTimeoutRef.current = setTimeout(() => {
         router.replace(AUTH_GUARD_ROUTES.login);

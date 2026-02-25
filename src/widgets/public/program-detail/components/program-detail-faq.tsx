@@ -56,7 +56,7 @@ const FaqItem = memo(function FaqItem({
         type="button"
         onClick={onToggle}
         aria-expanded={isOpen}
-        className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
+        className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-inset"
       >
         <span className="text-sm font-semibold text-foreground sm:text-base">
           {question}
@@ -77,10 +77,13 @@ const FaqItem = memo(function FaqItem({
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] }}
+            transition={{
+              duration: 0.25,
+              ease: [0.25, 0.46, 0.45, 0.94],
+            }}
           >
-            <div className="px-5 pb-5 pt-0">
-              <div className="h-px w-full bg-border/40 mb-4" />
+            <div className="px-5 pt-0 pb-5">
+              <div className="mb-4 h-px w-full bg-border/40" />
               <p className="text-sm leading-relaxed text-muted-foreground">
                 {answer}
               </p>

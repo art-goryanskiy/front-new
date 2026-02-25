@@ -58,7 +58,8 @@ function FloatingInput({
   const sharedInputProps = {
     id,
     value,
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value),
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
+      onChange(e.target.value),
     onFocus: () => setFocused(true),
     onBlur: () => setFocused(false),
     disabled,
@@ -95,7 +96,7 @@ function FloatingInput({
           <label
             htmlFor={id}
             className={cn(
-              "pointer-events-none absolute left-0 origin-top-left select-none transition-all duration-200",
+              "pointer-events-none absolute left-0 origin-top-left transition-all duration-200 select-none",
               active
                 ? cn(
                     "top-2 text-[10px] font-semibold tracking-wide",
@@ -103,7 +104,9 @@ function FloatingInput({
                   )
                 : cn(
                     "top-1/2 -translate-y-1/2 text-sm",
-                    error ? "text-destructive" : "text-muted-foreground"
+                    error
+                      ? "text-destructive"
+                      : "text-muted-foreground"
                   )
             )}
           >
@@ -148,17 +151,27 @@ function FloatingInput({
 export function ContactsForm() {
   const uid = useId();
   const ref = useRef<HTMLElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "0px 0px -80px 0px" });
+  const isInView = useInView(ref, {
+    once: true,
+    margin: "0px 0px -80px 0px",
+  });
 
-  const [form, setForm] = useState<FormState>({ name: "", phone: "", program: "" });
+  const [form, setForm] = useState<FormState>({
+    name: "",
+    phone: "",
+    program: "",
+  });
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const [touched, setTouched] = useState(false);
 
-  const nameError = touched && !form.name.trim() ? "Введите имя" : undefined;
+  const nameError =
+    touched && !form.name.trim() ? "Введите имя" : undefined;
   const phoneDigits = stripPhone(form.phone);
   const phoneError =
-    touched && phoneDigits.length < 10 ? "Введите полный номер телефона" : undefined;
+    touched && phoneDigits.length < 10
+      ? "Введите полный номер телефона"
+      : undefined;
 
   const set = (field: keyof FormState) => (v: string) =>
     setForm((prev) => ({ ...prev, [field]: v }));
@@ -180,7 +193,9 @@ export function ContactsForm() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error((data as { error?: string }).error ?? "Server error");
+        throw new Error(
+          (data as { error?: string }).error ?? "Server error"
+        );
       }
 
       setStatus("success");
@@ -203,14 +218,20 @@ export function ContactsForm() {
       className="relative scroll-mt-24"
       aria-labelledby="form-heading"
       initial={{ opacity: 0, y: 40 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+      animate={
+        isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }
+      }
       transition={{ duration: 0.55, ease: "easeOut" }}
     >
       <BlurGlowBackground
         spots={[
           { position: "top-right", color: "bg-primary/15" },
           { position: "bottom-left", color: "bg-blue-500/10" },
-          { position: "top-left", color: "bg-violet-500/8", size: "small" },
+          {
+            position: "top-left",
+            color: "bg-violet-500/8",
+            size: "small",
+          },
         ]}
       />
 
@@ -240,7 +261,8 @@ export function ContactsForm() {
               Оставить заявку
             </h2>
             <p className="mt-2 text-sm text-muted-foreground sm:text-base">
-              Перезвоним в течение рабочего дня и ответим на все вопросы
+              Перезвоним в течение рабочего дня и ответим на все
+              вопросы
             </p>
             <div className="mx-auto mt-5 h-px w-20 rounded-full bg-primary/30" />
           </div>
@@ -260,7 +282,9 @@ export function ContactsForm() {
                   <CheckCircle2 className="h-10 w-10" />
                 </span>
                 <div>
-                  <p className="text-xl font-bold text-foreground">Заявка отправлена!</p>
+                  <p className="text-xl font-bold text-foreground">
+                    Заявка отправлена!
+                  </p>
                   <p className="mt-1 text-sm text-muted-foreground">
                     Мы свяжемся с вами в ближайшее рабочее время.
                   </p>
@@ -333,7 +357,10 @@ export function ContactsForm() {
                 <div className="flex items-center justify-between gap-4 pt-2">
                   <p className="text-xs text-muted-foreground">
                     Нажимая «Отправить», вы соглашаетесь с{" "}
-                    <a href="/privacy" className="text-primary underline-offset-2 hover:underline">
+                    <a
+                      href="/privacy"
+                      className="text-primary underline-offset-2 hover:underline"
+                    >
                       политикой конфиденциальности
                     </a>
                   </p>

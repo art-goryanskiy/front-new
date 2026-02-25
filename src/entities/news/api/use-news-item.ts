@@ -27,15 +27,22 @@ export function useNewsItem(id: string | null) {
 
   const skip = !id || !!cachedItem;
 
-  const { data, loading, error, refetch } = useQuery<GetNewsQuery>(GET_NEWS, {
-    variables: { filter: { limit: 100, offset: 0 } },
-    fetchPolicy: "cache-first",
-    skip,
-  });
+  const { data, loading, error, refetch } = useQuery<GetNewsQuery>(
+    GET_NEWS,
+    {
+      variables: { filter: { limit: 100, offset: 0 } },
+      fetchPolicy: "cache-first",
+      skip,
+    }
+  );
 
   const newsItem: NewsEntity | undefined =
     cachedItem ??
-    (id ? (data?.news?.find((n) => n.id === id) as NewsEntity | undefined) : undefined);
+    (id
+      ? (data?.news?.find((n) => n.id === id) as
+          | NewsEntity
+          | undefined)
+      : undefined);
 
   return {
     newsItem,

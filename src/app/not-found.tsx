@@ -34,21 +34,24 @@ export default function NotFound() {
         {/* Ambient glow */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <div className="absolute top-1/3 left-1/2 h-[480px] w-[640px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/6 blur-3xl" />
-          <div className="absolute bottom-1/4 right-1/4 h-[280px] w-[360px] rounded-full bg-primary/4 blur-3xl" />
+          <div className="absolute right-1/4 bottom-1/4 h-[280px] w-[360px] rounded-full bg-primary/4 blur-3xl" />
         </div>
 
         <div className="relative z-10 w-full max-w-xl space-y-6 text-center">
           {/* 404 numeral */}
           <div className="relative flex items-center justify-center">
             <span
-              className="pointer-events-none select-none text-[11rem] font-black leading-none tracking-tighter text-foreground/4 sm:text-[14rem]"
+              className="pointer-events-none text-[11rem] leading-none font-black tracking-tighter text-foreground/4 select-none sm:text-[14rem]"
               aria-hidden
             >
               404
             </span>
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
               <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-border/60 bg-card/60 shadow-lg backdrop-blur">
-                <Search className="h-8 w-8 text-primary" aria-hidden />
+                <Search
+                  className="h-8 w-8 text-primary"
+                  aria-hidden
+                />
               </div>
               <span className="rounded-full border border-primary/30 bg-primary/10 px-4 py-1 text-sm font-semibold text-primary">
                 Страница не найдена
@@ -62,11 +65,16 @@ export default function NotFound() {
             </h1>
             <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground">
               Возможно, ссылка устарела или страница была перемещена.
-              Воспользуйтесь поиском или перейдите к каталогу программ.
+              Воспользуйтесь поиском или перейдите к каталогу
+              программ.
             </p>
 
             <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
-              <Button asChild size="lg" className="rounded-xl font-semibold">
+              <Button
+                asChild
+                size="lg"
+                className="rounded-xl font-semibold"
+              >
                 <Link href="/">
                   <Home className="mr-2 h-4 w-4" />
                   На главную
@@ -79,8 +87,7 @@ export default function NotFound() {
                 className="rounded-xl"
               >
                 <Link href="/qualification-upgrade">
-                  <BookOpen className="mr-2 h-4 w-4" />
-                  К программам
+                  <BookOpen className="mr-2 h-4 w-4" />К программам
                 </Link>
               </Button>
             </div>

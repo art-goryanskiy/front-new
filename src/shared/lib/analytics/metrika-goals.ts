@@ -3,11 +3,10 @@ type YmFn = (id: number, action: string, ...args: unknown[]) => void;
 const METRIKA_ID = 106976069;
 
 function ym(...args: Parameters<YmFn>): void {
-  const ymFn = (
+  const ymFn =
     typeof window !== "undefined"
       ? (window as Window & { ym?: YmFn }).ym
-      : undefined
-  );
+      : undefined;
   if (typeof ymFn === "function") {
     ymFn(...args);
   }
@@ -25,11 +24,13 @@ export const metrikaGoals = {
 
   /** Пользователь успешно оформил заявку */
   orderCreated: (orderId: string, customerType: string) =>
-    ym(METRIKA_ID, "reachGoal", "order_created", { orderId, customerType }),
+    ym(METRIKA_ID, "reachGoal", "order_created", {
+      orderId,
+      customerType,
+    }),
 
   /** Пользователь открыл чат поддержки */
-  chatOpened: () =>
-    ym(METRIKA_ID, "reachGoal", "chat_opened"),
+  chatOpened: () => ym(METRIKA_ID, "reachGoal", "chat_opened"),
 
   /** Пользователь отправил первое сообщение в чат */
   chatMessageSent: () =>

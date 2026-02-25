@@ -32,6 +32,11 @@ interface MeMinimalResponse {
 export async function getViewerServer(
   cookie?: string
 ): Promise<ViewerUser | null> {
+  // Для гостей без cookie избегаем лишнего network roundtrip на каждом SSR.
+  if (!cookie || cookie.trim().length === 0) {
+    return null;
+  }
+
   try {
     const headers = getServerHeaders(cookie);
     const data = await serverGraphQLRequest<MeMinimalResponse>(
@@ -41,7 +46,10 @@ export async function getViewerServer(
       { skipCache: true }
     );
     if (process.env.NODE_ENV === "development") {
-      console.log("[getViewerServer] result:", data.me ? `user ${data.me.id} role=${data.me.role}` : "null");
+      console.log(
+        "[getViewerServer] result:",
+        data.me ? `user ${data.me.id} role=${data.me.role}` : "null"
+      );
     }
     return data.me ?? null;
   } catch (e) {

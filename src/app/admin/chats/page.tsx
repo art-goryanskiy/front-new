@@ -146,17 +146,18 @@ function AdminChatsListSkeleton() {
 
 export default function AdminChatsPage() {
   const [q, setQ] = useState("");
-  const [statusFilter, setStatusFilter] = useState<ChatStatus | "all">(
-    ChatStatus.Open
-  );
-  const [assignedToMe, setAssignedToMe] = useState<boolean | undefined>(
-    undefined
-  );
+  const [statusFilter, setStatusFilter] = useState<
+    ChatStatus | "all"
+  >(ChatStatus.Open);
+  const [assignedToMe, setAssignedToMe] = useState<
+    boolean | undefined
+  >(undefined);
 
   const filter = useMemo(
     () => ({
       status: statusFilter === "all" ? undefined : statusFilter,
-      assignedToMe: assignedToMe === undefined ? undefined : assignedToMe,
+      assignedToMe:
+        assignedToMe === undefined ? undefined : assignedToMe,
       limit: ADMIN_CHATS_LIMIT,
       offset: 0,
     }),
@@ -184,7 +185,11 @@ export default function AdminChatsPage() {
         .toLowerCase();
       const email = (user?.email ?? "").toLowerCase();
       const preview = (chat.lastMessagePreview ?? "").toLowerCase();
-      return name.includes(lq) || email.includes(lq) || preview.includes(lq);
+      return (
+        name.includes(lq) ||
+        email.includes(lq) ||
+        preview.includes(lq)
+      );
     });
   }, [chats, q, usersMap]);
 
@@ -235,7 +240,9 @@ export default function AdminChatsPage() {
                       : "other"
                 }
                 onValueChange={(v) =>
-                  setAssignedToMe(v === "all" ? undefined : v === "me")
+                  setAssignedToMe(
+                    v === "all" ? undefined : v === "me"
+                  )
                 }
               >
                 <SelectTrigger className="h-9 w-[200px] bg-background/60">
@@ -243,7 +250,9 @@ export default function AdminChatsPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Все чаты</SelectItem>
-                  <SelectItem value="me">Назначены на меня</SelectItem>
+                  <SelectItem value="me">
+                    Назначены на меня
+                  </SelectItem>
                   <SelectItem value="other">
                     Не назначены / другие
                   </SelectItem>

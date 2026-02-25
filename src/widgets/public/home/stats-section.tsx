@@ -2,12 +2,7 @@
 
 import { memo, useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
-import {
-  GraduationCap,
-  BookOpen,
-  Users,
-  Award,
-} from "lucide-react";
+import { GraduationCap, BookOpen, Users, Award } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface StatItem {
@@ -25,7 +20,11 @@ interface StatsSectionProps {
   categoriesCount: number;
 }
 
-function useCountUp(target: number, duration: number, start: boolean) {
+function useCountUp(
+  target: number,
+  duration: number,
+  start: boolean
+) {
   const [current, setCurrent] = useState(0);
 
   useEffect(() => {
@@ -42,7 +41,9 @@ function useCountUp(target: number, duration: number, start: boolean) {
       // easeOutExpo
       const eased =
         progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
-      setCurrent(Math.floor(startValue + (target - startValue) * eased));
+      setCurrent(
+        Math.floor(startValue + (target - startValue) * eased)
+      );
       if (progress < 1) requestAnimationFrame(step);
     };
 
@@ -101,7 +102,9 @@ const StatCard = memo(function StatCard({
           {item.label}
         </p>
         {item.sublabel && (
-          <p className="text-xs text-muted-foreground">{item.sublabel}</p>
+          <p className="text-xs text-muted-foreground">
+            {item.sublabel}
+          </p>
         )}
       </div>
     </motion.div>
@@ -193,8 +196,8 @@ export const StatsSection = memo(function StatsSection({
             Нам доверяют профессионалы
           </h2>
           <p className="mx-auto max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-            Работаем в сфере дополнительного профессионального образования
-            в Республике Крым
+            Работаем в сфере дополнительного профессионального
+            образования в Республике Крым
           </p>
         </motion.div>
 

@@ -67,9 +67,7 @@ export function formatAdminDate(
  * Безопасно к UTC-смещению (не показывает 03:00).
  * Пример: «15 января 2025 г.»
  */
-export function formatOrderDate(
-  date: string | unknown
-): string {
+export function formatOrderDate(date: string | unknown): string {
   if (!date) return "—";
   try {
     return new Date(String(date)).toLocaleDateString("ru-RU", {
