@@ -516,6 +516,7 @@ export const CategoryProgramsView = memo(
           onOpenChange={setBulkDialogOpen}
           selectedIds={selectedIds}
           onApplied={() => setSelectedIds([])}
+          categoryType={categoryType}
         />
       </DashboardSection>
     );

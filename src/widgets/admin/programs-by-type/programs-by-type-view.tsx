@@ -536,6 +536,7 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
         onOpenChange={setBulkDialogOpen}
         selectedIds={selectedIds}
         onApplied={() => setSelectedIds([])}
+        categoryType={type}
       />
     </DashboardSection>
   );

@@ -24,6 +24,7 @@ import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { useCategories } from "@/entities/category/api/use-categories";
 import { useUpdateProgramsBulk } from "@/entities/program/api/use-update-programs-bulk";
+import type { CategoryType } from "@/shared/api/generated/graphql";
 import type {
   BulkFailureCode,
   BulkPatchMode,
@@ -54,11 +55,13 @@ export function BulkUpdateProgramsDialog({
   onOpenChange,
   selectedIds,
   onApplied,
+  categoryType,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   selectedIds: string[];
   onApplied?: () => void;
+  categoryType?: CategoryType | null;
 }) {
   const { showToast } = useToastState();
   const { updateProgramsBulk, loading } = useUpdateProgramsBulk();
@@ -85,6 +88,13 @@ export function BulkUpdateProgramsDialog({
   const selectedUniqueIds = useMemo(
     () => Array.from(new Set(selectedIds)),
     [selectedIds]
+  );
+  const scopedCategories = useMemo(
+    () =>
+      categoryType
+        ? categories.filter((item) => item.type === categoryType)
+        : categories,
+    [categories, categoryType]
   );
   const selectedIdsKey = useMemo(
     () => [...selectedUniqueIds].sort().join("|"),
@@ -219,6 +229,15 @@ export function BulkUpdateProgramsDialog({
     }
 
     const patch = parsePatch();
+    if (
+      patch.mode === "REPLACE" &&
+      patch.category &&
+      !scopedCategories.some((item) => item.id === patch.category)
+    ) {
+      throw new Error(
+        "Выбранная подкатегория не относится к текущей основной категории"
+      );
+    }
     if (patch.mode === "CLEAR" && !dryRun && !confirmClear) {
       throw new Error("Подтвердите CLEAR режим перед применением");
     }
@@ -429,7 +448,7 @@ export function BulkUpdateProgramsDialog({
                       <SelectItem value="__none__">
                         Не изменять подкатегорию
                       </SelectItem>
-                      {categories.map((item) => (
+                      {scopedCategories.map((item) => (
                         <SelectItem key={item.id} value={item.id}>
                           {item.name}
                         </SelectItem>
@@ -437,8 +456,9 @@ export function BulkUpdateProgramsDialog({
                     </SelectContent>
                   </Select>
                   <p className="text-xs text-muted-foreground">
-                    Выберите подкатегорию из доступных категорий, к
-                    которым могут быть привязаны программы.
+                    {scopedCategories.length === 0
+                      ? "Для текущей основной категории пока нет доступных подкатегорий."
+                      : "Выберите подкатегорию только из текущей основной категории."}
                   </p>
                 </div>
 
