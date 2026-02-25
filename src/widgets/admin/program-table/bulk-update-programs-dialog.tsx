@@ -20,7 +20,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
 import { useCategories } from "@/entities/category/api/use-categories";
 import { useUpdateProgramsBulk } from "@/entities/program/api/use-update-programs-bulk";
 import { useDeleteProgram } from "@/entities/program/api/use-delete-program";
@@ -57,7 +56,6 @@ export function BulkUpdateProgramsDialog({
 
   const [action, setAction] = useState<BulkAction>("category");
   const [category, setCategory] = useState("");
-  const [baseHours, setBaseHours] = useState("");
   const [pricingRows, setPricingRows] = useState<PricingRow[]>([]);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -77,7 +75,6 @@ export function BulkUpdateProgramsDialog({
   const resetDraft = () => {
     setAction("category");
     setCategory("");
-    setBaseHours("");
     setPricingRows([]);
     setConfirmDelete(false);
     setSubmitting(false);
@@ -109,22 +106,11 @@ export function BulkUpdateProgramsDialog({
     ) {
       throw new Error("Часы и цена должны быть корректными числами.");
     }
-    const parsedBaseHours =
-      baseHours.trim().length > 0 ? Number(baseHours) : undefined;
-    if (
-      parsedBaseHours !== undefined &&
-      (!Number.isFinite(parsedBaseHours) || parsedBaseHours < 0)
-    ) {
-      throw new Error("Базовые часы должны быть корректным числом.");
-    }
-    if (pricing.length === 0 && parsedBaseHours === undefined) {
-      throw new Error("Добавьте хотя бы одну строку часы-цена или базовые часы.");
+    if (pricing.length === 0) {
+      throw new Error("Добавьте хотя бы одну строку часы-цена.");
     }
     return {
       mode: "REPLACE" as const,
-      ...(parsedBaseHours !== undefined
-        ? { baseHours: parsedBaseHours }
-        : {}),
       ...(pricing.length > 0 ? { pricing } : {}),
     };
   };
@@ -321,19 +307,6 @@ export function BulkUpdateProgramsDialog({
 
             {action === "pricing" && (
               <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="bulk-base-hours">
-                    Базовые часы (опционально)
-                  </Label>
-                  <Input
-                    id="bulk-base-hours"
-                    type="number"
-                    placeholder="Например: 72"
-                    value={baseHours}
-                    onChange={(e) => setBaseHours(e.target.value)}
-                  />
-                </div>
-
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label>Часы - цена</Label>

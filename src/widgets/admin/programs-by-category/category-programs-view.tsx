@@ -398,14 +398,6 @@ export const CategoryProgramsView = memo(
                   <Button size="sm" className="font-semibold" onClick={handleCreate}>
                     + Программа
                   </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => setBulkDialogOpen(true)}
-                    disabled={selectedVisibleCount === 0}
-                  >
-                    Массово ({selectedVisibleCount})
-                  </Button>
                 </div>
               }
             />
@@ -495,7 +487,7 @@ export const CategoryProgramsView = memo(
                 {canLoadMore && (
                   <div
                     ref={loadMoreRef}
-                    className="mt-6 flex min-h-10 items-center justify-center"
+                    className="mt-6 flex min-h-10 flex-col items-center justify-center gap-2"
                   >
                     {loading ? (
                       <span className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -505,6 +497,16 @@ export const CategoryProgramsView = memo(
                         />
                         Подгружаем программы…
                       </span>
+                    ) : null}
+                    {!loading ? (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={handleLoadMore}
+                      >
+                        Показать еще
+                      </Button>
                     ) : null}
                   </div>
                 )}

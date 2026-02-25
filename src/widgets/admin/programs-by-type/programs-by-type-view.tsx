@@ -402,13 +402,6 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
                     </SelectItem>
                   </SelectContent>
                 </Select>
-                <Button
-                  variant="outline"
-                  onClick={() => setBulkDialogOpen(true)}
-                  disabled={selectedVisibleCount === 0}
-                >
-                  Массово ({selectedVisibleCount})
-                </Button>
               </div>
             }
           />
@@ -498,7 +491,7 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
               {canLoadMore && (
                 <div
                   ref={loadMoreRef}
-                  className="mt-6 flex min-h-10 items-center justify-center"
+                  className="mt-6 flex min-h-10 flex-col items-center justify-center gap-2"
                 >
                   {loading ? (
                     <span className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -508,6 +501,16 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
                       />
                       Подгружаем программы…
                     </span>
+                  ) : null}
+                  {!loading ? (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={handleLoadMore}
+                    >
+                      Показать еще
+                    </Button>
                   ) : null}
                 </div>
               )}
