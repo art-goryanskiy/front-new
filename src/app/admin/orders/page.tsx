@@ -5,7 +5,9 @@ import Link from "next/link";
 import { useAdminOrders } from "@/entities/order/api/use-admin-orders";
 import { ADMIN_ORDERS_LIMIT } from "@/shared/constants/admin";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
+import { EmptyState } from "@/shared/ui/empty-state/empty-state";
 import { Surface } from "@/shared/ui/surface/surface";
+import { DataToolbar } from "@/shared/ui/data-toolbar/data-toolbar";
 import {
   formatAdminDate,
   formatDateRange,
@@ -170,23 +172,33 @@ function AdminOrdersListSkeleton() {
 }
 
 const AdminOrdersPage = memo(function AdminOrdersPage() {
-  const [statusFilter, setStatusFilter] = useState<
-    OrderStatus | "all"
-  >("all");
+  const [q, setQ] = useState("");
+  const [statusFilter, setStatusFilter] = useState<OrderStatus | "all">("all");
 
   const filter = useMemo(
     () =>
       statusFilter === "all"
-        ? undefined
-        : {
-            status: statusFilter,
-            limit: ADMIN_ORDERS_LIMIT,
-            offset: 0,
-          },
+        ? { limit: ADMIN_ORDERS_LIMIT, offset: 0 }
+        : { status: statusFilter, limit: ADMIN_ORDERS_LIMIT, offset: 0 },
     [statusFilter]
   );
 
   const { orders, loading, error } = useAdminOrders(filter);
+
+  // Клиентский поиск по номеру заявки, имени заказчика и программам
+  const filteredOrders = useMemo(() => {
+    if (!q.trim()) return orders;
+    const lq = q.toLowerCase();
+    return orders.filter((order) => {
+      const num = ((order as { number?: string | null }).number ?? order.id).toLowerCase();
+      const customer = (order.customerDisplayName ?? "").toLowerCase();
+      const programs = (order.lines ?? [])
+        .map((l) => `${l.programTitle ?? ""} ${l.subProgramTitle ?? ""}`)
+        .join(" ")
+        .toLowerCase();
+      return num.includes(lq) || customer.includes(lq) || programs.includes(lq);
+    });
+  }, [orders, q]);
 
   return (
     <div className="space-y-4 sm:space-y-6 lg:space-y-8">
@@ -199,25 +211,34 @@ const AdminOrdersPage = memo(function AdminOrdersPage() {
       <DashboardSection
         title="Список заявок"
         actions={
-          <Select
-            value={statusFilter}
-            onValueChange={(v) =>
-              setStatusFilter(v as OrderStatus | "all")
-            }
-          >
-            <SelectTrigger className="h-9 w-[180px] rounded-xl bg-background/60">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {STATUS_OPTIONS.map((opt) => (
-                <SelectItem key={opt.value} value={opt.value}>
-                  {opt.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <span className="hidden rounded-full border border-border/60 bg-muted/20 px-2.5 py-1 text-xs text-muted-foreground sm:inline-flex">
+            {filteredOrders.length} / {orders.length}
+          </span>
         }
       >
+        <DataToolbar
+          searchValue={q}
+          onSearchValueChange={setQ}
+          searchPlaceholder="Поиск по номеру, заказчику или программе…"
+          rightSlot={
+            <Select
+              value={statusFilter}
+              onValueChange={(v) => setStatusFilter(v as OrderStatus | "all")}
+            >
+              <SelectTrigger className="h-9 w-[180px] rounded-xl bg-background/60">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {STATUS_OPTIONS.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          }
+        />
+
         {error && (
           <ErrorState
             message={error.message}
@@ -227,17 +248,20 @@ const AdminOrdersPage = memo(function AdminOrdersPage() {
         {!error && loading && orders.length === 0 && (
           <AdminOrdersListSkeleton />
         )}
-        {!error && !loading && orders.length === 0 && (
-          <Surface
-            variant="floating"
-            className="rounded-2xl border border-border/50 p-8 text-center text-muted-foreground"
-          >
-            Заявок не найдено
-          </Surface>
+        {!error && !loading && filteredOrders.length === 0 && (
+          <EmptyState
+            title={q ? "Ничего не найдено" : "Заявок пока нет"}
+            description={
+              q
+                ? "Попробуйте изменить запрос или сбросить фильтры."
+                : "Заявки на обучение появятся здесь после создания."
+            }
+            icon={<Package className="h-8 w-8 text-muted-foreground" />}
+          />
         )}
-        {!error && orders.length > 0 && (
+        {!error && filteredOrders.length > 0 && (
           <div className="space-y-3">
-            {orders.map((order) => (
+            {filteredOrders.map((order) => (
               <OrderRow key={order.id} order={order} />
             ))}
           </div>

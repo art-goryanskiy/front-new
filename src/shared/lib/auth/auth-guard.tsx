@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useEffect, useMemo } from "react";
+import { memo, useEffect, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   useAuthStatus,
@@ -18,8 +18,9 @@ export const AuthGuard = memo(function AuthGuard({
   const { isAuthenticated, isAdmin, isLoading } = useAuthStatus();
   const user = useAuthUser();
   const router = useRouter();
+  const redirectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const { loading } = useMe({ skip: !!user || isLoading });
+  const { loading } = useMe({ skip: !!user });
 
   const isChecking = useMemo(
     () => isLoading || loading,
@@ -27,21 +28,40 @@ export const AuthGuard = memo(function AuthGuard({
   );
 
   useEffect(() => {
-    if (!isChecking) {
-      if (!isAuthenticated) {
-        router.push(AUTH_GUARD_ROUTES.login);
-      } else if (!isAdmin) {
-        router.push(AUTH_GUARD_ROUTES.home);
-      }
+    if (process.env.NODE_ENV === "development") {
+      console.log("[AuthGuard]", { isChecking, isAuthenticated, isAdmin, user: !!user });
     }
-  }, [isAuthenticated, isAdmin, isChecking, router]);
+    if (redirectTimeoutRef.current) {
+      clearTimeout(redirectTimeoutRef.current);
+      redirectTimeoutRef.current = null;
+    }
 
-  if (isChecking) {
+    if (!isChecking && !isAuthenticated) {
+      if (process.env.NODE_ENV === "development") {
+        console.warn("[AuthGuard] → redirect to login (not authenticated)");
+      }
+      redirectTimeoutRef.current = setTimeout(() => {
+        router.replace(AUTH_GUARD_ROUTES.login);
+      }, 300);
+    } else if (!isChecking && !isAdmin) {
+      if (process.env.NODE_ENV === "development") {
+        console.warn("[AuthGuard] → redirect to home (not admin)");
+      }
+      redirectTimeoutRef.current = setTimeout(() => {
+        router.replace(AUTH_GUARD_ROUTES.home);
+      }, 300);
+    }
+
+    return () => {
+      if (redirectTimeoutRef.current) {
+        clearTimeout(redirectTimeoutRef.current);
+        redirectTimeoutRef.current = null;
+      }
+    };
+  }, [isAuthenticated, isAdmin, isChecking, router, user]);
+
+  if (isChecking || !isAuthenticated || !isAdmin) {
     return <AuthGuardLoading />;
-  }
-
-  if (!isAuthenticated || !isAdmin) {
-    return null;
   }
 
   return <>{children}</>;
