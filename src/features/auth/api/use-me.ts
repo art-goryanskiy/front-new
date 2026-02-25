@@ -21,7 +21,7 @@ export function useMe(options?: { skip?: boolean }) {
     fetchPolicy: "network-only",
     nextFetchPolicy: "cache-first",
     skip,
-    notifyOnNetworkStatusChange: false,
+    notifyOnNetworkStatusChange: true,
   });
 
   const meUser = useMemo(() => data?.me || null, [data?.me]);
