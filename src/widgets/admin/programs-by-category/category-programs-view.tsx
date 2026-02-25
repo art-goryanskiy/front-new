@@ -212,7 +212,6 @@ export const CategoryProgramsView = memo(
       // Keep accumulated rows in sync even when Apollo serves cache without loading transition.
       setPaging((prev) => {
         if (prev.key !== requestKey) return prev;
-
         if (effectivePaging.page === 1) {
           const prevIds = prev.accumulated.map((p) => p.id).join("|");
           const nextIds = items.map((p) => p.id).join("|");
@@ -250,6 +249,16 @@ export const CategoryProgramsView = memo(
     }, [effectivePaging.accumulated, pricing, views]);
 
     const canLoadMore = effectivePaging.accumulated.length < total;
+    const hasClientFilters =
+      views !== "all" || pricing !== "all";
+    const hiddenByClientFilters = Math.max(
+      0,
+      effectivePaging.accumulated.length - filteredItems.length
+    );
+    const displayTotal =
+      hasClientFilters && !canLoadMore
+        ? filteredItems.length
+        : total;
     const isInitialLoading =
       loading &&
       effectivePaging.page === 1 &&
@@ -386,7 +395,13 @@ export const CategoryProgramsView = memo(
               <ProgramList
                 programs={filteredItems}
                 categoryType={categoryType}
-                caption={`Показано ${filteredItems.length} из ${total}`}
+                caption={`Показано ${filteredItems.length} из ${displayTotal}${
+                  hasClientFilters &&
+                  !canLoadMore &&
+                  hiddenByClientFilters > 0
+                    ? ` • скрыто фильтрами: ${hiddenByClientFilters}`
+                    : ""
+                }`}
               />
 
               {canLoadMore && (

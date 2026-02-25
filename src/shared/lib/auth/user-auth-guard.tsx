@@ -76,8 +76,9 @@ export function UserAuthGuard({
     }
   }, [isAuthenticated, isChecking, router, pathname, redirectTo]);
 
-  // Показываем загрузку во время проверки или если не аутентифицирован (редирект в процессе)
-  if (isChecking || !isAuthenticated) {
+  // Для уже аутентифицированного пользователя не скрываем контент
+  // во время фоновой проверки, чтобы избежать визуального "полного" перерендера.
+  if (!isAuthenticated) {
     return <AuthGuardLoading />;
   }
 

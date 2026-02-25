@@ -255,6 +255,16 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
   }, [effectivePaging.accumulated, views, pricing, localQuery]);
 
   const canLoadMore = effectivePaging.accumulated.length < total;
+  const hasClientFilters =
+    views !== "all" || pricing !== "all";
+  const hiddenByClientFilters = Math.max(
+    0,
+    effectivePaging.accumulated.length - filteredItems.length
+  );
+  const displayTotal =
+    hasClientFilters && !canLoadMore
+      ? filteredItems.length
+      : total;
   const isInitialLoading =
     loading &&
     effectivePaging.page === 1 &&
@@ -403,7 +413,13 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
               <ProgramList
                 programs={filteredItems}
                 categoryType={type}
-                caption={`Показано ${filteredItems.length} из ${total}`}
+                caption={`Показано ${filteredItems.length} из ${displayTotal}${
+                  hasClientFilters &&
+                  !canLoadMore &&
+                  hiddenByClientFilters > 0
+                    ? ` • скрыто фильтрами: ${hiddenByClientFilters}`
+                    : ""
+                }`}
               />
 
               {canLoadMore && (
