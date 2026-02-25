@@ -173,13 +173,19 @@ function AdminOrdersListSkeleton() {
 
 const AdminOrdersPage = memo(function AdminOrdersPage() {
   const [q, setQ] = useState("");
-  const [statusFilter, setStatusFilter] = useState<OrderStatus | "all">("all");
+  const [statusFilter, setStatusFilter] = useState<
+    OrderStatus | "all"
+  >("all");
 
   const filter = useMemo(
     () =>
       statusFilter === "all"
         ? { limit: ADMIN_ORDERS_LIMIT, offset: 0 }
-        : { status: statusFilter, limit: ADMIN_ORDERS_LIMIT, offset: 0 },
+        : {
+            status: statusFilter,
+            limit: ADMIN_ORDERS_LIMIT,
+            offset: 0,
+          },
     [statusFilter]
   );
 
@@ -190,13 +196,23 @@ const AdminOrdersPage = memo(function AdminOrdersPage() {
     if (!q.trim()) return orders;
     const lq = q.toLowerCase();
     return orders.filter((order) => {
-      const num = ((order as { number?: string | null }).number ?? order.id).toLowerCase();
-      const customer = (order.customerDisplayName ?? "").toLowerCase();
+      const num = (
+        (order as { number?: string | null }).number ?? order.id
+      ).toLowerCase();
+      const customer = (
+        order.customerDisplayName ?? ""
+      ).toLowerCase();
       const programs = (order.lines ?? [])
-        .map((l) => `${l.programTitle ?? ""} ${l.subProgramTitle ?? ""}`)
+        .map(
+          (l) => `${l.programTitle ?? ""} ${l.subProgramTitle ?? ""}`
+        )
         .join(" ")
         .toLowerCase();
-      return num.includes(lq) || customer.includes(lq) || programs.includes(lq);
+      return (
+        num.includes(lq) ||
+        customer.includes(lq) ||
+        programs.includes(lq)
+      );
     });
   }, [orders, q]);
 
@@ -223,7 +239,9 @@ const AdminOrdersPage = memo(function AdminOrdersPage() {
           rightSlot={
             <Select
               value={statusFilter}
-              onValueChange={(v) => setStatusFilter(v as OrderStatus | "all")}
+              onValueChange={(v) =>
+                setStatusFilter(v as OrderStatus | "all")
+              }
             >
               <SelectTrigger className="h-9 w-[180px] rounded-xl bg-background/60">
                 <SelectValue />
@@ -256,7 +274,9 @@ const AdminOrdersPage = memo(function AdminOrdersPage() {
                 ? "Попробуйте изменить запрос или сбросить фильтры."
                 : "Заявки на обучение появятся здесь после создания."
             }
-            icon={<Package className="h-8 w-8 text-muted-foreground" />}
+            icon={
+              <Package className="h-8 w-8 text-muted-foreground" />
+            }
           />
         )}
         {!error && filteredOrders.length > 0 && (

@@ -15,7 +15,9 @@ import {
 } from "@/entities/news/lib/news-utils";
 
 function getFirstPhotoUrl(news: NewsEntity): string | null {
-  const att = news.attachments?.find((a) => a.type === "photo" && a.url);
+  const att = news.attachments?.find(
+    (a) => a.type === "photo" && a.url
+  );
   return att?.url ?? null;
 }
 

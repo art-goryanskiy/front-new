@@ -50,7 +50,8 @@ const ORDER_STATUS_STATS = [
     label: "Оплачены",
     icon: CheckCircle2,
     color: "text-emerald-600 dark:text-emerald-400",
-    getValue: (m: { orderCounts: { paid: number } }) => m.orderCounts.paid,
+    getValue: (m: { orderCounts: { paid: number } }) =>
+      m.orderCounts.paid,
   },
   {
     key: "inProgress",
@@ -248,7 +249,9 @@ export const AdminDashboardMetrics = memo(
                       key={s.key}
                       className="flex items-center gap-2 rounded-xl border border-border/30 bg-background/50 px-3 py-2.5 shadow-sm"
                     >
-                      <s.icon className={cn("h-4 w-4 shrink-0", s.color)} />
+                      <s.icon
+                        className={cn("h-4 w-4 shrink-0", s.color)}
+                      />
                       <div className="min-w-0">
                         <p className="truncate text-xs text-muted-foreground">
                           {s.label}

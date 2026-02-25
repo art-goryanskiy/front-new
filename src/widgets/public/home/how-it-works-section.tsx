@@ -92,13 +92,17 @@ export const HowItWorksSection = memo(function HowItWorksSection() {
         <div className="relative grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {/* Connector line (desktop only) */}
           <div
-            className="pointer-events-none absolute top-10 left-[12.5%] right-[12.5%] hidden h-px lg:block"
+            className="pointer-events-none absolute top-10 right-[12.5%] left-[12.5%] hidden h-px lg:block"
             aria-hidden
           >
             <motion.div
               initial={{ scaleX: 0 }}
               animate={inView ? { scaleX: 1 } : {}}
-              transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
+              transition={{
+                duration: 0.8,
+                delay: 0.3,
+                ease: "easeOut",
+              }}
               style={{ originX: 0 }}
               className="h-full bg-linear-to-r from-primary/30 via-blue-500/30 to-amber-500/30"
             />
@@ -137,7 +141,10 @@ export const HowItWorksSection = memo(function HowItWorksSection() {
                       step.borderColor
                     )}
                   >
-                    <Icon className={cn("h-8 w-8", step.color)} aria-hidden />
+                    <Icon
+                      className={cn("h-8 w-8", step.color)}
+                      aria-hidden
+                    />
                     <span
                       className={cn(
                         "absolute -top-2.5 -right-2.5 flex h-6 w-6 items-center justify-center rounded-full border bg-background text-[10px] font-black",
@@ -170,10 +177,12 @@ export const HowItWorksSection = memo(function HowItWorksSection() {
           transition={{ duration: 0.45, delay: 0.65 }}
           className="mt-10 flex justify-center"
         >
-          <Button asChild size="lg" className="rounded-xl font-semibold">
-            <Link href="/qualification-upgrade">
-              Начать обучение
-            </Link>
+          <Button
+            asChild
+            size="lg"
+            className="rounded-xl font-semibold"
+          >
+            <Link href="/qualification-upgrade">Начать обучение</Link>
           </Button>
         </motion.div>
       </div>

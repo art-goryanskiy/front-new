@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback, useState, useEffect } from "react";
+import { memo, useCallback, useState } from "react";
 import Link from "next/link";
 import { useOrder } from "@/entities/order/api/use-order";
 import { useOrderDocuments } from "@/entities/order/api/use-order-documents";
@@ -102,14 +102,6 @@ function EditOrderDialog({
   const [phone, setPhone] = useState(order.contactPhone ?? "");
   const [selectedOrg, setSelectedOrg] =
     useState<OrganizationSuggestion | null>(null);
-
-  useEffect(() => {
-    if (open) {
-      setEmail(order.contactEmail ?? "");
-      setPhone(order.contactPhone ?? "");
-      setSelectedOrg(null);
-    }
-  }, [open, order.contactEmail, order.contactPhone]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -220,6 +212,7 @@ export const OrderDetailContent = memo(function OrderDetailContent({
   const router = useRouter();
   const { showToast } = useToastState();
   const [editOpen, setEditOpen] = useState(false);
+  const [editDialogSession, setEditDialogSession] = useState(0);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const { order, loading, error, refetch } = useOrder(orderId);
   const { documents, loading: documentsLoading } =
@@ -314,18 +307,31 @@ export const OrderDetailContent = memo(function OrderDetailContent({
       <nav aria-label="Хлебные крошки">
         <ol className="flex flex-wrap items-center gap-1 text-sm text-muted-foreground">
           <li>
-            <Link href="/" className="transition-colors hover:text-foreground">
+            <Link
+              href="/"
+              className="transition-colors hover:text-foreground"
+            >
               Главная
             </Link>
           </li>
-          <li aria-hidden><ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-50" /></li>
+          <li aria-hidden>
+            <ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-50" />
+          </li>
           <li>
-            <Link href="/orders" className="transition-colors hover:text-foreground">
+            <Link
+              href="/orders"
+              className="transition-colors hover:text-foreground"
+            >
               Мои заявки
             </Link>
           </li>
-          <li aria-hidden><ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-50" /></li>
-          <li className="font-medium text-foreground" aria-current="page">
+          <li aria-hidden>
+            <ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-50" />
+          </li>
+          <li
+            className="font-medium text-foreground"
+            aria-current="page"
+          >
             Заявка №{orderDisplayNumber}
           </li>
         </ol>
@@ -377,7 +383,10 @@ export const OrderDetailContent = memo(function OrderDetailContent({
                     className="min-w-[180px] rounded-xl"
                   >
                     <DropdownMenuItem
-                      onClick={() => setEditOpen(true)}
+                      onClick={() => {
+                        setEditDialogSession((prev) => prev + 1);
+                        setEditOpen(true);
+                      }}
                       className="gap-2"
                     >
                       <Pencil className="h-4 w-4" />
@@ -394,6 +403,7 @@ export const OrderDetailContent = memo(function OrderDetailContent({
                   </DropdownMenuContent>
                 </DropdownMenu>
                 <EditOrderDialog
+                  key={`${order.id}-${editDialogSession}`}
                   order={order}
                   open={editOpen}
                   onOpenChange={setEditOpen}
@@ -482,7 +492,9 @@ export const OrderDetailContent = memo(function OrderDetailContent({
                           className="flex items-center gap-2 text-sm text-foreground"
                         >
                           <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted/60 text-[11px] font-semibold text-muted-foreground">
-                            {(l.lastName || l.firstName || "?").charAt(0).toUpperCase()}
+                            {(l.lastName || l.firstName || "?")
+                              .charAt(0)
+                              .toUpperCase()}
                           </span>
                           <span>
                             {l.lastName} {l.firstName}
@@ -525,11 +537,20 @@ export const OrderDetailContent = memo(function OrderDetailContent({
                 key={i}
                 className="grid grid-cols-[auto_1fr_auto] items-center gap-3 rounded-xl border border-border/40 bg-muted/5 px-4 py-3"
               >
-                <Skeleton variant="premium" className="h-9 w-9 rounded-lg" />
+                <Skeleton
+                  variant="premium"
+                  className="h-9 w-9 rounded-lg"
+                />
                 <Skeleton variant="premium" className="h-4 w-40" />
                 <div className="flex items-center gap-3">
-                  <Skeleton variant="premium" className="h-4 w-24 hidden sm:block" />
-                  <Skeleton variant="premium" className="h-8 w-28 rounded-xl" />
+                  <Skeleton
+                    variant="premium"
+                    className="hidden h-4 w-24 sm:block"
+                  />
+                  <Skeleton
+                    variant="premium"
+                    className="h-8 w-28 rounded-xl"
+                  />
                 </div>
               </li>
             ))}
@@ -567,7 +588,7 @@ export const OrderDetailContent = memo(function OrderDetailContent({
                     {documentKindLabel(doc.kind)}
                   </span>
                   <div className="flex min-w-0 items-center gap-3 sm:gap-4">
-                    <span className="shrink-0 text-left text-sm text-muted-foreground tabular-nums hidden sm:block">
+                    <span className="hidden shrink-0 text-left text-sm text-muted-foreground tabular-nums sm:block">
                       {formatDocumentDate(doc.documentDate)}
                     </span>
                     {doc.fileUrl ? (

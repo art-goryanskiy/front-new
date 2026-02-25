@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useState, useRef } from "react";
+import { memo, useState } from "react";
 import Link from "next/link";
 import { useMyOrders } from "@/entities/order/api/use-my-orders";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
@@ -171,24 +171,18 @@ export const OrdersList = memo(function OrdersList() {
   const [statusFilter, setStatusFilter] = useState<
     string | undefined
   >(undefined);
-  const { orders, loading, error } = useMyOrders({
+  const { orders, previousOrders, loading, error } = useMyOrders({
     filter: { limit: 20, status: statusFilter },
   });
 
-  // Синхронное обновление во время рендера — ref гарантированно актуален
-  // до вычисления isFirstLoad/displayOrders, в отличие от useEffect.
-  const staleOrdersRef = useRef<typeof orders>([]);
-  const hasLoadedOnceRef = useRef(false);
-  if (!loading) {
-    staleOrdersRef.current = orders;
-    hasLoadedOnceRef.current = true;
-  }
-
   // Скелетон только при самой первой загрузке страницы — никогда при смене фильтра.
   // При смене фильтра показываем stale данные с opacity пока летит запрос.
-  const isFirstLoad = !hasLoadedOnceRef.current && loading;
-  const isRefetching = hasLoadedOnceRef.current && loading;
-  const displayOrders = loading ? staleOrdersRef.current : orders;
+  const hasAnyLoadedData =
+    orders.length > 0 || previousOrders.length > 0;
+  const isFirstLoad = loading && !hasAnyLoadedData;
+  const isRefetching = loading && hasAnyLoadedData;
+  const displayOrders =
+    loading && orders.length === 0 ? previousOrders : orders;
 
   if (isFirstLoad) {
     return <OrdersListSkeleton />;

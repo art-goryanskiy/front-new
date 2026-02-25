@@ -46,7 +46,10 @@ export async function getViewerServer(
       { skipCache: true }
     );
     if (process.env.NODE_ENV === "development") {
-      console.log("[getViewerServer] result:", data.me ? `user ${data.me.id} role=${data.me.role}` : "null");
+      console.log(
+        "[getViewerServer] result:",
+        data.me ? `user ${data.me.id} role=${data.me.role}` : "null"
+      );
     }
     return data.me ?? null;
   } catch (e) {

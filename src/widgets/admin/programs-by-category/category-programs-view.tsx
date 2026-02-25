@@ -51,9 +51,7 @@ type ViewsFilter = "all" | "popular";
 type Sort = "updatedDesc" | "viewsDesc" | "titleAsc";
 
 function parsePricing(value: string | null): PricingFilter {
-  return value === "withPrice" || value === "noPrice"
-    ? value
-    : "all";
+  return value === "withPrice" || value === "noPrice" ? value : "all";
 }
 
 function parseViews(value: string | null): ViewsFilter {
@@ -333,7 +331,10 @@ export const CategoryProgramsView = memo(
 
           {isRefreshing ? (
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
+              <Loader2
+                className="h-3.5 w-3.5 animate-spin"
+                aria-hidden
+              />
               Обновляем список…
             </div>
           ) : null}

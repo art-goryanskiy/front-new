@@ -31,39 +31,33 @@ function getBentoSpan(index: number): {
 }
 
 export function NewsListContent() {
-  const [list, setList] = useState<NewsEntity[]>([]);
-  const [pageOffset, setPageOffset] = useState(0);
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [firstNewIndex, setFirstNewIndex] = useState<number | null>(
+    null
+  );
   const firstNewRef = useRef<HTMLDivElement | null>(null);
   const { news, loading, error, refetch } = useNews({
-    limit: PAGE_SIZE,
-    offset: pageOffset,
+    limit: visibleCount,
+    offset: 0,
   });
+  const list = news as NewsEntity[];
 
   useEffect(() => {
-    if (loading || !news.length) return;
-    if (pageOffset === 0) {
-      setList(news);
-    } else {
-      setList((prev) => {
-        const ids = new Set(prev.map((n) => n.id));
-        const toAdd = news.filter((n) => !ids.has(n.id));
-        return toAdd.length ? [...prev, ...toAdd] : prev;
+    if (firstNewIndex !== null && !loading && firstNewRef.current) {
+      firstNewRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
       });
     }
-  }, [loading, news, pageOffset]);
-
-  useEffect(() => {
-    if (pageOffset > 0 && !loading && firstNewRef.current) {
-      firstNewRef.current.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    }
-  }, [list, pageOffset, loading]);
+  }, [firstNewIndex, loading, list.length]);
 
   const loadMore = useCallback(() => {
-    setPageOffset(list.length);
+    setFirstNewIndex(list.length);
+    setVisibleCount((prev) => prev + PAGE_SIZE);
   }, [list.length]);
 
-  const hasMore = !loading && news.length === PAGE_SIZE;
-  const isLoadingMore = loading && pageOffset > 0;
+  const hasMore = !loading && list.length >= visibleCount;
+  const isLoadingMore = loading && visibleCount > PAGE_SIZE;
 
   if (error) {
     return (
@@ -79,7 +73,7 @@ export function NewsListContent() {
     );
   }
 
-  if (!loading && list.length === 0 && news.length === 0) {
+  if (!loading && list.length === 0) {
     return (
       <EmptyState
         title="Новостей пока нет"
@@ -88,12 +82,10 @@ export function NewsListContent() {
     );
   }
 
-  const prevListLength = pageOffset;
-
   return (
     <div className="space-y-10">
       <AnimatePresence mode="wait">
-        {loading && pageOffset === 0 ? (
+        {loading && visibleCount === PAGE_SIZE ? (
           <motion.div
             key="loading"
             initial={{ opacity: 0 }}
@@ -113,7 +105,8 @@ export function NewsListContent() {
           >
             {list.map((item, i) => {
               const { colSpan, variant } = getBentoSpan(i);
-              const isFirstNew = i === prevListLength && pageOffset > 0;
+              const isFirstNew =
+                firstNewIndex !== null && i === firstNewIndex;
               return (
                 <div
                   key={item.id}

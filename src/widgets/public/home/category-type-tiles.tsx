@@ -78,10 +78,7 @@ export function CategoryTypeTiles({
   ] as const;
 
   return (
-    <section
-      ref={ref}
-      className="relative py-12 sm:py-14 lg:py-16"
-    >
+    <section ref={ref} className="relative py-12 sm:py-14 lg:py-16">
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12">
         <motion.div
           initial={{ opacity: 0, y: 16 }}

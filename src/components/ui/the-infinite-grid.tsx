@@ -130,7 +130,7 @@ export const Component = () => {
               asChild
               size="lg"
               variant="outline"
-              className="h-12 px-6 font-semibold border-primary/40 text-primary hover:bg-primary/10 hover:text-primary hover:border-primary/60"
+              className="h-12 border-primary/40 px-6 font-semibold text-primary hover:border-primary/60 hover:bg-primary/10 hover:text-primary"
             >
               <a
                 href="https://standart.cdoprof.com"

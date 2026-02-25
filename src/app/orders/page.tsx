@@ -27,8 +27,7 @@ export default function OrdersPage() {
               className="self-start sm:self-auto"
             >
               <Link href="/profile">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                В профиль
+                <ArrowLeft className="mr-2 h-4 w-4" />В профиль
               </Link>
             </Button>
           </div>

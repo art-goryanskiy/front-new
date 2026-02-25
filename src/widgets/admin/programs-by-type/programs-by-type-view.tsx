@@ -55,9 +55,7 @@ type ViewsFilter = "all" | "popular";
 type Sort = "updatedDesc" | "viewsDesc" | "titleAsc";
 
 function parsePricing(value: string | null): PricingFilter {
-  return value === "withPrice" || value === "noPrice"
-    ? value
-    : "all";
+  return value === "withPrice" || value === "noPrice" ? value : "all";
 }
 
 function parseViews(value: string | null): ViewsFilter {
@@ -216,9 +214,7 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
         return {
           ...prev,
           accumulated:
-            prev.page === 1
-              ? items
-              : [...prev.accumulated, ...items],
+            prev.page === 1 ? items : [...prev.accumulated, ...items],
         };
       });
     }
@@ -354,7 +350,10 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
         <div className="border-t border-border/40 px-4 pb-4 sm:px-5 sm:pb-5">
           {isRefreshing ? (
             <div className="mb-3 flex items-center gap-2 text-xs text-muted-foreground">
-              <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
+              <Loader2
+                className="h-3.5 w-3.5 animate-spin"
+                aria-hidden
+              />
               Обновляем список…
             </div>
           ) : null}
@@ -450,14 +449,15 @@ export const ProgramsByTypeView = memo(function ProgramsByTypeView({
     [categoriesOfType]
   );
 
-  useEffect(() => {
+  const effectiveCategoryId = useMemo(() => {
     if (
       categoryId !== "all" &&
       categoryIds.length > 0 &&
       !categoryIds.includes(categoryId)
     ) {
-      setCategoryId("all");
+      return "all";
     }
+    return categoryId;
   }, [categoryId, categoryIds]);
 
   useEffect(() => {
@@ -467,8 +467,8 @@ export const ProgramsByTypeView = memo(function ProgramsByTypeView({
     if (normalizedSearch) next.set(QUERY_KEYS.q, normalizedSearch);
     else next.delete(QUERY_KEYS.q);
 
-    if (categoryId !== "all")
-      next.set(QUERY_KEYS.category, categoryId);
+    if (effectiveCategoryId !== "all")
+      next.set(QUERY_KEYS.category, effectiveCategoryId);
     else next.delete(QUERY_KEYS.category);
 
     if (pricing !== "all") next.set(QUERY_KEYS.pricing, pricing);
@@ -484,14 +484,13 @@ export const ProgramsByTypeView = memo(function ProgramsByTypeView({
     const updated = next.toString();
 
     if (updated !== current) {
-      router.replace(
-        updated ? `${pathname}?${updated}` : pathname,
-        { scroll: false }
-      );
+      router.replace(updated ? `${pathname}?${updated}` : pathname, {
+        scroll: false,
+      });
     }
   }, [
     q,
-    categoryId,
+    effectiveCategoryId,
     pricing,
     views,
     sort,
@@ -523,7 +522,7 @@ export const ProgramsByTypeView = memo(function ProgramsByTypeView({
       q={q}
       setQ={setQ}
       debouncedQ={debouncedQ}
-      categoryId={categoryId}
+      categoryId={effectiveCategoryId}
       setCategoryId={setCategoryId}
       pricing={pricing}
       setPricing={setPricing}

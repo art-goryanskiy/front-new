@@ -12,11 +12,14 @@ function MetrikaPageTracker() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const ym = (window as Window & { ym?: (...args: unknown[]) => void }).ym;
+    const ym = (
+      window as Window & { ym?: (...args: unknown[]) => void }
+    ).ym;
     if (typeof ym !== "function") return;
 
     const url =
-      pathname + (searchParams.toString() ? `?${searchParams.toString()}` : "");
+      pathname +
+      (searchParams.toString() ? `?${searchParams.toString()}` : "");
 
     ym(METRIKA_ID, "hit", url);
   }, [pathname, searchParams]);
@@ -54,6 +57,7 @@ export function YandexMetrika() {
       />
       <noscript>
         <div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={`https://mc.yandex.ru/watch/${METRIKA_ID}`}
             style={{ position: "absolute", left: "-9999px" }}

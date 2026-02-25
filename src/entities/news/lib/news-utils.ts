@@ -1,4 +1,6 @@
-const ALLOWED_IMAGE_HOSTS = ["standart-images.storage.yandexcloud.net"];
+const ALLOWED_IMAGE_HOSTS = [
+  "standart-images.storage.yandexcloud.net",
+];
 
 export function isOptimizableImageSrc(src: string): boolean {
   if (src.startsWith("data:")) return false;
@@ -13,7 +15,10 @@ export function isOptimizableImageSrc(src: string): boolean {
   }
 }
 
-export function truncateText(text: string, maxLength: number): string {
+export function truncateText(
+  text: string,
+  maxLength: number
+): string {
   const trimmed = text.trim();
   if (trimmed.length <= maxLength) return trimmed;
   return trimmed.slice(0, maxLength).trimEnd() + "…";
@@ -45,31 +50,19 @@ export function formatRelativeTime(iso: string): string | null {
     if (diffDays < 1) {
       if (diffHours >= 1) {
         const label =
-          diffHours === 1
-            ? "час"
-            : diffHours < 5
-              ? "часа"
-              : "часов";
+          diffHours === 1 ? "час" : diffHours < 5 ? "часа" : "часов";
         return `${diffHours} ${label} назад`;
       }
       if (diffMin >= 1) {
         const label =
-          diffMin === 1
-            ? "минуту"
-            : diffMin < 5
-              ? "минуты"
-              : "минут";
+          diffMin === 1 ? "минуту" : diffMin < 5 ? "минуты" : "минут";
         return `${diffMin} ${label} назад`;
       }
       return "только что";
     }
     if (diffDays < 7) {
       const label =
-        diffDays === 1
-          ? "день"
-          : diffDays < 5
-            ? "дня"
-            : "дней";
+        diffDays === 1 ? "день" : diffDays < 5 ? "дня" : "дней";
       return `${diffDays} ${label} назад`;
     }
     return null;

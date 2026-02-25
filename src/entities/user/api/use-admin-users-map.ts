@@ -38,7 +38,8 @@ export function useAdminUsersMap(userIds: string[]): UserMap {
       const map: UserMap = new Map();
       results.forEach((r) => {
         if (r.status === "fulfilled" && r.value?.data?.adminUser) {
-          const u = r.value.data.adminUser as AdminUserFieldsQueriesFragment;
+          const u = r.value.data
+            .adminUser as AdminUserFieldsQueriesFragment;
           map.set(u.id, u);
         }
       });
