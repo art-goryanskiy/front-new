@@ -108,8 +108,7 @@ export const ProgramList = memo(function ProgramList({
   );
 
   const tableId = useMemo(() => `program-list`, []);
-  const canUseVirtualized =
-    programs.length > VIRTUALIZE_THRESHOLD && !bulkEnabled;
+  const canUseVirtualized = programs.length > VIRTUALIZE_THRESHOLD;
 
   return (
     <>
@@ -189,6 +188,9 @@ export const ProgramList = memo(function ProgramList({
           <VirtualizedProgramTable
             programs={programs}
             categoryType={categoryType}
+            selectedProgramIds={selectedProgramIds}
+            onSelectProgram={onSelectProgram}
+            onSelectAllPrograms={onSelectAllPrograms}
             caption={
               caption ??
               `Показано ${programs.length} ${pluralPrograms(programs.length)}`

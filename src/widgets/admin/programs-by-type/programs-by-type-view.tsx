@@ -42,8 +42,6 @@ import { useProgramsByTypeHeaderStore } from "@/widgets/admin/programs-by-type/p
 import { DashboardSection } from "@/shared/ui/dashboard-section/dashboard-section";
 import { DataToolbar } from "@/shared/ui/data-toolbar/data-toolbar";
 import { EmptyState } from "@/shared/ui/empty-state/empty-state";
-import { GLASS_CLASSES } from "@/shared/ui/glass/glass-constants";
-import { cn } from "@/lib/utils";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
 import { CategoryProgramsViewSkeleton } from "@/widgets/admin/programs-by-category/category-programs-view-skeleton";
 
@@ -233,11 +231,6 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
     });
   }, [items, requestKey, effectivePaging.page]);
 
-  const localQuery = useMemo(
-    () => debouncedQ.trim().toLowerCase(),
-    [debouncedQ]
-  );
-
   const filteredItems = useMemo(() => {
     return effectivePaging.accumulated.filter((p) => {
       if (
@@ -251,13 +244,9 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
         if (pricing === "withPrice" && !hasPrice) return false;
         if (pricing === "noPrice" && hasPrice) return false;
       }
-
-      if (!localQuery) return true;
-      const haystack =
-        `${p.title} ${p.slug} ${p.description || ""}`.toLowerCase();
-      return haystack.includes(localQuery);
+      return true;
     });
-  }, [effectivePaging.accumulated, views, pricing, localQuery]);
+  }, [effectivePaging.accumulated, views, pricing]);
   const selectedIdsSet = useMemo(
     () => new Set(selectedIds),
     [selectedIds]
@@ -339,19 +328,14 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
 
   return (
     <DashboardSection title={title} suppressTitle={suppressTitle}>
-      <div
-        className={cn(
-          "overflow-hidden rounded-2xl border border-border/50",
-          GLASS_CLASSES.card
-        )}
-      >
+      <div className="overflow-hidden rounded-2xl border border-border/50 bg-background/30">
         <div className="px-4 pt-4 sm:px-5 sm:pt-5">
           <DataToolbar
             searchValue={q}
             onSearchValueChange={setQ}
             searchPlaceholder="Поиск по программам…"
             rightSlot={
-              <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border/40 bg-background/50 px-2.5 py-1.5">
+              <div className="flex flex-wrap items-center gap-2">
                 <Select
                   value={categoryId}
                   onValueChange={setCategoryId}

@@ -29,7 +29,7 @@ const DeleteProgramModal = lazy(() =>
 );
 
 /** Высота липкого блока (табы + заголовок) для расчёта top у DataToolbar */
-const STICKY_BLOCK_OFFSET = "6.5rem";
+const STICKY_BLOCK_OFFSET = "6rem";
 
 export type AdminCategoryTypePageConfig = {
   type: CategoryType;
@@ -69,8 +69,8 @@ export function AdminCategoryTypePage({
       >
         <div
           className={cn(
-            "sticky top-(--admin-header-offset) z-40 w-full space-y-3 rounded-2xl p-4 shadow-lg shadow-black/5",
-            GLASS_CLASSES.panelWithRing
+            "sticky top-(--admin-header-offset) z-40 w-full space-y-2.5 rounded-2xl border border-border/50 p-3.5",
+            GLASS_CLASSES.strong
           )}
         >
           <TabsList className="inline-flex w-full rounded-xl border-0 bg-background/50 p-1 shadow-none sm:w-auto">

@@ -336,82 +336,82 @@ export const CategoryProgramsView = memo(
 
     return (
       <DashboardSection title="Программы">
-        <div className="space-y-4">
-          <DataToolbar
-            searchValue={q}
-            onSearchValueChange={setQ}
-            searchPlaceholder="Поиск по программам…"
-            rightSlot={
-              <div className="flex items-center gap-2">
-                <Select
-                  value={views}
-                  onValueChange={(v) => setViews(v as ViewsFilter)}
-                >
-                  <SelectTrigger className="h-9 w-[150px] bg-background/60">
-                    <SelectValue placeholder="Просмотры" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Все</SelectItem>
-                    <SelectItem value="popular">
-                      Популярные
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
+        <div className="overflow-hidden rounded-2xl border border-border/50 bg-background/30">
+          <div className="px-4 pt-4 sm:px-5 sm:pt-5">
+            <DataToolbar
+              searchValue={q}
+              onSearchValueChange={setQ}
+              searchPlaceholder="Поиск по программам…"
+              rightSlot={
+                <div className="flex flex-wrap items-center gap-2">
+                  <Select
+                    value={views}
+                    onValueChange={(v) => setViews(v as ViewsFilter)}
+                  >
+                    <SelectTrigger className="h-8 w-[120px] border-0 bg-transparent shadow-none focus:ring-0 sm:w-[140px]">
+                      <SelectValue placeholder="Просмотры" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Все</SelectItem>
+                      <SelectItem value="popular">
+                        Популярные
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
 
-                <Select
-                  value={pricing}
-                  onValueChange={(v) =>
-                    setPricing(v as PricingFilter)
-                  }
-                >
-                  <SelectTrigger className="h-9 w-[150px] bg-background/60">
-                    <SelectValue placeholder="Цена" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Любая</SelectItem>
-                    <SelectItem value="withPrice">С ценой</SelectItem>
-                    <SelectItem value="noPrice">Без цены</SelectItem>
-                  </SelectContent>
-                </Select>
+                  <Select
+                    value={pricing}
+                    onValueChange={(v) =>
+                      setPricing(v as PricingFilter)
+                    }
+                  >
+                    <SelectTrigger className="h-8 w-[110px] border-0 bg-transparent shadow-none focus:ring-0 sm:w-[130px]">
+                      <SelectValue placeholder="Цена" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Любая</SelectItem>
+                      <SelectItem value="withPrice">С ценой</SelectItem>
+                      <SelectItem value="noPrice">Без цены</SelectItem>
+                    </SelectContent>
+                  </Select>
 
-                <Select
-                  value={sort}
-                  onValueChange={(v) => setSort(v as Sort)}
-                >
-                  <SelectTrigger className="h-9 w-[170px] bg-background/60">
-                    <SelectValue placeholder="Сортировка" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="updatedDesc">
-                      Сначала новые
-                    </SelectItem>
-                    <SelectItem value="viewsDesc">
-                      По просмотрам
-                    </SelectItem>
-                    <SelectItem value="titleAsc">
-                      По названию
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
+                  <Select
+                    value={sort}
+                    onValueChange={(v) => setSort(v as Sort)}
+                  >
+                    <SelectTrigger className="h-8 w-[150px] border-0 bg-transparent shadow-none focus:ring-0 sm:w-[170px]">
+                      <SelectValue placeholder="Сортировка" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="updatedDesc">
+                        Сначала новые
+                      </SelectItem>
+                      <SelectItem value="viewsDesc">
+                        По просмотрам
+                      </SelectItem>
+                      <SelectItem value="titleAsc">
+                        По названию
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
 
-                <Button
-                  className="font-semibold"
-                  onClick={handleCreate}
-                >
-                  + Программа
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => setBulkDialogOpen(true)}
-                  disabled={selectedVisibleCount === 0}
-                >
-                  Массово ({selectedVisibleCount})
-                </Button>
-              </div>
-            }
-          />
+                  <Button size="sm" className="font-semibold" onClick={handleCreate}>
+                    + Программа
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setBulkDialogOpen(true)}
+                    disabled={selectedVisibleCount === 0}
+                  >
+                    Массово ({selectedVisibleCount})
+                  </Button>
+                </div>
+              }
+            />
+          </div>
           {selectedVisibleCount > 0 ? (
-            <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border/50 bg-background/40 px-3 py-2">
+            <div className="mx-4 mb-3 flex flex-wrap items-center gap-2 rounded-xl border border-border/50 bg-background/40 px-3 py-2 sm:mx-5">
               <span className="text-sm text-muted-foreground">
                 Выбрано: {selectedVisibleCount}
               </span>
@@ -445,71 +445,72 @@ export const CategoryProgramsView = memo(
               </Button>
             </div>
           ) : null}
-
-          {isRefreshing ? (
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <Loader2
-                className="h-3.5 w-3.5 animate-spin"
-                aria-hidden
-              />
-              Обновляем список…
-            </div>
-          ) : null}
-
-          {isInitialLoading ? (
-            <div className="space-y-2 py-2">
-              {Array.from({ length: 6 }, (_, i) => (
-                <Skeleton
-                  key={i}
-                  variant="premium"
-                  className="h-14 w-full rounded-xl"
+          <div className="border-t border-border/40 px-4 pb-4 sm:px-5 sm:pb-5">
+            {isRefreshing ? (
+              <div className="mb-3 flex items-center gap-2 text-xs text-muted-foreground">
+                <Loader2
+                  className="h-3.5 w-3.5 animate-spin"
+                  aria-hidden
                 />
-              ))}
-            </div>
-          ) : error ? (
-            <ErrorState message={error.message} />
-          ) : filteredItems.length === 0 ? (
-            <EmptyState
-              title="Программы не найдены"
-              description="Попробуйте изменить фильтры или запрос."
-            />
-          ) : (
-            <>
-              <ProgramList
-                programs={filteredItems}
-                categoryType={categoryType}
-                selectedProgramIds={selectedIdsSet}
-                onSelectProgram={handleSelectProgram}
-                onSelectAllPrograms={handleSelectAllVisible}
-                onOpenBulkUpdate={() => setBulkDialogOpen(true)}
-                onClearSelection={() => setSelectedIds([])}
-                caption={`Показано ${filteredItems.length} из ${displayTotal}${
-                  hasClientFilters &&
-                  !canLoadMore &&
-                  hiddenByClientFilters > 0
-                    ? ` • скрыто фильтрами: ${hiddenByClientFilters}`
-                    : ""
-                }`}
-              />
+                Обновляем список…
+              </div>
+            ) : null}
 
-              {canLoadMore && (
-                <div
-                  ref={loadMoreRef}
-                  className="mt-6 flex min-h-10 items-center justify-center"
-                >
-                  {loading ? (
-                    <span className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Loader2
-                        className="h-4 w-4 animate-spin"
-                        aria-hidden
-                      />
-                      Подгружаем программы…
-                    </span>
-                  ) : null}
-                </div>
-              )}
-            </>
-          )}
+            {isInitialLoading ? (
+              <div className="space-y-2 py-2">
+                {Array.from({ length: 6 }, (_, i) => (
+                  <Skeleton
+                    key={i}
+                    variant="premium"
+                    className="h-14 w-full rounded-xl"
+                  />
+                ))}
+              </div>
+            ) : error ? (
+              <ErrorState message={error.message} />
+            ) : filteredItems.length === 0 ? (
+              <EmptyState
+                title="Программы не найдены"
+                description="Попробуйте изменить фильтры или запрос."
+              />
+            ) : (
+              <>
+                <ProgramList
+                  programs={filteredItems}
+                  categoryType={categoryType}
+                  selectedProgramIds={selectedIdsSet}
+                  onSelectProgram={handleSelectProgram}
+                  onSelectAllPrograms={handleSelectAllVisible}
+                  onOpenBulkUpdate={() => setBulkDialogOpen(true)}
+                  onClearSelection={() => setSelectedIds([])}
+                  caption={`Показано ${filteredItems.length} из ${displayTotal}${
+                    hasClientFilters &&
+                    !canLoadMore &&
+                    hiddenByClientFilters > 0
+                      ? ` • скрыто фильтрами: ${hiddenByClientFilters}`
+                      : ""
+                  }`}
+                />
+
+                {canLoadMore && (
+                  <div
+                    ref={loadMoreRef}
+                    className="mt-6 flex min-h-10 items-center justify-center"
+                  >
+                    {loading ? (
+                      <span className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Loader2
+                          className="h-4 w-4 animate-spin"
+                          aria-hidden
+                        />
+                        Подгружаем программы…
+                      </span>
+                    ) : null}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
         </div>
         <BulkUpdateProgramsDialog
           open={isBulkDialogOpen}

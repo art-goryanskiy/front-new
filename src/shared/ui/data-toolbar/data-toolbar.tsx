@@ -26,8 +26,8 @@ export function DataToolbar({
   return (
     <div
       className={cn(
-        "sticky top-[calc(var(--admin-header-offset)+var(--admin-tabs-offset,0px))] z-30 rounded-2xl p-3",
-        GLASS_CLASSES.panelWithRing,
+        "sticky top-[calc(var(--admin-header-offset)+var(--admin-tabs-offset,0px))] z-30 rounded-2xl border border-border/50 p-2.5 shadow-sm",
+        GLASS_CLASSES.strong,
         className
       )}
     >

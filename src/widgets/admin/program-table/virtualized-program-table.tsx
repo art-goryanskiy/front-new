@@ -25,10 +25,16 @@ export const VirtualizedProgramTable = memo(
   function VirtualizedProgramTable({
     programs,
     categoryType,
+    selectedProgramIds,
+    onSelectProgram,
+    onSelectAllPrograms,
     caption,
   }: {
     programs: ProgramEntity[];
     categoryType?: CategoryType | null;
+    selectedProgramIds?: Set<string>;
+    onSelectProgram?: (id: string, selected: boolean) => void;
+    onSelectAllPrograms?: (ids: string[], selected: boolean) => void;
     caption?: string;
   }) {
     const parentRef = useRef<HTMLDivElement>(null);
@@ -39,6 +45,16 @@ export const VirtualizedProgramTable = memo(
       showAwardedRank,
       showSubPrograms,
     } = useProgramTableConfig(categoryType);
+    const bulkEnabled = !!selectedProgramIds && !!onSelectProgram;
+    const allSelected =
+      bulkEnabled &&
+      programs.length > 0 &&
+      programs.every((program) => selectedProgramIds.has(program.id));
+    const someSelected =
+      bulkEnabled &&
+      programs.some((program) => selectedProgramIds.has(program.id)) &&
+      !allSelected;
+    const gridClass = bulkEnabled ? "grid-cols-8" : "grid-cols-7";
 
     // TanStack Virtual returns non-memoizable functions; React Compiler skips this component
     // eslint-disable-next-line react-hooks/incompatible-library
@@ -100,10 +116,33 @@ export const VirtualizedProgramTable = memo(
             <div
               role="rowgroup"
               className={cn(
-                "sticky top-0 z-10 grid grid-cols-7",
+                "sticky top-0 z-10 grid",
+                gridClass,
                 TABLE_CLASSES.thead
               )}
             >
+              {bulkEnabled ? (
+                <div
+                  role="columnheader"
+                  className={`flex items-center justify-center ${TABLE_CLASSES.th}`}
+                >
+                  <input
+                    type="checkbox"
+                    className="h-4 w-4 cursor-pointer accent-primary"
+                    checked={allSelected}
+                    ref={(node) => {
+                      if (node) node.indeterminate = !!someSelected;
+                    }}
+                    onChange={(e) =>
+                      onSelectAllPrograms?.(
+                        programs.map((program) => program.id),
+                        e.target.checked
+                      )
+                    }
+                    aria-label="Выбрать все программы на странице"
+                  />
+                </div>
+              ) : null}
               <div
                 role="columnheader"
                 className={`min-w-0 ${TABLE_CLASSES.th}`}
@@ -163,7 +202,8 @@ export const VirtualizedProgramTable = memo(
                     role="row"
                     tabIndex={0}
                     className={cn(
-                      "group grid w-full cursor-pointer grid-cols-7 border-b border-border/50",
+                      "group grid w-full cursor-pointer border-b border-border/50",
+                      gridClass,
                       TABLE_CLASSES.tr
                     )}
                     style={{
@@ -178,6 +218,25 @@ export const VirtualizedProgramTable = memo(
                     onKeyDown={(e) => handleKeyDown(program, e)}
                     aria-label={`Программа ${program.title}`}
                   >
+                    {bulkEnabled ? (
+                      <div
+                        className={`flex items-center justify-center ${TABLE_CLASSES.td}`}
+                      >
+                        <input
+                          type="checkbox"
+                          className="h-4 w-4 cursor-pointer accent-primary"
+                          checked={selectedProgramIds.has(program.id)}
+                          onChange={(e) =>
+                            onSelectProgram(
+                              program.id,
+                              e.target.checked
+                            )
+                          }
+                          onClick={(e) => e.stopPropagation()}
+                          aria-label={`Выбрать программу ${program.title}`}
+                        />
+                      </div>
+                    ) : null}
                     <div
                       className={`min-w-0 overflow-hidden ${TABLE_CLASSES.td}`}
                     >
