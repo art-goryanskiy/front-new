@@ -10,6 +10,8 @@ import { ListHeader } from "@/shared/ui/list-header/list-header";
 import { FolderOpen } from "lucide-react";
 import type { SubcategoryListProps } from "./types/subcategory-list.types";
 import { SUBCATEGORY_LIST_CLASSES } from "./constants/subcategory-list-constants";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export const SubcategoryList = memo(function SubcategoryList({
   categoryType,
@@ -48,6 +50,20 @@ export const SubcategoryList = memo(function SubcategoryList({
     []
   );
 
+  const emptyStateActions = useMemo(
+    () => (
+      <>
+        <Button asChild className="rounded-xl font-semibold">
+          <Link href="/contacts">Помогите мне с выбором</Link>
+        </Button>
+        <Button asChild variant="outline" className="rounded-xl">
+          <Link href="/">Посмотреть все направления</Link>
+        </Button>
+      </>
+    ),
+    []
+  );
+
   if (!hasInitialData && loading) {
     return <SubcategoryListSkeleton />;
   }
@@ -68,9 +84,10 @@ export const SubcategoryList = memo(function SubcategoryList({
 
       {subcategories.length === 0 ? (
         <EmptyState
-          title="Подкатегории не найдены"
-          description="В этой категории пока нет подкатегорий"
+          title="Не нашли программу, которая вам откликается?"
+          description="Так бывает. Мы с заботой подберем обучение под вашу задачу, сроки и бюджет."
           icon={emptyStateIcon}
+          actions={emptyStateActions}
         />
       ) : (
         <div className={SUBCATEGORY_LIST_CLASSES.grid}>

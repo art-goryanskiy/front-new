@@ -7,6 +7,7 @@ interface EmptyStateProps {
   title: string;
   description?: string;
   icon?: React.ReactNode;
+  actions?: React.ReactNode;
   className?: string;
 }
 
@@ -14,6 +15,7 @@ export const EmptyState = memo(function EmptyState({
   title,
   description,
   icon,
+  actions,
   className = "",
 }: EmptyStateProps) {
   return (
@@ -35,6 +37,11 @@ export const EmptyState = memo(function EmptyState({
           <p className="text-sm text-muted-foreground">
             {description}
           </p>
+        )}
+        {actions && (
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+            {actions}
+          </div>
         )}
       </CardContent>
     </Card>

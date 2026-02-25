@@ -8,6 +8,8 @@ import { CATEGORY_TYPE_LABELS } from "@/shared/constants/categories";
 import type { PublicSearchResult } from "../hooks/use-public-search-results";
 import { usePublicSearchResults } from "../hooks/use-public-search-results";
 import type { UserEntity } from "@/shared/api/generated/graphql";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 const CATEGORY_ORDER = Object.values(
   CATEGORY_TYPE_LABELS
@@ -122,8 +124,24 @@ export const PublicSearchDropdown = memo(
                 <span className="text-sm">Поиск...</span>
               </div>
             ) : !hasResults ? (
-              <div className="p-4 text-center text-sm text-muted-foreground">
-                Ничего не найдено
+              <div className="space-y-4 p-4 text-center">
+                <p className="text-sm text-muted-foreground">
+                  Пока ничего не нашли по этому запросу. Давайте подберем
+                  программу вместе?
+                </p>
+                <div className="flex flex-wrap items-center justify-center gap-2">
+                  <Button asChild size="sm" className="rounded-xl">
+                    <Link href="/contacts">Подобрать с поддержкой</Link>
+                  </Button>
+                  <Button
+                    asChild
+                    size="sm"
+                    variant="outline"
+                    className="rounded-xl"
+                  >
+                    <Link href="/">Все направления</Link>
+                  </Button>
+                </div>
               </div>
             ) : (
               <div className="py-2">

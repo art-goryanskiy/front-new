@@ -18,6 +18,8 @@ import {
 } from "@/shared/lib/helpers/program-category-helpers";
 import { BookOpen } from "lucide-react";
 import { Breadcrumbs } from "@/shared/ui/breadcrumbs/breadcrumbs";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export const ProgramList = memo(function ProgramList({
   programs: serverPrograms,
@@ -97,6 +99,20 @@ export const ProgramList = memo(function ProgramList({
     [categoryId]
   );
 
+  const emptyStateActions = useMemo(
+    () => (
+      <>
+        <Button asChild className="rounded-xl font-semibold">
+          <Link href="/contacts">Помогите мне с выбором</Link>
+        </Button>
+        <Button asChild variant="outline" className="rounded-xl">
+          <Link href="/">Посмотреть все направления</Link>
+        </Button>
+      </>
+    ),
+    []
+  );
+
   if (isLoading) {
     return <ProgramListSkeleton backButton={backButton} />;
   }
@@ -126,9 +142,10 @@ export const ProgramList = memo(function ProgramList({
 
       {sortedPrograms.length === 0 ? (
         <EmptyState
-          title="Программы не найдены"
-          description="В этой категории пока нет программ"
+          title="Не нашли программу, которая вам откликается?"
+          description="Так бывает. Оставьте заявку, и мы бережно подберем обучение под вашу цель, график и бюджет."
           icon={emptyStateIcon}
+          actions={emptyStateActions}
         />
       ) : (
         <div className={PROGRAM_LIST_CLASSES.grid}>
