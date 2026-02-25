@@ -5,7 +5,6 @@ import { useIsMobile } from "@/shared/lib/hooks/use-is-mobile";
 import { useKeyboardShortcut } from "@/shared/lib/hooks/use-keyboard-shortcut";
 import { useAuthUser } from "@/shared/store/auth-store";
 import { useSearchState } from "@/shared/store/search-store";
-import { NotificationButton } from "@/shared/ui/notification-button/notification-button";
 import { SEARCH_INPUT_TEXTS } from "@/shared/ui/search-input/constants/search-input-constants";
 import { SearchInput } from "@/shared/ui/search-input/search-input";
 import { ThemeToggle } from "@/shared/ui/theme-toggle/theme-toggle";
@@ -17,6 +16,7 @@ import {
   HEADER_ANIMATIONS,
   HEADER_CLASSES,
 } from "./constants/header-constants";
+import { AdminNotificationsMenu } from "./components/admin-notifications-menu";
 
 export const Header = memo(function Header() {
   const user = useAuthUser();
@@ -92,7 +92,7 @@ export const Header = memo(function Header() {
 
           <div className={HEADER_CLASSES.actions}>
             <ThemeToggle />
-            <NotificationButton count={3} size={notificationSize} />
+            <AdminNotificationsMenu size={notificationSize} />
             <UserMenu
               user={user}
               onLogout={handleLogout}

@@ -18,6 +18,7 @@ export const NotificationButton = memo(function NotificationButton({
   onClick,
   size = "md",
   className,
+  animationKey = 0,
 }: NotificationButtonProps) {
   const iconSize = useMemo(
     () => (size === "sm" ? 16 : size === "md" ? 20 : 24),
@@ -48,19 +49,77 @@ export const NotificationButton = memo(function NotificationButton({
         aria-label="Уведомления"
         aria-describedby={showBadge ? badgeId : undefined}
       >
-        <Bell
-          className="h-4 w-4 text-muted-foreground sm:h-5 sm:w-5"
-          size={iconSize}
+        <motion.span
+          key={`glow-${animationKey}`}
+          className={NOTIFICATION_BUTTON_CLASSES.glow}
+          animate={
+            animationKey > 0
+              ? {
+                  opacity: [0, 0.9, 0.25, 0],
+                  scale: [0.8, 1.45, 1.15, 1],
+                }
+              : undefined
+          }
+          transition={{ duration: 0.65, ease: "easeOut" }}
         />
+        <motion.div
+          key={animationKey}
+          animate={
+            animationKey > 0
+              ? {
+                  rotate: [0, -16, 14, -10, 8, -5, 0],
+                }
+              : undefined
+          }
+          transition={{ duration: 0.7, ease: "easeInOut" }}
+          className="origin-top"
+        >
+          <Bell
+            className="h-4 w-4 text-muted-foreground sm:h-5 sm:w-5"
+            size={iconSize}
+          />
+        </motion.div>
         {showBadge && (
-          <Badge
-            variant="destructive"
-            className={NOTIFICATION_BUTTON_CLASSES.badge}
-            id={badgeId}
-            aria-label={`${count} уведомлений`}
+          <motion.div
+            key={`badge-${animationKey}-${count}`}
+            animate={
+              animationKey > 0
+                ? {
+                    scale: [1, 1.2, 1.05, 1],
+                  }
+                : undefined
+            }
+            transition={{ duration: 0.45, ease: "easeOut" }}
           >
-            {formattedCount}
-          </Badge>
+            <motion.div
+              animate={
+                count > 0
+                  ? {
+                      boxShadow: [
+                        "0 0 0px rgba(239,68,68,0.0)",
+                        "0 0 10px rgba(239,68,68,0.35)",
+                        "0 0 0px rgba(239,68,68,0.0)",
+                      ],
+                    }
+                  : undefined
+              }
+              transition={{
+                duration: 2.2,
+                repeat: Number.POSITIVE_INFINITY,
+                ease: "easeInOut",
+              }}
+              className="rounded-full"
+            >
+              <Badge
+                variant="destructive"
+                className={NOTIFICATION_BUTTON_CLASSES.badge}
+                id={badgeId}
+                aria-label={`${count} уведомлений`}
+              >
+                {formattedCount}
+              </Badge>
+            </motion.div>
+          </motion.div>
         )}
       </Button>
     </motion.div>
