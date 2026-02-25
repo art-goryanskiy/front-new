@@ -494,51 +494,6 @@ export const ProfileAdditionalInfoSection = memo(
                         return;
                       }
 
-                      const bankAccountRaw = data.bankAccount?.trim();
-                      const bikRaw = data.bik?.trim();
-                      const correspondentAccountRaw =
-                        data.correspondentAccount?.trim();
-                      const bankAccount = bankAccountRaw
-                        ? normalizeDigits(bankAccountRaw)
-                        : "";
-                      const bik = bikRaw
-                        ? normalizeDigits(bikRaw)
-                        : "";
-                      const correspondentAccount =
-                        correspondentAccountRaw
-                          ? normalizeDigits(correspondentAccountRaw)
-                          : "";
-
-                      if (bankAccount && bankAccount.length !== 20) {
-                        showToast(
-                          "error",
-                          "Расчётный счёт (р/с) должен содержать 20 цифр"
-                        );
-                        return;
-                      }
-                      if (bik && bik.length !== 9) {
-                        showToast(
-                          "error",
-                          "БИК должен содержать 9 цифр"
-                        );
-                        return;
-                      }
-                      if (
-                        correspondentAccount &&
-                        correspondentAccount.length !== 20
-                      ) {
-                        showToast(
-                          "error",
-                          "Корреспондентский счёт (к/с) должен содержать 20 цифр"
-                        );
-                        return;
-                      }
-
-                      const bankName = data.bankName?.trim();
-                      const bankNameLimited = bankName
-                        ? bankName.slice(0, 300)
-                        : undefined;
-
                       const isFirst = workPlaces.length === 0;
                       const input = {
                         type: data.type,
@@ -575,11 +530,6 @@ export const ProfileAdditionalInfoSection = memo(
                           data.isPrimary || isFirst
                             ? true
                             : undefined,
-                        bankAccount: bankAccount || undefined,
-                        bankName: bankNameLimited,
-                        bik: bik || undefined,
-                        correspondentAccount:
-                          correspondentAccount || undefined,
                       };
 
                       const result: FetchResult<{

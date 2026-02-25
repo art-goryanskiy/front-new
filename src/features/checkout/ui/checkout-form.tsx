@@ -59,10 +59,6 @@ function toIsoDateOrUndefined(
   return t ? t : undefined;
 }
 
-function normalizeDigits(s: string): string {
-  return s.replace(/\D/g, "");
-}
-
 function learnerToOrderInput(
   l: LearnerFormData
 ): OrderLineLearnerInput {
@@ -592,54 +588,6 @@ export const CheckoutForm = memo(function CheckoutForm({
         getLearnersForLine
       );
 
-      let bankAccount: string | undefined;
-      let bankName: string | undefined;
-      let bik: string | undefined;
-      let correspondentAccount: string | undefined;
-      if (isOrganization) {
-        const bankAccountRaw = orderLevelData.bankAccount?.trim();
-        const bikRaw = orderLevelData.bik?.trim();
-        const correspondentAccountRaw =
-          orderLevelData.correspondentAccount?.trim();
-        bankAccount = bankAccountRaw
-          ? normalizeDigits(bankAccountRaw)
-          : undefined;
-        bik = bikRaw ? normalizeDigits(bikRaw) : undefined;
-        correspondentAccount = correspondentAccountRaw
-          ? normalizeDigits(correspondentAccountRaw)
-          : undefined;
-        bankName = orderLevelData.bankName?.trim();
-        if (bankName) bankName = bankName.slice(0, 300);
-
-        if (bankAccount && bankAccount.length !== 20) {
-          setStep(1);
-          onStepChange?.(1);
-          showToast(
-            "error",
-            "Расчётный счёт (р/с) должен содержать 20 цифр"
-          );
-          return;
-        }
-        if (bik && bik.length !== 9) {
-          setStep(1);
-          onStepChange?.(1);
-          showToast("error", "БИК должен содержать 9 цифр");
-          return;
-        }
-        if (
-          correspondentAccount &&
-          correspondentAccount.length !== 20
-        ) {
-          setStep(1);
-          onStepChange?.(1);
-          showToast(
-            "error",
-            "Корреспондентский счёт (к/с) должен содержать 20 цифр"
-          );
-          return;
-        }
-      }
-
       try {
         const order = await createOrderFromCart({
           customerType: data.customerType,
@@ -654,22 +602,6 @@ export const CheckoutForm = memo(function CheckoutForm({
           contactEmail: contactEmailSubmit,
           contactPhone: contactPhoneSubmit,
           lines,
-          trainingForm:
-            orderLevelData.trainingForm?.trim() || undefined,
-          trainingLanguage:
-            orderLevelData.trainingLanguage?.trim() || undefined,
-          headPosition:
-            orderLevelData.headPosition?.trim() || undefined,
-          headFullName:
-            orderLevelData.headFullName?.trim() || undefined,
-          contactPersonName:
-            orderLevelData.contactPersonName?.trim() || undefined,
-          contactPersonPosition:
-            orderLevelData.contactPersonPosition?.trim() || undefined,
-          bankAccount: bankAccount || undefined,
-          bankName: bankName || undefined,
-          bik: bik || undefined,
-          correspondentAccount: correspondentAccount || undefined,
         });
         if (order) {
           metrikaGoals.orderCreated(order.id, data.customerType);
