@@ -95,7 +95,7 @@ export function AdminCategoryTypePage({
           </div>
         </div>
 
-        <TabsContent value="categories" className="mt-0" forceMount>
+        <TabsContent value="categories" className="mt-0">
           <CategoryPage
             type={config.type}
             title={config.categoriesTitle}
@@ -104,7 +104,7 @@ export function AdminCategoryTypePage({
           />
         </TabsContent>
 
-        <TabsContent value="programs" className="mt-0" forceMount>
+        <TabsContent value="programs" className="mt-0">
           <ProgramsByTypeView
             type={config.type}
             title={config.programsTitle}

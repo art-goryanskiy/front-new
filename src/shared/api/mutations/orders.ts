@@ -2,10 +2,36 @@ import { gql } from "@apollo/client";
 import { ORDER_FIELDS } from "../queries/orders";
 
 export const CREATE_ORDER_FROM_CART = gql`
-  ${ORDER_FIELDS}
   mutation CreateOrderFromCart($input: CreateOrderFromCartInput!) {
     createOrderFromCart(input: $input) {
-      ...OrderFields
+      id
+      number
+      status
+      totalAmount
+      customerType
+      contactEmail
+      contactPhone
+      organizationId
+      createdAt
+      updatedAt
+      userId
+      lines {
+        programId
+        programTitle
+        subProgramIndex
+        subProgramTitle
+        hours
+        price
+        quantity
+        lineAmount
+        learners {
+          lastName
+          firstName
+          middleName
+          email
+          phone
+        }
+      }
     }
   }
 `;

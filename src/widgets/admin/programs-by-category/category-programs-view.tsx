@@ -28,6 +28,7 @@ type PagingState = {
 import { Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
   SelectContent,
@@ -40,7 +41,6 @@ import { DashboardSection } from "@/shared/ui/dashboard-section/dashboard-sectio
 import { DataToolbar } from "@/shared/ui/data-toolbar/data-toolbar";
 import { EmptyState } from "@/shared/ui/empty-state/empty-state";
 import { ErrorState } from "@/shared/ui/error-state/error-state";
-import { CategoryProgramsViewSkeleton } from "./category-programs-view-skeleton";
 
 import { POPULAR_VIEWS_THRESHOLD } from "@/widgets/admin/program-table/constants/program-table-constants";
 import { ProgramList } from "@/widgets/admin/program-table/program-list";
@@ -116,7 +116,7 @@ export const CategoryProgramsView = memo(
 
     useEffect(() => {
       const next = new URLSearchParams(searchParams.toString());
-      const normalizedSearch = q.trim();
+      const normalizedSearch = debouncedQ.trim();
 
       if (normalizedSearch) next.set(QUERY_KEYS.q, normalizedSearch);
       else next.delete(QUERY_KEYS.q);
@@ -139,7 +139,15 @@ export const CategoryProgramsView = memo(
           { scroll: false }
         );
       }
-    }, [q, pricing, views, sort, pathname, router, searchParams]);
+    }, [
+      debouncedQ,
+      pricing,
+      views,
+      sort,
+      pathname,
+      router,
+      searchParams,
+    ]);
 
     const requestKey = useMemo(
       () => `${categoryId}|${debouncedQ}|${sort}`,
@@ -198,26 +206,30 @@ export const CategoryProgramsView = memo(
 
     const { items, total, loading, error } = useProgramsPage(filter);
 
-    const prevLoadingRef = useRef(false);
-    useEffect(() => {
-      const wasLoading = prevLoadingRef.current;
-      prevLoadingRef.current = loading;
+    const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
-      if (wasLoading && !loading) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setPaging((prev) => {
-          // Игнорируем устаревший ответ, если ключ уже поменялся
-          if (prev.key !== requestKey) return prev;
-          return {
-            ...prev,
-            accumulated:
-              prev.page === 1
-                ? items
-                : [...prev.accumulated, ...items],
-          };
-        });
-      }
-    }, [loading, items, requestKey]);
+    useEffect(() => {
+      // Keep accumulated rows in sync even when Apollo serves cache without loading transition.
+      setPaging((prev) => {
+        if (prev.key !== requestKey) return prev;
+
+        if (effectivePaging.page === 1) {
+          const prevIds = prev.accumulated.map((p) => p.id).join("|");
+          const nextIds = items.map((p) => p.id).join("|");
+          if (prevIds === nextIds) return prev;
+          return { ...prev, accumulated: items };
+        }
+
+        const existing = new Set(prev.accumulated.map((p) => p.id));
+        const toAdd = items.filter((p) => !existing.has(p.id));
+        if (toAdd.length === 0) return prev;
+
+        return {
+          ...prev,
+          accumulated: [...prev.accumulated, ...toAdd],
+        };
+      });
+    }, [items, requestKey, effectivePaging.page]);
 
     const filteredItems = useMemo(() => {
       return effectivePaging.accumulated.filter((p) => {
@@ -238,6 +250,10 @@ export const CategoryProgramsView = memo(
     }, [effectivePaging.accumulated, pricing, views]);
 
     const canLoadMore = effectivePaging.accumulated.length < total;
+    const isInitialLoading =
+      loading &&
+      effectivePaging.page === 1 &&
+      effectivePaging.accumulated.length === 0;
     const isRefreshing =
       loading &&
       effectivePaging.page === 1 &&
@@ -251,13 +267,22 @@ export const CategoryProgramsView = memo(
       openCreateProgramModal(categoryId, categoryType);
     }, [openCreateProgramModal, categoryId, categoryType]);
 
-    if (
-      loading &&
-      effectivePaging.page === 1 &&
-      effectivePaging.accumulated.length === 0
-    )
-      return <CategoryProgramsViewSkeleton />;
-    if (error) return <ErrorState message={error.message} />;
+    useEffect(() => {
+      const node = loadMoreRef.current;
+      if (!node || !canLoadMore) return;
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          const first = entries[0];
+          if (!first?.isIntersecting || loading) return;
+          handleLoadMore();
+        },
+        { rootMargin: "240px 0px" }
+      );
+
+      observer.observe(node);
+      return () => observer.disconnect();
+    }, [canLoadMore, loading, handleLoadMore, effectivePaging.page]);
 
     return (
       <DashboardSection title="Программы">
@@ -339,7 +364,19 @@ export const CategoryProgramsView = memo(
             </div>
           ) : null}
 
-          {filteredItems.length === 0 ? (
+          {isInitialLoading ? (
+            <div className="space-y-2 py-2">
+              {Array.from({ length: 6 }, (_, i) => (
+                <Skeleton
+                  key={i}
+                  variant="premium"
+                  className="h-14 w-full rounded-xl"
+                />
+              ))}
+            </div>
+          ) : error ? (
+            <ErrorState message={error.message} />
+          ) : filteredItems.length === 0 ? (
             <EmptyState
               title="Программы не найдены"
               description="Попробуйте изменить фильтры или запрос."
@@ -353,26 +390,19 @@ export const CategoryProgramsView = memo(
               />
 
               {canLoadMore && (
-                <div className="mt-6 flex justify-center">
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className="min-w-[200px] rounded-xl border-border/60 bg-background/60 font-semibold shadow-sm transition-all hover:bg-background/80 hover:shadow focus-visible:ring-2 focus-visible:ring-primary/20"
-                    onClick={handleLoadMore}
-                    disabled={loading}
-                  >
-                    {loading ? (
-                      <span className="flex items-center gap-2">
-                        <Loader2
-                          className="h-4 w-4 animate-spin"
-                          aria-hidden
-                        />
-                        Загрузка…
-                      </span>
-                    ) : (
-                      "Показать ещё"
-                    )}
-                  </Button>
+                <div
+                  ref={loadMoreRef}
+                  className="mt-6 flex min-h-10 items-center justify-center"
+                >
+                  {loading ? (
+                    <span className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Loader2
+                        className="h-4 w-4 animate-spin"
+                        aria-hidden
+                      />
+                      Подгружаем программы…
+                    </span>
+                  ) : null}
                 </div>
               )}
             </>

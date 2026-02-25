@@ -26,27 +26,27 @@ export function DataToolbar({
   return (
     <div
       className={cn(
-        "sticky top-[calc(var(--admin-header-offset)+var(--admin-tabs-offset,0px))] z-30 rounded-2xl p-4 shadow-md",
+        "sticky top-[calc(var(--admin-header-offset)+var(--admin-tabs-offset,0px))] z-30 rounded-2xl p-3",
         GLASS_CLASSES.panelWithRing,
         className
       )}
     >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-          <div className="relative w-full sm:w-[320px]">
+          <div className="relative w-full sm:w-[300px]">
             <Search className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               value={searchValue}
               onChange={(e) => onSearchValueChange(e.target.value)}
               placeholder={searchPlaceholder}
-              className="h-10 rounded-xl border-border/60 bg-background/70 pr-10 pl-10"
+              className="h-9 rounded-xl border-border/60 bg-background/70 pr-10 pl-10"
             />
             {hasValue ? (
               <Button
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="absolute top-1/2 right-1 h-8 w-8 -translate-y-1/2"
+                className="absolute top-1/2 right-1 h-7 w-7 -translate-y-1/2"
                 onClick={() => onSearchValueChange("")}
                 aria-label="Очистить поиск"
               >

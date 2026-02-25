@@ -29,7 +29,7 @@ type PagingState = {
 };
 import { Loader2 } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
   SelectContent,
@@ -202,25 +202,36 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
 
   const { items, total, loading, error } = useProgramsPage(filter);
 
-  const prevLoadingRef = useRef(false);
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
+
   useEffect(() => {
-    const wasLoading = prevLoadingRef.current;
-    prevLoadingRef.current = loading;
+    // Sync accumulated rows from current page payload.
+    // Do not rely on loading transitions because cache-first may skip them.
+    setPaging((prev) => {
+      if (prev.key !== requestKey) return prev;
 
-    if (wasLoading && !loading) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setPaging((prev) => {
-        if (prev.key !== requestKey) return prev;
-        return {
-          ...prev,
-          accumulated:
-            prev.page === 1 ? items : [...prev.accumulated, ...items],
-        };
-      });
-    }
-  }, [loading, items, requestKey]);
+      if (effectivePaging.page === 1) {
+        const prevIds = prev.accumulated.map((p) => p.id).join("|");
+        const nextIds = items.map((p) => p.id).join("|");
+        if (prevIds === nextIds) return prev;
+        return { ...prev, accumulated: items };
+      }
 
-  const localQuery = useMemo(() => q.trim().toLowerCase(), [q]);
+      const existing = new Set(prev.accumulated.map((p) => p.id));
+      const toAdd = items.filter((p) => !existing.has(p.id));
+      if (toAdd.length === 0) return prev;
+
+      return {
+        ...prev,
+        accumulated: [...prev.accumulated, ...toAdd],
+      };
+    });
+  }, [items, requestKey, effectivePaging.page]);
+
+  const localQuery = useMemo(
+    () => debouncedQ.trim().toLowerCase(),
+    [debouncedQ]
+  );
 
   const filteredItems = useMemo(() => {
     return effectivePaging.accumulated.filter((p) => {
@@ -244,6 +255,10 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
   }, [effectivePaging.accumulated, views, pricing, localQuery]);
 
   const canLoadMore = effectivePaging.accumulated.length < total;
+  const isInitialLoading =
+    loading &&
+    effectivePaging.page === 1 &&
+    effectivePaging.accumulated.length === 0;
   const isRefreshing =
     loading &&
     effectivePaging.page === 1 &&
@@ -253,13 +268,22 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
     setPaging((prev) => ({ ...prev, page: prev.page + 1 }));
   }, []);
 
-  if (
-    loading &&
-    effectivePaging.page === 1 &&
-    effectivePaging.accumulated.length === 0
-  )
-    return <CategoryProgramsViewSkeleton />;
-  if (error) return <ErrorState message={error.message} />;
+  useEffect(() => {
+    const node = loadMoreRef.current;
+    if (!node || !canLoadMore) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const first = entries[0];
+        if (!first?.isIntersecting || loading) return;
+        handleLoadMore();
+      },
+      { rootMargin: "240px 0px" }
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [canLoadMore, loading, handleLoadMore, effectivePaging.page]);
 
   return (
     <DashboardSection title={title} suppressTitle={suppressTitle}>
@@ -357,7 +381,19 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
               Обновляем список…
             </div>
           ) : null}
-          {filteredItems.length === 0 ? (
+          {isInitialLoading ? (
+            <div className="space-y-2 py-2">
+              {Array.from({ length: 6 }, (_, i) => (
+                <Skeleton
+                  key={i}
+                  variant="premium"
+                  className="h-14 w-full rounded-xl"
+                />
+              ))}
+            </div>
+          ) : error ? (
+            <ErrorState message={error.message} />
+          ) : filteredItems.length === 0 ? (
             <EmptyState
               title="Программы не найдены"
               description="Попробуйте изменить фильтры или выберите другую категорию."
@@ -371,26 +407,19 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
               />
 
               {canLoadMore && (
-                <div className="mt-6 flex justify-center">
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className="min-w-[200px] rounded-xl border-border/60 bg-background/60 font-semibold shadow-sm transition-all hover:bg-background/80 hover:shadow focus-visible:ring-2 focus-visible:ring-primary/20"
-                    onClick={handleLoadMore}
-                    disabled={loading}
-                  >
-                    {loading ? (
-                      <span className="flex items-center gap-2">
-                        <Loader2
-                          className="h-4 w-4 animate-spin"
-                          aria-hidden
-                        />
-                        Загрузка…
-                      </span>
-                    ) : (
-                      "Показать ещё"
-                    )}
-                  </Button>
+                <div
+                  ref={loadMoreRef}
+                  className="mt-6 flex min-h-10 items-center justify-center"
+                >
+                  {loading ? (
+                    <span className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Loader2
+                        className="h-4 w-4 animate-spin"
+                        aria-hidden
+                      />
+                      Подгружаем программы…
+                    </span>
+                  ) : null}
                 </div>
               )}
             </>
@@ -462,7 +491,7 @@ export const ProgramsByTypeView = memo(function ProgramsByTypeView({
 
   useEffect(() => {
     const next = new URLSearchParams(searchParams.toString());
-    const normalizedSearch = q.trim();
+    const normalizedSearch = debouncedQ.trim();
 
     if (normalizedSearch) next.set(QUERY_KEYS.q, normalizedSearch);
     else next.delete(QUERY_KEYS.q);
@@ -489,7 +518,7 @@ export const ProgramsByTypeView = memo(function ProgramsByTypeView({
       });
     }
   }, [
-    q,
+    debouncedQ,
     effectiveCategoryId,
     pricing,
     views,

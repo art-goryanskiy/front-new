@@ -158,10 +158,18 @@ export const CategoryTable = memo(function CategoryTable({
   }
 
   if (filtered.length === 0) {
+    const hasQuery = !!searchQuery.trim();
+    const description = hasQuery
+      ? `По запросу “${searchQuery}” нет результатов`
+      : programsFilter === "withPrograms"
+        ? "Нет категорий с программами"
+        : programsFilter === "empty"
+          ? "Нет категорий без программ"
+          : "Нет категорий для отображения";
     return (
       <EmptyState
         title="Ничего не найдено"
-        description={`По запросу “${searchQuery}” нет результатов`}
+        description={description}
         icon={EMPTY_STATE_ICON}
       />
     );

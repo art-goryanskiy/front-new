@@ -56,8 +56,8 @@ export const ProgramTableSubprogramsContent = memo(
               <TooltipTrigger asChild>
                 <span className="inline-block cursor-help">
                   <Badge
-                    variant="secondary"
-                    className="cursor-help font-semibold"
+                    variant="outline"
+                    className="cursor-help font-medium"
                     aria-label={ariaLabel}
                   >
                     {subProgramsCount} шт.
