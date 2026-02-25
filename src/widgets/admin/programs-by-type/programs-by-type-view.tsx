@@ -13,7 +13,6 @@ import {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from "react";
 import {
@@ -202,25 +201,34 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
 
   const { items, total, loading, error } = useProgramsPage(filter);
 
-  const prevLoadingRef = useRef(false);
   useEffect(() => {
-    const wasLoading = prevLoadingRef.current;
-    prevLoadingRef.current = loading;
+    // cache-first может не дать переход loading=true -> false.
+    // Синхронизируем накопленный список по факту изменения items.
+    setPaging((prev) => {
+      if (prev.key !== requestKey) return prev;
 
-    if (wasLoading && !loading) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setPaging((prev) => {
-        if (prev.key !== requestKey) return prev;
-        return {
-          ...prev,
-          accumulated:
-            prev.page === 1 ? items : [...prev.accumulated, ...items],
-        };
-      });
-    }
-  }, [loading, items, requestKey]);
+      if (effectivePaging.page === 1) {
+        const prevIds = prev.accumulated.map((p) => p.id).join("|");
+        const nextIds = items.map((p) => p.id).join("|");
+        if (prevIds === nextIds) return prev;
+        return { ...prev, accumulated: items };
+      }
 
-  const localQuery = useMemo(() => q.trim().toLowerCase(), [q]);
+      const existing = new Set(prev.accumulated.map((p) => p.id));
+      const toAdd = items.filter((p) => !existing.has(p.id));
+      if (toAdd.length === 0) return prev;
+
+      return {
+        ...prev,
+        accumulated: [...prev.accumulated, ...toAdd],
+      };
+    });
+  }, [items, requestKey, effectivePaging.page]);
+
+  const localQuery = useMemo(
+    () => debouncedQ.trim().toLowerCase(),
+    [debouncedQ]
+  );
 
   const filteredItems = useMemo(() => {
     return effectivePaging.accumulated.filter((p) => {
@@ -244,6 +252,16 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
   }, [effectivePaging.accumulated, views, pricing, localQuery]);
 
   const canLoadMore = effectivePaging.accumulated.length < total;
+  const hasClientFilters =
+    views !== "all" || pricing !== "all";
+  const hiddenByClientFilters = Math.max(
+    0,
+    effectivePaging.accumulated.length - filteredItems.length
+  );
+  const displayTotal =
+    hasClientFilters && !canLoadMore
+      ? filteredItems.length
+      : total;
   const isRefreshing =
     loading &&
     effectivePaging.page === 1 &&
@@ -367,7 +385,13 @@ const ProgramsByTypeResults = memo(function ProgramsByTypeResults({
               <ProgramList
                 programs={filteredItems}
                 categoryType={type}
-                caption={`Показано ${filteredItems.length} из ${total}`}
+                caption={`Показано ${filteredItems.length} из ${displayTotal}${
+                  hasClientFilters &&
+                  !canLoadMore &&
+                  hiddenByClientFilters > 0
+                    ? ` • скрыто фильтрами: ${hiddenByClientFilters}`
+                    : ""
+                }`}
               />
 
               {canLoadMore && (
