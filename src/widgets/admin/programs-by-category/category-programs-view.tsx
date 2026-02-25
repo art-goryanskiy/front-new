@@ -206,26 +206,30 @@ export const CategoryProgramsView = memo(
 
     const { items, total, loading, error } = useProgramsPage(filter);
 
-    const prevLoadingRef = useRef(false);
-    useEffect(() => {
-      const wasLoading = prevLoadingRef.current;
-      prevLoadingRef.current = loading;
+    const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
-      if (wasLoading && !loading) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setPaging((prev) => {
-          // Игнорируем устаревший ответ, если ключ уже поменялся
-          if (prev.key !== requestKey) return prev;
-          return {
-            ...prev,
-            accumulated:
-              prev.page === 1
-                ? items
-                : [...prev.accumulated, ...items],
-          };
-        });
-      }
-    }, [loading, items, requestKey]);
+    useEffect(() => {
+      // Keep accumulated rows in sync even when Apollo serves cache without loading transition.
+      setPaging((prev) => {
+        if (prev.key !== requestKey) return prev;
+
+        if (effectivePaging.page === 1) {
+          const prevIds = prev.accumulated.map((p) => p.id).join("|");
+          const nextIds = items.map((p) => p.id).join("|");
+          if (prevIds === nextIds) return prev;
+          return { ...prev, accumulated: items };
+        }
+
+        const existing = new Set(prev.accumulated.map((p) => p.id));
+        const toAdd = items.filter((p) => !existing.has(p.id));
+        if (toAdd.length === 0) return prev;
+
+        return {
+          ...prev,
+          accumulated: [...prev.accumulated, ...toAdd],
+        };
+      });
+    }, [items, requestKey, effectivePaging.page]);
 
     const filteredItems = useMemo(() => {
       return effectivePaging.accumulated.filter((p) => {
@@ -262,6 +266,23 @@ export const CategoryProgramsView = memo(
     const handleCreate = useCallback(() => {
       openCreateProgramModal(categoryId, categoryType);
     }, [openCreateProgramModal, categoryId, categoryType]);
+
+    useEffect(() => {
+      const node = loadMoreRef.current;
+      if (!node || !canLoadMore) return;
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          const first = entries[0];
+          if (!first?.isIntersecting || loading) return;
+          handleLoadMore();
+        },
+        { rootMargin: "240px 0px" }
+      );
+
+      observer.observe(node);
+      return () => observer.disconnect();
+    }, [canLoadMore, loading, handleLoadMore, effectivePaging.page]);
 
     return (
       <DashboardSection title="Программы">
@@ -369,26 +390,19 @@ export const CategoryProgramsView = memo(
               />
 
               {canLoadMore && (
-                <div className="mt-6 flex justify-center">
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className="min-w-[200px] rounded-xl border-border/60 bg-background/60 font-semibold shadow-sm transition-all hover:bg-background/80 hover:shadow focus-visible:ring-2 focus-visible:ring-primary/20"
-                    onClick={handleLoadMore}
-                    disabled={loading}
-                  >
-                    {loading ? (
-                      <span className="flex items-center gap-2">
-                        <Loader2
-                          className="h-4 w-4 animate-spin"
-                          aria-hidden
-                        />
-                        Загрузка…
-                      </span>
-                    ) : (
-                      "Показать ещё"
-                    )}
-                  </Button>
+                <div
+                  ref={loadMoreRef}
+                  className="mt-6 flex min-h-10 items-center justify-center"
+                >
+                  {loading ? (
+                    <span className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Loader2
+                        className="h-4 w-4 animate-spin"
+                        aria-hidden
+                      />
+                      Подгружаем программы…
+                    </span>
+                  ) : null}
                 </div>
               )}
             </>

@@ -15,11 +15,7 @@ export const ProgramTableViewsContent = memo(
 
     return (
       <div className="text-center">
-        <Badge
-          variant="secondary"
-          className="font-semibold"
-          aria-label={ariaLabel}
-        >
+        <Badge variant="outline" className="font-medium" aria-label={ariaLabel}>
           {program.views}
         </Badge>
       </div>
