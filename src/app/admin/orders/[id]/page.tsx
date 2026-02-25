@@ -1,13 +1,12 @@
 "use client";
 
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useAdminOrder } from "@/entities/order/api/use-admin-order";
-import { useAdminOrderDocuments } from "@/entities/order/api/use-admin-order-documents";
-import { useAdminUpdateOrderStatus } from "@/entities/order/api/use-admin-update-order-status";
-import { useAdminDeleteOrder } from "@/entities/order/api/use-admin-delete-order";
-import { useAdminSetOrderTrainingDates } from "@/entities/order/api/use-admin-set-order-training-dates";
+import { useOrder } from "@/entities/order/api/use-order";
+import { useOrderDocuments } from "@/entities/order/api/use-order-documents";
+import { useUpdateOrderStatus } from "@/entities/order/api/use-update-order-status";
+import { useDeleteOrder } from "@/entities/order/api/use-delete-order";
 import {
   useAdminGenerateOrderContract,
   useAdminGenerateOrderAct,
@@ -36,15 +35,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   FileText,
   FileDown,
   User,
   ArrowLeft,
   Loader2,
-  Calendar,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -153,17 +149,16 @@ const AdminOrderDetailContent = memo(
     const orderId = typeof params?.id === "string" ? params.id : null;
     const { showToast } = useToastState();
 
-    const { order, loading, error, refetch } = useAdminOrder(orderId);
+    const { order, loading, error, refetch } = useOrder(orderId);
     const {
       documents,
       loading: documentsLoading,
       refetch: refetchDocs,
-    } = useAdminOrderDocuments(orderId);
+    } = useOrderDocuments(orderId);
 
-    const { adminUpdateOrderStatus, loading: statusLoading } =
-      useAdminUpdateOrderStatus();
-    const { adminDeleteOrder, loading: deleteLoading } =
-      useAdminDeleteOrder();
+    const { updateOrderStatus, loading: statusLoading } =
+      useUpdateOrderStatus();
+    const { deleteOrder, loading: deleteLoading } = useDeleteOrder();
     const { adminGenerateOrderContract, loading: contractLoading } =
       useAdminGenerateOrderContract(orderId ?? "");
     const { adminGenerateOrderAct, loading: actLoading } =
@@ -172,36 +167,13 @@ const AdminOrderDetailContent = memo(
       adminGenerateOrderTrainingApplication,
       loading: trainingAppLoading,
     } = useAdminGenerateOrderTrainingApplication(orderId ?? "");
-    const {
-      adminSetOrderTrainingDates,
-      loading: trainingDatesLoading,
-    } = useAdminSetOrderTrainingDates(orderId ?? "");
-
     const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
-    const [trainingStartInput, setTrainingStartInput] = useState("");
-    const [trainingEndInput, setTrainingEndInput] = useState("");
-
-    useEffect(() => {
-      if (!order) return;
-      setTrainingStartInput(
-        order.trainingStartDate
-          ? new Date(order.trainingStartDate)
-              .toISOString()
-              .slice(0, 10)
-          : ""
-      );
-      setTrainingEndInput(
-        order.trainingEndDate
-          ? new Date(order.trainingEndDate).toISOString().slice(0, 10)
-          : ""
-      );
-    }, [order]);
 
     const handleStatusChange = useCallback(
       async (status: OrderStatus) => {
         if (!orderId) return;
         try {
-          await adminUpdateOrderStatus(orderId, status);
+          await updateOrderStatus(orderId, status);
           showToast("success", "Статус обновлён");
           refetch();
         } catch (e) {
@@ -211,13 +183,13 @@ const AdminOrderDetailContent = memo(
           );
         }
       },
-      [orderId, adminUpdateOrderStatus, showToast, refetch]
+      [orderId, updateOrderStatus, showToast, refetch]
     );
 
     const handleDelete = useCallback(async () => {
       if (!orderId) return;
       try {
-        const ok = await adminDeleteOrder(orderId);
+        const ok = await deleteOrder(orderId);
         if (ok) {
           showToast("success", "Заявка удалена");
           router.push("/admin/orders");
@@ -232,7 +204,7 @@ const AdminOrderDetailContent = memo(
       } finally {
         setDeleteConfirmOpen(false);
       }
-    }, [orderId, adminDeleteOrder, router, showToast]);
+    }, [orderId, deleteOrder, router, showToast]);
 
     const handleGenerateContract = useCallback(async () => {
       try {
@@ -259,32 +231,6 @@ const AdminOrderDetailContent = memo(
         );
       }
     }, [adminGenerateOrderAct, showToast, refetchDocs]);
-
-    const handleSaveTrainingDates = useCallback(async () => {
-      try {
-        await adminSetOrderTrainingDates({
-          trainingStartDate: trainingStartInput
-            ? `${trainingStartInput}T00:00:00.000Z`
-            : undefined,
-          trainingEndDate: trainingEndInput
-            ? `${trainingEndInput}T00:00:00.000Z`
-            : undefined,
-        });
-        showToast("success", "Сроки обучения сохранены");
-        refetch();
-      } catch (e) {
-        showToast(
-          "error",
-          (e as Error)?.message ?? "Ошибка сохранения сроков"
-        );
-      }
-    }, [
-      adminSetOrderTrainingDates,
-      trainingStartInput,
-      trainingEndInput,
-      showToast,
-      refetch,
-    ]);
 
     const handleGenerateTrainingApplication =
       useCallback(async () => {
@@ -509,49 +455,6 @@ const AdminOrderDetailContent = memo(
               {formatPriceWithCurrency(order.totalAmount)}
             </span>
           </div>
-        </Surface>
-
-        {/* Сроки обучения */}
-        <Surface variant="floating" className="space-y-4 p-6">
-          <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground">
-            <Calendar className="h-5 w-5" />
-            Сроки обучения
-          </h2>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="training-start">Дата начала</Label>
-              <Input
-                id="training-start"
-                type="date"
-                value={trainingStartInput}
-                onChange={(e) =>
-                  setTrainingStartInput(e.target.value)
-                }
-                className="rounded-xl"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="training-end">Дата окончания</Label>
-              <Input
-                id="training-end"
-                type="date"
-                value={trainingEndInput}
-                onChange={(e) => setTrainingEndInput(e.target.value)}
-                className="rounded-xl"
-              />
-            </div>
-          </div>
-          <Button
-            onClick={handleSaveTrainingDates}
-            disabled={trainingDatesLoading}
-            className="rounded-xl"
-          >
-            {trainingDatesLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              "Сохранить"
-            )}
-          </Button>
         </Surface>
 
         {/* Документы заявки (админ): список + кнопки формирования */}

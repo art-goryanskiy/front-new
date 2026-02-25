@@ -6,7 +6,6 @@ export const ORDER_FIELDS = gql`
     number
     userId
     customerType
-    customerDisplayName
     organizationId
     contactEmail
     contactPhone
@@ -14,15 +13,6 @@ export const ORDER_FIELDS = gql`
     totalAmount
     createdAt
     updatedAt
-    statusChangedAt
-    trainingStartDate
-    trainingEndDate
-    trainingForm
-    trainingLanguage
-    headPosition
-    headFullName
-    contactPersonName
-    contactPersonPosition
     lines {
       programId
       programTitle
@@ -38,20 +28,6 @@ export const ORDER_FIELDS = gql`
         middleName
         email
         phone
-        dateOfBirth
-        citizenship
-        passportSeries
-        passportNumber
-        passportIssuedBy
-        passportIssuedAt
-        passportDepartmentCode
-        snils
-        educationQualification
-        educationDocumentIssuedAt
-        passportRegistrationAddress
-        residentialAddress
-        workPlaceName
-        position
       }
     }
   }
@@ -114,8 +90,8 @@ export const ORDER_DOCUMENTS = gql`
 /** Список заявок (только для админа) */
 export const ADMIN_ORDERS = gql`
   ${ORDER_FIELDS}
-  query AdminOrders($filter: AdminOrdersFilterInput) {
-    adminOrders(filter: $filter) {
+  query AdminOrders($filter: MyOrdersFilterInput) {
+    adminOrders: myOrders(filter: $filter) {
       ...OrderFields
     }
   }
@@ -125,7 +101,7 @@ export const ADMIN_ORDERS = gql`
 export const ADMIN_ORDER = gql`
   ${ORDER_FIELDS}
   query AdminOrder($id: ID!) {
-    adminOrder(id: $id) {
+    adminOrder: order(id: $id) {
       ...OrderFields
     }
   }

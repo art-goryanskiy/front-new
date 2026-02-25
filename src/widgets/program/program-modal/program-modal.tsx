@@ -128,6 +128,7 @@ export const ProgramModal = memo(function ProgramModal() {
               categoryType={categoryType}
               onDirtyChange={setIsDirty}
               onBusyChange={setIsBusy}
+              onRequestClose={handleRequestClose}
             />
           </div>
         </DialogContent>

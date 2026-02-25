@@ -68,6 +68,7 @@ export const ProgramForm = memo(function ProgramForm({
   categoryType,
   onDirtyChange,
   onBusyChange,
+  onRequestClose,
 }: ProgramFormProps) {
   const isEditMode = !!editingProgram;
   const {
@@ -235,7 +236,7 @@ export const ProgramForm = memo(function ProgramForm({
         <Button
           type="button"
           variant="ghost"
-          onClick={closeModal}
+          onClick={onRequestClose ?? closeModal}
           disabled={loading}
           className="min-w-24"
         >

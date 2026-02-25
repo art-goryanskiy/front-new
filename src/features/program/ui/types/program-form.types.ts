@@ -37,4 +37,5 @@ export interface ProgramFormProps {
   categoryType?: CategoryType | null;
   onDirtyChange?: (dirty: boolean) => void;
   onBusyChange?: (busy: boolean) => void;
+  onRequestClose?: () => void;
 }

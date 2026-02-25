@@ -17,19 +17,19 @@ export const ProgramTableTitleContent = memo(
       <div className="flex max-w-[320px] min-w-0 items-start gap-2">
         <div className="min-w-0 flex-1">
           <p
-            className="line-clamp-2 text-sm font-semibold text-foreground"
+            className="line-clamp-2 text-sm font-medium text-foreground"
             title={program.title}
           >
             {program.title}
           </p>
           {program.description && (
-            <p className="mt-0.5 line-clamp-1 text-xs text-muted-foreground">
+            <p className="mt-0.5 line-clamp-1 text-xs text-muted-foreground/90">
               {program.description}
             </p>
           )}
           {isPopular && (
             <span
-              className="mt-1 inline-block text-[10px] text-muted-foreground"
+              className="mt-1 inline-block rounded border border-border/60 bg-muted/10 px-1.5 py-0.5 text-[10px] text-muted-foreground"
               aria-label="Популярная программа"
             >
               Популярная

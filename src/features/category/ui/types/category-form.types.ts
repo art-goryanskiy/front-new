@@ -19,4 +19,5 @@ export interface CategoryFormProps {
   editingCategory?: EditingCategory | null;
   onDirtyChange?: (dirty: boolean) => void;
   onBusyChange?: (busy: boolean) => void;
+  onRequestClose?: () => void;
 }
