@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
+import { useCategories } from "@/entities/category/api/use-categories";
 import { useUpdateProgramsBulk } from "@/entities/program/api/use-update-programs-bulk";
 import type {
   BulkFailureCode,
@@ -61,6 +62,7 @@ export function BulkUpdateProgramsDialog({
 }) {
   const { showToast } = useToastState();
   const { updateProgramsBulk, loading } = useUpdateProgramsBulk();
+  const { categories } = useCategories();
 
   const [mode, setMode] = useState<BulkPatchMode>("REPLACE");
   const [category, setCategory] = useState("");
@@ -388,30 +390,61 @@ export function BulkUpdateProgramsDialog({
                   <SelectValue placeholder="Выберите режим" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="REPLACE">REPLACE</SelectItem>
-                  <SelectItem value="DELTA">DELTA</SelectItem>
-                  <SelectItem value="CLEAR">CLEAR</SelectItem>
+                  <SelectItem value="REPLACE">
+                    Замена (REPLACE) - обновить выбранные поля
+                  </SelectItem>
+                  <SelectItem value="DELTA">
+                    Дельта (DELTA) - изменить только базовые часы
+                  </SelectItem>
+                  <SelectItem value="CLEAR">
+                    Очистка (CLEAR) - очистить часы и цены
+                  </SelectItem>
                 </SelectContent>
               </Select>
+              <p className="text-xs text-muted-foreground">
+                {mode === "REPLACE"
+                  ? "REPLACE: можно указать подкатегорию, базовые часы и/или цены."
+                  : mode === "DELTA"
+                    ? "DELTA: разрешено только поле базовых часов."
+                    : "CLEAR: очищаются базовые часы и цены; подкатегорию указывать нельзя."}
+              </p>
             </div>
 
             {mode === "REPLACE" && (
               <>
                 <div className="space-y-2">
                   <Label htmlFor="bulk-category">
-                    Category ID (опционально)
+                    Подкатегория (опционально)
                   </Label>
-                  <Input
-                    id="bulk-category"
-                    placeholder="Например: 66b..."
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                  />
+                  <Select
+                    value={category || "__none__"}
+                    onValueChange={(value) =>
+                      setCategory(value === "__none__" ? "" : value)
+                    }
+                  >
+                    <SelectTrigger id="bulk-category">
+                      <SelectValue placeholder="Не изменять подкатегорию" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="__none__">
+                        Не изменять подкатегорию
+                      </SelectItem>
+                      {categories.map((item) => (
+                        <SelectItem key={item.id} value={item.id}>
+                          {item.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground">
+                    Выберите подкатегорию из доступных категорий, к
+                    которым могут быть привязаны программы.
+                  </p>
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="bulk-base-hours">
-                    Base hours (опционально)
+                    Базовые часы (опционально)
                   </Label>
                   <Input
                     id="bulk-base-hours"
@@ -424,7 +457,7 @@ export function BulkUpdateProgramsDialog({
 
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label>Pricing (опционально)</Label>
+                    <Label>Цены и часы (опционально)</Label>
                     <Button
                       type="button"
                       variant="outline"
@@ -458,7 +491,7 @@ export function BulkUpdateProgramsDialog({
                       >
                         <Input
                           type="number"
-                          placeholder="hours"
+                          placeholder="часы"
                           value={row.hours}
                           onChange={(e) =>
                             setPricingRows((prev) =>
@@ -475,7 +508,7 @@ export function BulkUpdateProgramsDialog({
                         />
                         <Input
                           type="number"
-                          placeholder="price"
+                          placeholder="цена"
                           value={row.price}
                           onChange={(e) =>
                             setPricingRows((prev) =>
@@ -515,7 +548,7 @@ export function BulkUpdateProgramsDialog({
             {mode === "DELTA" && (
               <div className="space-y-2">
                 <Label htmlFor="bulk-delta-base-hours">
-                  Base hours (обязательно)
+                  Базовые часы (обязательно)
                 </Label>
                 <Input
                   id="bulk-delta-base-hours"
@@ -553,7 +586,7 @@ export function BulkUpdateProgramsDialog({
             <div className="flex items-center justify-between rounded-lg border border-border/50 p-3">
               <div className="space-y-1">
                 <p className="text-sm font-medium">
-                  dryRun по умолчанию
+                  Режим dry-run по умолчанию
                 </p>
                 <p className="text-xs text-muted-foreground">
                   Если включено, изменения не сохраняются.
@@ -640,11 +673,11 @@ export function BulkUpdateProgramsDialog({
                     onClick={() =>
                       copyIds(
                         lastResult.failed.map((item) => item.id),
-                        "все failed"
+                        "все ошибки"
                       )
                     }
                   >
-                    Копировать все failed ID
+                    Копировать ID всех ошибок
                   </Button>
                   <Button
                     type="button"
@@ -659,7 +692,7 @@ export function BulkUpdateProgramsDialog({
                       )
                     }
                   >
-                    Копировать ID по фильтру
+                    Копировать ID по фильтру ошибок
                   </Button>
                   <Button
                     type="button"

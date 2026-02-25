@@ -23,6 +23,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 
@@ -81,6 +82,11 @@ export const ProgramList = memo(function ProgramList({
     y: number;
     programId: string;
   } | null>(null);
+  const [contextMenuVisible, setContextMenuVisible] = useState(false);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null
+  );
+  const menuRef = useRef<HTMLDivElement | null>(null);
   const visibleProgramIds = useMemo(
     () => programs.map((program) => program.id),
     [programs]
@@ -136,20 +142,57 @@ export const ProgramList = memo(function ProgramList({
     (programId: string, e: React.MouseEvent) => {
       if (!bulkEnabled) return;
       e.preventDefault();
+      if (closeTimerRef.current) {
+        clearTimeout(closeTimerRef.current);
+        closeTimerRef.current = null;
+      }
+      const MENU_WIDTH = 240;
+      const MENU_HEIGHT = 176;
+      const x = Math.min(
+        e.clientX + 4,
+        window.innerWidth - MENU_WIDTH - 8
+      );
+      const y = Math.min(
+        e.clientY + 4,
+        window.innerHeight - MENU_HEIGHT - 8
+      );
       setContextMenu({
-        x: e.clientX,
-        y: e.clientY,
+        x: Math.max(8, x),
+        y: Math.max(8, y),
         programId,
       });
+      setContextMenuVisible(false);
+      requestAnimationFrame(() => setContextMenuVisible(true));
     },
     [bulkEnabled]
   );
+  const closeContextMenu = useCallback(() => {
+    if (!contextMenu) return;
+    setContextMenuVisible(false);
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+    }
+    closeTimerRef.current = setTimeout(() => {
+      setContextMenu(null);
+      closeTimerRef.current = null;
+    }, 120);
+  }, [contextMenu]);
   useEffect(() => {
     if (!contextMenu) return;
 
-    const handlePointerDown = () => setContextMenu(null);
+    // On small screens, ensure the menu stays comfortably visible.
+    if (window.innerWidth < 768) {
+      requestAnimationFrame(() => {
+        menuRef.current?.scrollIntoView({
+          block: "nearest",
+          inline: "nearest",
+        });
+      });
+    }
+
+    const handlePointerDown = () => closeContextMenu();
     const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setContextMenu(null);
+      if (event.key === "Escape") closeContextMenu();
     };
 
     window.addEventListener("pointerdown", handlePointerDown);
@@ -161,7 +204,15 @@ export const ProgramList = memo(function ProgramList({
       window.removeEventListener("keydown", handleEscape);
       window.removeEventListener("scroll", handlePointerDown, true);
     };
-  }, [contextMenu]);
+  }, [closeContextMenu, contextMenu]);
+  useEffect(
+    () => () => {
+      if (closeTimerRef.current) {
+        clearTimeout(closeTimerRef.current);
+      }
+    },
+    []
+  );
 
   const tableId = useMemo(() => `program-list`, []);
   const canUseVirtualized =
@@ -426,7 +477,13 @@ export const ProgramList = memo(function ProgramList({
       </div>
       {bulkEnabled && contextMenu ? (
         <div
-          className="fixed z-50 min-w-56 rounded-lg border border-border/60 bg-background/95 p-1.5 shadow-xl backdrop-blur"
+          ref={menuRef}
+          className={cn(
+            "fixed z-50 min-w-56 rounded-lg border border-border/60 bg-background/95 p-1.5 shadow-xl backdrop-blur transition duration-120 ease-out",
+            contextMenuVisible
+              ? "scale-100 opacity-100"
+              : "scale-95 opacity-0"
+          )}
           style={{ left: contextMenu.x, top: contextMenu.y }}
           onPointerDown={(e) => e.stopPropagation()}
         >
@@ -438,7 +495,7 @@ export const ProgramList = memo(function ProgramList({
                 contextMenu.programId,
                 !selectedProgramIds.has(contextMenu.programId)
               );
-              setContextMenu(null);
+              closeContextMenu();
             }}
           >
             {selectedProgramIds.has(contextMenu.programId)
@@ -450,7 +507,7 @@ export const ProgramList = memo(function ProgramList({
             className="w-full rounded-md px-3 py-2 text-left text-sm hover:bg-muted"
             onClick={() => {
               onSelectAllPrograms?.(visibleProgramIds, true);
-              setContextMenu(null);
+              closeContextMenu();
             }}
           >
             Выбрать все по текущему фильтру
@@ -460,7 +517,7 @@ export const ProgramList = memo(function ProgramList({
             className="w-full rounded-md px-3 py-2 text-left text-sm hover:bg-muted"
             onClick={() => {
               onOpenBulkUpdate?.();
-              setContextMenu(null);
+              closeContextMenu();
             }}
           >
             Открыть массовое обновление ({selectedCount})
@@ -470,7 +527,7 @@ export const ProgramList = memo(function ProgramList({
             className="w-full rounded-md px-3 py-2 text-left text-sm text-muted-foreground hover:bg-muted"
             onClick={() => {
               onClearSelection?.();
-              setContextMenu(null);
+              closeContextMenu();
             }}
           >
             Очистить выбор
