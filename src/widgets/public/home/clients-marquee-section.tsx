@@ -143,8 +143,8 @@ const ClientLogo = memo(function ClientLogo({
         alt={client.name}
         width={client.width}
         height={client.height}
+        sizes="130px"
         className="h-full w-full object-contain grayscale transition-all duration-300 group-hover:grayscale-0"
-        unoptimized
         loading="lazy"
       />
     </div>

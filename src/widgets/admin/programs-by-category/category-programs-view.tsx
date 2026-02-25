@@ -14,6 +14,11 @@ import {
   useRef,
   useState,
 } from "react";
+import {
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 
 type PagingState = {
   key: string;
@@ -45,6 +50,29 @@ type PricingFilter = "all" | "withPrice" | "noPrice";
 type ViewsFilter = "all" | "popular";
 type Sort = "updatedDesc" | "viewsDesc" | "titleAsc";
 
+function parsePricing(value: string | null): PricingFilter {
+  return value === "withPrice" || value === "noPrice"
+    ? value
+    : "all";
+}
+
+function parseViews(value: string | null): ViewsFilter {
+  return value === "popular" ? "popular" : "all";
+}
+
+function parseSort(value: string | null): Sort {
+  return value === "viewsDesc" || value === "titleAsc"
+    ? value
+    : "updatedDesc";
+}
+
+const QUERY_KEYS = {
+  q: "cp_q",
+  pricing: "cp_pricing",
+  views: "cp_views",
+  sort: "cp_sort",
+} as const;
+
 function mapSort(sort: Sort): {
   sortBy: string;
   sortOrder: "asc" | "desc";
@@ -69,13 +97,51 @@ export const CategoryProgramsView = memo(
     categoryType: CategoryType;
   }) {
     const { openCreateProgramModal } = useProgramModalState();
+    const router = useRouter();
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
 
-    const [q, setQ] = useState("");
+    const [q, setQ] = useState(
+      () => searchParams.get(QUERY_KEYS.q) ?? ""
+    );
     const debouncedQ = useDebounce(q, 250);
 
-    const [pricing, setPricing] = useState<PricingFilter>("all");
-    const [views, setViews] = useState<ViewsFilter>("all");
-    const [sort, setSort] = useState<Sort>("updatedDesc");
+    const [pricing, setPricing] = useState<PricingFilter>(() =>
+      parsePricing(searchParams.get(QUERY_KEYS.pricing))
+    );
+    const [views, setViews] = useState<ViewsFilter>(() =>
+      parseViews(searchParams.get(QUERY_KEYS.views))
+    );
+    const [sort, setSort] = useState<Sort>(() =>
+      parseSort(searchParams.get(QUERY_KEYS.sort))
+    );
+
+    useEffect(() => {
+      const next = new URLSearchParams(searchParams.toString());
+      const normalizedSearch = q.trim();
+
+      if (normalizedSearch) next.set(QUERY_KEYS.q, normalizedSearch);
+      else next.delete(QUERY_KEYS.q);
+
+      if (pricing !== "all") next.set(QUERY_KEYS.pricing, pricing);
+      else next.delete(QUERY_KEYS.pricing);
+
+      if (views !== "all") next.set(QUERY_KEYS.views, views);
+      else next.delete(QUERY_KEYS.views);
+
+      if (sort !== "updatedDesc") next.set(QUERY_KEYS.sort, sort);
+      else next.delete(QUERY_KEYS.sort);
+
+      const current = searchParams.toString();
+      const updated = next.toString();
+
+      if (updated !== current) {
+        router.replace(
+          updated ? `${pathname}?${updated}` : pathname,
+          { scroll: false }
+        );
+      }
+    }, [q, pricing, views, sort, pathname, router, searchParams]);
 
     const requestKey = useMemo(
       () => `${categoryId}|${debouncedQ}|${sort}`,
@@ -95,13 +161,17 @@ export const CategoryProgramsView = memo(
     const effectivePaging =
       paging.key === requestKey
         ? paging
-        : { key: requestKey, page: 1, accumulated: [] };
+        : { ...paging, key: requestKey, page: 1 };
 
     // Фиксируем изменение ключа в state (для корректного handleLoadMore)
     useEffect(() => {
       if (paging.key !== requestKey) {
         // eslint-disable-next-line react-hooks/set-state-in-effect
-        setPaging({ key: requestKey, page: 1, accumulated: [] });
+        setPaging((prev) => ({
+          ...prev,
+          key: requestKey,
+          page: 1,
+        }));
       }
     }, [requestKey, paging.key]);
 
@@ -170,6 +240,10 @@ export const CategoryProgramsView = memo(
     }, [effectivePaging.accumulated, pricing, views]);
 
     const canLoadMore = effectivePaging.accumulated.length < total;
+    const isRefreshing =
+      loading &&
+      effectivePaging.page === 1 &&
+      effectivePaging.accumulated.length > 0;
 
     const handleLoadMore = useCallback(() => {
       setPaging((prev) => ({ ...prev, page: prev.page + 1 }));
@@ -179,7 +253,11 @@ export const CategoryProgramsView = memo(
       openCreateProgramModal(categoryId, categoryType);
     }, [openCreateProgramModal, categoryId, categoryType]);
 
-    if (loading && effectivePaging.page === 1)
+    if (
+      loading &&
+      effectivePaging.page === 1 &&
+      effectivePaging.accumulated.length === 0
+    )
       return <CategoryProgramsViewSkeleton />;
     if (error) return <ErrorState message={error.message} />;
 
@@ -252,6 +330,13 @@ export const CategoryProgramsView = memo(
               </div>
             }
           />
+
+          {isRefreshing ? (
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
+              Обновляем список…
+            </div>
+          ) : null}
 
           {filteredItems.length === 0 ? (
             <EmptyState

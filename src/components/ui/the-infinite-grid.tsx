@@ -6,6 +6,7 @@ import {
   useAnimationFrame,
   useMotionTemplate,
   useMotionValue,
+  useReducedMotion,
   type MotionValue,
 } from "framer-motion";
 import { ArrowRight, MonitorPlay, Sparkles } from "lucide-react";
@@ -16,6 +17,7 @@ import { HandWrittenTitle } from "./hand-writing-text";
 export const Component = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(true);
+  const shouldReduceMotion = useReducedMotion();
 
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -45,7 +47,7 @@ export const Component = () => {
   }, []);
 
   useAnimationFrame(() => {
-    if (!isVisible) return;
+    if (!isVisible || shouldReduceMotion) return;
     const currentX = gridOffsetX.get();
     const currentY = gridOffsetY.get();
     gridOffsetX.set((currentX + speedX) % 40);
@@ -67,7 +69,11 @@ export const Component = () => {
       </div>
       <motion.div
         className="absolute inset-0 z-0 opacity-40"
-        style={{ maskImage, WebkitMaskImage: maskImage }}
+        style={
+          shouldReduceMotion
+            ? undefined
+            : { maskImage, WebkitMaskImage: maskImage }
+        }
       >
         <GridPattern offsetX={gridOffsetX} offsetY={gridOffsetY} />
       </motion.div>

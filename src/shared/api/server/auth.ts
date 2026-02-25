@@ -32,6 +32,11 @@ interface MeMinimalResponse {
 export async function getViewerServer(
   cookie?: string
 ): Promise<ViewerUser | null> {
+  // Для гостей без cookie избегаем лишнего network roundtrip на каждом SSR.
+  if (!cookie || cookie.trim().length === 0) {
+    return null;
+  }
+
   try {
     const headers = getServerHeaders(cookie);
     const data = await serverGraphQLRequest<MeMinimalResponse>(
