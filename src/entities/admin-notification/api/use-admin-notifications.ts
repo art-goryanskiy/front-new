@@ -81,22 +81,23 @@ export function useAdminNotifications(params?: {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const socketConnectedRef = useRef(false);
 
-  const { data, loading, fetchMore, refetch } = useQuery<NotificationsData>(
-    ADMIN_NOTIFICATIONS_QUERY,
-    {
-      variables: { filter: { limit: pageSize, offset: 0, unreadOnly: false } },
+  const { data, loading, fetchMore, refetch } =
+    useQuery<NotificationsData>(ADMIN_NOTIFICATIONS_QUERY, {
+      variables: {
+        filter: { limit: pageSize, offset: 0, unreadOnly: false },
+      },
       fetchPolicy: "network-only",
       errorPolicy: "all",
-    }
-  );
+    });
 
-  const { data: unreadData, refetch: refetchUnread } = useQuery<UnreadCountData>(
-    ADMIN_NOTIFICATIONS_UNREAD_COUNT_QUERY,
-    {
-      fetchPolicy: "network-only",
-      errorPolicy: "all",
-    }
-  );
+  const { data: unreadData, refetch: refetchUnread } =
+    useQuery<UnreadCountData>(
+      ADMIN_NOTIFICATIONS_UNREAD_COUNT_QUERY,
+      {
+        fetchPolicy: "network-only",
+        errorPolicy: "all",
+      }
+    );
 
   useEffect(() => {
     if (!unreadData?.adminNotificationsUnreadCount) {
@@ -107,7 +108,9 @@ export function useAdminNotifications(params?: {
     );
   }, [unreadData]);
 
-  const [markReadMutation] = useMutation(ADMIN_MARK_NOTIFICATION_READ_MUTATION);
+  const [markReadMutation] = useMutation(
+    ADMIN_MARK_NOTIFICATION_READ_MUTATION
+  );
   const [markAllReadMutation] = useMutation(
     ADMIN_MARK_ALL_NOTIFICATIONS_READ_MUTATION
   );
@@ -193,7 +196,9 @@ export function useAdminNotifications(params?: {
 
       setItems((prev) =>
         prev.map((item) =>
-          item.id === notificationId ? { ...item, isRead: true } : item
+          item.id === notificationId
+            ? { ...item, isRead: true }
+            : item
         )
       );
       setUnreadCount((count) => Math.max(0, count - 1));
@@ -212,7 +217,9 @@ export function useAdminNotifications(params?: {
       return;
     }
 
-    setItems((prev) => prev.map((item) => ({ ...item, isRead: true })));
+    setItems((prev) =>
+      prev.map((item) => ({ ...item, isRead: true }))
+    );
     setUnreadCount(0);
 
     try {
@@ -232,11 +239,16 @@ export function useAdminNotifications(params?: {
       const current = items.length;
       const response = await fetchMore({
         variables: {
-          filter: { limit: pageSize, offset: current, unreadOnly: false },
+          filter: {
+            limit: pageSize,
+            offset: current,
+            unreadOnly: false,
+          },
         },
       });
 
-      const next = (response.data?.adminNotifications ?? []) as AdminNotification[];
+      const next = (response.data?.adminNotifications ??
+        []) as AdminNotification[];
       if (!next.length) {
         return;
       }

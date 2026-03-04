@@ -5,7 +5,11 @@ export type AdminNotificationType =
   | "CHAT_CREATED"
   | "CHAT_MESSAGE";
 
-export type AdminNotificationEntityType = "user" | "order" | "chat" | "message";
+export type AdminNotificationEntityType =
+  | "user"
+  | "order"
+  | "chat"
+  | "message";
 
 export interface AdminNotification {
   id: string;

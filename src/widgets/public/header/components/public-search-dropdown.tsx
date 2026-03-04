@@ -127,8 +127,8 @@ export const PublicSearchDropdown = memo(
             ) : !hasResults ? (
               <div className="space-y-4 p-4 text-center">
                 <p className="text-sm text-muted-foreground">
-                  Пока ничего не нашли по этому запросу. Давайте подберем
-                  программу вместе?
+                  Пока ничего не нашли по этому запросу. Давайте
+                  подберем программу вместе?
                 </p>
                 <div className="flex flex-wrap items-center justify-center gap-2">
                   <Button asChild size="sm" className="rounded-xl">

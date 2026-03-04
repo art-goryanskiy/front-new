@@ -43,14 +43,17 @@ export function YandexMetrika() {
               }
               k=e.createElement(t),a=e.getElementsByTagName(t)[0],
               k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
-            })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js', 'ym');
+            })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js?id=${METRIKA_ID}', 'ym');
 
             ym(${METRIKA_ID}, 'init', {
-              clickmap: true,
-              trackLinks: true,
-              accurateTrackBounce: true,
+              ssr: true,
               webvisor: true,
-              ecommerce: "dataLayer"
+              clickmap: true,
+              ecommerce: "dataLayer",
+              referrer: document.referrer,
+              url: location.href,
+              accurateTrackBounce: true,
+              trackLinks: true
             });
           `,
         }}

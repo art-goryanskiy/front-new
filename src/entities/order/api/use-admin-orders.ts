@@ -18,9 +18,11 @@ type AdminOrdersCompatVariables = {
   filter?: { status?: string; limit?: number; offset?: number };
 };
 
-export function useAdminOrders(
-  filter?: { status?: string; limit?: number; offset?: number }
-) {
+export function useAdminOrders(filter?: {
+  status?: string;
+  limit?: number;
+  offset?: number;
+}) {
   const { data, loading, error, refetch } = useQuery<
     AdminOrdersCompatData,
     AdminOrdersCompatVariables

@@ -81,13 +81,12 @@ export function BulkUpdateProgramsDialog({
   };
 
   const parsePricingPatch = () => {
-    const rows = pricingRows
-      .map((row) => ({
-        rawHours: row.hours.trim(),
-        rawPrice: row.price.trim(),
-        hours: Number(row.hours),
-        price: Number(row.price),
-      }));
+    const rows = pricingRows.map((row) => ({
+      rawHours: row.hours.trim(),
+      rawPrice: row.price.trim(),
+      hours: Number(row.hours),
+      price: Number(row.price),
+    }));
     const hasPartial = rows.some(
       (row) =>
         (row.rawHours.length > 0 && row.rawPrice.length === 0) ||
@@ -97,11 +96,14 @@ export function BulkUpdateProgramsDialog({
       throw new Error("Заполните и часы, и цену в каждой строке.");
     }
     const pricing = rows
-      .filter((row) => row.rawHours.length > 0 && row.rawPrice.length > 0)
+      .filter(
+        (row) => row.rawHours.length > 0 && row.rawPrice.length > 0
+      )
       .map((row) => ({ hours: row.hours, price: row.price }));
     if (
       pricing.some(
-        (row) => !Number.isFinite(row.hours) || !Number.isFinite(row.price)
+        (row) =>
+          !Number.isFinite(row.hours) || !Number.isFinite(row.price)
       )
     ) {
       throw new Error("Часы и цена должны быть корректными числами.");
@@ -136,7 +138,10 @@ export function BulkUpdateProgramsDialog({
         ).length;
         const failed = selectedUniqueIds.length - deleted;
         if (deleted === 0) {
-          showToast("error", "Не удалось удалить выбранные программы.");
+          showToast(
+            "error",
+            "Не удалось удалить выбранные программы."
+          );
           return;
         }
         showToast(
@@ -156,7 +161,11 @@ export function BulkUpdateProgramsDialog({
         if (!category.trim()) {
           throw new Error("Выберите категорию.");
         }
-        if (!scopedCategories.some((item) => item.id === category.trim())) {
+        if (
+          !scopedCategories.some(
+            (item) => item.id === category.trim()
+          )
+        ) {
           throw new Error(
             "Выбранная категория не относится к текущему разделу."
           );
@@ -254,7 +263,10 @@ export function BulkUpdateProgramsDialog({
             Пакетное изменение программ
           </DialogTitle>
           <DialogDescription>
-            Выбрано программ: <span className="font-semibold">{selectedUniqueIds.length}</span>
+            Выбрано программ:{" "}
+            <span className="font-semibold">
+              {selectedUniqueIds.length}
+            </span>
           </DialogDescription>
         </DialogHeader>
 
@@ -332,13 +344,17 @@ export function BulkUpdateProgramsDialog({
 
                   {pricingRows.length === 0 ? (
                     <p className="text-xs text-muted-foreground">
-                      Добавьте строки, если нужно изменить цены по часам.
+                      Добавьте строки, если нужно изменить цены по
+                      часам.
                     </p>
                   ) : null}
 
                   <div className="space-y-2">
                     {pricingRows.map((row) => (
-                      <div key={row.id} className="flex items-center gap-2">
+                      <div
+                        key={row.id}
+                        className="flex items-center gap-2"
+                      >
                         <Input
                           type="number"
                           placeholder="часы"
@@ -379,7 +395,9 @@ export function BulkUpdateProgramsDialog({
                           size="icon"
                           onClick={() =>
                             setPricingRows((prev) =>
-                              prev.filter((item) => item.id !== row.id)
+                              prev.filter(
+                                (item) => item.id !== row.id
+                              )
                             )
                           }
                           aria-label="Удалить строку"
@@ -398,7 +416,8 @@ export function BulkUpdateProgramsDialog({
                 <div className="flex items-start gap-2">
                   <Trash2 className="mt-0.5 h-4 w-4 text-red-500" />
                   <p className="text-sm text-red-700 dark:text-red-300">
-                    Будут удалены выбранные программы. Действие необратимо.
+                    Будут удалены выбранные программы. Действие
+                    необратимо.
                   </p>
                 </div>
                 <label className="flex items-start gap-2 text-sm">

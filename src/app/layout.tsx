@@ -28,20 +28,17 @@ export const metadata: Metadata = {
   creator: "ООО ЦОК СТАНДАРТ ПЛЮС",
   publisher: "ООО ЦОК СТАНДАРТ ПЛЮС",
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ||
-      "https://www.standart82.ru"
+    process.env.NEXT_PUBLIC_SITE_URL || "https://www.standart82.ru"
   ),
   alternates: {
     canonical:
-      process.env.NEXT_PUBLIC_SITE_URL ||
-      "https://www.standart82.ru",
+      process.env.NEXT_PUBLIC_SITE_URL || "https://www.standart82.ru",
   },
   openGraph: {
     type: "website",
     locale: "ru_RU",
     url:
-      process.env.NEXT_PUBLIC_SITE_URL ||
-      "https://www.standart82.ru",
+      process.env.NEXT_PUBLIC_SITE_URL || "https://www.standart82.ru",
     siteName: "ООО ЦОК СТАНДАРТ ПЛЮС",
     title: "ООО ЦОК СТАНДАРТ ПЛЮС - Профессиональное обучение",
     description:

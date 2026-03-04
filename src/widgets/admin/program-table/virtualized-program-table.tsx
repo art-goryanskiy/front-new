@@ -52,7 +52,9 @@ export const VirtualizedProgramTable = memo(
       programs.every((program) => selectedProgramIds.has(program.id));
     const someSelected =
       bulkEnabled &&
-      programs.some((program) => selectedProgramIds.has(program.id)) &&
+      programs.some((program) =>
+        selectedProgramIds.has(program.id)
+      ) &&
       !allSelected;
     const gridClass = bulkEnabled ? "grid-cols-8" : "grid-cols-7";
 

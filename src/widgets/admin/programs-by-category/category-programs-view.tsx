@@ -370,8 +370,12 @@ export const CategoryProgramsView = memo(
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">Любая</SelectItem>
-                      <SelectItem value="withPrice">С ценой</SelectItem>
-                      <SelectItem value="noPrice">Без цены</SelectItem>
+                      <SelectItem value="withPrice">
+                        С ценой
+                      </SelectItem>
+                      <SelectItem value="noPrice">
+                        Без цены
+                      </SelectItem>
                     </SelectContent>
                   </Select>
 
@@ -395,7 +399,11 @@ export const CategoryProgramsView = memo(
                     </SelectContent>
                   </Select>
 
-                  <Button size="sm" className="font-semibold" onClick={handleCreate}>
+                  <Button
+                    size="sm"
+                    className="font-semibold"
+                    onClick={handleCreate}
+                  >
                     + Программа
                   </Button>
                 </div>
