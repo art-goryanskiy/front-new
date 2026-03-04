@@ -50,7 +50,10 @@ async function doRefreshRequest(): Promise<UserEntity | null> {
   try {
     const res = await fetch(GRAPHQL_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "apollo-require-preflight": "true",
+      },
       credentials: "include",
       body: JSON.stringify({ query: REFRESH_MUTATION }),
     });

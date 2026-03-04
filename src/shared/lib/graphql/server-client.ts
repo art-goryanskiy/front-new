@@ -24,6 +24,7 @@ export async function serverGraphQLRequest<T>(
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      "apollo-require-preflight": "true",
       ...headers,
     },
     body: JSON.stringify({

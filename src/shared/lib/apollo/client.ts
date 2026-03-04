@@ -11,6 +11,9 @@ const httpLink = new HttpLink({
     process.env.NEXT_PUBLIC_GRAPHQL_URL ||
     "https://standart82.ru/graphql",
   credentials: "include",
+  headers: {
+    "apollo-require-preflight": "true",
+  },
 });
 
 const link = ApolloLink.from([createAuthErrorLink(), httpLink]);
