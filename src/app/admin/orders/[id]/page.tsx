@@ -3,8 +3,8 @@
 import { memo, useCallback, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useOrder } from "@/entities/order/api/use-order";
-import { useOrderDocuments } from "@/entities/order/api/use-order-documents";
+import { useAdminOrder } from "@/entities/order/api/use-admin-order";
+import { useAdminOrderDocuments } from "@/entities/order/api/use-admin-order-documents";
 import { useUpdateOrderStatus } from "@/entities/order/api/use-update-order-status";
 import { useDeleteOrder } from "@/entities/order/api/use-delete-order";
 import {
@@ -149,12 +149,12 @@ const AdminOrderDetailContent = memo(
     const orderId = typeof params?.id === "string" ? params.id : null;
     const { showToast } = useToastState();
 
-    const { order, loading, error, refetch } = useOrder(orderId);
+    const { order, loading, error, refetch } = useAdminOrder(orderId);
     const {
       documents,
       loading: documentsLoading,
       refetch: refetchDocs,
-    } = useOrderDocuments(orderId);
+    } = useAdminOrderDocuments(orderId);
 
     const { updateOrderStatus, loading: statusLoading } =
       useUpdateOrderStatus();

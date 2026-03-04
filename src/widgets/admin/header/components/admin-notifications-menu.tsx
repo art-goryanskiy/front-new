@@ -103,17 +103,17 @@ export const AdminNotificationsMenu = memo(
     }, []);
 
     const handleNotificationClick = useCallback(
-      async (
+      (
         entityType: string,
         entityId: string,
         notificationId: string
       ) => {
-        await markRead(notificationId);
         const href = getNotificationLink(entityType, entityId);
         if (href) {
           router.push(href);
         }
         closeMenu();
+        void markRead(notificationId);
       },
       [closeMenu, markRead, router]
     );
