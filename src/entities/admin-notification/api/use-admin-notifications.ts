@@ -1,6 +1,6 @@
 "use client";
 
-import { useMutation, useQuery } from "@apollo/client/react";
+import { useMutation, useQuery, useApolloClient } from "@apollo/client/react";
 import {
   useCallback,
   useEffect,
@@ -16,6 +16,9 @@ import {
   ADMIN_NOTIFICATIONS_QUERY,
   ADMIN_NOTIFICATIONS_UNREAD_COUNT_QUERY,
 } from "@/shared/api/queries/admin-notifications";
+import { ADMIN_ORDERS } from "@/shared/api/queries/orders";
+import { GET_USERS } from "@/shared/api/queries/users";
+import { AdminChatsDocument } from "@/shared/api/generated/graphql";
 import type {
   AdminNotification,
   AdminNotificationSocketEvent,
@@ -73,6 +76,7 @@ export function useAdminNotifications(params?: {
 }) {
   const backendUrl = params?.backendUrl ?? "";
   const pageSize = params?.pageSize ?? 30;
+  const client = useApolloClient();
 
   const [items, setItems] = useState<AdminNotification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -170,6 +174,16 @@ export function useAdminNotifications(params?: {
           if (inserted) {
             setUnreadCount((count) => count + 1);
             setNewNotificationPulse((pulse) => pulse + 1);
+          }
+
+          // Обновляем списки заявок, пользователей и чатов по entityType
+          const { entityType } = notification;
+          if (entityType === "order") {
+            void client.refetchQueries({ include: [ADMIN_ORDERS] });
+          } else if (entityType === "user") {
+            void client.refetchQueries({ include: [GET_USERS] });
+          } else if (entityType === "chat" || entityType === "message") {
+            void client.refetchQueries({ include: [AdminChatsDocument] });
           }
         }
       );

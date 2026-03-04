@@ -120,16 +120,6 @@ export const Component = () => {
               asChild
               size="lg"
               variant="outline"
-              className="h-12 px-6 font-semibold"
-            >
-              <Link href="/qualification-upgrade">
-                Подобрать обучение
-              </Link>
-            </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
               className="h-12 border-primary/40 px-6 font-semibold text-primary hover:border-primary/60 hover:bg-primary/10 hover:text-primary"
             >
               <a

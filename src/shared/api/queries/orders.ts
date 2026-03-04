@@ -87,11 +87,11 @@ export const ORDER_DOCUMENTS = gql`
   }
 `;
 
-/** Список заявок (только для админа) */
+/** Список заявок (только для админа) — все заявки, не только текущего пользователя */
 export const ADMIN_ORDERS = gql`
   ${ORDER_FIELDS}
-  query AdminOrders($filter: MyOrdersFilterInput) {
-    adminOrders: myOrders(filter: $filter) {
+  query AdminOrders($filter: AdminOrdersFilterInput) {
+    adminOrders(filter: $filter) {
       ...OrderFields
     }
   }
