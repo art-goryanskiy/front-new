@@ -24,13 +24,14 @@ function getNotificationLink(
   entityType: string,
   entityId: string
 ): string | null {
-  if (entityType === "chat" || entityType === "message") {
+  const type = entityType?.toLowerCase() ?? "";
+  if (type === "chat" || type === "message") {
     return `/admin/chats/${entityId}`;
   }
-  if (entityType === "order") {
+  if (type === "order") {
     return `/admin/orders/${entityId}`;
   }
-  if (entityType === "user") {
+  if (type === "user") {
     return "/admin/users";
   }
   return null;
