@@ -9,7 +9,7 @@ import { createAuthErrorLink } from "./auth-error-link";
 const httpLink = new HttpLink({
   uri:
     process.env.NEXT_PUBLIC_GRAPHQL_URL ||
-    "https://standart82.ru/graphql",
+    "https://www.standart82.ru/graphql",
   credentials: "include",
   headers: {
     "apollo-require-preflight": "true",
