@@ -101,7 +101,7 @@ export const ADMIN_ORDERS = gql`
 export const ADMIN_ORDER = gql`
   ${ORDER_FIELDS}
   query AdminOrder($id: ID!) {
-    adminOrder: order(id: $id) {
+    adminOrder(id: $id) {
       ...OrderFields
     }
   }
