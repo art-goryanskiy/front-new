@@ -19,7 +19,7 @@
 **Часть 1 — на своей машине (репозиторий front-new):**
 
 1. **Проверить standalone:** в корне выполнить `npm run build`, убедиться что есть `.next/standalone`.
-2. **Создать .env:** скопировать `.env.example` в `.env`, заполнить `NEXT_PUBLIC_GRAPHQL_URL`, `NEXT_PUBLIC_UPLOAD_URL`, `NEXT_PUBLIC_SITE_URL` (например `https://www.new.standart82.ru/...`).
+2. **Создать .env:** скопировать `.env.example` в `.env`, заполнить `NEXT_PUBLIC_GRAPHQL_URL`, `NEXT_PUBLIC_UPLOAD_URL`, `NEXT_PUBLIC_SITE_URL` (например `https://standart82.ru/...`).
 3. **Проверить образ:** выполнить `docker build -t front-new:test .`, затем `docker run -d -p 3000:3000 --env-file .env --name front-test front-new:test`, открыть http://localhost:3000. Потом `docker stop front-test && docker rm front-test`.
 4. **SSH-ключ для деплоя:** выполнить `ssh-keygen -t ed25519 -C "github-deploy-front" -f ~/.ssh/github_deploy_front -N ""`. Публичный ключ — `~/.ssh/github_deploy_front.pub`, приватный — `~/.ssh/github_deploy_front`.
 5. **Добавить ключ на VPS:** скопировать вывод `cat ~/.ssh/github_deploy_front.pub`, зайти на сервер (`ssh ПОЛЬЗОВАТЕЛЬ@IP_СЕРВЕРА`), вставить строку в `~/.ssh/authorized_keys` (файл создать при необходимости, права `chmod 600 ~/.ssh/authorized_keys`).
@@ -34,9 +34,9 @@
 11. **Создать .env для compose:** `cp .env.deploy.example .env`, указать `FRONT_IMAGE` (например `ghcr.io/YOUR_ORG/front-new`) и `FRONT_IMAGE_TAG=latest`.
 12. **Создать .env.front** с содержимым:
     ```
-    NEXT_PUBLIC_GRAPHQL_URL=https://www.new.standart82.ru/graphql
-    NEXT_PUBLIC_UPLOAD_URL=https://www.new.standart82.ru/upload/image
-    NEXT_PUBLIC_SITE_URL=https://www.new.standart82.ru
+    NEXT_PUBLIC_GRAPHQL_URL=https://standart82.ru/graphql
+    NEXT_PUBLIC_UPLOAD_URL=https://standart82.ru/upload/image
+    NEXT_PUBLIC_SITE_URL=https://standart82.ru
     ```
 13. **Проверить сеть бэкенда:** `docker network ls | grep education-network` — сеть должна быть (создаётся при запуске compose бэкенда).
 14. **Запустить фронт:** `docker compose up -d`. Проверить: `docker compose ps` — контейнер `education-center-front` в Up.
@@ -44,7 +44,7 @@
 
 **Дальше:** при пуше в ветку `main` GitHub Actions соберёт образ, запушит в registry и на сервере выполнит `docker compose pull front && docker compose up -d front` в `DEPLOY_PATH` (корень репо) — продакшен обновится автоматически.
 
-Полная инструкция — **[docs/DEPLOY.md](docs/DEPLOY.md)**. Конфиги деплоя: в корне репо (**docker-compose.yml**, **.env.deploy.example**) и в папке **deploy/** (docker-compose, .env.example).
+Полная инструкция — **[docs/DEPLOY.md](docs/DEPLOY.md)**. Что сделать на сервере при смене домена — **[docs/SERVER-SETUP.md](docs/SERVER-SETUP.md)**. Конфиги деплоя: в корне репо (**docker-compose.yml**, **.env.deploy.example**) и в папке **deploy/** (docker-compose, .env.example).
 
 ### Демо / скриншоты
 
@@ -251,18 +251,18 @@
 
 ```bash
 # GraphQL API (по умолчанию — продакшен)
-NEXT_PUBLIC_GRAPHQL_URL=https://www.new.standart82.ru/graphql
+NEXT_PUBLIC_GRAPHQL_URL=https://standart82.ru/graphql
 
 # Загрузка изображений (REST POST multipart)
-NEXT_PUBLIC_UPLOAD_URL=https://www.new.standart82.ru/upload/image
+NEXT_PUBLIC_UPLOAD_URL=https://standart82.ru/upload/image
 
 # URL фронта для SEO (canonical, OpenGraph, sitemap, robots)
-NEXT_PUBLIC_SITE_URL=https://www.new.standart82.ru
+NEXT_PUBLIC_SITE_URL=https://standart82.ru
 ```
 
 Примечания:
 
-- Если переменные не заданы, используются указанные выше URL (бэкенд на www.new.standart82.ru).
+- Если переменные не заданы, используются указанные выше URL (бэкенд на standart82.ru).
 - Для локальной разработки с локальным бэкендом задайте в `.env.local`: `NEXT_PUBLIC_GRAPHQL_URL=http://localhost:4200/graphql` и при необходимости остальные.
 - Авторизация через cookies (`credentials: "include"`); бэкенд должен отдавать корректные `Set-Cookie` и CORS (`Access-Control-Allow-Credentials: true`, разрешённый origin).
 

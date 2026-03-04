@@ -5,7 +5,7 @@ import { getNewsServer } from "@/shared/api/server/news";
 import { safeAsyncArray } from "@/shared/lib/helpers/error-helpers";
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://www.new.standart82.ru";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://standart82.ru";
 
 /** При сборке в Docker/CI без доступа к API — только статические URL (избегаем падения build) */
 const skipBuildTimeFetch = process.env.SKIP_SITEMAP_FETCH === "1";

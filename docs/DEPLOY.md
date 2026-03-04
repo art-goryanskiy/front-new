@@ -9,8 +9,10 @@
 - **Git** и **GitHub** — репозиторий front-new на GitHub.
 - **Docker** — установлен локально (для проверки образа) и на VPS.
 - **VPS** — сервер с IP (например 83.222.17.192), доступ по SSH.
-- **Домен** — например www.new.standart82.ru, DNS указывает на IP VPS.
+- **Домен** — например standart82.ru, DNS указывает на IP VPS.
 - **Бэкенд** — уже работает на том же домене; репо бэкенда не меняем.
+
+**При смене домена** (например с www.new.standart82.ru на standart82.ru) шаги на сервере описаны в **[SERVER-SETUP.md](SERVER-SETUP.md)**.
 
 ---
 
@@ -54,9 +56,9 @@
    cp .env.example .env
    ```
 3. Откройте `.env` в редакторе. Для продакшена обычно оставляют:
-   - `NEXT_PUBLIC_GRAPHQL_URL=https://www.new.standart82.ru/graphql`
-   - `NEXT_PUBLIC_UPLOAD_URL=https://www.new.standart82.ru/upload/image`
-   - `NEXT_PUBLIC_SITE_URL=https://www.new.standart82.ru`
+   - `NEXT_PUBLIC_GRAPHQL_URL=https://standart82.ru/graphql`
+   - `NEXT_PUBLIC_UPLOAD_URL=https://standart82.ru/upload/image`
+   - `NEXT_PUBLIC_SITE_URL=https://standart82.ru`
 4. Сохраните файл. Файл `.env` в репозиторий не коммитится (он в .gitignore).
 
 **Проверка:** файл `.env` существует и содержит три переменные выше (или свои значения для теста).
@@ -356,9 +358,9 @@ pwd
    ```
 2. Вставьте (домен замените при необходимости):
    ```
-   NEXT_PUBLIC_GRAPHQL_URL=https://www.new.standart82.ru/graphql
-   NEXT_PUBLIC_UPLOAD_URL=https://www.new.standart82.ru/upload/image
-   NEXT_PUBLIC_SITE_URL=https://www.new.standart82.ru
+   NEXT_PUBLIC_GRAPHQL_URL=https://standart82.ru/graphql
+   NEXT_PUBLIC_UPLOAD_URL=https://standart82.ru/upload/image
+   NEXT_PUBLIC_SITE_URL=https://standart82.ru
    ```
 3. Сохраните: Ctrl+O, Enter, Ctrl+X.
 
@@ -393,7 +395,7 @@ pwd
    ```
    Контейнер `education-center-front` должен быть в состоянии `Up`.
 
-**Проверка:** в конфиге nginx бэкенда замените upstream frontend на `server education-center-front:3000;` и выполните `docker compose exec nginx nginx -s reload` (в папке деплоя бэкенда). После этого https://www.new.standart82.ru отдаёт фронт (/) и бэкенд (/graphql, /upload).
+**Проверка:** в конфиге nginx бэкенда замените upstream frontend на `server education-center-front:3000;` и выполните `docker compose exec nginx nginx -s reload` (в папке деплоя бэкенда). После этого https://standart82.ru отдаёт фронт (/) и бэкенд (/graphql, /upload).
 
 **Если контейнер в состоянии Exit:** выполните `docker compose logs front` и исправьте ошибки (часто неверный .env.front или образ не найден).
 
@@ -401,7 +403,7 @@ pwd
 
 ## Шаг 2.9. (Опционально) Проверить, что домен указывает на сервер
 
-**Что делаем:** убеждаемся, что домен www.new.standart82.ru (и при необходимости new.standart82.ru) в DNS указывает на IP вашего VPS.
+**Что делаем:** убеждаемся, что домен standart82.ru (и при необходимости www.standart82.ru) в DNS указывает на IP вашего VPS.
 
 **Зачем:** Let's Encrypt выдаёт сертификат только если по домену на порт 80 приходит запрос на ваш сервер; иначе проверка владения доменом не пройдёт.
 
@@ -409,8 +411,8 @@ pwd
 
 1. На своей машине выполните (или используйте любой сервис проверки DNS):
    ```bash
-   dig +short www.new.standart82.ru
-   dig +short new.standart82.ru
+   dig +short standart82.ru
+   dig +short www.standart82.ru
    ```
 2. В ответе должен быть IP вашего VPS (83.222.17.192). Если выводится другой IP или пусто — добавьте или измените A-записи в панели управления доменом.
 
@@ -490,6 +492,6 @@ SSL и certbot уже настроены на бэкенде; отдельно �
 - **Workflow падает на шаге Deploy:** проверьте секреты (DEPLOY_HOST, DEPLOY_USER, DEPLOY_SSH_KEY, DEPLOY_PATH). Убедитесь, что по ключу из DEPLOY_SSH_KEY можно войти на VPS (шаг 1.6). Путь DEPLOY_PATH (корень репо) должен существовать и содержать docker-compose.yml; пользователь должен иметь право выполнять `docker compose` без sudo.
 - **502 Bad Gateway в браузере:** контейнер front не запущен или падает. Выполните на сервере в корне репо `docker compose ps` и `docker compose logs front`. Часто причина — неверный .env.front или образ не найден (неверный FRONT_IMAGE/FRONT_IMAGE_TAG). Убедитесь, что в nginx бэкенда upstream frontend указывает на `education-center-front:3000`.
 - **SSL:** certbot и nginx — на стороне бэкенда; отдельно для фронта SSL не настраиваем.
-- **Кука авторизации не сохраняется / постоянно редирект на логин:** фронт и бэкенд должны работать с одного домена (www.new.standart82.ru). Проверьте настройки CORS и куки на бэкенде (см. docs/AUTH-COOKIES-CORS.md).
+- **Кука авторизации не сохраняется / постоянно редирект на логин:** фронт и бэкенд должны работать с одного домена (standart82.ru). Проверьте настройки CORS и куки на бэкенде (см. docs/AUTH-COOKIES-CORS.md).
 
 После выполнения всех шагов фронт будет в корне репо front-new, собираться в контейнерах, деплоиться через GitHub Actions при пуше в main/develop. SSL и nginx — на стороне бэкенда.

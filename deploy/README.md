@@ -16,6 +16,6 @@
 3. Создайте `.env.front` с переменными фронта (см. корневой `.env.example`).
 4. Создайте `.env.backend` с переменными бэкенда (MONGODB_URI, REDIS_HOST и т.д.).
 5. Запустите: `docker compose up -d`.
-6. Получите SSL: `export DOMAIN=www.new.standart82.ru && chmod +x scripts/init-ssl.sh && ./scripts/init-ssl.sh`.
+6. Получите SSL: `export DOMAIN=standart82.ru && chmod +x scripts/init-ssl.sh && ./scripts/init-ssl.sh`.
 
 Подробные шаги — в корневом [DEPLOY.md](../DEPLOY.md).

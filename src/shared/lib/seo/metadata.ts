@@ -5,7 +5,7 @@ import type {
 } from "@/shared/api/generated/graphql";
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://www.new.standart82.ru";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://standart82.ru";
 const SITE_NAME = "ООО ЦОК СТАНДАРТ ПЛЮС - Профессиональное обучение";
 const COMPANY_NAME = "ООО ЦОК СТАНДАРТ ПЛЮС";
 const DEFAULT_DESCRIPTION =

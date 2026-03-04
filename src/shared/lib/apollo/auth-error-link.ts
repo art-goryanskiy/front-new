@@ -9,7 +9,7 @@ import { catchError, switchMap } from "rxjs/operators";
 
 const GRAPHQL_URL =
   process.env.NEXT_PUBLIC_GRAPHQL_URL ||
-  "https://www.new.standart82.ru/graphql";
+  "https://standart82.ru/graphql";
 
 const REFRESH_MUTATION = `
   mutation RefreshToken {
