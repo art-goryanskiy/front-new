@@ -79,7 +79,7 @@ export default async function Home() {
           __html: JSON.stringify(organizationSchema),
         }}
       />
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen w-full overflow-x-hidden bg-background">
         <PublicHeader />
         <main id="main-content" className="relative z-10">
           <Component />
