@@ -6,7 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export const FreshNewsCarouselSkeleton = memo(
   function FreshNewsCarouselSkeleton() {
     return (
-      <div className="flex gap-4 overflow-hidden py-4">
+      <div className="min-w-0 flex gap-4 overflow-x-hidden py-4">
         {[1, 2, 3, 4].map((i) => (
           <div
             key={i}
